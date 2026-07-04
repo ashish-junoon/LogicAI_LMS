@@ -36,7 +36,7 @@ const Navbar = ({ setIsMobileOpen }) => {
           <input
             type="text"
             placeholder="Search customer, loan id..."
-            className="w-80 h-11 pl-11 pr-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-80 h-10 pl-11 pr-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
           />
 
         </div>
@@ -45,22 +45,6 @@ const Navbar = ({ setIsMobileOpen }) => {
 
       {/* Right */}
       <div className="flex items-center gap-5">
-
-        {/* Mail */}
-
-        <button className="relative">
-
-          <RiMailLine
-            size={22}
-            className="text-gray-600 hover:text-primary"
-          />
-
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center">
-            2
-          </span>
-
-        </button>
-
         {/* Notification */}
 
         <button className="relative">
@@ -70,8 +54,8 @@ const Navbar = ({ setIsMobileOpen }) => {
             className="text-gray-600 hover:text-primary"
           />
 
-          <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center">
-            8
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center">
+            2
           </span>
 
         </button>
@@ -92,7 +76,7 @@ const Navbar = ({ setIsMobileOpen }) => {
             <img
               src="https://i.pravatar.cc/150?img=12"
               alt="profile"
-              className="h-10 w-10 rounded-full border"
+              className="h-8 w-8 rounded-full border"
             />
 
             <div className="hidden md:block text-left">

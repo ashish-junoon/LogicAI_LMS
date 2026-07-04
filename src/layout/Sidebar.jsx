@@ -171,7 +171,7 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
         {/* Header */}
         <div className="flex justify-between items-center px-6 py-5 border-b border-gray-800">
           <h1 className="text-lg font-bold text-white tracking-wide">
-            <span className="text-blue-400">LMS</span> System
+            <span className="text-blue-500">LMS</span> System
           </h1>
           <button
             className="md:hidden text-gray-400 hover:text-white transition-colors"
@@ -204,14 +204,14 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
                         <Icon
                           size={18}
                           className={`${
-                            openMenus[index] ? "text-blue-400" : "text-gray-500"
+                            openMenus[index] ? "text-blue-500" : "text-gray-500"
                           }`}
                         />
                         <span className="text-sm font-medium">{item.title}</span>
                       </div>
                       <RiArrowDownSLine
                         className={`transition-transform duration-200 ${
-                          openMenus[index] ? "rotate-180 text-blue-400" : "text-gray-500"
+                          openMenus[index] ? "rotate-180 text-blue-500" : "text-gray-500"
                         }`}
                         size={16}
                       />
@@ -233,7 +233,7 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
                               `block px-3 py-2 rounded-lg text-sm transition-all duration-200
                               ${
                                 navActive
-                                  ? "bg-blue-500/10 text-blue-400 font-medium"
+                                  ? "bg-blue-500/10 text-blue-500 font-medium"
                                   : "text-gray-400 hover:text-white hover:bg-gray-800/30"
                               }`
                             }
@@ -241,7 +241,7 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
                             <span className="flex items-center gap-2">
                               <span
                                 className={`w-1 h-1 rounded-full ${
-                                  isActive(sub.path) ? "bg-blue-400" : "bg-gray-600"
+                                  isActive(sub.path) ? "bg-blue-500" : "bg-gray-600"
                                 }`}
                               ></span>
                               {sub.title}
@@ -267,7 +267,7 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
                   >
                     <Icon
                       size={18}
-                      className={isActive(item.path) ? "text-blue-400" : "text-gray-500"}
+                      className={isActive(item.path) ? "text-blue-500" : "text-gray-500"}
                     />
                     <span className="font-medium">{item.title}</span>
                   </NavLink>
