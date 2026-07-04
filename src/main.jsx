@@ -7,7 +7,7 @@ import { IconContext } from 'react-icons'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <IconContext.Provider value={{ color: "green", className: "global-class-name" }}>
+    <IconContext.Provider value={{ color: "", className: "global-class-name" }}>
       <App />
     </IconContext.Provider>
     <ToastContainer />
