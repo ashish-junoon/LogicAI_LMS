@@ -9,6 +9,8 @@ import Relationships from './pages/master/Relationships'
 import StateList from './pages/master/StateList'
 import CityList from './pages/master/CityList'
 import Occupations from './pages/master/Occupations'
+import ApplyLoan from './pages/formPages/ApplyLoan'
+import Login from './pages/auth/Login'
 
 function App() {
 
@@ -25,8 +27,10 @@ function App() {
           <Route path='/state-list' element={<StateList />} />
           <Route path='/city-list' element={<CityList />} />
           <Route path='/occupations' element={<Occupations />} />
+          <Route path='/apply-loan' element={<ApplyLoan />} />
           <Route path='*' element={<Navigate to="/"/>} />
         </Route>
+        <Route path='/login' element={<Login />} />
       </Routes>
     </Router>
   )
