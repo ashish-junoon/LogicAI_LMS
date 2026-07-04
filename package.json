@@ -13,6 +13,7 @@
     "@tailwindcss/vite": "^4.3.2",
     "axios": "^1.18.1",
     "formik": "^2.4.9",
+    "framer-motion": "^12.42.2",
     "react": "^19.2.7",
     "react-data-table-component": "^8.4.0",
     "react-dom": "^19.2.7",

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { RiArrowDownSLine, RiCloseLine } from "react-icons/ri";
 import { NavLink, useLocation } from "react-router-dom";
 import { RiDashboardLine, RiUser3Line, RiSettings3Line } from "react-icons/ri";
-import { IoBookmarksOutline, IoTicketOutline, IoMailOpenOutline } from "react-icons/io5";
+import { IoBookmarksOutline, IoTicketOutline, IoMailOpenOutline, IoSettings } from "react-icons/io5";
 import { MdHistory } from "react-icons/md";
 
 const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
@@ -139,6 +139,40 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
     //     },
     //   ],
     // },
+    {
+      title: "Master",
+      icon: IoSettings,
+      children: [
+        {
+          title: "Branches",
+          path: "/branches",
+        },
+        {
+          title: "Branch Managers",
+          path: "/branch-managers",
+        },
+        {
+          title: "Finantial Years",
+          path: "/finance-years",
+        },
+        {
+          title: "Relationships",
+          path: "/relationships",
+        },
+        {
+          title: "State Master",
+          path: "/state-list",
+        },
+        {
+          title: "City Master",
+          path: "/city-list",
+        },
+        {
+          title: "Occupations",
+          path: "/occupations",
+        },
+      ],
+    },
   ];
 
   const toggleMenu = (index) => {
