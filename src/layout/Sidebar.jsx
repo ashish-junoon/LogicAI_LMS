@@ -203,7 +203,7 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
         md:translate-x-0`}
       >
         {/* Header */}
-        <div className="flex justify-between items-center px-6 py-5 border-b border-gray-800">
+        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-800">
           <h1 className="text-lg font-bold text-white tracking-wide">
             <span className="text-blue-500">LMS</span> System
           </h1>
@@ -216,7 +216,7 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
         </div>
 
         {/* Menu */}
-        <div className="flex-1 overflow-y-auto py-2 px-3 space-y-0.5">
+        <div className="flex-1 overflow-y-auto py-2 px-3 space-y-0.5 no-scrollbar">
           {sidebarData.map((item, index) => {
             const Icon = item.icon;
 

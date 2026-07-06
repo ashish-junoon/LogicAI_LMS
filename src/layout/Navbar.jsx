@@ -21,11 +21,11 @@ const Navbar = ({ setIsMobileOpen }) => {
 
         <button
           onClick={() => setIsMobileOpen(true)}
-          className="lg:hidden text-gray-700"
+          className="md:hidden text-gray-700"
         >
           <RiMenuLine size={24} />
         </button>
-
+{/* 
         <div className="hidden md:flex items-center relative">
 
           <RiSearchLine
@@ -39,7 +39,7 @@ const Navbar = ({ setIsMobileOpen }) => {
             className="w-80 h-10 pl-11 pr-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
           />
 
-        </div>
+        </div> */}
 
       </div>
 
