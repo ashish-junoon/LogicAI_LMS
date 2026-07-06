@@ -11,6 +11,7 @@ import CityList from './pages/master/CityList'
 import Occupations from './pages/master/Occupations'
 import ApplyLoan from './pages/formPages/ApplyLoan'
 import Login from './pages/auth/Login'
+import AllLoans from './pages/loan/AllLoans'
 
 function App() {
 
@@ -28,6 +29,7 @@ function App() {
           <Route path='/city-list' element={<CityList />} />
           <Route path='/occupations' element={<Occupations />} />
           <Route path='/apply-loan' element={<ApplyLoan />} />
+          <Route path='/all-loans' element={<AllLoans />} />
           <Route path='*' element={<Navigate to="/"/>} />
         </Route>
         <Route path='/login' element={<Login />} />

@@ -9,7 +9,7 @@ function Button({ btnName, style, onClick, btnIcon, type, disabled }) {
             onClick={onClick}
             disabled={disabled}
         >
-            {btnIcon && <span className="mr-1"><Icon name={btnIcon} size={18} /></span>}
+            {btnIcon && <span className="mr-1"><Icon name={btnIcon} size={18} color="white" /></span>}
             {btnName}
         </button>
     )

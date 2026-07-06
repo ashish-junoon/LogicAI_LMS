@@ -9,46 +9,28 @@ import {
   RiUser3Line,
   RiSettings3Line,
 } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = ({ setIsMobileOpen }) => {
   const [profileOpen, setProfileOpen] = useState(false);
+  const navigate = useNavigate()
 
   return (
     <header className="sticky top-0 z-30 bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6">
-
       {/* Left */}
       <div className="flex items-center gap-4">
-
         <button
           onClick={() => setIsMobileOpen(true)}
           className="md:hidden text-gray-700"
         >
           <RiMenuLine size={24} />
         </button>
-{/* 
-        <div className="hidden md:flex items-center relative">
-
-          <RiSearchLine
-            size={18}
-            className="absolute left-4 text-gray-400"
-          />
-
-          <input
-            type="text"
-            placeholder="Search customer, loan id..."
-            className="w-80 h-10 pl-11 pr-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-
-        </div> */}
-
       </div>
 
       {/* Right */}
       <div className="flex items-center gap-5">
         {/* Notification */}
-
         <button className="relative">
-
           <RiNotification3Line
             size={22}
             className="text-gray-600 hover:text-primary"
@@ -57,7 +39,6 @@ const Navbar = ({ setIsMobileOpen }) => {
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center">
             2
           </span>
-
         </button>
 
         {/* Divider */}
@@ -67,76 +48,47 @@ const Navbar = ({ setIsMobileOpen }) => {
         {/* Profile */}
 
         <div className="relative">
-
           <button
             onClick={() => setProfileOpen(!profileOpen)}
-            className="flex items-center gap-3"
+            className="flex items-center gap-3 cursor-pointer"
           >
-
-            <img
-              src="https://i.pravatar.cc/150?img=12"
-              alt="profile"
-              className="h-8 w-8 rounded-full border"
-            />
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-blue-500/20">
+              RK
+            </div>
 
             <div className="hidden md:block text-left">
+              <h4 className="text-sm font-semibold text-gray-800">Rohit</h4>
 
-              <h4 className="text-sm font-semibold text-gray-800">
-                Rohit
-              </h4>
-
-              <p className="text-xs text-gray-500">
-                Super Admin
-              </p>
-
+              <p className="text-xs text-gray-500">Super Admin</p>
             </div>
 
             <RiArrowDownSLine
-              className={`transition ${
-                profileOpen ? "rotate-180" : ""
-              }`}
+              className={`transition ${profileOpen ? "rotate-180" : ""}`}
             />
-
           </button>
 
           {profileOpen && (
-
-            <div className="absolute right-0 mt-3 w-56 rounded-xl border bg-white shadow-xl overflow-hidden">
-
-              <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100">
-
+            <div className="absolute right-0 mt-3 w-56 rounded-md border border-gray-200 bg-white shadow-xl overflow-hidden">
+              <button className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-100 cursor-pointer">
                 <RiUser3Line />
-
                 My Profile
-
               </button>
 
-              <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100">
-
+              <button className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-100 cursor-pointer">
                 <RiSettings3Line />
-
                 Settings
-
               </button>
 
-              <div className="border-t"></div>
+              <div className="border-t border-gray-300"></div>
 
-              <button className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50">
-
+              <button onClick={()=> navigate("/login")} className="w-full flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 cursor-pointer">
                 <RiLogoutBoxRLine />
-
                 Logout
-
               </button>
-
             </div>
-
           )}
-
         </div>
-
       </div>
-
     </header>
   );
 };

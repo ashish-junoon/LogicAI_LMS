@@ -1,5 +1,9 @@
 import React from "react";
-import { RiShieldUserLine } from "react-icons/ri";
+import {
+  RiCheckboxCircleFill,
+  RiErrorWarningLine,
+  RiShieldUserLine,
+} from "react-icons/ri";
 
 import Accordion from "../utils/Accordion";
 import TextInput from "../fields/TextInput";
@@ -9,7 +13,12 @@ import Button from "../utils/Button";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-const KycInfo = ({onNext, open, onToggle}) => {
+const KycInfo = ({ onNext, open, onToggle }) => {
+  const [verified, setVerified] = React.useState({
+    pan: false,
+    aadhaar: false,
+  });
+
   const formik = useFormik({
     initialValues: {
       panNumber: "",
@@ -53,13 +62,37 @@ const KycInfo = ({onNext, open, onToggle}) => {
         <div className="grid max-md:grid-cols-2 grid-cols-3 gap-4">
           {/* PAN Number */}
           <div>
-            <TextInput
-              label="PAN Number"
-              name="panNumber"
-              value={formik.values.panNumber}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            />
+            <label className="block mb-2 text-sm font-medium text-slate-700">
+              PAN Number
+            </label>
+
+            <div className="relative">
+              <TextInput
+                name="panNumber"
+                maxLength={10}
+                value={formik.values.panNumber}
+                onChange={(e)=> formik.setFieldValue("panNumber", e.target.value.toUpperCase())}
+                onBlur={formik.handleBlur}
+              />
+
+              <button
+                type="button"
+                onClick={() => setVerified((prev) => ({ ...prev, pan: true }))}
+                className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 rounded-md bg-green-300 px-2 py-1 text-xs font-medium text-green-900 hover:bg-green-300/80 cursor-pointer"
+              >
+                {verified.pan ? (
+                  <>
+                    <RiCheckboxCircleFill />
+                    Verified
+                  </>
+                ) : (
+                  <>
+                    <RiErrorWarningLine />
+                    Verify
+                  </>
+                )}
+              </button>
+            </div>
 
             <ErrorMsg
               error={formik.touched.panNumber && formik.errors.panNumber}
@@ -83,13 +116,39 @@ const KycInfo = ({onNext, open, onToggle}) => {
 
           {/* Aadhaar Number */}
           <div>
-            <TextInput
-              label="Aadhaar Number"
-              name="aadhaarNumber"
-              value={formik.values.aadhaarNumber}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            />
+            <label className="block mb-2 text-sm font-medium text-slate-700">
+              Aadhaar Number
+            </label>
+
+            <div className="relative">
+              <TextInput
+                name="aadhaarNumber"
+                maxLength={12}
+                value={formik.values.aadhaarNumber}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+
+              <button
+                type="button"
+                onClick={() =>
+                  setVerified((prev) => ({ ...prev, aadhaar: true }))
+                }
+                className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 rounded-md bg-green-300 px-2 py-1 text-xs font-medium text-green-900 hover:bg-green-300/80 cursor-pointer"
+              >
+                {verified.aadhaar ? (
+                  <>
+                    <RiCheckboxCircleFill />
+                    Verified
+                  </>
+                ) : (
+                  <>
+                    <RiErrorWarningLine />
+                    Verify
+                  </>
+                )}
+              </button>
+            </div>
 
             <ErrorMsg
               error={

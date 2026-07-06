@@ -42,6 +42,10 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
           path: "/apply-loan",
         },
         {
+          title: "All Loans",
+          path: "/all-loans",
+        },
+        {
           title: "Approved Loans",
           path: "/loan-approval",
         },

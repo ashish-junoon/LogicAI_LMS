@@ -39,7 +39,7 @@ const BranchList = () => {
 
       <Modal
         title={'Add New Branch'}
-        // description={'Read-only asset return status for this offboarding employee.'}
+        // description={'Read-only asset return status for this offboarding employee.'}a
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       >

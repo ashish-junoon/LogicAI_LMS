@@ -52,7 +52,8 @@ const Modal = ({ title, description, isOpen, onClose, onSubmit, formId, children
                             </div>
 
                             {/* Action buttons */}
-                            {!formId && <div className="flex justify-end gap-3 px-6 pb-5">
+                            {formId && 
+                            <div className="flex justify-end gap-3 px-6 pb-5">
                                 {/* <Button
                                     onClick={onClose}
                                     className="px-4 py-2 text-sm rounded-lg text-gray-600 hover:bg-gray-100"
