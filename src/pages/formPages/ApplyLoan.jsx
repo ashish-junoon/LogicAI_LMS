@@ -193,7 +193,7 @@ const ApplyLoan = () => {
         isOpen={isFillByAadhaar}
         onClose={()=> setisFillByAadhaar(false)}
       >
-        <AadhaarVearification setisFillByAadhaar={setisFillByAadhaar} />
+        <AadhaarVerification setisFillByAadhaar={setisFillByAadhaar} />
       </ConfirmationModal>
     </>
   );
