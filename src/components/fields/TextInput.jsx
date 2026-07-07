@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Icon from "../utils/Icon";
 
-function TextInput({ label, icon, type="text", name, id, placeholder, onChange, onBlur, value, required, disabled, maxLength, style, readOnly, hideEye=false }) {
+function TextInput({ label, icon, type="text", name, id, placeholder, onChange, onBlur, value, required, disabled, maxLength, style, readOnly, hideEye=true }) {
     const [showPassword, setShowPassword] = useState(false);
 
     const togglePassword = () => {
@@ -39,7 +39,7 @@ function TextInput({ label, icon, type="text", name, id, placeholder, onChange, 
                         onClick={togglePassword}
                         className="absolute inset-y-0 inset-e-0 flex items-center pe-3.5 pointer-events-auto"
                     >
-                        <Icon name={showPassword ? "RiEyeOffLine" : "RiEyeLine"} size={22} />
+                        <Icon name={showPassword ? "RiEyeOffLine" : "RiEyeLine"} color="black" size={20} />
                     </button>
                 )}
             </div>
