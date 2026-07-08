@@ -12,6 +12,8 @@ import Occupations from './pages/master/Occupations'
 import ApplyLoan from './pages/formPages/ApplyLoan'
 import Login from './pages/auth/Login'
 import AllLoans from './pages/loan/AllLoans'
+import AdvanceEMI from './pages/emi/AdvanceEMI'
+import EMIDetails from './pages/emi/EMIDetails'
 
 function App() {
 
@@ -20,6 +22,9 @@ function App() {
       <Routes>
         <Route element={<Layout />}>
           <Route path='/' element={<Dashboard />} />
+          {/* emi */}
+          <Route path='/advance-emi/' element={<AdvanceEMI />} />
+          <Route path='/emi-details/' element={<EMIDetails />} />
           {/* master pages */}
           <Route path='/branches' element={<BranchList />} />
           <Route path='/finance-years' element={<FinantialYears />} />

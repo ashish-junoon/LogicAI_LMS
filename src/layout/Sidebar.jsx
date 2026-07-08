@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { RiArrowDownSLine, RiCloseLine } from "react-icons/ri";
+import { RiArrowDownSLine, RiBankCard2Line, RiCloseLine } from "react-icons/ri";
 import { NavLink, useLocation } from "react-router-dom";
 import { RiDashboardLine, RiUser3Line, RiSettings3Line } from "react-icons/ri";
 import { IoBookmarksOutline, IoTicketOutline, IoMailOpenOutline, IoSettings } from "react-icons/io5";
@@ -15,6 +15,40 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
       title: "Dashboard",
       path: "/",
       icon: RiDashboardLine,
+    },
+     {
+      title: "Master",
+      icon: IoSettings,
+      children: [
+        {
+          title: "Branches",
+          path: "/branches",
+        },
+        {
+          title: "Branch Managers",
+          path: "/branch-managers",
+        },
+        {
+          title: "Finantial Years",
+          path: "/finance-years",
+        },
+        {
+          title: "Relationships",
+          path: "/relationships",
+        },
+        {
+          title: "State Master",
+          path: "/state-list",
+        },
+        {
+          title: "City Master",
+          path: "/city-list",
+        },
+        {
+          title: "Occupations",
+          path: "/occupations",
+        },
+      ],
     },
     // {
     //   title: "Customer Management",
@@ -68,24 +102,16 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
         },
       ],
     },
-    // {
-    //   title: "Collections",
-    //   icon: RiDashboardLine,
-    //   children: [
-    //     {
-    //       title: "EMI Collection",
-    //       path: "/emi-collection",
-    //     },
-    //     {
-    //       title: "Recovery",
-    //       path: "/recovery",
-    //     },
-    //     {
-    //       title: "Overdue Loans",
-    //       path: "/overdue-loans",
-    //     },
-    //   ],
-    // },
+    {
+      title: "EMI Collection",
+      icon: RiBankCard2Line,
+      children: [
+        {
+          title: "Advance EMI",
+          path: "/advance-emi",
+        },
+      ],
+    },
     // {
     //   title: "Loan Products",
     //   icon: IoBookmarksOutline,
@@ -144,40 +170,7 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
     //     },
     //   ],
     // },
-    {
-      title: "Master",
-      icon: IoSettings,
-      children: [
-        {
-          title: "Branches",
-          path: "/branches",
-        },
-        {
-          title: "Branch Managers",
-          path: "/branch-managers",
-        },
-        {
-          title: "Finantial Years",
-          path: "/finance-years",
-        },
-        {
-          title: "Relationships",
-          path: "/relationships",
-        },
-        {
-          title: "State Master",
-          path: "/state-list",
-        },
-        {
-          title: "City Master",
-          path: "/city-list",
-        },
-        {
-          title: "Occupations",
-          path: "/occupations",
-        },
-      ],
-    },
+   
   ];
 
   const toggleMenu = (index) => {

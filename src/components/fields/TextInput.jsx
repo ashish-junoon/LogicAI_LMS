@@ -10,7 +10,7 @@ function TextInput({ label, icon, type="text", name, id, placeholder, onChange, 
 
     return (
         <div>
-            <label htmlFor={id} className="block mb-1 text-sm font-medium text-gray-800">
+            <label htmlFor={id} className="block mb-1 text-sm font-medium text-gray-700">
                 {label}{required ? <span className="text-danger text-sm">*</span> : ""}
             </label>
             <div className="relative">

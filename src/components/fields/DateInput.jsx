@@ -56,7 +56,7 @@ const DateInput = ({
   }
 
   return (
-    <>
+    <div>
       <label htmlFor={id} className="block mb-1 text-sm font-medium text-black">
         {label}
         {required ? <span className="text-danger text-sm">*</span> : ""}
@@ -94,7 +94,7 @@ const DateInput = ({
           aria-label="Open date picker"
         ></div>
       </div>
-    </>
+    </div>
   );
 };
 

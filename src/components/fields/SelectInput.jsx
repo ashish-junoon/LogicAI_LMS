@@ -3,7 +3,7 @@ import Icon from "../utils/Icon";
 
 function SelectInput({ label, icon, name, id, options, onChange, onBlur, value, placeholder, required, disabled, readOnly, defaultValue = "" }) {
     return (
-        <>
+        <div>
             <label htmlFor={id} className="block mb-1 text-sm font-medium text-black">
                 {label}{required ? <span className="text-danger text-sm">*</span> : ""}
             </label>
@@ -30,7 +30,7 @@ function SelectInput({ label, icon, name, id, options, onChange, onBlur, value, 
                     ))}
                 </select>
             </div>
-        </>
+        </div>
     );
 }
 
