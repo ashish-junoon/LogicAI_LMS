@@ -21,6 +21,7 @@ import {
 } from "react-icons/ri";
 import ConfirmationModal from "../../components/utils/ConfirmationModal";
 import { useNavigate } from "react-router-dom";
+import OtherDocsInfo from "../../components/forms/OtherDocsInfo";
 
 const ApplyLoan = () => {
   const [activeAccordion, setActiveAccordion] = useState(0);
@@ -94,6 +95,16 @@ const ApplyLoan = () => {
                 : setActiveAccordion(5);
             }}
             onNext={() => setActiveAccordion(6)}
+          />
+
+          <OtherDocsInfo
+            open={activeAccordion === 6}a
+            onToggle={() => {
+              activeAccordion == 6
+                ? setActiveAccordion(10)
+                : setActiveAccordion(6);
+            }}
+            onNext={() => setActiveAccordion(7)}
           />
 
           <div className="flex justify-end">

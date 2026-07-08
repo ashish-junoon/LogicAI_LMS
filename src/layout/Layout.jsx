@@ -17,7 +17,7 @@ const Layout = () => {
         {/* Navbar */}
         <Navbar setIsMobileOpen={setIsMobileOpen} />
 
-        <div className="flex-1 p-4 md:p-6 bg-gray-200/90 overflow-y-auto overflow-x-hidden">
+        <div className="flex-1 p-4 md:p-6 bg-gray-200/80 overflow-y-auto overflow-x-hidden">
           <Outlet />
         </div>
       </div>

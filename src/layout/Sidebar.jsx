@@ -81,16 +81,16 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
           path: "/all-loans",
         },
         {
-          title: "Approved Loans",
-          path: "/loan-approval",
-        },
-        {
           title: "Loan Approval",
           path: "/loan-approval",
         },
         {
           title: "Disbursement",
           path: "/disbursement",
+        },
+        {
+          title: "Active Loans",
+          path: "/active-loan",
         },
         {
           title: "Closed Loans",
@@ -194,7 +194,7 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
 
       {/* Sidebar */}
       <div
-        className={`fixed md:static top-0 left-0 z-50 h-screen w-65 bg-linear-to-b
+        className={`fixed md:static top-0 left-0 z-30 h-screen w-65 bg-linear-to-b
         from-blue-0 to-blue-100 text-blue-300 flex flex-col
         transform transition-transform duration-300
         ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}

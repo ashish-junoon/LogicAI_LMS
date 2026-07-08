@@ -14,6 +14,9 @@ import Login from './pages/auth/Login'
 import AllLoans from './pages/loan/AllLoans'
 import AdvanceEMI from './pages/emi/AdvanceEMI'
 import EMIDetails from './pages/emi/EMIDetails'
+import LoanApproval from './pages/loan/LoanApproval'
+import Loan from './pages/loan/Loan'
+import DisbursementList from './pages/loan/DisbursementList'
 
 function App() {
 
@@ -35,6 +38,9 @@ function App() {
           <Route path='/occupations' element={<Occupations />} />
           <Route path='/apply-loan' element={<ApplyLoan />} />
           <Route path='/all-loans' element={<AllLoans />} />
+          <Route path='/loan-approval' element={<LoanApproval />} />
+          <Route path='/loan-info' element={<Loan />} />
+          <Route path='/disbursement' element={<DisbursementList />} />
           <Route path='*' element={<Navigate to="/"/>} />
         </Route>
         <Route path='/login' element={<Login />} />

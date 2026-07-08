@@ -17,6 +17,7 @@ const Navbar = ({ setIsMobileOpen }) => {
 
   return (
     <header className="sticky top-0 z-30 bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6">
+      {profileOpen && <div onClick={()=> setProfileOpen(false)} className="bg-black/20 w-[100vw] h-[100vh] fixed z-50 inset-0" />}
       {/* Left */}
       <div className="flex items-center gap-4">
         <button
@@ -68,7 +69,7 @@ const Navbar = ({ setIsMobileOpen }) => {
           </button>
 
           {profileOpen && (
-            <div className="absolute right-0 mt-3 w-56 rounded-md border border-gray-200 bg-white shadow-xl overflow-hidden">
+            <div className="absolute right-0 mt-3 z-50 w-56 rounded-md border border-gray-200 bg-white shadow-xl overflow-hidden">
               <button className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-100 cursor-pointer">
                 <RiUser3Line />
                 My Profile

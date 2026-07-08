@@ -19,7 +19,7 @@ const iconLibraries = {
 
 const Icon = ({ name, size = 24, color = 'blue', style = {} }) => {
 
-    const prefix = name.slice(0, 2);
+    const prefix = name?.slice(0, 2);
     const IconComponent = iconLibraries[prefix]?.[name];
 
     if (!IconComponent) {
