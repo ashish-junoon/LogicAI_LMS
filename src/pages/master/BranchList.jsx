@@ -28,7 +28,7 @@ const BranchList = () => {
         {/* header  */}
         <div className='flex justify-between p-3 px-4 bg-gray-100 rounded-t-lg'>
           <div className='text-lg font-semibold self-center'>All Branches</div>
-          <button onClick={() => setIsModalOpen(true)} className='p-2 px-4 rounded-sm bg-blue-600 text-white flex justify-between gap-3'>  New Branch <IoPerson className='self-center' /></button>
+          <button onClick={() => setIsModalOpen(true)} className='p-2 px-4 rounded-sm bg-blue-600 text-white flex justify-between gap-3'> New Branch </button>
         </div>
 
         {/* table data */}

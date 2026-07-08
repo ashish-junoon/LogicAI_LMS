@@ -1,11 +1,13 @@
-import React from 'react'
-import DataTable from 'react-data-table-component';
+import React from "react";
+import DataTable from "react-data-table-component";
+import { FiSearch, FiFilter, FiDownload } from "react-icons/fi";
 
-const Table = ({columns, data}) => {
-    const customStyles = {
+const Table = ({ columns, data }) => {
+  const customStyles = {
     table: {
       style: {
         backgroundColor: "#fff",
+        padding: 5
       },
     },
 
@@ -62,21 +64,48 @@ const Table = ({columns, data}) => {
       },
     },
   };
-  
+
   return (
-    <div className="flex-1 border border-slate-200 bg-white shadow-sm m-3 rounded-md">
-          <DataTable
-            columns={columns}
-            data={data}
-            customStyles={customStyles}
-            highlightOnHover
-            pointerOnHover
-            striped
-            responsive
-            pagination
+    <div className="m-3 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+      {/* Toolbar */}
+      <div className="flex flex-col gap-4 border-b border-slate-200 bg-slate-50 px-5 py-4 md:flex-row md:items-center md:justify-between">
+        {/* Search */}
+        <div className="relative w-full md:max-w-sm">
+          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+
+          <input
+            type="text"
+            placeholder="Search..."
+            className="w-full rounded-md border border-slate-300 bg-white py-2 pl-10 pr-4 text-sm text-slate-700 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
           />
         </div>
-  )
-}
 
-export default Table
+        {/* Right Actions */}
+        <div className="flex items-center gap-3">
+          <button className="flex items-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-400 hover:bg-slate-100">
+            <FiFilter size={16} />
+          </button>
+
+          <button className="flex items-center gap-2 rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-900">
+            <FiDownload size={16} />
+            Export
+          </button>
+        </div>
+      </div>
+
+      {/* Table */}
+      <DataTable
+        columns={columns}
+        data={data}
+        customStyles={customStyles}
+        highlightOnHover
+        pointerOnHover
+        striped
+        responsive
+        pagination
+      />
+    </div>
+  );
+};
+
+export default Table;
