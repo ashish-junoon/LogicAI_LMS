@@ -91,13 +91,9 @@ const AdvanceEMI = () => {
                 <div className="flex justify-between items-center p-4 bg-gray-100 rounded-t-lg">
 
                     <div>
-                        <h2 className="text-xl font-semibold">
+                        <h2 className="text-lg font-semibold">
                             Advance EMI Customers
                         </h2>
-
-                        <p className="text-sm text-gray-500">
-                            View and manage pending EMI collections
-                        </p>
                     </div>
 
                 </div>

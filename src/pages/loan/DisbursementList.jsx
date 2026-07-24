@@ -10,6 +10,7 @@ import Table from "../../components/Table";
 import Modal from "../../components/utils/Modal";
 import TextInput from "../../components/fields/TextInput";
 import Icon from "../../components/utils/Icon";
+import { GiOpenFolder } from "react-icons/gi";
 
 // Sample disbursement data (ishe aap apne actual data se replace karenge)
 const disbursementData = [
@@ -28,6 +29,8 @@ const disbursementData = [
     ifscCode: "HDFC0001234",
     disbursementDate: "2024-01-20",
     remarks: "First disbursement",
+    gender: "Male",
+    mobile: "9999999911"    
   },
   {
     id: 2,
@@ -44,6 +47,8 @@ const disbursementData = [
     ifscCode: "ICICI0005678",
     disbursementDate: "2024-01-18",
     remarks: "Full amount disbursed",
+    gender: "Female",
+    mobile: "9999999922"    
   },
   {
     id: 3,
@@ -60,6 +65,8 @@ const disbursementData = [
     ifscCode: "SBIN0009012",
     disbursementDate: "2024-01-22",
     remarks: "Awaiting approval",
+    gender: "Male",
+    mobile: "9999999933"    
   },
   {
     id: 4,
@@ -76,6 +83,8 @@ const disbursementData = [
     ifscCode: "AXIS0003456",
     disbursementDate: "2024-01-19",
     remarks: "Partial disbursement",
+    gender: "Female",
+    mobile: "9999999944"    
   },
 ];
 
@@ -115,13 +124,28 @@ const DisbursementList = () => {
 
   const columns = [
     {
-      name: "Loan ID",
+      name: "Lead ID",
       selector: (row) => row.loanId,
       sortable: true,
     },
     {
       name: "Customer Name",
       selector: (row) => row.customerName,
+      sortable: true,
+    },
+    {
+      name: "Gender",
+      selector: (row) => row.gender || "N/A",
+      sortable: true,
+    },
+    {
+      name: "Mobile",
+      selector: (row) => row.mobile,
+      sortable: true,
+    },
+    {
+      name: "Salary",
+      selector: (row) => `₹${row.loanAmount.toLocaleString()}`,
       sortable: true,
     },
     {
@@ -152,11 +176,12 @@ const DisbursementList = () => {
       name: "Action",
       cell: (row) => (
         <button
-          onClick={() => handleDisburse(row)}
+          // onClick={() => handleDisburse(row)}
+          onClick={() => navigate('/disbursement-detail')}
           className={`px-3 py-1 rounded text-sm font-medium flex items-center gap-1 bg-blue-600 text-white hover:bg-blue-700 cursor-pointer`}
         >
-          <IoCheckmarkCircle />
-          Disburse
+          <GiOpenFolder />
+          {/* Disburse */}
         </button>
       ),
     },

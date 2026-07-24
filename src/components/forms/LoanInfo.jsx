@@ -15,6 +15,7 @@ const LoanInfo = ({ onNext, open, onToggle }) => {
       interestRate: "",
       tenure: "",
       processingFee: "",
+      type: ""
     //   emiAmount: "",
     //   repaymentMode: "",
     //   loanPurpose: "",
@@ -168,6 +169,27 @@ const LoanInfo = ({ onNext, open, onToggle }) => {
               }
             />
           </div> */}
+
+          <div>
+            <SelectInput
+              label="Loan Type"
+              name="type"
+              placeholder="Select repayment mode"
+              value={formik.values.type}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              options={[
+                { label: "Bussiness Loan", value: "Bussiness" },
+                { label: "Personal Personal", value: "Personal" },
+              ]}
+            />
+            <ErrorMsg
+              error={
+                formik.touched.type &&
+                formik.errors.type
+              }
+            />
+          </div>
 
           {/* <div className="col-span-full">
             <TextInput

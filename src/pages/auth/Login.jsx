@@ -171,14 +171,14 @@ const Login = () => {
                 <TextInput label="Email" placeholder={"Enter your email address"} style={"py-1.5"} />
                 <div className="space-y-2">
                   <TextInput label={"Password"} type="password" placeholder="Enter your password" hideEye={false} style={"py-1.5"} />
-                  <div className="text-end text-blue-900 text-sm font-semibold">Forgot Password?</div>
+                  <div className="text-end text-primary text-sm font-semibold">Forgot Password?</div>
                 </div>
               </div>
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3 bg-linear-to-r from-[#0b1f33] to-[#1a3650] hover:from-[#132b42] hover:to-[#1f3f5a] text-white font-medium rounded-lg transition-all duration-300 shadow-lg shadow-[#0b1f33]/20 hover:shadow-[#0b1f33]/30 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98] text-sm"
+                className="w-full py-3 bg-linear-to-r from-primary to-primary/70 hover:from-primary hover:to-primary text-white font-medium rounded-lg transition-all duration-300 shadow-lg shadow-[#0b1f33]/20 hover:shadow-[#0b1f33]/30 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98] text-sm"
               >
                 {isLoading ? (
                   <span className="flex items-center justify-center gap-2">

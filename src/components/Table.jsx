@@ -82,11 +82,11 @@ const Table = ({ columns, data }) => {
 
         {/* Right Actions */}
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-400 hover:bg-slate-100">
+          <button className="flex items-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-400 hover:bg-slate-100 cursor-pointer">
             <FiFilter size={16} />
           </button>
 
-          <button className="flex items-center gap-2 rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-900">
+          <button className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary/80 cursor-pointer">
             <FiDownload size={16} />
             Export
           </button>

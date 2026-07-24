@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+@theme{
+    /* Red */
+    /* --color-primary: #FF0052; */
+    /* --color-primary: #15173D; */
+    /* --color-bgdark: #0B1849; */
+    --color-bgdark: #111844;
+    --color-secondary: #fc1278;
+
+    /* Purple */
+    --color-primary: #1B4EF5;
+}
+
 /* Hide scrollbar but allow scroll */
 .no-scrollbar::-webkit-scrollbar {
   display: none;

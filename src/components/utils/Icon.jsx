@@ -11,13 +11,14 @@ import * as Fa from 'react-icons/fa';
 import * as Tb from 'react-icons/tb';
 import * as Ti from 'react-icons/ti';
 import * as Hi from 'react-icons/hi';
+import * as Si from 'react-icons/si';
 // Import other icon sets as needed
 
 const iconLibraries = {
-    Ri, Md, Io, Gi, Pi, Go, Ci, Gr, Fa, Tb, Ti, Hi, Fa
+    Ri, Md, Io, Gi, Pi, Go, Ci, Gr, Fa, Tb, Ti, Hi, Fa, Si
 };
 
-const Icon = ({ name, size = 24, color = 'blue', style = {} }) => {
+const Icon = ({ name, size = 24, color = 'black', style = {} }) => {
 
     const prefix = name?.slice(0, 2);
     const IconComponent = iconLibraries[prefix]?.[name];

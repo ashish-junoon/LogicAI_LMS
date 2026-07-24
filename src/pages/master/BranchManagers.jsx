@@ -23,7 +23,7 @@ const BranchManagers = () => {
                 {/* header  */}
                 <div className='flex justify-between p-3 px-4 bg-gray-100 rounded-t-lg'>
                     <div className='text-lg font-semibold self-center'>Branch Mangers</div>
-                    <button onClick={() => setIsModalOpen(true)} className='p-2 px-4 rounded-sm bg-blue-600 text-white flex justify-between gap-3'> New Manager </button>
+                    <button onClick={() => setIsModalOpen(true)} className='p-1.5 px-3 rounded-sm bg-primary hover:bg-primary/90 text-white cursor-pointer flex justify-between gap-3'> New Manager </button>
                 </div>
 
                 {/* table data */}

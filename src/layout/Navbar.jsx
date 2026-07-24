@@ -16,8 +16,8 @@ const Navbar = ({ setIsMobileOpen }) => {
   const navigate = useNavigate()
 
   return (
-    <header className="sticky top-0 z-30 bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6">
-      {profileOpen && <div onClick={()=> setProfileOpen(false)} className="bg-black/20 w-[100vw] h-[100vh] fixed z-50 inset-0" />}
+    <header className="sticky top-0 z-40 bg-white border-b border-gray-200 h-14 flex items-center justify-between px-6">
+      {profileOpen && <div onClick={()=> setProfileOpen(false)} className="bg-black/20 w-[100vw] h-[100vh] fixed z-20 inset-0" />}
       {/* Left */}
       <div className="flex items-center gap-4">
         <button
@@ -33,11 +33,11 @@ const Navbar = ({ setIsMobileOpen }) => {
         {/* Notification */}
         <button className="relative">
           <RiNotification3Line
-            size={22}
+            size={20}
             className="text-gray-600 hover:text-primary"
           />
 
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] rounded-full h-3 w-3 flex items-center justify-center">
             2
           </span>
         </button>
@@ -53,14 +53,14 @@ const Navbar = ({ setIsMobileOpen }) => {
             onClick={() => setProfileOpen(!profileOpen)}
             className="flex items-center gap-3 cursor-pointer"
           >
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-blue-500/20">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-blue-500/20">
               RK
             </div>
 
             <div className="hidden md:block text-left">
-              <h4 className="text-sm font-semibold text-gray-800">Rohit</h4>
+              <h4 className="text-[12px] font-semibold text-gray-800">Rohit koli</h4>
 
-              <p className="text-xs text-gray-500">Super Admin</p>
+              <p className="text-[10px] text-gray-500">Super Admin</p>
             </div>
 
             <RiArrowDownSLine

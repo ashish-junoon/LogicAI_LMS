@@ -298,6 +298,86 @@ export const allLoansData = [
   },
 ];
 
+export const PendingLeadsData = [
+  {
+    name: "Vikram Rao",
+    leadId: "L005",
+    phone: "8432109876",
+    branch: "Chennai Central",
+    sanctionAmount: 450000,
+    pendingStep: "Personal Info",
+    createdDate: "2026-07-16",
+    createdBy: "Meena Iyer"
+  },
+  {
+    name: "Anjali Gupta",
+    leadId: "L006",
+    phone: "9821098765",
+    branch: "Hyderabad North",
+    sanctionAmount: 600000,
+    pendingStep: "KYC Info",
+    createdDate: "2026-07-15",
+    createdBy: "Arjun Nair"
+  },
+  {
+    name: "Deepak Verma",
+    leadId: "L007",
+    phone: "9910987654",
+    branch: "Kolkata East",
+    sanctionAmount: 850000,
+    pendingStep: "Bank Info",
+    createdDate: "2026-07-14",
+    createdBy: "Pooja Sharma"
+  }
+];
+
+export const NewLeadsData = [
+  {
+    name: "Sunita Mehta",
+    leadId: "L004",
+    phone: "65432 10987",
+    branch: "Pune West",
+    loanType: "Bussines Loan",
+    sanctionAmount: 1000000,
+    pendingStep: "Loan Info",
+    createdDate: "2026-07-17",
+    createdBy: "Ravi Desai"
+  },
+  {
+    name: "Vikram Rao",
+    leadId: "L005",
+    phone: "54321 09876",
+    branch: "Chennai Central",
+    loanType: "Personal Loan",
+    sanctionAmount: 450000,
+    pendingStep: "Personal Info",
+    createdDate: "2026-07-16",
+    createdBy: "Meena Iyer"
+  },
+  {
+    name: "Anjali Gupta",
+    leadId: "L006",
+    phone: "43210 98765",
+    branch: "Hyderabad North",
+    loanType: "Bussines Loan",
+    sanctionAmount: 600000,
+    pendingStep: "KYC Info",
+    createdDate: "2026-07-15",
+    createdBy: "Arjun Nair"
+  },
+  {
+    name: "Deepak Verma",
+    leadId: "L007",
+    phone: "32109 87654",
+    branch: "Kolkata East",
+    loanType: "Personal Loan",
+    sanctionAmount: 850000,
+    pendingStep: "Bank Info",
+    createdDate: "2026-07-14",
+    createdBy: "Pooja Sharma"
+  }
+];
+
 export const advanceEmiCustomers = [
   {
     id: 1,
