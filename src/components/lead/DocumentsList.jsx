@@ -69,11 +69,11 @@ const DocumentsList = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+              {/* <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
                 doc.status === "Verified" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
               }`}>
                 {doc.status}
-              </span>
+              </span> */}
               <button className="p-1 text-gray-400 hover:text-primary/90 hover:bg-primary/5 rounded transition-colors">
                 <Icon name="RiEyeLine" size={14} />
               </button>

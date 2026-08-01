@@ -198,6 +198,7 @@ export const occupationData = [
 export const allLoansData = [
   {
     loanId: "LN100001",
+    mobile: "9889741111",
     customerName: "Rohit Sharma",
     loanAmount: 250000,
     interestAmount: 30000,
@@ -208,6 +209,7 @@ export const allLoansData = [
   },
   {
     loanId: "LN100002",
+    mobile: "9889742222",
     customerName: "Priya Verma",
     loanAmount: 150000,
     interestAmount: 18000,
@@ -218,6 +220,7 @@ export const allLoansData = [
   },
   {
     loanId: "LN100003",
+    mobile: "9889743333",
     customerName: "Amit Kumar",
     loanAmount: 500000,
     interestAmount: 70000,
@@ -228,6 +231,7 @@ export const allLoansData = [
   },
   {
     loanId: "LN100004",
+    mobile: "9889744444",
     customerName: "Sneha Patel",
     loanAmount: 80000,
     interestAmount: 9600,
@@ -238,6 +242,7 @@ export const allLoansData = [
   },
   {
     loanId: "LN100005",
+    mobile: "9889745555",
     customerName: "Vikram Singh",
     loanAmount: 350000,
     interestAmount: 42000,
@@ -248,6 +253,7 @@ export const allLoansData = [
   },
   {
     loanId: "LN100006",
+    mobile: "9889746666",
     customerName: "Neha Gupta",
     loanAmount: 120000,
     interestAmount: 14400,
@@ -258,6 +264,7 @@ export const allLoansData = [
   },
   {
     loanId: "LN100007",
+    mobile: "9889747777",
     customerName: "Rajesh Yadav",
     loanAmount: 600000,
     interestAmount: 90000,
@@ -268,6 +275,7 @@ export const allLoansData = [
   },
   {
     loanId: "LN100008",
+    mobile: "9889748888",
     customerName: "Pooja Sharma",
     loanAmount: 100000,
     interestAmount: 12000,
@@ -278,6 +286,7 @@ export const allLoansData = [
   },
   {
     loanId: "LN100009",
+    mobile: "9889749999",
     customerName: "Deepak Chauhan",
     loanAmount: 275000,
     interestAmount: 33000,
@@ -288,6 +297,7 @@ export const allLoansData = [
   },
   {
     loanId: "LN100010",
+    mobile: "9889740000",
     customerName: "Kavita Joshi",
     loanAmount: 450000,
     interestAmount: 54000,

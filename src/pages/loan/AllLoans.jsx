@@ -6,7 +6,7 @@ import { branchData, allLoansData } from '../../content/masterData'
 import Table from '../../components/Table'
 import Modal from '../../components/utils/Modal'
 import TextInput from '../../components/fields/TextInput'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const AllLoans = () => {
 
@@ -22,6 +22,11 @@ const AllLoans = () => {
   {
     name: "Customer Name",
     selector: (row) => row.customerName,
+    sortable: true,
+  },
+  {
+    name: "Mobile No.",
+    selector: (row) => row.mobile,
     sortable: true,
   },
   {
@@ -42,40 +47,53 @@ const AllLoans = () => {
     sortable: true,
     right: true,
   },
+  // {
+  //   name: "Status",
+  //   selector: (row) => row.status,
+  //   sortable: true,
+  //   center: true,
+  //   cell: (row) => (
+  //     <span
+  //       className={`px-2 py-1 rounded-full text-xs font-medium ${
+  //         row.status === "Approved"
+  //           ? "bg-green-100 text-green-700"
+  //           : row.status === "Pending"
+  //           ? "bg-yellow-100 text-yellow-700"
+  //           : row.status === "Rejected"
+  //           ? "bg-red-100 text-red-700"
+  //           : row.status === "Disbursed"
+  //           ? "bg-blue-100 text-blue-700"
+  //           : row.status === "Closed"
+  //           ? "bg-gray-100 text-gray-700"
+  //           : "bg-orange-100 text-orange-700"
+  //       }`}
+  //     >
+  //       {row.status}
+  //     </span>
+  //   ),
+  // },
   {
-    name: "Status",
-    selector: (row) => row.status,
-    sortable: true,
-    center: true,
-    cell: (row) => (
-      <span
-        className={`px-2 py-1 rounded-full text-xs font-medium ${
-          row.status === "Approved"
-            ? "bg-green-100 text-green-700"
-            : row.status === "Pending"
-            ? "bg-yellow-100 text-yellow-700"
-            : row.status === "Rejected"
-            ? "bg-red-100 text-red-700"
-            : row.status === "Disbursed"
-            ? "bg-blue-100 text-blue-700"
-            : row.status === "Closed"
-            ? "bg-gray-100 text-gray-700"
-            : "bg-orange-100 text-orange-700"
-        }`}
-      >
-        {row.status}
-      </span>
-    ),
-  },
-  {
-    name: "Created Date",
+    name: "Disbursement Date",
     selector: (row) => row.createdDate,
     sortable: true,
   },
   {
-    name: "Created By",
-    selector: (row) => row.createdBy,
+    name: "Due Date",
+    selector: (row) => row.createdDate,
     sortable: true,
+  },
+      {
+    name: "Actions",
+    selector: (row) => row.status,
+    sortable: true,
+    center: true,
+    cell: (row) => (
+      <Link to="/loan-detail"
+        className={`p-1.5 rounded-sm text-xs font-medium bg-primary`}
+      >
+        <Icon name="MdPendingActions" size={15} color={'white'} />
+      </Link>
+    ),
   },
 ];
 

@@ -63,7 +63,7 @@ const RejectedLeads = () => {
   // },
   {
     name: "Remarks",
-    selector: (row) => "Reject Remarks here ",
+    selector: (row) => <span className='text-red-500 font-semibold'>Reject Remarks here</span>,
     sortable: true,
   },
   {

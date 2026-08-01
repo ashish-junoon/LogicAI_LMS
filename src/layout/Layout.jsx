@@ -25,7 +25,7 @@ const Layout = () => {
           <Button 
             btnName={"Back"}
             btnIcon={"TiArrowBack"}
-            style={"bg-primary text-white text-sm font-semibold mb-1"}
+            style={"bg-primary text-white text-sm font-semibold mb-1 py-1.5"}
             btnIconSize={18}
             onClick={()=> navigate(-1)}
           />}

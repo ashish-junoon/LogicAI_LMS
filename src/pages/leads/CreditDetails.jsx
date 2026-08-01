@@ -9,20 +9,6 @@ const CreditDetails = () => {
   return (
     <div>
       <ApplicationInfo>
-        {/* <div>
-          <div>
-            <CreditSection />
-            <BankStatementAnalyser />
-          </div>
-
-          <div>
-          </div>
-
-          <div className="grid grid-cols-4">
-            <OfferLoan />
-          </div>
-        </div> */}
-
         <CreditWrapper />
       </ApplicationInfo>
     </div>

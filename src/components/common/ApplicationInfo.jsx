@@ -2,7 +2,7 @@ import React from "react";
 import Icon from "../../components/utils/Icon";
 import InfoCard from "./InfoCard";
 
-const ApplicationInfo = ({children}) => {
+const ApplicationInfo = ({children, hideBtn}) => {
   return (
     <div>
       <div>
@@ -14,7 +14,7 @@ const ApplicationInfo = ({children}) => {
       </div>
 
       {/* Action Buttons */}
-      <div className="flex items-center justify-between mt-6">
+      {!hideBtn && <div className="flex items-center justify-between mt-6">
         <div className="flex gap-3">
           <button className="px-6 py-2.5 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm font-medium">
             Reject Application
@@ -32,7 +32,7 @@ const ApplicationInfo = ({children}) => {
             Approve
           </button>
         </div>
-      </div>
+      </div>}
     </div>
   );
 };

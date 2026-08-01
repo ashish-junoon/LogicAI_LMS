@@ -10,6 +10,7 @@ const InfoCardSection = ({
   profileImage,
   gender,
   applicantData,
+  co_applicantData,
   selfieVerified,
   emailVerified,
   heading,
@@ -52,6 +53,27 @@ const InfoCardSection = ({
                 </span>
               </div>
             ))}
+            
+            {/* Co Applicant Data */}
+            <p className="text-[11px] font-semibold col-span-full text-gray-700 uppercase bg-gray-200 py-0.5 px-2 -ml-4">Co-Applicant Details</p>
+
+            {co_applicantData?.map((data, index) => (
+              <React.Fragment key={index}>
+                {Object?.entries(data)?.map(([key, value]) => (
+                  <div
+                    key={key}
+                    className="flex flex-col border-b border-gray-50 pb-1"
+                  >
+                    <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+                      {capitalizeWords(key)}
+                    </label>
+                    <span className="text-xs text-gray-800 font-medium truncate">
+                      {value || "N/A"}
+                    </span>
+                  </div>
+                ))}
+              </React.Fragment>
+            ))}
 
             <div className="border-t border-gray-300 col-span-full my-2"></div>
 
@@ -91,6 +113,26 @@ const InfoCardSection = ({
               </span>
             </div>
           </div>
+
+          {/* <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-1 p-4">
+            {co_applicantData?.map((data, index) => (
+              <React.Fragment key={index}>
+                {Object?.entries(data)?.map(([key, value]) => (
+                  <div
+                    key={key}
+                    className="flex flex-col border-b border-gray-50 pb-1"
+                  >
+                    <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+                      {capitalizeWords(key)}
+                    </label>
+                    <span className="text-xs text-gray-800 font-medium truncate">
+                      {value || "N/A"}
+                    </span>
+                  </div>
+                ))}
+              </React.Fragment>
+            ))}
+          </div> */}
         </div>
 
         {/* Right Section - Profile Image */}
@@ -151,13 +193,23 @@ export const demoApplicantData = {
   father_name: "Dr. Ramesh Singh",
   mother_name: "Sneha Singh",
   marital_status: "Unmarried",
-  education: "MBBS, MD",
-  hospital_name: "Apollo Hospital",
-  work_experience: "4 years",
-  monthly_expenses: "₹60,000",
+  company_name: "Apollo Hospital",
   existing_loans: "None",
   credit_score: "820",
 };
+
+export const demoCoApplicantData = [
+  {
+    name: "Rajat Singh",
+    age: "32",
+    occupation: "Labour",
+    income: "₹11,20,000",
+    pan_number: "RRHEN1234B",
+    aadhar_number: "787825254136",
+    credit_score: "432",
+    relation: "Brother",
+  },
+];
 
 const InfoCard = () => {
   return (
@@ -167,6 +219,7 @@ const InfoCard = () => {
         profileImage="https://randomuser.me/api/portraits/women/44.jpg"
         gender="female"
         applicantData={demoApplicantData}
+        co_applicantData={demoCoApplicantData}
         selfieVerified={false}
         emailVerified={true}
       />

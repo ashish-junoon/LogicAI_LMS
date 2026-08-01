@@ -3,34 +3,152 @@ import Icon from "../utils/Icon";
 import SelectInput from "../fields/SelectInput";
 
 const CreditSection = () => {
-  const [creditScore, setCreditScore] = useState(null);
-  const [generatedDate, setGeneratedDate] = useState(null);
-  const [fileUrl, setFileUrl] = useState(null);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [showFile, setShowFile] = useState(false);
+  const [users, setUsers] = useState([
+    {
+      id: 1,
+      name: "Raju Das",
+      email: "john@example.com",
+      softPull: {
+        creditScore: 720,
+        generatedDate: "2024-05-20 10:30 AM",
+        fileUrl: "/credit-reports/soft-pull-report.pdf",
+        fileName: "Soft_Pull_Report.pdf",
+        showFile: true,
+        isGenerating: false,
+        selectedMode: "Crif",
+        lastRefreshed: "2024-05-20 10:30 AM",
+      },
+      hardPull: {
+        creditScore: null,
+        generatedDate: null,
+        fileUrl: null,
+        fileName: null,
+        showFile: false,
+        isGenerating: false,
+        selectedMode: "",
+      },
+    },
+    {
+      id: 2,
+      name: "Jane Smith",
+      email: "jane@example.com",
+      softPull: {
+        creditScore: 680,
+        generatedDate: "2024-05-19 02:15 PM",
+        fileUrl: "/credit-reports/soft-pull-report-2.pdf",
+        fileName: "Soft_Pull_Report_2.pdf",
+        showFile: true,
+        isGenerating: false,
+        selectedMode: "Experian",
+        lastRefreshed: "2024-05-19 02:15 PM",
+      },
+      hardPull: {
+        creditScore: null,
+        generatedDate: null,
+        fileUrl: null,
+        fileName: null,
+        showFile: false,
+        isGenerating: false,
+        selectedMode: "",
+      },
+    },
+  ]);
 
-  const creditData = {
-    score: 720,
-    rating: "Good",
-    color: "#10B981",
-    generatedOn: "2024-05-20 10:30 AM",
-    fileUrl: "/credit-reports/LA-1250-credit-report.pdf",
-    fileName: "Credit_Report_LA-1250.pdf",
-  };
+  const handleGenerateCredit = (userId, pullType, isRefetch = false) => {
+    setUsers((prevUsers) =>
+      prevUsers.map((user) =>
+        user.id === userId
+          ? {
+              ...user,
+              [pullType]: {
+                ...user[pullType],
+                isGenerating: true,
+              },
+            }
+          : user,
+      ),
+    );
 
-  const handleGenerateCredit = () => {
-    setIsGenerating(true);
+    // Simulate API call
     setTimeout(() => {
-      setCreditScore(creditData.score);
-      setGeneratedDate(creditData.generatedOn);
-      setFileUrl(creditData.fileUrl);
-      setIsGenerating(false);
-      setShowFile(true);
-    }, 2000);
+      // Generate new random score (slightly different from existing for realism)
+      const existingScore = users.find(u => u.id === userId)?.[pullType]?.creditScore || 0;
+      let newScore;
+      
+      if (isRefetch && existingScore > 0) {
+        // For refetch, vary by ±20 points
+        const variation = Math.floor(Math.random() * 41) - 20; // -20 to +20
+        newScore = Math.min(850, Math.max(300, existingScore + variation));
+      } else {
+        // For new fetch, random score
+        newScore = Math.ceil(Math.random() * 250 + 550);
+      }
+
+      const now = new Date();
+      const generatedOn = now.toLocaleString('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      });
+
+      const fileName = pullType === 'softPull' 
+        ? `Soft_Pull_Report_${Date.now()}.pdf`
+        : `Hard_Pull_Report_${Date.now()}.pdf`;
+      
+      const fileUrl = `/credit-reports/${fileName}`;
+
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id === userId
+            ? {
+                ...user,
+                [pullType]: {
+                  ...user[pullType],
+                  creditScore: newScore,
+                  generatedDate: generatedOn,
+                  fileUrl: fileUrl,
+                  fileName: fileName,
+                  isGenerating: false,
+                  showFile: true,
+                  lastRefreshed: isRefetch ? generatedOn : user[pullType]?.lastRefreshed || generatedOn,
+                },
+              }
+            : user,
+        ),
+      );
+    }, 1500);
   };
 
-  const handleDownload = () => alert("Downloading credit report...");
-  const handleView = () => alert("Opening credit report...");
+  const handleDownload = (userId, pullType) => {
+    const user = users.find(u => u.id === userId);
+    const pullData = user[pullType];
+    alert(`Downloading ${pullType === 'softPull' ? 'Soft Pull' : 'Hard Pull'} report for ${user.name}...\nFile: ${pullData.fileName}`);
+  };
+
+  const handleView = (userId, pullType) => {
+    const user = users.find(u => u.id === userId);
+    const pullData = user[pullType];
+    alert(`Opening ${pullType === 'softPull' ? 'Soft Pull' : 'Hard Pull'} report for ${user.name}...\nFile: ${pullData.fileName}`);
+  };
+
+  const handleModeChange = (userId, pullType, mode) => {
+    setUsers((prevUsers) =>
+      prevUsers.map((user) =>
+        user.id === userId
+          ? {
+              ...user,
+              [pullType]: {
+                ...user[pullType],
+                selectedMode: mode,
+              },
+            }
+          : user,
+      ),
+    );
+  };
 
   const getScoreColor = (score) => {
     if (score >= 750) return "#10B981";
@@ -56,137 +174,217 @@ const CreditSection = () => {
     return "bg-red-50 text-red-700";
   };
 
-  return (
-    <div className="py-2">
-      {/* Compact Grid */}
-      <div className="grid grid-cols-2 gap-1">
-        {/* Left - Generate Section */}
-        <div className="bg-white rounded-md border border-slate-200 shadow-sm p-4">
-          <div className="flex flex-col items-center">
-            <div className="w-14 h-14 bg-gradient-to-br from-primary/5 to-primary/20 rounded-xl flex items-center justify-center mb-2.5">
-              <Icon name="RiFileTextLine" size={28} color="#6D28D9" />
-            </div>
-            <h3 className="text-slate-800 font-semibold text-sm mb-0.5">
-              Generate Report
-            </h3>
-            <p className="text-slate-500 text-xs text-center mb-3">
-              Fetch latest credit score
-            </p>
-            <select
-              // value={mode}
-              // onChange={(e) => setMode(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 mb-1"
-            >
-              <option value="">Select Mode</option>
-              <option value="Crif">Crif</option>
-              <option value="Experian">Experian</option>
-            </select>
+  const renderPullSection = (user, pullType, label) => {
+    const pullData = user[pullType];
+    const isSoftPull = pullType === 'softPull';
+    const hasScore = pullData.creditScore !== null;
 
-            <button
-              onClick={handleGenerateCredit}
-              disabled={isGenerating}
-              className={`bg-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary/90 cursor-pointer transition-all flex items-center gap-1.5 text-sm shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed w-full justify-center`}
-            >
-              {isGenerating ? (
-                <>
-                  <span className="animate-spin">
-                    <Icon name="RiRefreshLine" size={16} color="#FFFFFF" />
-                  </span>
-                  <span>Generating...</span>
-                </>
-              ) : (
-                <>
-                  <Icon name="RiFileTextLine" size={16} color="#FFFFFF" />
-                  <span>Generate</span>
-                </>
-              )}
-            </button>
+    return (
+      <div className={`border ${isSoftPull ? 'border-emerald-200 bg-emerald-50/30' : 'border-blue-200 bg-blue-50/30'} rounded-lg p-3`}>
+        {/* Header with Pull Type */}
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-1.5">
+            {/* <div className={`w-6 h-6 rounded-full ${isSoftPull ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'} flex items-center justify-center text-[10px] font-bold`}>
+              {isSoftPull ? 'S' : 'H'}
+            </div> */}
+            <span className={`text-xs font-semibold ${isSoftPull ? 'text-emerald-700' : 'text-blue-700'}`}>
+              {isSoftPull ? 'Soft Pull' : 'Hard Pull'}
+            </span>
+            {hasScore && (
+              <span className={`text-[8px] px-1.5 py-0.5 rounded-full font-semibold ${getScoreBgColor(pullData.creditScore)}`}>
+                {getScoreRating(pullData.creditScore)}
+              </span>
+            )}
           </div>
+          {!isSoftPull && (
+            <span className="text-[8px] text-slate-400 bg-white px-1.5 py-0.5 rounded border border-slate-200">
+              Requires Consent
+            </span>
+          )}
+          {/* {isSoftPull && hasScore && (
+            <span className="text-[8px] text-slate-400 bg-white px-1.5 py-0.5 rounded border border-slate-200">
+              Auto-Refresh Available
+            </span>
+          )} */}
         </div>
 
-        {/* Right - Score Section */}
-        <div className="bg-white rounded-md border border-slate-200 shadow-sm p-4">
-          {creditScore !== null ? (
-            <div className="flex flex-col h-full">
-              <div className="flex items-center gap-4">
-                <div className="relative flex-shrink-0">
-                  <div
-                    className="w-25 h-25 rounded-full border-[8px] flex items-center justify-center shadow-md"
-                    style={{ borderColor: getScoreColor(creditScore) }}
-                  >
-                    <div className="text-center">
-                      <span
-                        className="text-xl font-bold"
-                        style={{ color: getScoreColor(creditScore) }}
-                      >
-                        {creditScore}
-                      </span>
-                      <span className="text-[12px] text-slate-500 block font-medium">
-                        Score
-                      </span>
-                    </div>
-                  </div>
-                  <div className="absolute -top-1 -right-1">
+        {/* Score and Generate Section */}
+        <div className="flex items-center gap-2">
+          {/* Score Display or Placeholder */}
+          <div className="flex-shrink-0">
+            {hasScore ? (
+              <div className="relative">
+                <div
+                  className="w-12 h-12 rounded-full border-[4px] flex items-center justify-center shadow-sm bg-white"
+                  style={{ borderColor: getScoreColor(pullData.creditScore) }}
+                >
+                  <div className="text-center">
                     <span
-                      className={`text-[9px] px-2 py-0.5 rounded-full font-semibold shadow-sm ${getScoreBgColor(creditScore)}`}
+                      className="text-sm font-bold"
+                      style={{ color: getScoreColor(pullData.creditScore) }}
                     >
-                      {getScoreRating(creditScore)}
+                      {pullData.creditScore}
                     </span>
                   </div>
                 </div>
-                <div className="flex-1 space-y-1.5">
+                {/* {isSoftPull && pullData.lastRefreshed && (
+                  <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                    <span className="text-[6px] text-slate-400 bg-white px-1 py-0.5 rounded border border-slate-100">
+                      Refreshed: {pullData.lastRefreshed.split(' ').slice(0,2).join(' ')}
+                    </span>
+                  </div>
+                )} */}
+              </div>
+            ) : (
+              <div className="w-12 h-12 rounded-full border-2 border-dashed border-slate-300 flex items-center justify-center bg-white">
+                <span className="text-[8px] text-slate-400 text-center leading-tight">
+                  No<br/>Score
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Right side content */}
+          <div className="flex-1 min-w-0">
+            {hasScore ? (
+              // Show score details and actions
+              <div>
+                <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-slate-500 text-[9px] font-medium uppercase tracking-wider">
+                    <p className="text-slate-500 text-[8px] font-medium uppercase tracking-wider">
                       Generated
                     </p>
-                    <p className="text-slate-800 font-semibold text-[11px]">
-                      {generatedDate}
+                    <p className="text-slate-800 font-semibold text-[9px] truncate">
+                      {pullData.generatedDate}
                     </p>
                   </div>
+                  
+                  {/* Refetch button for Soft Pull */}
+                  {isSoftPull && (
+                    <button
+                      onClick={() => handleGenerateCredit(user.id, pullType, true)}
+                      disabled={pullData.isGenerating}
+                      className="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-medium hover:bg-emerald-200 transition-all flex items-center gap-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {pullData.isGenerating ? (
+                        <>
+                          <span className="animate-spin">
+                            <Icon name="RiRefreshLine" size={12} color="#065F46" />
+                          </span>
+                          <span>Refreshing</span>
+                        </>
+                      ) : (
+                        <>
+                          <Icon name="RiRefreshLine" size={12} color="#065F46" />
+                          <span>Refetch</span>
+                        </>
+                      )}
+                    </button>
+                  )}
                 </div>
-              </div>
-
-              {/* Actions */}
-              {showFile && fileUrl && (
-                <div className="flex items-center gap-2 mt-3 pt-2.5 border-t border-slate-200">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-slate-500 text-xs font-medium uppercase tracking-wider">
-                      File
+                
+                {pullData.showFile && pullData.fileUrl && (
+                  <div className="flex items-center gap-1 mt-1 pt-1 border-t border-slate-200">
+                    <p className="text-slate-700 text-[8px] font-medium truncate flex-1">
+                      {pullData.fileName}
                     </p>
-                    <p className="text-slate-700 text-[12px] font-medium truncate">
-                      {creditData.fileName}
-                    </p>
+                    <button
+                      onClick={() => handleView(user.id, pullType)}
+                      className="bg-slate-200/80 text-slate-700 px-1.5 py-1 rounded text-[8px] font-medium hover:bg-slate-300 transition-all cursor-pointer"
+                    >
+                      <Icon name="RiEyeLine" size={11} color="#475569" />
+                    </button>
+                    <button
+                      onClick={() => handleDownload(user.id, pullType)}
+                      className="bg-primary text-white px-1.5 py-1 rounded text-[8px] font-medium hover:bg-primary/90 transition-all cursor-pointer"
+                    >
+                      <Icon name="RiDownloadLine" size={11} color="#FFFFFF" />
+                    </button>
                   </div>
-                  <button
-                    onClick={handleView}
-                    className="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg text-[12px] font-medium hover:bg-slate-200 transition-all flex items-center gap-1 shadow-sm"
-                  >
-                    <Icon name="RiEyeLine" size={12} color="#475569" />
-                    View
-                  </button>
-                  <button
-                    onClick={handleDownload}
-                    className="bg-primary text-white px-2.5 py-1 rounded-lg text-[12px] font-medium hover:bg-primary/90 cursor-pointer transition-all flex items-center gap-1 shadow-sm"
-                  >
-                    <Icon name="RiDownloadLine" size={12} color="#FFFFFF" />
-                    Download
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="h-full flex flex-col items-center justify-center">
-              <div className="w-14 h-14 bg-slate-100 rounded-xl flex items-center justify-center mb-2.5">
-                <Icon name="RiFileTextLine" size={24} color="#94A3B8" />
+                )}
               </div>
-              <p className="text-slate-600 font-medium text-xs">No Report</p>
-              <p className="text-slate-400 text-[10px]">
-                Generate to fetch score
-              </p>
-            </div>
-          )}
+            ) : (
+              // Show generate controls for hard pull
+              <div className="space-y-1.5">
+                <SelectInput
+                  placeholder="Select Mode"
+                  value={pullData.selectedMode}
+                  onChange={(e) => handleModeChange(user.id, pullType, e.target.value)}
+                  options={[
+                    { label: "Crif", value: "Crif" },
+                    { label: "Experian", value: "Experian" },
+                  ]}
+                  className="!text-[10px] !py-1 !px-2"
+                />
+                <button
+                  onClick={() => handleGenerateCredit(user.id, pullType, false)}
+                  disabled={pullData.isGenerating || !pullData.selectedMode}
+                  className={`w-full ${isSoftPull ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-blue-600 hover:bg-blue-700'} text-white px-2 py-1.5 rounded text-[10px] font-semibold transition-all flex items-center justify-center gap-1 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  {pullData.isGenerating ? (
+                    <>
+                      <span className="animate-spin">
+                        <Icon name="RiRefreshLine" size={12} color="#FFFFFF" />
+                      </span>
+                      <span>Fetching...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Icon name="RiFileTextLine" size={12} color="#FFFFFF" />
+                      <span>Fetch Score</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
+    );
+  };
+
+  return (
+    <div className="py-0 space-y-3">
+      {users.map((user) => (
+        <div
+          key={user.id}
+          className="bg-white rounded-lg border border-slate-200 shadow-sm p-3 hover:shadow-md transition-shadow"
+        >
+          {/* User Header */}
+          <div className="flex items-center justify-between mb-2.5 pb-2 border-b border-slate-100">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
+                {user.name.charAt(0)}
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-slate-700 leading-tight">
+                  {user.name}
+                </p>
+                <p className="text-[10px] text-slate-400 leading-tight">
+                  {user.email}
+                </p>
+              </div>
+            </div>
+            {user.softPull.creditScore !== null && (
+              <div className="flex items-center gap-1.5">
+                <span className="text-[9px] text-slate-400">Soft:</span>
+                <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${getScoreBgColor(user.softPull.creditScore)}`}>
+                  {user.softPull.creditScore}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Two-column layout for Soft and Hard Pull */}
+          <div className="grid grid-cols-2 gap-2">
+            {/* Soft Pull Section */}
+            {renderPullSection(user, 'softPull', 'Soft Pull')}
+            
+            {/* Hard Pull Section */}
+            {renderPullSection(user, 'hardPull', 'Hard Pull')}
+          </div>
+        </div>
+      ))}
     </div>
   );
 };

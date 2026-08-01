@@ -14,8 +14,6 @@ import Login from './pages/auth/Login'
 import AllLoans from './pages/loan/AllLoans'
 import AdvanceEMI from './pages/emi/AdvanceEMI'
 import EMIDetails from './pages/emi/EMIDetails'
-import LoanApproval from './pages/loan/LoanApproval'
-import Loan from './pages/loan/Loan'
 import DisbursementList from './pages/loan/DisbursementList'
 import Dashboard2 from './pages/main/Dashboard2'
 import PendingLeads from './pages/leads/PendingLeads'
@@ -27,6 +25,7 @@ import DisbursementDetails from './pages/leads/DisbursementDetails'
 import RejectedLeads from './pages/leads/RejectedLeads'
 import KycLeads from './pages/leads/KycLeads'
 import Kyc from './pages/leads/Kyc'
+import LoanManagement from './pages/loan/LoanManagement'
 
 function App() {
 
@@ -58,15 +57,16 @@ function App() {
           <Route path='/leads-rejected' element={<RejectedLeads />} />
           <Route path='/leads-kyc' element={<KycLeads />} />
 
+          {/* Loan Section  */}
+          <Route path='/loan-all' element={<AllLoans />} />
+
           <Route path='/leads-detail' element={<LeadDetails />} />
           <Route path='/credit-detail' element={<CreditDetails />} />
           <Route path='/disbursement-detail' element={<DisbursementDetails />} />
           <Route path='/kyc-detail' element={<Kyc />} />
+
+          <Route path='/loan-detail' element={<LoanManagement />} />
           
-          <Route path='/all-loans' element={<AllLoans />} />
-          {/* Has to remove */}
-          <Route path='/loan-info' element={<Loan />} />
-          <Route path='/loan-approval' element={<LoanApproval />} />
 
           <Route path='*' element={<Navigate to="/"/>} />
         </Route>

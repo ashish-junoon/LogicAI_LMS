@@ -34,6 +34,17 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
       ],
     },
     {
+      title: "Loan Management",
+      icon: FaMoneyBillTransfer,
+      children: [
+        // { title: "Apply Loan", path: "/apply-loan" },
+        { title: "All Loans", path: "/loan-all" },
+        // { title: "Active Loans", path: "/active-loan" },
+        // { title: "Closed Loans", path: "/closed-loans" },
+        // { title: "Rejected Lead", path: "/leads-rejected" },
+      ],
+    },
+    {
       title: "EMI Collection",
       icon: RiBankCard2Line,
       children: [
