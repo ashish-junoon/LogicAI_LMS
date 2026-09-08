@@ -203,7 +203,7 @@ const TeamPerformance = () => {
                     : parseFloat(npaRate) > 15
                       ? ["yellow", "Monitor"]
                       : parseFloat(paidRate) > 5
-                        ? ["blue", "Normal"]
+                        ? ["#5050b8", "Normal"]
                         : ["green", "Strong"];
                 return (
                   <tr

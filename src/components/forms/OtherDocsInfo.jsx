@@ -1,12 +1,10 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
   RiFileList3Line,
   RiAddLine,
   RiDeleteBin6Line,
-  RiUploadCloud2Line,
-  RiFileTextLine,
 } from "react-icons/ri";
 
 import Accordion from "../utils/Accordion";
@@ -32,8 +30,9 @@ const MAX_DOCUMENTS = 10;
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const SUPPORTED_FORMATS = ["image/jpeg", "image/png", "application/pdf"];
 
-const OtherDocsInfo = ({ onNext, open, onToggle, initialDocuments = [] }) => {
+const OtherDocsInfo = ({ onNext, open, onToggle, initialDocuments = [], step }) => {
   const fileInputRefs = useRef({});
+  const [isEditing, setIsEditing] = useState(false);
 
   const validationSchema = Yup.object({
     documents: Yup.array()
@@ -60,12 +59,12 @@ const OtherDocsInfo = ({ onNext, open, onToggle, initialDocuments = [] }) => {
     initialValues: {
       documents: initialDocuments.length > 0 ? initialDocuments : [
         {
-          documentType: "",
-          documentFile: null,
+          documentType: step === "prepd" ? "Passport" : "",
+          documentFile: step === "prepd" ? null : null,
         },
       ],
     },
-    validationSchema,
+    // validationSchema,
     onSubmit: (values) => {
       const formData = new FormData();
       values.documents.forEach((doc, index) => {
@@ -75,7 +74,8 @@ const OtherDocsInfo = ({ onNext, open, onToggle, initialDocuments = [] }) => {
         }
       });
       console.log("Form Data:", Object.fromEntries(formData));
-      onNext();
+            onNext();
+setIsEditing(false);
     },
   });
 
@@ -128,7 +128,7 @@ const OtherDocsInfo = ({ onNext, open, onToggle, initialDocuments = [] }) => {
     }
     const updated = formik.values.documents.filter((_, i) => i !== index);
     formik.setFieldValue("documents", updated);
-    
+
     // Reset touched state for removed document
     if (formik.touched.documents) {
       const newTouched = { ...formik.touched.documents };
@@ -167,7 +167,7 @@ const OtherDocsInfo = ({ onNext, open, onToggle, initialDocuments = [] }) => {
   };
 
   console.log(formik.errors);
-  
+
 
   return (
     <form onSubmit={formik.handleSubmit}>
@@ -183,7 +183,7 @@ const OtherDocsInfo = ({ onNext, open, onToggle, initialDocuments = [] }) => {
             <div
               key={index}
               id={`document-${index}`}
-              className="p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors duration-200"
+              className="p-4 border border-gray-200 rounded-lg hover:border-primary transition-colors duration-200"
             >
               <div className="flex justify-between items-start mb-2">
                 <div className="flex items-center gap-2">
@@ -219,6 +219,7 @@ const OtherDocsInfo = ({ onNext, open, onToggle, initialDocuments = [] }) => {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     className="w-full"
+                    disabled={step && !isEditing}
                   />
                   <ErrorMsg
                     error={
@@ -237,6 +238,7 @@ const OtherDocsInfo = ({ onNext, open, onToggle, initialDocuments = [] }) => {
                       accept=".jpg,.jpeg,.png,.pdf"
                       onChange={(e) => handleFileChange(index, e)}
                       className="w-full"
+                      disabled={step && !isEditing}
                     />
                     {doc.documentFile && (
                       <div className="mt-1 text-xs text-gray-600 truncate">
@@ -273,46 +275,25 @@ const OtherDocsInfo = ({ onNext, open, onToggle, initialDocuments = [] }) => {
           ))}
 
           {/* Add Document Button */}
-          <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+          <div className="flex md:flex-row flex-col items-center justify-between pt-2 border-t border-gray-200">
             <button
               type="button"
               onClick={addDocument}
-              disabled={!canAddMore}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                canAddMore
-                  ? "text-blue-600 hover:bg-blue-50 border border-blue-200"
-                  : "text-gray-400 cursor-not-allowed border border-gray-200"
-              }`}
+              disabled={(step && !isEditing) || !canAddMore}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${!((step && !isEditing) || !canAddMore)
+                ? "text-primary cursor-pointer border-primary"
+                : "text-gray-400 cursor-not-allowed border border-gray-200"
+                }`}
             >
               <RiAddLine size={20} />
               <span className="text-sm font-medium">
-                Add Another Document {!canAddMore && `(Max ${MAX_DOCUMENTS})`}
+                Add Another Document {(step && !isEditing) || !canAddMore && `(Max ${MAX_DOCUMENTS})`}
               </span>
             </button>
             <span className="text-xs text-gray-400">
               {formik.values.documents.length} of {MAX_DOCUMENTS} documents
             </span>
           </div>
-
-          {/* Summary of filled documents */}
-          {/* {formik.values.documents.length > 1 && (
-            <div className="mt-2 p-3 bg-blue-50 rounded-lg border border-blue-100">
-              <h4 className="text-xs font-medium text-blue-700 mb-2">
-                Documents Summary
-              </h4>
-              <ul className="space-y-1">
-                {formik.values.documents.map((doc, idx) => (
-                  <li key={idx} className="text-xs text-blue-600 flex items-center gap-2">
-                    <RiFileTextLine size={14} />
-                    <span>
-                      {doc.documentType || `Document ${idx + 1}`}
-                      {doc.documentFile ? " ✓" : " ⚠️ Pending"}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )} */}
 
           {/* Form Errors */}
           {formik.errors.documents && typeof formik.errors.documents === 'string' && (
@@ -322,15 +303,22 @@ const OtherDocsInfo = ({ onNext, open, onToggle, initialDocuments = [] }) => {
           )}
         </div>
 
-        <div className="flex justify-end mt-6 pt-4 border-t border-gray-200">
-          <Button
-            type="submit"
-            btnName="Save & Continue"
-            style="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-lg transition-colors"
-            // disabled={formik.isSubmitting}
-          >
-            {formik.isSubmitting ? "Saving..." : "Save & Continue"}
-          </Button>
+        <div className="flex justify-end mt-6 pt-4 border-t border-gray-200 gap-3">
+          {step === "prepd" && !isEditing &&
+              <Button
+                type="button"
+                onClick={() => setIsEditing(!isEditing)}
+                btnName={"Edit Document"}
+                style="bg-primary hover:bg-primary text-white w-full sm:w-auto"
+              />
+            }
+            {(!step || isEditing) &&
+              <Button
+                type="submit"
+                btnName="Save & Continue"
+                style="bg-primary text-white hover:bg-primary cursor-pointer w-full sm:w-auto"
+              />}
+            {/* {formik.isSubmitting ? "Saving..." : "Save"} */}
         </div>
       </Accordion>
     </form>

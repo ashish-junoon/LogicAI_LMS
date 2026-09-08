@@ -11,7 +11,7 @@ function TextInput({ label, icon, type="text", name, id, placeholder, onChange, 
     return (
         <div>
             <label htmlFor={id} className="block mb-1 text-sm font-medium text-gray-700">
-                {label}{required ? <span className="text-danger text-sm">*</span> : ""}
+                {label}{required ? <span className="text-danger text-sm"> *</span> : ""}
             </label>
             <div className="relative">
                 {icon && <div className="absolute inset-y-0 inset-s-0 flex items-center ps-2 pointer-events-none">
@@ -31,7 +31,7 @@ function TextInput({ label, icon, type="text", name, id, placeholder, onChange, 
                     disabled={disabled}
                     maxLength={maxLength}
                     spellCheck="false"
-                    className={`bg-white border border-gray-300 text-gray-800 text-md rounded focus:ring-1 focus:ring-primary focus:border-primary outline-0 block w-full ${icon ? "ps-10" : "px-2"} p-1 focus:shadow-sm focus:outline-light ${disabled ? " bg-zinc-100" : ""} ${style}`}
+                    className={`bg-white border border-gray-300 text-gray-800 text-sm rounded focus:ring-1 focus:ring-primary focus:border-primary outline-0 block w-full ${icon ? "ps-10" : "px-2"} p-1 focus:shadow-sm focus:outline-light ${disabled ? " bg-zinc-100" : ""} ${style}`}
                 />
                 {type === "password" && !hideEye && (
                     <button

@@ -3,55 +3,20 @@ import React, { useState } from "react";
 // Components
 import VideoKYC from "../common/VideoKYC";
 import BankInfoSection from "./BankInfoSection";
-import KYCInfoSection from "./KYCInfoSection";
 import CreditInfo from "./CreditInfo";
 import DocumentsList from "./DocumentsList";
-import LoanInfoSection from "./LoanInfoSection";
 import Icon from "../utils/Icon";
 import RemarksHistory from "./RemarksHistory";
+import LeadForm from "../../pages/formPages/LeadForm";
+import LoanAnalysis from "./LoanAnalysis";
 
 const InfoWrapper = ({ loanData, userData, onAction }) => {
-  const [activeSection, setActiveSection] = useState("kyc");
-
-  // Mock data
-  const mockLoanData = {
-    loanId: "L-2024-001234",
-    applicationDate: "2024-01-15",
-    loanAmount: 500000,
-    interestRate: 8.5,
-    tenure: 60,
-    monthlyEMI: 10256,
-    totalInterest: 115360,
-    totalPayable: 615360,
-    purpose: "Home Renovation",
-    status: "Pending",
-    disbursementDate: null,
-    nextPaymentDate: "2024-02-01",
-    remainingAmount: 410240,
-    overdueDays: 0,
-  };
-
-  const mockUserData = {
-    name: "Rahul Kumar",
-    email: "rahul.kumar@email.com",
-    phone: "+91 98765 43210",
-    address: "123, Green Valley Apartments, Electronic City, Bangalore - 560100",
-    pan: "ABCDE1234F",
-    aadhar: "XXXX-XXXX-XXXX-1234",
-    dateOfBirth: "15 May 1990",
-    employmentType: "Salaried",
-    annualIncome: 1200000,
-    creditScore: 765,
-  };
-
-  const loanInfo = loanData || mockLoanData;
-  const userInfo = userData || mockUserData;
+  const [activeSection, setActiveSection] = useState("user");
 
   const sections = [
-    { id: "kyc", label: "KYC Details", icon: "RiShieldCheckLine" },
-    { id: "credit", label: "Credit Info", icon: "RiBankCardLine" },
+    { id: "user", label: "User Details", icon: "RiShieldCheckLine" },
+    { id: "credit", label: "Credit Health", icon: "RiBankCardLine" },
     { id: "documents", label: "Documents", icon: "RiFileList3Line" },
-    // { id: "videoKyc", label: "Video KYC", icon: "RiVideoChatLine" },
     { id: "loanInfo", label: "Loan Info", icon: "RiInformationLine" },
     { id: "bankInfo", label: "Bank Info", icon: "RiBankLine" },
     { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
@@ -59,14 +24,14 @@ const InfoWrapper = ({ loanData, userData, onAction }) => {
 
   const renderSection = () => {
     switch (activeSection) {
+      case "user":
+        return <LeadForm />;
       case "loanInfo":
-        return <LoanInfoSection loanData={loanInfo} />;
+        return <LoanAnalysis />;
       case "documents":
-        return <DocumentsList />;
-      case "kyc":
-        return <KYCInfoSection userInfo={userInfo} />;
+        return <DocumentsList permission={true} />;
       case "credit":
-        return <CreditInfo userInfo={userInfo} />;
+        return <CreditInfo />;
       case "videoKyc":
         return <VideoKYC />;
       case "bankInfo":
@@ -99,7 +64,7 @@ const InfoWrapper = ({ loanData, userData, onAction }) => {
                         : "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
                     }`}
                   >
-                    <Icon name={section.icon} color={isActive ? "blue" : "gray"} size={16} />
+                    <Icon name={section.icon} color={isActive ? "#5050b8" : "gray"} size={16} />
                     {section.label}
                   </button>
                 );

@@ -35,7 +35,7 @@ const BankInfoSection = () => {
 
       <div className="p-3 bg-primary/5 rounded-lg border border-blue-200">
         <div className="flex items-start gap-3">
-          <Icon name="RiSecurePaymentLine" color="blue" />
+          <Icon name="RiSecurePaymentLine" color="#5050b8" />
           <div>
             <h4 className="text-xs font-semibold text-gray-800">Bank Verification Status</h4>
             <p className="text-xs text-gray-600 mt-0.5">Bank account has been verified successfully</p>

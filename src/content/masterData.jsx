@@ -8,6 +8,7 @@ export const branchData = [
     city: "New Delhi",
     manager: "Amit Sharma",
     opening_date: "2022-01-15",
+    isActive: true
   },
   {
     code: "BR002",
@@ -18,6 +19,7 @@ export const branchData = [
     city: "Kolkata",
     manager: "Neha Gupta",
     opening_date: "2021-07-10",
+    isActive: false
   },
   {
     code: "BR003",
@@ -28,6 +30,7 @@ export const branchData = [
     city: "Pune",
     manager: "Rahul Verma",
     opening_date: "2023-03-05",
+    isActive: false
   },
   {
     code: "BR004",
@@ -38,6 +41,7 @@ export const branchData = [
     city: "Chennai",
     manager: "Priya Nair",
     opening_date: "2020-11-20",
+    isActive: true
   },
 ];
 
@@ -310,6 +314,7 @@ export const allLoansData = [
 
 export const PendingLeadsData = [
   {
+    index: 1,
     name: "Vikram Rao",
     leadId: "L005",
     phone: "8432109876",
@@ -320,6 +325,7 @@ export const PendingLeadsData = [
     createdBy: "Meena Iyer"
   },
   {
+    index: 2,
     name: "Anjali Gupta",
     leadId: "L006",
     phone: "9821098765",
@@ -330,6 +336,7 @@ export const PendingLeadsData = [
     createdBy: "Arjun Nair"
   },
   {
+    index: 3,
     name: "Deepak Verma",
     leadId: "L007",
     phone: "9910987654",
@@ -455,4 +462,30 @@ export const advanceEmiCustomers = [
     pendingEmi: 1,
     status: "Due",
   },
+];
+
+
+export const allProductData = [
+  {
+    index: "1",
+    name: "Sunita Mehta",
+    leadId: "L004",
+    userId: "UI004",
+    loanId: "UI004-UI004",
+    phone: "65432 10987",
+    createdDate: "2026-07-17",
+    createdBy: "Ravi Desai",
+    product: "EW"
+  },
+  {
+    index: "2",
+    name: "Vikram Rao",
+    leadId: "L005",
+    userId: "UI005",
+    loanId: "UI005-L005",
+    phone: "54321 09876",
+    createdDate: "2026-07-16",
+    createdBy: "Meena Iyer",
+    product: "PU"
+  }
 ];

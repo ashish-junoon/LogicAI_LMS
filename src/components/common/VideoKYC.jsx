@@ -21,7 +21,7 @@ const VideoKYC = () => {
       <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-4 rounded-lg border border-primary/20">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 bg-primary/5 rounded-full flex items-center justify-center">
-            <Icon name={"RiVideoChatLine"} size={20} color={"blue"} />
+            <Icon name={"RiVideoChatLine"} size={20} color={"#5050b8"} />
           </div>
           <div className="flex-1">
             <p className="text-xs text-gray-600">Video KYC Status</p>

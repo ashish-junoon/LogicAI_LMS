@@ -30,7 +30,10 @@ const Overview = () => {
     loading6: false,
   });
 
-  const totalLoan = loanStatusDistribution?.reduce((acc, val)=> val?.loan_count + acc, 0)
+  const totalLoan = loanStatusDistribution?.reduce(
+    (acc, val) => val?.loan_count + acc,
+    0,
+  );
   const statusData = {
     labels: loanStatusDistribution?.map((item) => item?.loan_status),
     datasets: [
@@ -113,8 +116,8 @@ const Overview = () => {
       const response = await Overview_MainAPI(req);
       if (response.status) {
         setMainData(response.data);
-      }else{
-        toast.info(response.message || "Something went wrong!")
+      } else {
+        toast.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -134,8 +137,8 @@ const Overview = () => {
       const response = await Overview_DescriptionAPI(req);
       if (response.status) {
         setOverViewDescription(response.data);
-      }else{
-        toast.info(response.message || "Something went wrong!")
+      } else {
+        toast.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -155,8 +158,8 @@ const Overview = () => {
       const response = await Overview_LoanStatusDistributionAPI(req);
       if (response.status) {
         setloanStatusDistribution(response.data);
-      }else{
-        toast.info(response.message || "Something went wrong!")
+      } else {
+        toast.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -176,8 +179,8 @@ const Overview = () => {
       const response = await Overview_MonthlyDisbursementsAPI(req);
       if (response.status) {
         setmonthlyDisbursement(response.data);
-      }else{
-        toast.info(response.message || "Something went wrong!")
+      } else {
+        toast.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -197,8 +200,8 @@ const Overview = () => {
       const response = await CustomerProfile_LoanSizeDistributionAPI(req);
       if (response.status) {
         setLoanSizeDistribution(response.data);
-      }else{
-        toast.info(response.message || "Something went wrong!")
+      } else {
+        toast.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -218,8 +221,8 @@ const Overview = () => {
       const response = await PortfolioHealth_NPAbySectorAPI(req);
       if (response.status) {
         setsectorNPA(response.data);
-      }else{
-        toast.info(response.message || "Something went wrong!")
+      } else {
+        toast.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -266,14 +269,67 @@ const Overview = () => {
             color="#6ee7b7"
             type={3}
           />
-          <KpiCard
+          <div className="relative group">
+            <KpiCard
+              icon="🏦"
+              label="Total Demand"
+              value={`₹${formatNumber(mainData?.demand_amount)}`}
+              sub={`Total Demand Amount`}
+              color="#6ee7b7"
+              type={3}
+            />
+
+            {/* Hover Cards */}
+            <div
+              className="
+      absolute
+      bottom-full
+      left-1/2
+      -translate-x-1/2
+      mb-2
+      z-50
+      flex
+      gap-2
+      whitespace-nowrap
+
+      opacity-0
+      invisible
+      translate-y-2
+      scale-95
+
+      group-hover:opacity-100
+      group-hover:visible
+      group-hover:translate-y-0
+      group-hover:scale-100
+
+      transition-all
+      duration-300
+      ease-out
+    "
+            >
+              <div className="w-44 bg-white border border-gray-200 rounded-lg shadow-lg p-3">
+                <p className="text-xs text-gray-500">NPA Amount</p>
+                <p className="text-lg font-bold text-red-500">{`₹${formatNumber(mainData?.npa_demand_amount)}`}</p>
+                <p className="text-[11px] text-gray-400">NPA Demand Amount</p>
+              </div>
+
+              <div className="w-44 bg-white border border-gray-200 rounded-lg shadow-lg p-3">
+                <p className="text-xs text-gray-500">NPA Customers</p>
+                <p className="text-lg font-bold text-red-500">{`₹${formatNumber(mainData?.under_npa_demand_amount)}`}</p>
+                <p className="text-[11px] text-gray-400">
+                  Under NPA Demand Amount
+                </p>
+              </div>
+            </div>
+          </div>
+          {/* <KpiCard
             icon="🏦"
             label="Total Demand"
             value={`₹${formatNumber(mainData?.demand_amount)}`}
             // sub={`${mainData?.collection_rate}% collection rate`}
             color="#6ee7b7"
             type={3}
-          />
+          /> */}
           <KpiCard
             icon="⚠️"
             label="NPA Rate"
@@ -316,17 +372,19 @@ const Overview = () => {
           <InsightCard
             type="warn"
             title={`NPA Concentration in ${overViewDescription?.top_npa_sector}`}
-            body={overViewDescription?.npa_concentration  || "N/A"}
+            body={overViewDescription?.npa_concentration || "N/A"}
           />
           <InsightCard
             type="danger"
             title="High Pending & Foreclosure Volume"
-            body={overViewDescription?.high_pending_and_foreclosure_volume  || "N/A"}
+            body={
+              overViewDescription?.high_pending_and_foreclosure_volume || "N/A"
+            }
           />
           <InsightCard
             type="info"
             title="Portfolio Scaling Rapidly"
-            body={overViewDescription?.portfolio_scaling_rapidly  || "N/A"}
+            body={overViewDescription?.portfolio_scaling_rapidly || "N/A"}
           />
         </div>
       ) : (
@@ -363,7 +421,6 @@ const Overview = () => {
                       labels: { color: "#94a3b8", padding: 5, boxWidth: 10 },
                     },
                   },
-                  
                 }}
               />
             </div>

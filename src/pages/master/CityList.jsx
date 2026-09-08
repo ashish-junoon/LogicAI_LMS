@@ -8,6 +8,7 @@ import Modal from '../../components/utils/Modal'
 import TextInput from '../../components/fields/TextInput'
 import { FaEdit } from 'react-icons/fa'
 import { FaDeleteLeft } from 'react-icons/fa6'
+import TogleInput from '../../components/fields/TogleInput'
 
 const CityList = () => {
 
@@ -17,8 +18,27 @@ const CityList = () => {
         { name: '#', selector: (row, i) =>i+1, sortable: true, width: 60, center: true },
         { name: 'City', selector: row => row.name, sortable: true},
         { name: 'State', selector: row => row.name, sortable: true},
-        { name: 'Edit', selector: row => <FaEdit color='blue' size={16} />, width: 150, center: true },
-        { name: 'Delete', selector: row => <IoTrashBin color='red' size={16} />, width: 150, center: true },
+            {
+      name: "Action",
+      center: true,
+      width : 100,
+      selector: (row) => (
+          <div className="flex gap-5">
+          <button className="">
+            <Icon name={"FaEdit"} size={18} color="black" />
+          </button>
+        </div>
+      ),
+    },
+    {
+        width : 100,
+        name: "Status",
+        center: true,
+        selector: (row) => (
+            <TogleInput checked={row.isActive} onChange={() => {}} />
+        ),
+    },
+        { name: 'Delete', selector: row => <IoTrashBin color='red' size={16} />, width: 100, center: true },
     ];
 
     return (

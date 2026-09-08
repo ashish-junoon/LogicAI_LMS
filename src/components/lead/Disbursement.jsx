@@ -60,7 +60,7 @@ const Disbursement = () => {
         <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
           <div className="flex items-center gap-2">
             <div className="p-1.5 bg-primary/10 rounded-md">
-              <Icon name="RiMoneyDollarCircleLine" size={16} color="blue" />
+              <Icon name="RiMoneyDollarCircleLine" size={16} color="#5050b8" />
             </div>
             <div>
               <h2 className="text-xs font-semibold text-slate-800">
@@ -245,7 +245,7 @@ const Disbursement = () => {
                 className="w-full bg-primary text-white px-4 py-3 rounded-md font-semibold hover:bg-primary/80 transition-all flex items-center justify-center gap-1.5 text-xs shadow-sm hover:shadow cursor-pointer"
               >
                 <Icon name="RiSendPlane2Line" size={14} color="#FFFFFF" />
-                <span>Disburse Now</span>
+                <span>Mark as Disbursed</span>
               </button>
             </div>
           )}

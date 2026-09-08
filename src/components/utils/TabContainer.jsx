@@ -1,67 +1,5 @@
-import React, { useState } from "react";
-
-// Components
-import Icon from "../utils/Icon";
-import RemarksHistory from "./RemarksHistory";
-import Disbursement from "./Disbursement";
-import DocumentsList from "./DocumentsList";
-
-const DisbursementWrapper = ({ loanData, userData, onAction }) => {
-  const [activeSection, setActiveSection] = useState("disbursement");
-
-  // Mock data
-  const mockLoanData = {
-    loanId: "L-2024-001234",
-    applicationDate: "2024-01-15",
-    loanAmount: 500000,
-    interestRate: 8.5,
-    tenure: 60,
-    monthlyEMI: 10256,
-    totalInterest: 115360,
-    totalPayable: 615360,
-    purpose: "Home Renovation",
-    status: "Pending",
-    disbursementDate: null,
-    nextPaymentDate: "2024-02-01",
-    remainingAmount: 410240,
-    overdueDays: 0,
-  };
-
-  const mockUserData = {
-    name: "Rahul Kumar",
-    email: "rahul.kumar@email.com",
-    phone: "+91 98765 43210",
-    address:
-      "123, Green Valley Apartments, Electronic City, Bangalore - 560100",
-    pan: "ABCDE1234F",
-    aadhar: "XXXX-XXXX-XXXX-1234",
-    dateOfBirth: "15 May 1990",
-    employmentType: "Salaried",
-    annualIncome: 1200000,
-    creditScore: 765,
-  };
-
-  const userInfo = userData || mockUserData;
-
-  const sections = [
-    { id: "disbursement", label: "Manage Disbursal", icon: "RiShieldCheckLine" },
-    { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
-    { id: "documents", label: "Documents", icon: "RiFileList3Line" },
-  ];
-
-  const renderSection = () => {
-    switch (activeSection) {
-      case "disbursement":
-        return <Disbursement />;
-      case "remarks":
-        return <RemarksHistory />;
-      case "documents":
-        return <DocumentsList permission={true} />;
-      default:
-        return null;
-    }
-  };
-
+const TabContainer = ({sections, selected}) => {
+    const [activeSection, setActiveSection] = useState(selected);
   return (
     <div className="py-4">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-2">
@@ -114,7 +52,7 @@ const DisbursementWrapper = ({ loanData, userData, onAction }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default DisbursementWrapper;
+export default TabContainer

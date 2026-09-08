@@ -9,49 +9,53 @@ import SelectInput from "../fields/SelectInput";
 import DateInput from "../fields/DateInput";
 import ErrorMsg from "../utils/ErrorMsg";
 import { gender, meritalStatus, religion } from "../../content/data";
+import { useState } from "react";
 
-const PersonalInfo = ({onNext, open, onToggle}) => {
+const PersonalInfo = ({ onNext, open, onToggle, step }) => {
+  const [isEditing, setIsEditing] = useState(false)
+
   const formik = useFormik({
     initialValues: {
-      customerName: "",
-      fathername: "",
-      dob: "",
-      mobile: "",
-      email: "",
-      religion: "",
-      maritalStatus: "",
-      gender: "",
+      customerName: step === "prepd" ? "Rajesh Kumar" : "",
+      fathername: step === "prepd" ? "Suresh Kumar" : "",
+      dob: step === "prepd" ? "1990-01-15" : "",
+      mobile: step === "prepd" ? "XXXXXX" : "",
+      email: step === "prepd" ? "rajesh@example.com" : "",
+      religion: step === "prepd" ? "Hindu" : "",
+      maritalStatus: step === "prepd" ? "Married" : "",
+      gender: step === "prepd" ? "Male" : "",
     },
 
-    validationSchema: Yup.object({
-      customerName: Yup.string()
-        .matches(/^[A-Za-z ]+$/, "Only alphabets are allowed")
-        .required("Customer name is required"),
+    // validationSchema: Yup.object({
+    //   customerName: Yup.string()
+    //     .matches(/^[A-Za-z ]+$/, "Only alphabets are allowed")
+    //     .required("Customer name is required"),
 
-      fathername: Yup.string()
-        .matches(/^[A-Za-z ]+$/, "Only alphabets are allowed")
-        .required("Father name is required"),
+    //   fathername: Yup.string()
+    //     .matches(/^[A-Za-z ]+$/, "Only alphabets are allowed")
+    //     .required("Father name is required"),
 
-      dob: Yup.string().required("DOB is required"),
+    //   dob: Yup.string().required("DOB is required"),
 
-      mobile: Yup.string()
-        .matches(/^[6-9]\d{9}$/, "Enter valid mobile number")
-        .required("Mobile number is required"),
+    //   mobile: Yup.string()
+    //     .matches(/^[6-9]\d{9}$/, "Enter valid mobile number")
+    //     .required("Mobile number is required"),
 
-      email: Yup.string()
-        .email("Invalid email")
-        .required("Email is required"),
+    //   email: Yup.string()
+    //     .email("Invalid email")
+    //     .required("Email is required"),
 
-      religion: Yup.string().required("Religion is required"),
+    //   religion: Yup.string().required("Religion is required"),
 
-      maritalStatus: Yup.string().required("Marital status is required"),
+    //   maritalStatus: Yup.string().required("Marital status is required"),
 
-      gender: Yup.string().required("Gender is required"),
-    }),
+    //   gender: Yup.string().required("Gender is required"),
+    // }),
 
     onSubmit: async (values) => {
       console.log(values);
-      onNext();
+            onNext();
+setIsEditing(false);
     },
   });
 
@@ -64,7 +68,7 @@ const PersonalInfo = ({onNext, open, onToggle}) => {
         onToggle={onToggle}
         open={open}
       >
-        <div className="grid max-md:grid-cols-2 grid-cols-3 gap-4">
+        <div className="grid max-md:grid-cols-2 grid-cols-4 gap-2">
 
           <div>
             <TextInput
@@ -73,6 +77,7 @@ const PersonalInfo = ({onNext, open, onToggle}) => {
               value={formik.values.customerName}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
+              disabled={step && !isEditing}
             />
 
             <ErrorMsg
@@ -90,6 +95,7 @@ const PersonalInfo = ({onNext, open, onToggle}) => {
               value={formik.values.fathername}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
+              disabled={step && !isEditing}
             />
 
             <ErrorMsg
@@ -107,6 +113,7 @@ const PersonalInfo = ({onNext, open, onToggle}) => {
               value={formik.values.dob}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
+              disabled={step && !isEditing}
             />
 
             <ErrorMsg
@@ -122,8 +129,12 @@ const PersonalInfo = ({onNext, open, onToggle}) => {
               label="Mobile"
               name="mobile"
               value={formik.values.mobile}
-              onChange={formik.handleChange}
+              onChange={step === "prepd" ? (e) => {
+                if (e.target.value.length < 6) return;
+                formik.setFieldValue('mobile', e.target.value)
+              } : formik.handleChange}
               onBlur={formik.handleBlur}
+              maxLength={10}
             />
 
             <ErrorMsg
@@ -141,6 +152,7 @@ const PersonalInfo = ({onNext, open, onToggle}) => {
               value={formik.values.email}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
+              disabled={step && !isEditing}
             />
 
             <ErrorMsg
@@ -160,6 +172,7 @@ const PersonalInfo = ({onNext, open, onToggle}) => {
               value={formik.values.religion}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
+              disabled={step && !isEditing}
             />
 
             <ErrorMsg
@@ -179,6 +192,7 @@ const PersonalInfo = ({onNext, open, onToggle}) => {
               value={formik.values.maritalStatus}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
+              disabled={step && !isEditing}
             />
 
             <ErrorMsg
@@ -198,6 +212,7 @@ const PersonalInfo = ({onNext, open, onToggle}) => {
               value={formik.values.gender}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
+              disabled={step && !isEditing}
             />
 
             <ErrorMsg
@@ -210,12 +225,21 @@ const PersonalInfo = ({onNext, open, onToggle}) => {
 
         </div>
 
-        <div className="flex justify-end mt-6">
-          <Button
-            type="submit"
-            btnName="Save & Continue"
-            style="bg-blue-600 hover:bg-blue-700 text-white"
-          />
+        <div className="flex justify-end mt-6 gap-3">
+          {step === "prepd" && !isEditing &&
+            <Button
+              type="button"
+              onClick={() => setIsEditing(!isEditing)}
+              btnName={"Edit Personal Info"}
+              style="bg-primary hover:bg-primary text-white w-full sm:w-auto"
+            />}
+          {(!step || isEditing) &&
+            <Button
+              type="submit"
+              btnName="Save & Continue"
+              style="bg-primary hover:bg-primary text-white"
+            />}
+
         </div>
       </Accordion>
     </form>

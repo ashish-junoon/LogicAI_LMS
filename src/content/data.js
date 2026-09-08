@@ -385,3 +385,41 @@ export const relationList = [
   { label: "Relative", value: "Relative" },
   { label: "Spouse", value: "Spouse" },
 ];
+
+
+export const employmentType = [
+  { value: "salaried", label: "Salaried" },
+  { value: "self-employed", label: "Self Employed" },
+  { value: "business", label: "Business" },
+  { value: "government", label: "Government Employee" },
+  { value: "contract", label: "Contract Employee" },
+  { value: "retired", label: "Retired" },
+];
+
+export const sector = [
+  { value: "it", label: "Information Technology" },
+  { value: "banking", label: "Banking & Finance" },
+  { value: "healthcare", label: "Healthcare" },
+  { value: "education", label: "Education" },
+  { value: "manufacturing", label: "Manufacturing" },
+  { value: "retail", label: "Retail" },
+  { value: "real-estate", label: "Real Estate" },
+  { value: "automobile", label: "Automobile" },
+  { value: "agriculture", label: "Agriculture" },
+  { value: "other", label: "Other" },
+];
+
+export const documentType = [
+    { label: "Selfie", value: "Selfie" },
+    { label: "ID Card", value: "idCard" },
+    { label: "Water Bill", value: "WaterBill" },
+    { label: "Salary Slip", value: "SalarySlip" },
+    { label: "Credit Report", value: "CreditReport" },
+    { label: "Bank Statement", value: "BankStatement" },
+    { label: "Rent Agreement", value: "RentAgreement" },
+    { label: "Electricity Bill", value: "ElectricityBill" },
+    { label: "Postpaid Mobile Bill", value: "PostpaidMobileBill" },
+    { label: "Video Kyc", value: "VideoKyc" },  // newly added Rohit
+    { label: "Other Bank Statement", value: "OtherBankStatement" },  // newly added Rohit
+    // { label: "Other", value: "Other" },
+]

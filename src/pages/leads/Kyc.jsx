@@ -1,15 +1,13 @@
-import React from 'react'
-import KycWrapper from '../../components/lead/KycWrapper'
-import ApplicationInfo from "../../components/common/ApplicationInfo"
+import KycWrapper from "../../components/lead/KycWrapper";
+import InfoCard from "../../components/common/InfoCard";
 
 const Kyc = () => {
   return (
     <div>
-        <ApplicationInfo>
-            <KycWrapper />
-        </ApplicationInfo>
+      <InfoCard />
+      <KycWrapper />
     </div>
-  )
-}
+  );
+};
 
-export default Kyc
+export default Kyc;

@@ -66,7 +66,7 @@ const Dashboard2 = () => {
       <header className="border-b border-slate-100 px-4 py-3 flex items-center justify-between">
         {/* Left */}
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded bg-indigo-600 flex items-center justify-center">
+          <div className="w-7 h-7 rounded bg-primary flex items-center justify-center">
             <Icon name="MdSpaceDashboard" size={18} color="white" />
           </div>
           <div className="leading-tight">
@@ -89,58 +89,36 @@ const Dashboard2 = () => {
           </div>
           <div className="flex items-center gap-1 px-2 py-1 rounded bg-indigo-50 border border-indigo-200/50">
             <Icon name="book" size={11} color="#4f46e5" />
-            <span className="font-semibold text-indigo-600">
+            <span className="font-semibold text-primary">
               ₹
               {mainData?.total_disbursed
                 ? Math.floor(mainData.total_disbursed / 10000).toLocaleString()
                 : 0}
             </span>
-            <span className="text-indigo-400 font-semibold">Cr</span>
+            <span className="text-primary font-semibold">Cr</span>
           </div>
         </div>
       </header>
 
-      {/* <nav className="max-w-[1400px] mx-auto px-6 border-b border-slate-200">
-        <div className="flex gap-8 overflow-x-auto no-scrollbar">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`relative py-4 text-sm font-medium whitespace-nowrap transition ${
-                activeTab === tab.id
-                  ? "text-blue-600"
-                  : "text-slate-500 hover:text-slate-700"
-              }`}
-            >
-              {tab.label}
-
-              {activeTab === tab.id && (
-                <span className="absolute left-0 bottom-0 h-[3px] w-full rounded-full bg-blue-600"></span>
-              )}
-            </button>
-          ))}
+      <nav className="max-w-[1400px] mx-auto px-4 py-3 border-b border-gray-200 shadow bg-white">
+        <div className="overflow-x-auto no-scrollbar">
+          <div className="inline-flex min-w-max gap-2">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`shrink-0 whitespace-nowrap px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer ${
+                  activeTab === tab.id
+                    ? "bg-primary text-white shadow"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
-      </nav> */}
-
-<nav className="max-w-[1400px] mx-auto px-4 py-3 border-b border-gray-200 shadow bg-white">
-  <div className="overflow-x-auto no-scrollbar">
-    <div className="inline-flex min-w-max gap-2">
-      {tabs.map((tab) => (
-        <button
-          key={tab.id}
-          onClick={() => setActiveTab(tab.id)}
-          className={`shrink-0 whitespace-nowrap px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer ${
-            activeTab === tab.id
-              ? "bg-blue-600 text-white shadow"
-              : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-          }`}
-        >
-          {tab.label}
-        </button>
-      ))}
-    </div>
-  </div>
-</nav>
+      </nav>
 
       {/* Content */}
       <main className="px-2 sm:px-4 py-4 max-w-[1400px] mx-auto">

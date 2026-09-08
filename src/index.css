@@ -1,15 +1,20 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap'); */
 @import "tailwindcss";
 
-@theme{
-    /* Red */
-    /* --color-primary: #FF0052; */
-    /* --color-primary: #15173D; */
-    /* --color-bgdark: #0B1849; */
-    --color-bgdark: #111844;
-    --color-secondary: #fc1278;
+@theme {
+  --color-bgdark: #111844;
+  --color-secondary: #fc1278;
 
-    /* Purple */
-    --color-primary: #1B4EF5;
+  /* Purple */
+  /* --color-primary: #8140DC; */
+  /* --color-primary: #038f69; */
+  --color-primary: #5050b8;
+  --color-danger: red;
+}
+
+body {
+  /* font-family: "Poppins", sans-serif; */
+  font-family: "Inter", sans-serif;
 }
 
 /* Hide scrollbar but allow scroll */

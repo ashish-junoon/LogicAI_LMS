@@ -1,13 +1,12 @@
 import React from 'react'
-import ApplicationInfo from '../../components/common/ApplicationInfo'
 import InfoWrapper from '../../components/lead/InfoWrapper'
+import InfoCard from '../../components/common/InfoCard'
 
 const LeadDetails = () => {
   return (
     <div>
-        <ApplicationInfo>
-            <InfoWrapper />
-        </ApplicationInfo>
+        <InfoCard />
+        <InfoWrapper />
     </div>
   )
 }

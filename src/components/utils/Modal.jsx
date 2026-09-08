@@ -25,7 +25,7 @@ const Modal = ({ title, description, isOpen, onClose, onSubmit, formId, children
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 10 }}
                     >
-                        <div onClick={(e) => e.stopPropagation()} className="w-full max-w-2xl rounded-lg bg-white shadow-md">
+                        <div onClick={(e) => e.stopPropagation()} className="w-full max-w-3xl rounded-lg bg-white shadow-md">
 
                             {/* header */}
                             <div className="flex items-center justify-between px-4 pt-3 pb-1 border-b-2 border-gray-200">
@@ -40,7 +40,7 @@ const Modal = ({ title, description, isOpen, onClose, onSubmit, formId, children
 
                                 <button
                                     onClick={onClose}
-                                    className="p-2 rounded-full hover:bg-gray-100 transition"
+                                    className="p-2 rounded-full hover:bg-gray-100 transition cursor-pointer"
                                 >
                                     <IoClose />
                                 </button>

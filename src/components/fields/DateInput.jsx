@@ -66,7 +66,7 @@ const DateInput = ({
           className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-10"
           aria-hidden="true"
         >
-          <Icon name="RiCalendarLine" size={20} color="black" />
+          <Icon name="RiCalendarLine" size={16} color="grey" />
         </div>
         <input
           ref={inputRef}
@@ -74,7 +74,7 @@ const DateInput = ({
           name={name}
           id={id}
           placeholder={placeholder}
-          className="bg-white border border-gray-300 text-gray-800 uppercase rounded focus:ring-primary focus:border-primary block w-full pl-10 p-1 focus:shadow-sm focus:outline-light"
+          className="bg-white border border-gray-300 text-gray-800 text-sm uppercase rounded focus:ring-primary focus:border-primary block w-full pl-10 p-1 focus:shadow-sm focus:outline-light"
           // value={value}
           value={formatDate(value)}
           onChange={onChange}

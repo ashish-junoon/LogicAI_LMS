@@ -2,71 +2,34 @@ import React, { useState } from "react";
 
 // Components
 import VideoKYC from "../common/VideoKYC";
-import BankInfoSection from "./BankInfoSection";
-import KYCInfoSection from "./KYCInfoSection";
-import CreditInfo from "./CreditInfo";
-import DocumentsList from "./DocumentsList";
-import LoanInfoSection from "./LoanInfoSection";
 import Icon from "../utils/Icon";
-import CreditSection from "./CreditSection";
-import BankStatementAnalyser from "./BankStatementAnalyser ";
-import OfferLoan from "./OfferLoan";
 import RemarksHistory from "./RemarksHistory";
-import Disbursement from "./Disbursement";
 import ESignatureStatus from "../common/ESignatureStatus";
+import LeadForm from "../../pages/formPages/LeadForm";
+import DocumentsList from "./DocumentsList";
 
 const KycWrapper = ({ loanData, userData, onAction }) => {
   const [activeSection, setActiveSection] = useState("videokyc");
-
-  // Mock data
-  const mockLoanData = {
-    loanId: "L-2024-001234",
-    applicationDate: "2024-01-15",
-    loanAmount: 500000,
-    interestRate: 8.5,
-    tenure: 60,
-    monthlyEMI: 10256,
-    totalInterest: 115360,
-    totalPayable: 615360,
-    purpose: "Home Renovation",
-    status: "Pending",
-    disbursementDate: null,
-    nextPaymentDate: "2024-02-01",
-    remainingAmount: 410240,
-    overdueDays: 0,
-  };
-
-  const mockUserData = {
-    name: "Rahul Kumar",
-    email: "rahul.kumar@email.com",
-    phone: "+91 98765 43210",
-    address:
-      "123, Green Valley Apartments, Electronic City, Bangalore - 560100",
-    pan: "ABCDE1234F",
-    aadhar: "XXXX-XXXX-XXXX-1234",
-    dateOfBirth: "15 May 1990",
-    employmentType: "Salaried",
-    annualIncome: 1200000,
-    creditScore: 765,
-  };
-
-  const loanInfo = loanData || mockLoanData;
-  const userInfo = userData || mockUserData;
-
   const sections = [
     { id: "videokyc", label: "Video KYC", icon: "RiShieldCheckLine" },
-    { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
     { id: "esign", label: "e-Signature", icon: "FaSignature" },
+    { id: "user", label: "User Details", icon: "PiBookOpenTextDuotone" },
+    { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
+    { id: "document", label: "Documents", icon: "PiBookOpenTextDuotone" },
   ];
 
   const renderSection = () => {
     switch (activeSection) {
+      case "user":
+        return <LeadForm />;
       case "videokyc":
-        return <VideoKYC userInfo={userInfo} />;
+        return <VideoKYC />;
       case "remarks":
-        return <RemarksHistory userInfo={userInfo} />;
+        return <RemarksHistory />;
       case "esign":
-        return <ESignatureStatus userInfo={userInfo} />;
+        return <ESignatureStatus />;
+      case "document":
+        return <DocumentsList permission={true} />;
       default:
         return null;
     }
@@ -96,7 +59,7 @@ const KycWrapper = ({ loanData, userData, onAction }) => {
                   >
                     <Icon
                       name={section.icon}
-                      color={isActive ? "blue" : "gray"}
+                      color={isActive ? "#5050b8" : "gray"}
                       size={16}
                     />
                     {section.label}

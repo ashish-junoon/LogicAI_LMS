@@ -1,19 +1,13 @@
-import React from 'react'
-import ApplicationInfo from '../../components/common/ApplicationInfo'
-import Disbursement from '../../components/lead/Disbursement'
-import DisbursementWrapper from '../../components/lead/DisbursementWrapper'
+import DisbursementWrapper from "../../components/lead/DisbursementWrapper";
+import InfoCard from "../../components/common/InfoCard";
 
 const DisbursementDetails = () => {
   return (
     <div>
-        <ApplicationInfo>
-            {/* <div className='mt-1 grid grid-cols-1'>
-                <Disbursement />
-            </div> */}
-            <DisbursementWrapper />
-        </ApplicationInfo>
+      <InfoCard />
+      <DisbursementWrapper />
     </div>
-  )
-}
+  );
+};
 
-export default DisbursementDetails
+export default DisbursementDetails;

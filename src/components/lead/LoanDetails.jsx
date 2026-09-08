@@ -317,11 +317,11 @@ const LoanDetails = () => {
           Update EMI Payment
         </button>
         {/* <button className="flex-1 bg-emerald-50 text-emerald-600 px-4 py-2.5 rounded-lg font-semibold hover:bg-emerald-100 transition-colors flex items-center justify-center gap-2 cursor-pointer">
-          <Icon name="RiBankCardLine" size={18} color="blue" />
+          <Icon name="RiBankCardLine" size={18} color="#5050b8" />
           Pay Next EMI
         </button> */}
         <button className="flex-1 bg-slate-200 text-slate-600 px-4 py-2.5 rounded-lg font-semibold hover:bg-slate-300 transition-colors flex items-center justify-center gap-2 cursor-pointer">
-          <Icon name="RiPrinterLine" size={18} color="blue" />
+          <Icon name="RiPrinterLine" size={18} color="#5050b8" />
           Print Statement
         </button>
       </div>

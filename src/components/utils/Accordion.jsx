@@ -16,7 +16,7 @@ const Accordion = ({
       {/* Header */}
       <div
         onClick={onToggle}
-        className="flex items-center justify-between px-4 py-4 cursor-pointer hover:bg-slate-50 transition"
+        className="flex items-center justify-between px-2 py-2 cursor-pointer hover:bg-slate-50 transition"
       >
         {/* Left */}
         <div className="flex items-center gap-4">
@@ -66,7 +66,7 @@ const Accordion = ({
           open ? "max-h-[2000px]" : "max-h-0"
         }`}
       >
-        <div className="border-t border-slate-200 p-6 bg-slate-50">
+        <div className="border-t border-slate-200 p-4 bg-slate-50">
           {children}
         </div>
       </div>

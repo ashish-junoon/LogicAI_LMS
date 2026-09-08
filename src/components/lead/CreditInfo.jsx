@@ -1,8 +1,8 @@
 import { RiBankCardLine } from "react-icons/ri";
 
-const CreditInfo = ({ userInfo }) => {
+const CreditInfo = () => {
   const creditData = {
-    score: userInfo.creditScore || 765,
+    score: 765,
     totalAccounts: 8,
     activeAccounts: 4,
     creditUtilization: 32,

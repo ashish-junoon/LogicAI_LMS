@@ -133,7 +133,7 @@ export const InsightCard = ({ title, body, type = "info" }) => {
   );
 };
 
-export const Pill = ({ children, color = "blue" }) => {
+export const Pill = ({ children, color = "#5050b8" }) => {
   const colors = {
     green: "bg-[rgba(6,214,160,0.1)] text-[#06d6a0]",
     red: "bg-[rgba(239,68,68,0.1)] text-[#ef4444]",

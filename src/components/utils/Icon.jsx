@@ -18,7 +18,7 @@ const iconLibraries = {
     Ri, Md, Io, Gi, Pi, Go, Ci, Gr, Fa, Tb, Ti, Hi, Fa, Si
 };
 
-const Icon = ({ name, size = 24, color = 'black', style = {} }) => {
+const Icon = ({ name, size = 24, color = '#5050b8', style = {} , className = {}}) => {
 
     const prefix = name?.slice(0, 2);
     const IconComponent = iconLibraries[prefix]?.[name];
@@ -28,7 +28,7 @@ const Icon = ({ name, size = 24, color = 'black', style = {} }) => {
         return null;
     }
 
-    return <IconComponent size={size} color={color} style={style} />;
+    return <IconComponent size={size} color={color} style={style} className={className} />;
 };
 
 export default Icon;

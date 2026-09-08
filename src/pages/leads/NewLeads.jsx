@@ -97,7 +97,7 @@ const NewLeads = () => {
       <Link to="/leads-detail"
         className={`p-1.5 rounded-sm text-xs font-medium bg-primary`}
       >
-        <Icon name="MdPendingActions" size={15} color={'white'} />
+        <Icon name="FaRegEye" size={15} color={'white'} />
       </Link>
     ),
   },
@@ -105,11 +105,10 @@ const NewLeads = () => {
 
   return (
     <>
-      <div className='flex-1 border border-gray-200 shadow-sm rounded-lg bg-gray-50'>
+      <div className='flex-1'>
         {/* header  */}
-        <div className='flex justify-between p-3 px-4 bg-gray-100 rounded-t-lg'>
-          <div className='text-lg font-semibold self-center'>New Leads</div>
-          {/* <button onClick={() => navigate("/apply-loan")} className='p-2 px-4 rounded-sm bg-blue-600 text-white flex justify-between gap-3 cursor-pointer'>  Add Loan <IoPerson className='self-center' /></button> */}
+        <div className="flex justify-between py-0 px-4">
+          <div className="text-md font-medium self-center">New Leads</div>
         </div>
 
         {/* table data */}

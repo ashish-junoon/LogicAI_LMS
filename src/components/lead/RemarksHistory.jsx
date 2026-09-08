@@ -152,15 +152,6 @@ const RemarksHistory = ({
     return filtered;
   };
 
-  // Get unique statuses for filter
-  const statusCounts = {
-    all: remarkData.length,
-    ...remarkData.reduce((acc, r) => {
-      acc[r.status] = (acc[r.status] || 0) + 1;
-      return acc;
-    }, {}),
-  };
-
   const filteredRemarks = getFilteredRemarks();
 
   return (
@@ -183,18 +174,10 @@ const RemarksHistory = ({
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-            onClick={() => window.location.reload()}
-            className="text-xs text-gray-500 hover:text-primary/90 transition-colors flex items-center gap-1"
-          >
-            <Icon name="RiRefreshLine" size={14} />
-            Refresh
-          </button>
-
           <Button
             btnName={"Add Remarks"}
-            btnIcon={"IoAdd"}
-            style={"bg-primary text-white"}
+            // btnIcon={"IoAdd"}
+            style={"bg-primary text-white text-sm font-semibold"}
           />
           </div>
         </div>

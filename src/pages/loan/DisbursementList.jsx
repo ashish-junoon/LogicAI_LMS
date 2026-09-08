@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   IoPerson,
   IoCheckmarkCircle,
@@ -30,7 +30,7 @@ const disbursementData = [
     disbursementDate: "2024-01-20",
     remarks: "First disbursement",
     gender: "Male",
-    mobile: "9999999911"    
+    mobile: "9999999911",
   },
   {
     id: 2,
@@ -48,7 +48,7 @@ const disbursementData = [
     disbursementDate: "2024-01-18",
     remarks: "Full amount disbursed",
     gender: "Female",
-    mobile: "9999999922"    
+    mobile: "9999999922",
   },
   {
     id: 3,
@@ -66,7 +66,7 @@ const disbursementData = [
     disbursementDate: "2024-01-22",
     remarks: "Awaiting approval",
     gender: "Male",
-    mobile: "9999999933"    
+    mobile: "9999999933",
   },
   {
     id: 4,
@@ -84,7 +84,7 @@ const disbursementData = [
     disbursementDate: "2024-01-19",
     remarks: "Partial disbursement",
     gender: "Female",
-    mobile: "9999999944"    
+    mobile: "9999999944",
   },
 ];
 
@@ -175,17 +175,20 @@ const DisbursementList = () => {
     {
       name: "Action",
       cell: (row) => (
-        <button
-          // onClick={() => handleDisburse(row)}
-          onClick={() => navigate('/disbursement-detail')}
-          className={`px-3 py-1 rounded text-sm font-medium flex items-center gap-1 bg-blue-600 text-white hover:bg-blue-700 cursor-pointer`}
+        <Link
+          to="/disbursement-detail"
+          className={`p-1.5 rounded-sm text-xs font-medium bg-primary`}
         >
-          <GiOpenFolder />
-          {/* Disburse */}
-        </button>
+          <Icon name="FaRegEye" size={15} color={"white"} />
+        </Link>
       ),
     },
   ];
+
+  // className={`p-1.5 rounded-sm text-xs font-medium bg-primary`}
+  //     >
+  //       <Icon name="FaRegEye" size={15} color={'white'} />
+  //     </Link>
 
   const handleDisburse = (row) => {
     setSelectedLoan(row);
@@ -215,12 +218,10 @@ const DisbursementList = () => {
 
   return (
     <>
-      <div className="flex-1 h-full border border-gray-200 shadow-sm rounded-lg bg-gray-50">
+      <div className="flex-1">
         {/* header */}
-        <div className="flex justify-between p-3 px-4 bg-gray-100 rounded-t-lg">
-          <div className="text-lg font-semibold self-center">
-            Disbursement List
-          </div>
+        <div className="flex justify-between py-0 px-4">
+          <div className="text-md font-medium self-center">Disbursement List</div>
         </div>
 
         {/* Table data */}

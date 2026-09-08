@@ -55,7 +55,7 @@ const InfoCardSection = ({
             ))}
             
             {/* Co Applicant Data */}
-            <p className="text-[11px] font-semibold col-span-full text-gray-700 uppercase bg-gray-200 py-0.5 px-2 -ml-4">Co-Applicant Details</p>
+            {/* <p className="text-[11px] font-semibold col-span-full text-gray-700 uppercase bg-gray-200 py-0.5 px-2 -ml-4">Co-Applicant Details</p>
 
             {co_applicantData?.map((data, index) => (
               <React.Fragment key={index}>
@@ -73,7 +73,7 @@ const InfoCardSection = ({
                   </div>
                 ))}
               </React.Fragment>
-            ))}
+            ))} */}
 
             <div className="border-t border-gray-300 col-span-full my-2"></div>
 
@@ -152,7 +152,7 @@ const InfoCardSection = ({
                 />
               </div>
               {/* Status Badge */}
-              <div className="absolute -bottom-1 -right-1">
+              <div className="absolute bottom-2 right-1">
                 <span
                   className={`w-4 h-4 rounded-full border-2 border-white inline-block ${
                     selfieVerified && emailVerified

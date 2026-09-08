@@ -1,19 +1,11 @@
 import React, { useState } from "react";
 
 // Components
-import VideoKYC from "../common/VideoKYC";
-import BankInfoSection from "./BankInfoSection";
-import KYCInfoSection from "./KYCInfoSection";
-import CreditInfo from "./CreditInfo";
-import DocumentsList from "./DocumentsList";
-import LoanInfoSection from "./LoanInfoSection";
 import Icon from "../utils/Icon";
-import CreditSection from "./CreditSection";
-import BankStatementAnalyser from "./BankStatementAnalyser ";
-import OfferLoan from "./OfferLoan";
 import RemarksHistory from "./RemarksHistory";
-import Disbursement from "./Disbursement";
 import LoanDetails from "./LoanDetails";
+import DocumentsList from "./DocumentsList";
+import LeadForm from "../../pages/formPages/LeadForm";
 
 const LoanWrapper = ({ loanData, userData, onAction }) => {
   const [activeSection, setActiveSection] = useState("loan");
@@ -56,16 +48,20 @@ const LoanWrapper = ({ loanData, userData, onAction }) => {
   const sections = [
     { id: "loan", label: "Loan Management", icon: "RiShieldCheckLine" },
     { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
-    // { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
-    // { id: "documents", label: "Documents", icon: "RiFileList3Line" },
+    { id: "user", label: "User Details", icon: "PiBookOpenTextDuotone" },
+    { id: "documents", label: "Documents", icon: "RiFileList3Line" },
   ];
 
   const renderSection = () => {
     switch (activeSection) {
       case "loan":
-        return <LoanDetails userInfo={userInfo} />;
+        return <LoanDetails />;
       case "remarks":
-        return <RemarksHistory userInfo={userInfo} />;
+        return <RemarksHistory />;
+      case "user":
+        return <LeadForm />;
+      case "documents":
+        return <DocumentsList permission={true} />;
       default:
         return null;
     }
@@ -95,7 +91,7 @@ const LoanWrapper = ({ loanData, userData, onAction }) => {
                   >
                     <Icon
                       name={section.icon}
-                      color={isActive ? "blue" : "gray"}
+                      color={isActive ? "#5050b8" : "gray"}
                       size={16}
                     />
                     {section.label}
