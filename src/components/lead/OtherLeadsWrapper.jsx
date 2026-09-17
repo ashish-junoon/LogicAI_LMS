@@ -6,6 +6,7 @@ import Icon from "../utils/Icon";
 import RemarksHistory from "./RemarksHistory";
 import LoanAnalysis from "./LoanAnalysis";
 import LeadForm from "../../pages/formPages/LeadForm";
+import LoanOverview from "./LoanOverview";
 
 const OtherLeadsWrapper = ({ loanData, userData, onAction }) => {
   const [activeSection, setActiveSection] = useState("documents");
@@ -22,11 +23,12 @@ const OtherLeadsWrapper = ({ loanData, userData, onAction }) => {
       case "user":
         return <LeadForm />;
       case "loanInfo":
-        return <LoanAnalysis />;
+        // return <LoanAnalysis />;
+        return <LoanOverview />;
       case "documents":
         return <DocumentsList permission={false} />;
       case "remarks":
-        return <RemarksHistory />;
+        return <RemarksHistory permission={false} />;
       default:
         return null;
     }

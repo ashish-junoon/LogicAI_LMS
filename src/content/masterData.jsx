@@ -1,6 +1,12 @@
 export const branchData = [
   {
+    id: 1,
     code: "BR001",
+    lat: 28.5931079,
+    long: 77.0219015,
+    type: "Branch",
+    email: "example@gmail.com",
+    pin: "110071",
     address: "12 MG Road, Connaught Place",
     name: "Central Branch",
     state: "Delhi",
@@ -11,7 +17,13 @@ export const branchData = [
     isActive: true
   },
   {
+    id: 2,
     code: "BR002",
+    lat: 28.5933282,
+    long: 76.8673883,
+    type: "Branch",
+    email: "example@gmail.com",
+    pin: "110071",
     address: "45 Park Street",
     name: "Park Street Branch",
     state: "West Bengal",
@@ -22,7 +34,13 @@ export const branchData = [
     isActive: false
   },
   {
+    id: 3,
     code: "BR003",
+    lat: 28.5933282,
+    long: 76.8673883,
+    type: "Branch",
+    email: "example@gmail.com",
+    pin: "110071",
     address: "88 FC Road",
     name: "FC Road Branch",
     state: "Maharashtra",
@@ -33,7 +51,13 @@ export const branchData = [
     isActive: false
   },
   {
+    id: 4,
     code: "BR004",
+    lat: 28.5933282,
+    long: 76.8673883,
+    type: "Branch",
+    email: "example@gmail.com",
+    pin: "110071",
     address: "210 Anna Salai",
     name: "Anna Nagar Branch",
     state: "Tamil Nadu",

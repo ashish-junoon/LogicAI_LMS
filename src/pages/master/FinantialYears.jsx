@@ -8,6 +8,7 @@ import Modal from "../../components/utils/Modal";
 import TextInput from "../../components/fields/TextInput";
 import { FaEdit } from "react-icons/fa";
 import TogleInput from "../../components/fields/TogleInput";
+import Button from "../../components/utils/Button";
 
 const FinantialYears = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,14 +27,14 @@ const FinantialYears = () => {
           </button>
         </div>
       ),
-    }
+    },
   ];
 
   return (
     <>
       <div className="flex-1">
         {/* Header */}
-        <div className="flex items-center justify-between rounded-t-lg bg-gray-100 px-4 py-0">
+        <div className="flex items-center justify-between px-4 py-0">
           <h2 className="text-md font-medium self-center">Financial Years</h2>
 
           <button
@@ -70,6 +71,17 @@ const FinantialYears = () => {
               <option value="Inactive">Inactive</option>
             </select>
           </div>
+        </div>
+
+        <div className="flex justify-end gap-2">
+          <Button
+            btnName={"Cancel"}
+            style={"border border-gray-200 hover:bg-gray-100"}
+          />
+          <Button
+            btnName={"Submit"}
+            style={"bg-primary text-white hover:bg-primary/90"}
+          />
         </div>
       </Modal>
     </>

@@ -33,6 +33,7 @@ import LeadForm from './pages/formPages/LeadForm'
 import DesignationMaster from './pages/master/DesignationMaster'
 import PDQuestionsMaster from './pages/master/PDQuestionsMaster'
 import PageMaster from './pages/master/PageMaster'
+import VendorMaster from './pages/master/VendorMaster'
 
 function App() {
 
@@ -58,6 +59,7 @@ function App() {
           <Route path='/designation-master' element={<DesignationMaster />} /> 
           <Route path='/quetionare-master' element={<PDQuestionsMaster />} /> 
           <Route path='/page-master' element={<PageMaster />} /> 
+          <Route path='/vendor-master' element={<VendorMaster />} /> 
           {/* <Route path='/product-master' element={<CreateLoanProduct />} />  */}
 
           {/* Leads Section  */}

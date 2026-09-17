@@ -13,6 +13,7 @@ import TextInput from "../../components/fields/TextInput";
 import { FaEdit } from "react-icons/fa";
 import { FaDeleteLeft } from "react-icons/fa6";
 import TogleInput from "../../components/fields/TogleInput";
+import Button from "../../components/utils/Button";
 
 const Relationships = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -53,18 +54,16 @@ const Relationships = () => {
 
   return (
     <>
-      <div className="flex-1 h-full border border-gray-200 shadow-sm rounded-lg bg-gray-50">
+      <div className="flex-1">
         {/* header  */}
-        <div className="flex justify-between p-3 px-4 bg-gray-100 rounded-t-lg">
-          <div className="text-lg font-semibold self-center">
-            Relationship Master
-          </div>
+        <div className="flex justify-between px-4">
+          <div className="text-md font-medium self-center">Relation Master</div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="rounded-sm p-1.5 px-3 bg-primary hover:bg-primary/90 text-white flex justify-between gap-3"
+            className="flex items-center gap-2 p-1.5 px-3 rounded-sm bg-primary hover:bg-primary/90 cursor-pointer text-sm font-medium text-white"
           >
             {" "}
-            New Relationship <IoPerson className="self-center" />
+            New Relation <IoPerson className="self-center" />
           </button>
         </div>
 
@@ -84,6 +83,11 @@ const Relationships = () => {
             label="Relationship"
             placeholder="Enter relationship name"
           />
+        </div>
+
+                <div className="flex justify-end gap-2">
+            <Button btnName={"Cancel"} style={"border border-gray-200 hover:bg-gray-100"} />
+            <Button btnName={"Submit"} style={"bg-primary text-white hover:bg-primary/90"} />
         </div>
       </Modal>
     </>

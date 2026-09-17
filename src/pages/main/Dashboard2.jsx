@@ -8,6 +8,7 @@ import { Overview_MainAPI } from "../../api/functions";
 import { formatNumber } from "../../components/dashboard/Helper";
 import Collection from "../../components/dashboard/Collection";
 import Icon from "../../components/utils/Icon";
+import SelectInput from "../../components/fields/SelectInput";
 
 const Dashboard2 = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -19,7 +20,7 @@ const Dashboard2 = () => {
     { id: "sectors", label: "Sectors & Geography" },
     // { id: "team", label: "Team Performance" },
     { id: "customers", label: "Customer Profile" },
-    // { id: "collection", label: "Collection" },
+    { id: "collection", label: "Collection" },
   ];
 
   const renderPage = () => {
@@ -101,7 +102,7 @@ const Dashboard2 = () => {
       </header>
 
       <nav className="max-w-[1400px] mx-auto px-4 py-3 border-b border-gray-200 shadow bg-white">
-        <div className="overflow-x-auto no-scrollbar">
+        <div className="overflow-x-auto no-scrollbar flex justify-between">
           <div className="inline-flex min-w-max gap-2">
             {tabs.map((tab) => (
               <button
@@ -116,6 +117,23 @@ const Dashboard2 = () => {
                 {tab.label}
               </button>
             ))}
+          </div>
+
+          <div>
+            <SelectInput
+              // label="Current State"
+              name="currentState"
+              placeholder="ALL"
+              options={[
+                { label: "PaisaUdhar", value: "PU" },
+                { label: "EarlyWages", value: "EW" },
+                { label: "Instapaise", value: "IP" },
+                { label: "Refyne", value: "RF" },
+                { label: "MSME", value: "MSME" },
+                { label: "SME", value: "SME" },
+                { label: "JLG", value: "JLG" },
+              ]}
+            />
           </div>
         </div>
       </nav>

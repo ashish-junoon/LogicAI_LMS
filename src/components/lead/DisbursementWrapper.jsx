@@ -54,7 +54,7 @@ const DisbursementWrapper = ({ loanData, userData, onAction }) => {
       case "disbursement":
         return <Disbursement />;
       case "remarks":
-        return <RemarksHistory />;
+        return <RemarksHistory permission={true} />;
       case "documents":
         return <DocumentsList permission={true} />;
       default:

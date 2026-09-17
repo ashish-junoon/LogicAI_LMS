@@ -3,7 +3,7 @@ import Icon from "./Icon"
 function Button({ btnName, style, onClick, btnIcon, btnIconSize, type, disabled, children, icolor }) {
     return (
         <button
-            className={`shadow-md mt-2 py-1 px-3 rounded flex items-center cursor-pointer justify-center hover:shadow-md ${style}`}
+            className={`shadow-md py-1 px-3 rounded flex items-center cursor-pointer justify-center hover:shadow-md ${style}`}
             type={type ? type : "button"}
             onClick={onClick}
             disabled={disabled}

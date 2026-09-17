@@ -8,15 +8,17 @@ import TextInput from "../../components/fields/TextInput";
 import { Link, useNavigate } from "react-router-dom";
 import { allProductData } from "../../content/masterData";
 import FilterCard from "../../components/utils/FilterCard";
+import SelectInput from "../../components/fields/SelectInput";
+import DateInput from "../../components/fields/DateInput";
 
 const LeadCenter = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isOpenFilter, setIsOpenFilter] = useState(false);
   const navigate = useNavigate();
 
-      const handleFilterBtn = () => {
-        setIsOpenFilter((prev)=> !prev)
-    }
+  const handleFilterBtn = () => {
+    setIsOpenFilter((prev) => !prev);
+  };
 
   const columns = [
     {
@@ -87,56 +89,56 @@ const LeadCenter = () => {
           </div>
         </div>
 
-        {isOpenFilter && <FilterCard title="Loan Filters" defaultOpen={false} handleFilterBtn={handleFilterBtn} >
-          {" "}
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {" "}
-            <div>
-              {" "}
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                {" "}
-                Search{" "}
-              </label>{" "}
-              <input
-                type="text"
-                placeholder="Search customer..."
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#3E3E75]"
-              />{" "}
-            </div>{" "}
-            <div>
-              {" "}
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                {" "}
-                From Date{" "}
-              </label>{" "}
-              <input
-                type="date"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#3E3E75]"
-              />{" "}
-            </div>{" "}
-            <div>
-              {" "}
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                {" "}
-                To Date{" "}
-              </label>{" "}
-              <input
-                type="date"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#3E3E75]"
-              />{" "}
-            </div>{" "}
-            <div className="flex items-end">
-              {" "}
-              <button className="w-full rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 cursor-pointer">
-                {" "}
-                Apply Filters{" "}
-              </button>{" "}
-            </div>{" "}
-          </div>{" "}
-        </FilterCard>}
+        {isOpenFilter && (
+          <FilterCard
+            title="Loan Filters"
+            defaultOpen={false}
+            handleFilterBtn={handleFilterBtn}
+          >
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-5">
+              <div> 
+                <TextInput label={"Search"} placeholder={"Search here"} />
+              </div>
+
+              <div>
+                <SelectInput
+                  label="Select Product"
+                  name="currentState"
+                  placeholder="ALL"
+                  options={[
+                    { label: "PaisaUdhar", value: "PU" },
+                    { label: "EarlyWages", value: "EW" },
+                    { label: "Instapaise", value: "IP" },
+                    { label: "Refyne", value: "RF" },
+                    { label: "MSME", value: "MSME" },
+                    { label: "SME", value: "SME" },
+                    { label: "JLG", value: "JLG" },
+                  ]}
+                />
+              </div>
+
+              <div>
+                <DateInput label={"Start Date"} />
+              </div>
+              <div>
+                <DateInput label={"End Date"} />
+              </div>
+
+              <div className="flex items-end">
+                <button className="w-full rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 cursor-pointer">
+                  Apply Filters
+                </button>
+              </div>
+            </div>
+          </FilterCard>
+        )}
 
         {/* table data */}
-        <Table data={allProductData} columns={columns} handleFilterBtn={handleFilterBtn} />
+        <Table
+          data={allProductData}
+          columns={columns}
+          handleFilterBtn={handleFilterBtn}
+        />
       </div>
     </>
   );

@@ -7,6 +7,7 @@ import Table from "../../components/Table";
 import Modal from "../../components/utils/Modal";
 import TextInput from "../../components/fields/TextInput";
 import TogleInput from "../../components/fields/TogleInput";
+import Button from "../../components/utils/Button";
 
 const BranchManagers = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,7 +40,7 @@ const BranchManagers = () => {
     <>
       <div className="flex-1">
         {/* header  */}
-        <div className="flex justify-between py-0 px-4 bg-gray-100 rounded-t-lg">
+        <div className="flex justify-between py-0 px-4">
           <div className="text-md font-medium self-center">
             Branch Mangers
           </div>
@@ -70,6 +71,11 @@ const BranchManagers = () => {
           <div className="col-span-2">
             <TextInput label="Address" placeholder="Enter address" />
           </div>
+        </div>
+
+                <div className="flex justify-end gap-2">
+            <Button btnName={"Cancel"} style={"border border-gray-200 hover:bg-gray-100"} />
+            <Button btnName={"Submit"} style={"bg-primary text-white hover:bg-primary/90"} />
         </div>
       </Modal>
     </>

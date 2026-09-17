@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { RiBankLine, RiAddLine, RiDeleteBinLine, RiEditLine } from "react-icons/ri";
+import {
+  RiBankLine,
+  RiAddLine,
+  RiDeleteBinLine,
+  RiEditLine,
+} from "react-icons/ri";
 
 import Accordion from "../utils/Accordion";
 import TextInput from "../fields/TextInput";
@@ -19,11 +24,11 @@ const MultipleBankInfo = ({ onNext, open, onToggle, step }) => {
 
   const formik = useFormik({
     initialValues: {
-      bankName: step === "prepd" ? "State Bank of India" : "",
-      ifscCode: step === "prepd" ? "XXXXXX" : "",
-      accountNumber: step === "prepd" ? "XXXXXX" : "",
-      accountHolderName: step === "prepd" ? "Rajesh Kumar" : "",
-      bankDocument: step === "prepd" ? null : null,
+      bankName: "State Bank of India",
+      ifscCode: "SBIN00002",
+      accountNumber: "320895544887",
+      accountHolderName: "Rajesh Kumar",
+      bankDocument: null,
     },
 
     validationSchema: Yup.object({
@@ -37,8 +42,6 @@ const MultipleBankInfo = ({ onNext, open, onToggle, step }) => {
       //   accountHolderName: Yup.string()
       //     .matches(/^[A-Za-z ]+$/, "Only alphabets are allowed")
       //     .required("Account Holder Name is required"),
-
-
       //   bankDocument: Yup.mixed().required("Bank document is required"),
     }),
 
@@ -95,8 +98,8 @@ const MultipleBankInfo = ({ onNext, open, onToggle, step }) => {
       return;
     }
     console.log("All Bank Accounts:", bankAccounts);
-          onNext();
-setIsEditing(false);
+    onNext();
+    setIsEditing(false);
   };
 
   return (
@@ -189,7 +192,9 @@ setIsEditing(false);
         ) : (
           <div className="mb-6 p-4 shadow-md rounded-lg bg-blue-50">
             <h4 className="text-sm font-semibold text-gray-700 mb-4">
-              {editingIndex !== null ? "Edit Bank Account" : "Add New Bank Account"}
+              {editingIndex !== null
+                ? "Edit Bank Account"
+                : "Add New Bank Account"}
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-3 lg:gap-2">
               {/* Bank Name */}
@@ -215,10 +220,14 @@ setIsEditing(false);
                   label="IFSC Code"
                   name="ifscCode"
                   value={formik.values.ifscCode}
-                  onChange={step === "prepd" ? (e) => {
-                    if (e.target.value.length < 6) return;
-                    formik.setFieldValue('ifscCode', e.target.value)
-                  } : formik.handleChange}
+                  onChange={
+                    step === "prepd"
+                      ? (e) => {
+                          if (e.target.value.length < 6) return;
+                          formik.setFieldValue("ifscCode", e.target.value);
+                        }
+                      : formik.handleChange
+                  }
                   onBlur={formik.handleBlur}
                 />
                 <ErrorMsg
@@ -232,10 +241,14 @@ setIsEditing(false);
                   label="Account Number"
                   name="accountNumber"
                   value={formik.values.accountNumber}
-                  onChange={step === "prepd" ? (e) => {
-                    if (e.target.value.length < 6) return;
-                    formik.setFieldValue('accountNumber', e.target.value)
-                  } : formik.handleChange}
+                  onChange={
+                    step === "prepd"
+                      ? (e) => {
+                          if (e.target.value.length < 6) return;
+                          formik.setFieldValue("accountNumber", e.target.value);
+                        }
+                      : formik.handleChange
+                  }
                   onBlur={formik.handleBlur}
                 />
                 <ErrorMsg
@@ -275,45 +288,52 @@ setIsEditing(false);
                   disabled={step && !isEditing}
                 />
                 <ErrorMsg
-                  error={formik.touched.bankDocument && formik.errors.bankDocument}
+                  error={
+                    formik.touched.bankDocument && formik.errors.bankDocument
+                  }
                 />
               </div>
             </div>
 
             {/* Form Actions */}
-            {!step && <div className="flex gap-3 mt-4">
-              <Button
-                type="submit"
-                btnName={editingIndex !== null ? "Update Account" : "Add Account"}
-                style="bg-primary hover:bg-primary text-white"
-              />
-              <Button
-                type="button"
-                btnName="Cancel"
-                style="bg-gray-200 hover:bg-gray-300 text-gray-700"
-                onClick={handleCancel}
-              />
-            </div>}
+            {!step && (
+              <div className="flex gap-3 mt-4">
+                <Button
+                  type="submit"
+                  btnName={
+                    editingIndex !== null ? "Update Account" : "Add Account"
+                  }
+                  style="bg-primary hover:bg-primary text-white"
+                />
+                <Button
+                  type="button"
+                  btnName="Cancel"
+                  style="bg-gray-200 hover:bg-gray-300 text-gray-700"
+                  onClick={handleCancel}
+                />
+              </div>
+            )}
           </div>
         )}
 
         {/* Continue Button */}
         <div className="flex justify-end mt-6 gap-3">
-          {step === "prepd" && !isEditing &&
-              <Button
-                type="button"
-                onClick={() => setIsEditing(!isEditing)}
-                btnName={isEditing ? "Save" : "Edit Bank"}
-                style="bg-primary hover:bg-primary text-white w-full sm:w-auto"
-              />
-            }
-            {(!step || isEditing) &&
-              <Button
-                type="submit"
-                btnName="Save & Continue"
-                style="bg-primary text-white hover:bg-primary cursor-pointer w-full sm:w-auto"
-                onClick={handleContinue}
-              />}
+          {step === "prepd" && !isEditing && (
+            <Button
+              type="button"
+              onClick={() => setIsEditing(!isEditing)}
+              btnName={isEditing ? "Save" : "Edit Bank"}
+              style="bg-primary hover:bg-primary text-white w-full sm:w-auto"
+            />
+          )}
+          {(!step || isEditing) && (
+            <Button
+              type="submit"
+              btnName="Save & Continue"
+              style="bg-primary text-white hover:bg-primary cursor-pointer w-full sm:w-auto"
+              onClick={handleContinue}
+            />
+          )}
         </div>
       </Accordion>
     </form>

@@ -25,7 +25,7 @@ const KycWrapper = ({ loanData, userData, onAction }) => {
       case "videokyc":
         return <VideoKYC />;
       case "remarks":
-        return <RemarksHistory />;
+        return <RemarksHistory permission={true} />;
       case "esign":
         return <ESignatureStatus />;
       case "document":

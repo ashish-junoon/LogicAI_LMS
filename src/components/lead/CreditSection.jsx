@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Icon from "../utils/Icon";
 import SelectInput from "../fields/SelectInput";
+import Button from "../utils/Button";
 
 const CreditSection = () => {
   const [users, setUsers] = useState([
@@ -9,7 +10,7 @@ const CreditSection = () => {
       name: "Raju Das",
       email: "john@example.com",
       softPull: {
-        creditScore: 720,
+        creditScore: 12,
         generatedDate: "2024-05-20 10:30 AM",
         fileUrl: "/credit-reports/soft-pull-report.pdf",
         fileName: "Soft_Pull_Report.pdf",
@@ -33,7 +34,7 @@ const CreditSection = () => {
       name: "Jane Smith",
       email: "jane@example.com",
       softPull: {
-        creditScore: 680,
+        creditScore: null,
         generatedDate: "2024-05-19 02:15 PM",
         fileUrl: "/credit-reports/soft-pull-report-2.pdf",
         fileName: "Soft_Pull_Report_2.pdf",
@@ -171,10 +172,10 @@ const CreditSection = () => {
     if (score >= 700) return "bg-blue-50 text-blue-700";
     if (score >= 650) return "bg-amber-50 text-amber-700";
     if (score >= 600) return "bg-orange-50 text-orange-700";
-    return "bg-red-50 text-red-700";
+    return "bg-red-100 text-red-700";
   };
 
-  const renderPullSection = (user, pullType, label) => {
+  const renderPullSection = (user, pullType) => {
     const pullData = user[pullType];
     const isSoftPull = pullType === 'softPull';
     const hasScore = pullData.creditScore !== null;
@@ -191,7 +192,7 @@ const CreditSection = () => {
               {isSoftPull ? 'Soft Pull' : 'Hard Pull'}
             </span>
             {hasScore && (
-              <span className={`text-[8px] px-1.5 py-0.5 rounded-full font-semibold ${getScoreBgColor(pullData.creditScore)}`}>
+              <span className={`text-[9px] px-1.5 py-0.5 rounded-sm font-semibold ${getScoreBgColor(pullData.creditScore)}`}>
                 {getScoreRating(pullData.creditScore)}
               </span>
             )}
@@ -201,11 +202,6 @@ const CreditSection = () => {
               Requires Consent
             </span>
           )}
-          {/* {isSoftPull && hasScore && (
-            <span className="text-[8px] text-slate-400 bg-white px-1.5 py-0.5 rounded border border-slate-200">
-              Auto-Refresh Available
-            </span>
-          )} */}
         </div>
 
         {/* Score and Generate Section */}
@@ -251,10 +247,10 @@ const CreditSection = () => {
               <div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-slate-500 text-[8px] font-medium uppercase tracking-wider">
+                    <p className="text-slate-800 text-[9px] font-bold uppercase tracking-wider">
                       Generated
                     </p>
-                    <p className="text-slate-800 font-semibold text-[9px] truncate">
+                    <p className="text-slate-800 font-medium text-[10px] truncate">
                       {pullData.generatedDate}
                     </p>
                   </div>
@@ -264,7 +260,7 @@ const CreditSection = () => {
                     <button
                       onClick={() => handleGenerateCredit(user.id, pullType, true)}
                       disabled={pullData.isGenerating}
-                      className="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-medium hover:bg-emerald-200 transition-all flex items-center gap-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-semibold hover:bg-emerald-200 transition-all flex items-center gap-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {pullData.isGenerating ? (
                         <>
@@ -285,20 +281,20 @@ const CreditSection = () => {
                 
                 {pullData.showFile && pullData.fileUrl && (
                   <div className="flex items-center gap-1 mt-1 pt-1 border-t border-slate-200">
-                    <p className="text-slate-700 text-[8px] font-medium truncate flex-1">
+                    <p className="text-slate-700 text-[10px] font-medium truncate flex-1">
                       {pullData.fileName}
                     </p>
                     <button
                       onClick={() => handleView(user.id, pullType)}
                       className="bg-slate-200/80 text-slate-700 px-1.5 py-1 rounded text-[8px] font-medium hover:bg-slate-300 transition-all cursor-pointer"
                     >
-                      <Icon name="RiEyeLine" size={11} color="#475569" />
+                      <Icon name="RiEyeLine" size={12} color="#475569" />
                     </button>
                     <button
                       onClick={() => handleDownload(user.id, pullType)}
                       className="bg-primary text-white px-1.5 py-1 rounded text-[8px] font-medium hover:bg-primary/90 transition-all cursor-pointer"
                     >
-                      <Icon name="RiDownloadLine" size={11} color="#FFFFFF" />
+                      <Icon name="RiDownloadLine" size={12} color="#FFFFFF" />
                     </button>
                   </div>
                 )}
@@ -316,10 +312,10 @@ const CreditSection = () => {
                   ]}
                   className="!text-[10px] !py-1 !px-2"
                 />
-                <button
+                <Button
                   onClick={() => handleGenerateCredit(user.id, pullType, false)}
                   disabled={pullData.isGenerating || !pullData.selectedMode}
-                  className={`w-full ${isSoftPull ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-blue-600 hover:bg-blue-700'} text-white px-2 py-1.5 rounded text-[10px] font-semibold transition-all flex items-center justify-center gap-1 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed`}
+                  style={`w-full ${isSoftPull ? 'bg-primary hover:bg-primary/80' : 'bg-primary hover:bg-primary/80'} cursor-pointer text-white px-2 py-1.5 rounded text-[10px] font-semibold transition-all flex items-center justify-center gap-1 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
                   {pullData.isGenerating ? (
                     <>
@@ -334,7 +330,7 @@ const CreditSection = () => {
                       <span>Fetch Score</span>
                     </>
                   )}
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -353,30 +349,19 @@ const CreditSection = () => {
           {/* User Header */}
           <div className="flex items-center justify-between mb-2.5 pb-2 border-b border-slate-100">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
+              <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
                 {user.name.charAt(0)}
               </div>
               <div>
-                <p className="text-sm font-semibold text-slate-700 leading-tight">
+                <p className="text-sm font-semibold text-slate-600 leading-tight">
                   {user.name}
-                </p>
-                <p className="text-[10px] text-slate-400 leading-tight">
-                  {user.email}
                 </p>
               </div>
             </div>
-            {user.softPull.creditScore !== null && (
-              <div className="flex items-center gap-1.5">
-                <span className="text-[9px] text-slate-400">Soft:</span>
-                <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${getScoreBgColor(user.softPull.creditScore)}`}>
-                  {user.softPull.creditScore}
-                </span>
-              </div>
-            )}
           </div>
 
           {/* Two-column layout for Soft and Hard Pull */}
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 max-lg:grid-cols-1 gap-2">
             {/* Soft Pull Section */}
             {renderPullSection(user, 'softPull', 'Soft Pull')}
             

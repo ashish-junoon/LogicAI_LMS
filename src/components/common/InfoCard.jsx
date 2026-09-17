@@ -33,7 +33,7 @@ const InfoCardSection = ({
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-      <div className="bg-gray-400/90 px-3 py-1 font-semibold text-gray-800 uppercase text-sm">
+      <div className="bg-gray-300/90 px-3 py-1 font-semibold text-gray-700 uppercase text-sm">
         {heading}
       </div>
       <div className="flex flex-col-reverse sm:flex-row">
@@ -186,6 +186,8 @@ const InfoCardSection = ({
 export const demoApplicantData = {
   name: "Priya Singh",
   age: "28",
+  user_id: "28",
+  lead_id: "28",
   occupation: "Doctor",
   income: "₹1,20,000",
   pan_number: "FGHIJ5678K",
@@ -196,6 +198,8 @@ export const demoApplicantData = {
   company_name: "Apollo Hospital",
   existing_loans: "None",
   credit_score: "820",
+  registered_on: "06-08-2025",
+  user_status: "Pending"
 };
 
 export const demoCoApplicantData = [

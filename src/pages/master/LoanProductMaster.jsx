@@ -334,12 +334,12 @@ const LoanProductMaster = () => {
     <div>
       <div className="flex-1">
         {/* header  */}
-        <div className="flex justify-between items-center p-0 px-4 bg-gray-100 rounded-t-lg">
+        <div className="flex justify-between items-center px-4">
           <div className="text-md font-medium self-center">Create Loan Product</div>
 
           <Button
             onClick={() => handleOpenModal()}
-            btnName="Create +"
+            btnName="Add Create"
             style="bg-primary hover:bg-primary text-white flex items-center gap-2"
             icon={<RiAddLine size={20} />}
           />

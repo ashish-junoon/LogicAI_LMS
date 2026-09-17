@@ -6,6 +6,7 @@ import Modal from "../../components/utils/Modal";
 import TextInput from "../../components/fields/TextInput";
 import TogleInput from "../../components/fields/TogleInput";
 import SelectInput from "../../components/fields/SelectInput";
+import Button from "../../components/utils/Button";
 
 const defaultQuestions = [
   {
@@ -371,17 +372,17 @@ const defaultQuestions = [
 ];
 
 const categories = [
-    { label : "Borrower & Business Details"},
-    { label : "Purpose of Loan"},
-    { label : "Promoter Profile"},
-    { label : "Business Operations"},
-    { label : "Financial Understanding"},
-    { label : "Banking & Cashflow"},
-    { label : "Verification"},
-    { label : "Red Flags"},
-    { label : "Observations"},
-    { label : "PD Outcome"}
-]
+  { label: "Borrower & Business Details" },
+  { label: "Purpose of Loan" },
+  { label: "Promoter Profile" },
+  { label: "Business Operations" },
+  { label: "Financial Understanding" },
+  { label: "Banking & Cashflow" },
+  { label: "Verification" },
+  { label: "Red Flags" },
+  { label: "Observations" },
+  { label: "PD Outcome" },
+];
 
 const PDQuestionsMaster = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -458,29 +459,26 @@ const PDQuestionsMaster = () => {
         {/* Header */}
 
         <div className="flex justify-between items-center p-0 px-4">
-          <div className="text-md font-medium self-center">Page Master</div>
+          <div className="text-md font-medium self-center">Quetions Master</div>
 
           <div className="flex items-center gap-2">
             <button
-            onClick={() => setIsCategoryModalOpen(true)}
-            className="text-sm py-1.5 px-3 rounded-sm bg-primary hover:bg-primary/90 text-white flex justify-between gap-3 cursor-pointer"
-          >
-            Add Category
-          </button>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="text-sm py-1.5 px-3 rounded-sm bg-primary hover:bg-primary/90 text-white flex justify-between gap-3 cursor-pointer"
-          >
-            Add Question
-          </button>
+              onClick={() => setIsCategoryModalOpen(true)}
+              className="text-sm py-1.5 px-3 rounded-sm bg-primary hover:bg-primary/90 text-white flex justify-between gap-3 cursor-pointer"
+            >
+              Add Category
+            </button>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="text-sm py-1.5 px-3 rounded-sm bg-primary hover:bg-primary/90 text-white flex justify-between gap-3 cursor-pointer"
+            >
+              Add Question
+            </button>
           </div>
         </div>
 
         {/* Table */}
-        <Table
-          data={defaultQuestions}
-          columns={columns}
-        />
+        <Table data={defaultQuestions} columns={columns} />
       </div>
 
       {/* Add / Edit Modal */}
@@ -491,19 +489,26 @@ const PDQuestionsMaster = () => {
       >
         <div className="grid grid-cols-2 gap-4 mt-6">
           <SelectInput
-          options={categories}
+            options={categories}
             label="Category"
             placeholder="Enter category"
           />
 
-          <TextInput
-            label="Question"
-            placeholder="Enter question"
+          <TextInput label="Question" placeholder="Enter question" />
+        </div>
+
+        <div className="flex justify-end gap-2">
+          <Button
+            btnName={"Cancel"}
+            style={"border border-gray-200 hover:bg-gray-100"}
+          />
+          <Button
+            btnName={"Submit"}
+            style={"bg-primary text-white hover:bg-primary/90"}
           />
         </div>
       </Modal>
-      
-      
+
       {/* Add / Edit Modal --- Category */}
       <Modal
         title="Add PD Question"
@@ -511,10 +516,17 @@ const PDQuestionsMaster = () => {
         onClose={() => setIsCategoryModalOpen(false)}
       >
         <div className="grid grid-cols-2 gap-4 mt-6">
+          <TextInput label="Category" placeholder="Enter category" />
+        </div>
 
-          <TextInput
-            label="Category"
-            placeholder="Enter category"
+        <div className="flex justify-end gap-2">
+          <Button
+            btnName={"Cancel"}
+            style={"border border-gray-200 hover:bg-gray-100"}
+          />
+          <Button
+            btnName={"Submit"}
+            style={"bg-primary text-white hover:bg-primary/90"}
           />
         </div>
       </Modal>

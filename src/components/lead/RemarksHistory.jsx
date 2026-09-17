@@ -3,25 +3,21 @@ import {
   RiChatHistoryLine,
   RiTimeLine,
   RiUser3Line,
-  RiRefreshLine,
   RiSearchLine,
-  RiFilterLine,
-  RiCheckLine,
-  RiCloseLine,
-  RiAlertLine,
-  RiInformationLine,
 } from "react-icons/ri";
 import Button from "../utils/Button";
-import { IoAdd } from "react-icons/io5";
-import Icon from "../utils/Icon";
+import Modal from "../utils/Modal";
+import TextInput from '../fields/TextInput'
+import SelectInput from '../fields/SelectInput'
 
 const RemarksHistory = ({
   remarks = [],
   className = "",
   maxHeight = "400px",
+  permission = false
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all");
+  const [open, setOpen] = useState(false);
 
   // Default mock data
   const defaultRemarks = [
@@ -69,72 +65,9 @@ const RemarksHistory = ({
 
   const remarkData = remarks.length > 0 ? remarks : defaultRemarks;
 
-  // Get status badge styles
-  const getStatusStyles = (status) => {
-    const statusMap = {
-      Completed: {
-        bg: "bg-green-100",
-        text: "text-green-700",
-        icon: <RiCheckLine size={14} />,
-      },
-      Approved: {
-        bg: "bg-green-100",
-        text: "text-green-700",
-        icon: <RiCheckLine size={14} />,
-      },
-      "In Progress": {
-        bg: "bg-blue-100",
-        text: "text-blue-700",
-        icon: <RiInformationLine size={14} />,
-      },
-      Pending: {
-        bg: "bg-yellow-100",
-        text: "text-yellow-700",
-        icon: <RiAlertLine size={14} />,
-      },
-      "On Hold": {
-        bg: "bg-orange-100",
-        text: "text-orange-700",
-        icon: <RiAlertLine size={14} />,
-      },
-      Rejected: {
-        bg: "bg-red-100",
-        text: "text-red-700",
-        icon: <RiCloseLine size={14} />,
-      },
-    };
-    return (
-      statusMap[status] || {
-        bg: "bg-gray-100",
-        text: "text-gray-700",
-        icon: <RiInformationLine size={14} />,
-      }
-    );
-  };
-
-  // Get status color for dot indicator
-  const getStatusDotColor = (status) => {
-    const colorMap = {
-      Completed: "bg-green-500",
-      Approved: "bg-green-500",
-      "In Progress": "bg-blue-500",
-      Pending: "bg-yellow-500",
-      "On Hold": "bg-orange-500",
-      Rejected: "bg-red-500",
-    };
-    return colorMap[status] || "bg-gray-500";
-  };
-
   // Filter and search remarks
   const getFilteredRemarks = () => {
     let filtered = remarkData;
-
-    // Filter by status
-    if (filterStatus !== "all") {
-      filtered = filtered.filter(
-        (r) => r.status.toLowerCase() === filterStatus.toLowerCase(),
-      );
-    }
 
     // Filter by search term
     if (searchTerm) {
@@ -174,11 +107,12 @@ const RemarksHistory = ({
           </div>
 
           <div className="flex items-center gap-2">
-          <Button
+          {permission && <Button
             btnName={"Add Remarks"}
+            onClick={()=> setOpen(true)}
             // btnIcon={"IoAdd"}
             style={"bg-primary text-white text-sm font-semibold"}
-          />
+          />}
           </div>
         </div>
       </div>
@@ -224,23 +158,12 @@ const RemarksHistory = ({
               </tr>
             ) : (
               filteredRemarks.map((remark) => {
-                const statusStyle = getStatusStyles(remark.status);
-                const dotColor = getStatusDotColor(remark.status);
 
                 return (
                   <tr
                     key={remark.id}
                     className="hover:bg-gray-50 transition-colors"
                   >
-                    {/* <td className="px-4 py-3 whitespace-nowrap">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`text-[10px] font-medium px-2 py-0.5 rounded-md ${statusStyle.bg} ${statusStyle.text}`}
-                        >
-                          {remark.status}
-                        </span>
-                      </div>
-                    </td> */}
                     <td className="px-4 py-3 whitespace-nowrap">
                       <span className="text-xs font-medium text-gray-800">
                         {remark.step}
@@ -284,10 +207,25 @@ const RemarksHistory = ({
       <div className="flex items-center justify-between text-[10px] text-gray-400">
         <span>
           Showing {filteredRemarks.length} of {remarkData.length} entries
-          {filterStatus !== "all" && ` (filtered by "${filterStatus}")`}
         </span>
         {searchTerm && <span>Search results for: "{searchTerm}"</span>}
       </div>
+
+      <Modal
+        isOpen={open}
+        onClose={()=> setOpen(false)}
+        title={"Add Remarks"}
+      >
+        <div className="grid grid-cols-2 gap-2 my-3">
+          <SelectInput placeholder={"Select Remark"} options={[{label: "Remark 1", value: "Remark 1"}, {label: "Remark 2", value: "Remark 2"}]} label="Remark" />
+          <TextInput label="Description" />
+        </div>
+
+        <div className="flex gap-1 items-center justify-end">
+          <Button btnName={"Cancel"} style={"border border-gray-200"} />
+          <Button btnName={"Submit"} style={"bg-primary text-white"} />
+        </div>
+      </Modal>
     </div>
   );
 };

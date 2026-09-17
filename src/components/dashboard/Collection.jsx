@@ -4,17 +4,23 @@ import Chart from "./Chart";
 import { InsightCard } from "./Helper";
 import {
   CustomerProfile_DescriptionAPI,
-  CustomerProfile_LoanSizeDistributionAPI,
   CustomerProfileAnalysisAPI,
+  Financial_PerformanceAPI,
+  Financials_CollectionEfficiencySummaryAPI,
+  Financials_LoanTenureDistributionAPI,
+  Financials_MonthlyRevenueTrendAPI,
+  Financials_ROIDistributionAPI,
   PortfolioHealth_CreditScoreDistributionAPI,
-} from "../../api/functions";
+} from "../../api/functions.js";
 import { toast } from "react-toastify";
 import SkeletonLoader from "../utils/SkeletonLoader";
 
 const Collection = () => {
-  const [CustomerProfileAnalysis, setCustomerProfileAnalysis] = useState({});
-  const [csDistribution, setcsDistribution] = useState([]);
-  const [LoanSizeDistribution, setLoanSizeDistribution] = useState([]);
+  const [financialPerformance, setfinancialPerformance] = useState({});
+  const [collectionEfficiencySummary, setCollectionEfficiencySummary] = useState({});
+  const [loanTenureDistribution, setLoanTenureDistribution] = useState([]);
+  const [monthlyLoanCount, setMonthlyLoanCount] = useState([]);
+  const [ROIDistribution, setROIDistribution] = useState([]);
   const [profileDescription, setprofileDescription] = useState({});
 
   const [isLoading, setIsLoading] = useState({
@@ -22,13 +28,18 @@ const Collection = () => {
     loading2: false,
     loading3: false,
     loading4: false,
+    loading5: false,
   });
 
-  const csDetailData = {
-    labels: csDistribution?.map((item) => item?.credit_score_range),
+  const loanTenureDistributionDetailData = {
+    labels: loanTenureDistribution?.map(
+      (item) => item?.loan_tenure_distribution,
+    ),
     datasets: [
       {
-        data: csDistribution?.map((item) => item?.total_loans),
+        data: loanTenureDistribution?.map(
+          (item) => item?.loan_tenure_distribution_count,
+        ),
         backgroundColor: [
           "#dc2626",
           "#f97316",
@@ -43,26 +54,59 @@ const Collection = () => {
     ],
   };
 
-  const loanDistDetailData = {
-    labels: LoanSizeDistribution?.map((item) => item?.loan_size_range),
+  const monthlyRevenueData = {
+    labels: monthlyLoanCount?.map((m) => m.month_name),
     datasets: [
       {
-        data: LoanSizeDistribution?.map((item) => item?.total_loans),
+        label: "Loans",
+        data: monthlyLoanCount?.map((m) => m.monthlyrevenue_Amount),
+        borderColor: "#06d6a0",
+        backgroundColor: "rgba(6,214,160,0.08)",
+        fill: true,
+        tension: 0.4,
+        pointRadius: 3,
+        pointBackgroundColor: "#06d6a0",
+      },
+    ],
+  };
+
+  const RoiDistributionDetailsData = {
+    labels: ROIDistribution?.map((item) => item?.roi_distribution),
+    datasets: [
+      {
+        data: ROIDistribution?.map((item) => item?.roi_distribution_count),
         backgroundColor: [
+          "#dc2626",
+          "#f97316",
+          "#f59e0b",
           "#3b82f6",
-          "#6366f1",
-          "#8b5cf6",
-          "#a855f7",
-          "#ec4899",
           "#06d6a0",
+          "#10b981",
         ],
-        borderWidth: 2,
+        borderWidth: 0,
+        borderRadius: 6,
+        // borderColor: "#c2c3c4",
+      },
+    ],
+  };
+
+  const revenueData = {
+    labels: ["Principal", "ROI", "Penal"],
+    datasets: [
+      {
+        data: [
+          collectionEfficiencySummary?.principal_collected,
+          collectionEfficiencySummary?.roi_collected,
+          collectionEfficiencySummary?.penal_collected,
+        ],
+        backgroundColor: ["#06d6a0", "#3b82f6", "#f59e0b"],
+        borderWidth: 1,
         borderColor: "#c2c3c4",
       },
     ],
   };
 
-  const fetchCustomerProfileAnalysis = async () => {
+  const fetchFinancial_Performance = async () => {
     setIsLoading((prev) => ({ ...prev, loading1: true }));
     try {
       const req = {
@@ -70,9 +114,9 @@ const Collection = () => {
         to_date: "",
       };
 
-      const response = await CustomerProfileAnalysisAPI(req);
+      const response = await Financial_PerformanceAPI(req);
       if (response.status) {
-        setCustomerProfileAnalysis(response.data);
+        setfinancialPerformance(response.data[0]);
       } else {
         toast.info(response.message || "Something went wrong!");
       }
@@ -83,28 +127,7 @@ const Collection = () => {
     }
   };
 
-  const fetchCreditScoreDistribution = async () => {
-    setIsLoading((prev) => ({ ...prev, loading2: true }));
-    try {
-      const req = {
-        from_date: "",
-        to_date: "",
-      };
-
-      const response = await PortfolioHealth_CreditScoreDistributionAPI(req);
-      if (response.status) {
-        setcsDistribution(response.data);
-      } else {
-        toast.info(response.message || "Something went wrong!");
-      }
-    } catch (error) {
-      toast.error(error.message || "Something went wrong. Please try again.");
-    } finally {
-      setIsLoading((prev) => ({ ...prev, loading2: false }));
-    }
-  };
-
-  const fetchCustomerProfile_LoanSizeDistribution = async () => {
+  const fetchFinancials_CollectionEfficiencySummary = async () => {
     setIsLoading((prev) => ({ ...prev, loading3: true }));
     try {
       const req = {
@@ -112,9 +135,9 @@ const Collection = () => {
         to_date: "",
       };
 
-      const response = await CustomerProfile_LoanSizeDistributionAPI(req);
+      const response = await Financials_CollectionEfficiencySummaryAPI(req);
       if (response.status) {
-        setLoanSizeDistribution(response.data);
+        setCollectionEfficiencySummary(response.data[0]);
       } else {
         toast.info(response.message || "Something went wrong!");
       }
@@ -125,7 +148,28 @@ const Collection = () => {
     }
   };
 
-  const fetchCustomerProfile_Description = async () => {
+  const fetchloanTenureDistributionDetailData = async () => {
+    setIsLoading((prev) => ({ ...prev, loading5: true }));
+    try {
+      const req = {
+        from_date: "",
+        to_date: "",
+      };
+
+      const response = await Financials_LoanTenureDistributionAPI(req);
+      if (response.status) {
+        setLoanTenureDistribution(response.data);
+      } else {
+        toast.info(response.message || "Something went wrong!");
+      }
+    } catch (error) {
+      toast.error(error.message || "Something went wrong. Please try again.");
+    } finally {
+      setIsLoading((prev) => ({ ...prev, loading5: false }));
+    }
+  };
+
+  const fetchFinancials_MonthlyRevenueTrend = async () => {
     setIsLoading((prev) => ({ ...prev, loading4: true }));
     try {
       const req = {
@@ -133,9 +177,9 @@ const Collection = () => {
         to_date: "",
       };
 
-      const response = await CustomerProfile_DescriptionAPI(req);
+      const response = await Financials_MonthlyRevenueTrendAPI(req);
       if (response.status) {
-        setprofileDescription(response.data);
+        setMonthlyLoanCount(response.data);
       } else {
         toast.info(response.message || "Something went wrong!");
       }
@@ -146,11 +190,35 @@ const Collection = () => {
     }
   };
 
+  const fetchFinancials_ROIDistribution = async () => {
+    setIsLoading((prev) => ({ ...prev, loading2: true }));
+    try {
+      const req = {
+        from_date: "",
+        to_date: "",
+      };
+
+      const response = await Financials_ROIDistributionAPI(req);
+      if (response.status) {
+        setROIDistribution(response.data);
+      } else {
+        toast.info(response.message || "Something went wrong!");
+      }
+    } catch (error) {
+      toast.error(error.message || "Something went wrong. Please try again.");
+    } finally {
+      setIsLoading((prev) => ({ ...prev, loading2: false }));
+    }
+  };
+
+  function pct(a,b){return b?(a/b*100).toFixed(1):'0.0';}
+
   useEffect(() => {
-    fetchCustomerProfileAnalysis();
-    fetchCreditScoreDistribution();
-    fetchCustomerProfile_LoanSizeDistribution();
-    fetchCustomerProfile_Description();
+    fetchFinancial_Performance();
+    fetchFinancials_CollectionEfficiencySummary();
+    fetchloanTenureDistributionDetailData();
+    fetchFinancials_MonthlyRevenueTrend();
+    fetchFinancials_ROIDistribution();
   }, []);
 
   return (
@@ -163,23 +231,29 @@ const Collection = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-2">
           <KpiCard
             label="Total Disbursed"
-            value={CustomerProfileAnalysis?.unique_customers?.toLocaleString()}
+            value={formatNumber(financialPerformance?.total_disbursed)}
+            star
             sub={`Principal out`}
             color="#3b82f6"
             type={1}
           />
           <KpiCard
             label="Total Collected"
-            value={`₹${formatNumber(CustomerProfileAnalysis?.avg_monthly_salary)}`}
-            //   value="₹1.2 L"
-            sub={`86.9% recovery`}
-            //   sub={`Median ₹1.02 L`}
+            value={`₹${formatNumber(financialPerformance?.total_collected)}`}
+            star
+            // sub={`${(
+            //   (financialPerformance?.total_collected /
+            //     financialPerformance?.total_disbursed) *
+            //   100
+            // ).toFixed(2)}% recovery`}
+            sub={`${pct(financialPerformance?.total_collected, financialPerformance?.total_disbursed)}% recovery`}
             color="#06d6a0"
             type={2}
           />
           <KpiCard
             label="ROI Collected"
-            value={`₹${formatNumber(CustomerProfileAnalysis?.avg_loan_amt)}`}
+            value={`₹${formatNumber(financialPerformance?.roi_collected)}`}
+            star
             //   value={`₹32.5 K`}
             sub="Interest income"
             color="#f59e0b"
@@ -187,21 +261,23 @@ const Collection = () => {
           />
           <KpiCard
             label="Penal Collected"
-            value={CustomerProfileAnalysis?.avg_credit_score}
+            value={formatNumber(financialPerformance?.penal_collected)}
+            star
             sub={`Penalty income`}
             color="#8b5cf6"
             type={4}
           />
           <KpiCard
             label="Outstanding"
-            value={CustomerProfileAnalysis?.avg_credit_score}
+            value={formatNumber(financialPerformance?.outstanding)}
+            star
             sub={`Uncollected amount`}
             color="#8b5cf6"
             type={5}
           />
           <KpiCard
             label="Avg ROI Rate"
-            value={`${CustomerProfileAnalysis?.avg_credit_score}%`}
+            value={`${financialPerformance?.avg_roi_rate}%`}
             sub={`Daily interest rate`}
             color="#8b5cf6"
             type={6}
@@ -217,17 +293,17 @@ const Collection = () => {
         <div className="bg-gray-50/50 border border-gray-200 rounded-xl p-5">
           <div className="flex justify-between items-center mb-4">
             <div>
-              <div className="text-sm font-semibold">Credit Score Segments</div>
-              <div className="text-[#64748b] text-[11px]">
-                Borrower risk distribution
+              <div className="text-sm font-semibold">
+                ROI Distribution
               </div>
+              <div className="text-[#64748b] text-[11px]">Interest rate bands</div>
             </div>
           </div>
           {!isLoading?.loading2 ? (
             <div className="relative max-h-[320px]">
               <Chart
                 type="bar"
-                data={csDetailData}
+                data={RoiDistributionDetailsData}
                 options={{
                   scales: {
                     y: { grid: { color: "#c2c3c4" } },
@@ -247,33 +323,36 @@ const Collection = () => {
         </div>
 
         <div className="bg-gray-50/50 border border-gray-200 rounded-xl p-5">
-          {/* <div className="bg-[#131929] border border-[#1f2e47] rounded-xl p-5"> */}
-          {/* <div className="flex justify-between items-center mb-4">
-              <div>
-                <div className="text-sm font-semibold text-gray-900">
-                  Loan Status Distribution
-                </div>
-                <div className="text-[#64748b] text-[11px]">
-                  All {totalLoan?.toLocaleString()} loans
-                </div>
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <div className="text-sm font-semibold">Revenue Components</div>
+              <div className="text-[#64748b] text-[11px]">
+                Principal vs ROI vs Penal collected
               </div>
             </div>
-            <div className="relative max-h-[260px] w-fit m-auto">
-              <Chart
-                type="doughnut"
-                data={statusData}
-                options={{
-                  cutout: "55%",
-                  plugins: {
-                    legend: {
-                      display: true,
-                      position: "bottom",
-                      labels: { color: "#94a3b8", padding: 5, boxWidth: 10 },
+          </div>
+          {!isLoading?.loading3 ? (
+            <>
+              <div className="relative max-h-[260px] w-fit m-auto">
+                <Chart
+                  type="doughnut"
+                  data={revenueData}
+                  options={{
+                    cutout: "65%",
+                    plugins: {
+                      legend: {
+                        display: true,
+                        position: "bottom",
+                        labels: { color: "#94a3b8", padding: 16 },
+                      },
                     },
-                  },
-                }}
-              />
-            </div> */}
+                  }}
+                />
+              </div>
+            </>
+          ) : (
+            <SkeletonLoader />
+          )}
         </div>
       </div>
 
@@ -281,29 +360,24 @@ const Collection = () => {
         <div className="bg-gray-50/50 border border-gray-200 rounded-xl p-5">
           <div className="flex justify-between items-center mb-4">
             <div>
-              <div className="text-sm font-semibold">Credit Score Segments</div>
+              <div className="text-sm font-semibold">Monthly Loan Count</div>
               <div className="text-[#64748b] text-[11px]">
-                Borrower risk distribution
+                Number of loans disbursed per month
               </div>
             </div>
           </div>
-          {!isLoading?.loading2 ? (
-            <div className="relative max-h-[320px]">
-              {/* <Chart
-                type="bar"
-                data={csDetailData}
+          {!isLoading?.loading4 ? (
+            <div className="relative max-h-[260px] w-full">
+              <Chart
+                type="line"
+                data={monthlyRevenueData}
                 options={{
                   scales: {
                     y: { grid: { color: "#c2c3c4" } },
                     x: { grid: { display: false } },
                   },
-                  plugins: {
-                    legend: {
-                      display: false,
-                    },
-                  },
                 }}
-              /> */}
+              />
             </div>
           ) : (
             <SkeletonLoader />
@@ -313,17 +387,17 @@ const Collection = () => {
         <div className="bg-gray-50/50 border border-gray-200 rounded-xl p-5">
           <div className="flex justify-between items-center mb-4">
             <div>
-              <div className="text-sm font-semibold">Credit Score Segments</div>
-              <div className="text-[#64748b] text-[11px]">
-                Borrower risk distribution
+              <div className="text-sm font-semibold">
+                Loan Tenure Distribution
               </div>
+              <div className="text-[#64748b] text-[11px]">Tenure in days</div>
             </div>
           </div>
-          {!isLoading?.loading2 ? (
+          {!isLoading?.loading5 ? (
             <div className="relative max-h-[320px]">
               <Chart
                 type="bar"
-                data={csDetailData}
+                data={loanTenureDistributionDetailData}
                 options={{
                   scales: {
                     y: { grid: { color: "#c2c3c4" } },
@@ -348,43 +422,38 @@ const Collection = () => {
         <p className="font-gray-200 text-[12px]">
           Disbursed vs Collected breakdown
         </p>
+        {!isLoading?.loading3 ?
         <div className="grid grid-cols-6 gap-2 mt-3">
-          {[
-            {
-              label: "Principal Collected",
-              value: "₹15.7 Cr",
-            },
-            {
-              label: "ROI Collected",
-              value: "₹4.9 Cr",
-            },
-            {
-              label: "Penal Collected",
-              value: "₹33.3 L",
-            },
-            {
-              label: "NPA Exposure",
-              value: "₹3.7 Cr",
-            },
-            {
-              label: "Collection Rate",
-              value: "86.9%",
-            },
-            {
-              label: "NPA Rate",
-              value: "16.3%",
-            },
-          ]?.map((item) => {
+          {Object.entries(collectionEfficiencySummary)?.map(([key, value]) => {
+            const isRate = ["collection_rate", "npa_rate"];
+            const COLORS = {
+              "npa_exposure": "text-red-500",
+              "npa_rate": "text-red-500",
+              "principal_collected": "text-green-500",
+              "collection_rate": "text-green-500",
+              "roi_collected" : "text-blue-500",
+              "penal_collected" : "text-amber-500"
+            }
+            
             return (
-              <div className="bg-white border border-gray-200 shadow-lg rounded-lg py-3 px-3.5">
-                <p className="uppercase text-[10px] font-semibold">{item?.label}</p>
-                <p className="font-bold text-green-600 text-[18px]">
-                  {item?.value}
+              <div
+                key={key}
+                className="bg-white border border-gray-200 shadow-lg rounded-lg py-3 px-3.5"
+              >
+                <p className="uppercase text-[10px] font-semibold">
+                  {key?.replaceAll("_", " ")}
+                </p>
+                <p className={`font-bold ${COLORS[key]} text-[18px]`}>
+                  {isRate?.includes(key)
+                    ? `${value}%`
+                    : `₹${formatNumber(value)}`}
                 </p>
               </div>
             );
           })}
-        </div>
+        </div>: (
+            <SkeletonLoader />
+          )}
       </div>
     </div>
   );

@@ -25,12 +25,12 @@ const Modal = ({ title, description, isOpen, onClose, onSubmit, formId, children
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 10 }}
                     >
-                        <div onClick={(e) => e.stopPropagation()} className="w-full max-w-3xl rounded-lg bg-white shadow-md">
+                        <div onClick={(e) => e.stopPropagation()} className="w-full max-w-3xl rounded-2xl bg-white shadow-md">
 
                             {/* header */}
                             <div className="flex items-center justify-between px-4 pt-3 pb-1 border-b-2 border-gray-200">
                                 <div>
-                                    <h2 className="text-lg font-semibold text-gray-900">
+                                    <h2 className="text-md font-medium text-gray-900">
                                         {title}
                                     </h2>
                                     <p className="text-xs text-gray-700 mt-0.5">

@@ -174,3 +174,60 @@ export const Overview_MonthlyDisbursementsAPI = async (req) => {
         throw error;
     }
 }
+
+
+
+//? Financial Performance Section API's
+//* =====================================
+
+export const Financial_PerformanceAPI = async (req) => {
+    try {
+        const response = await api.post("/Dashboard/Financial_Performance", req);
+        return response.data;
+    } catch (error) {
+        console.error("Financial_Performance:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+
+export const Financials_CollectionEfficiencySummaryAPI = async (req) => {
+    try {
+        const response = await api.post("/Dashboard/Financials_CollectionEfficiencySummary", req);
+        return response.data;
+    } catch (error) {
+        console.error("Financials_CollectionEfficiencySummary:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+
+export const Financials_LoanTenureDistributionAPI = async (req) => {
+    try {
+        const response = await api.post("/Dashboard/Financials_LoanTenureDistribution", req);
+        return response.data;
+    } catch (error) {
+        console.error("loanTenureDistributionDetailData:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const Financials_MonthlyRevenueTrendAPI = async (req) => {
+    try {
+        const response = await api.post("/Dashboard/Financials_MonthlyRevenueTrend", req);
+        return response.data;
+    } catch (error) {
+        console.error("Financials_MonthlyRevenueTrend:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const Financials_ROIDistributionAPI = async (req) => {
+    try {
+        const response = await api.post("/Dashboard/Financials_ROIDistribution", req);
+        return response.data;
+    } catch (error) {
+        console.error("Financials_ROIDistribution:", error.response?.data || error.message);
+        throw error;
+    }
+}

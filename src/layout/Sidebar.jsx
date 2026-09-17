@@ -356,7 +356,8 @@ const Sidebar = ({
     },
 
     {
-      title: "Lead Consolidation",
+      // title: "Lead Consolidation",
+      title: "Leads Center",
       icon: FaRegObjectUngroup,
       children: [
         {
@@ -413,6 +414,10 @@ const Sidebar = ({
         {
           title: "Page Master",
           path: "/page-master",
+        },
+        {
+          title: "Vendor Master",
+          path: "/vendor-master",
         },
       ],
     },

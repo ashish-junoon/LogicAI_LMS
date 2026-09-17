@@ -37,7 +37,7 @@ const InfoWrapper = ({ loanData, userData, onAction }) => {
       case "bankInfo":
         return <BankInfoSection />;
       case "remarks":
-        return <RemarksHistory />;
+        return <RemarksHistory permission={true} />;
       default:
         return null;
     }

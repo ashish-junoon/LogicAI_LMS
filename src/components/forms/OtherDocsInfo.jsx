@@ -1,11 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import {
-  RiFileList3Line,
-  RiAddLine,
-  RiDeleteBin6Line,
-} from "react-icons/ri";
+import { RiFileList3Line, RiAddLine, RiDeleteBin6Line } from "react-icons/ri";
 
 import Accordion from "../utils/Accordion";
 import SelectInput from "../fields/SelectInput";
@@ -30,295 +26,226 @@ const MAX_DOCUMENTS = 10;
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const SUPPORTED_FORMATS = ["image/jpeg", "image/png", "application/pdf"];
 
-const OtherDocsInfo = ({ onNext, open, onToggle, initialDocuments = [], step }) => {
-  const fileInputRefs = useRef({});
-  const [isEditing, setIsEditing] = useState(false);
+const OtherDocsInfo = ({
+  onNext,
+  open,
+  onToggle,
+  initialDocuments = [],
+  // permission,
+}) => {
 
-  const validationSchema = Yup.object({
-    documents: Yup.array()
-      .of(
-        Yup.object({
-          documentType: Yup.string().required("Document type is required"),
-          documentFile: Yup.mixed()
-            .required("Document is required")
-            .test("fileSize", "File size must be less than 5MB", (value) => {
-              if (!value) return true;
-              return value.size <= MAX_FILE_SIZE;
-            })
-            .test("fileType", "Unsupported file format", (value) => {
-              if (!value) return true;
-              return SUPPORTED_FORMATS.includes(value.type);
-            }),
-        })
-      )
-      .min(1, "At least one document is required")
-      .max(MAX_DOCUMENTS, `Maximum ${MAX_DOCUMENTS} documents allowed`),
-  });
+  const permission = true;
 
   const formik = useFormik({
     initialValues: {
-      documents: initialDocuments.length > 0 ? initialDocuments : [
-        {
-          documentType: step === "prepd" ? "Passport" : "",
-          documentFile: step === "prepd" ? null : null,
-        },
-      ],
+      documents: [],
     },
-    // validationSchema,
+
     onSubmit: (values) => {
-      const formData = new FormData();
-      values.documents.forEach((doc, index) => {
-        formData.append(`documents[${index}][documentType]`, doc.documentType);
-        if (doc.documentFile) {
-          formData.append(`documents[${index}][documentFile]`, doc.documentFile);
-        }
-      });
-      console.log("Form Data:", Object.fromEntries(formData));
-            onNext();
-setIsEditing(false);
+      // ONLY NEW DOCUMENTS
+      console.log("New Documents:", values.documents);
+
+      onNext();
     },
   });
 
-  const canAddMore = formik.values.documents.length < MAX_DOCUMENTS;
+  const totalDocuments =
+    initialDocuments.length + formik.values.documents.length;
 
-  const addDocument = () => {
-    if (!canAddMore) {
-      alert(`Maximum ${MAX_DOCUMENTS} documents allowed`);
-      return;
-    }
-
-    // Check if the last document is filled
-    const lastDoc = formik.values.documents[formik.values.documents.length - 1];
-    if (!lastDoc.documentType || !lastDoc.documentFile) {
-      // Scroll to the last incomplete document
-      const lastIndex = formik.values.documents.length - 1;
-      const element = document.getElementById(`document-${lastIndex}`);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "center" });
-        element.classList.add("border-red-300", "bg-red-50");
-        setTimeout(() => {
-          element.classList.remove("border-red-300", "bg-red-50");
-        }, 2000);
-      }
-      return;
-    }
-
-    formik.setFieldValue("documents", [
-      ...formik.values.documents,
-      {
-        documentType: "",
-        documentFile: null,
-      },
-    ]);
-
-    // Focus on the new document's first field after a short delay
-    setTimeout(() => {
-      const newIndex = formik.values.documents.length;
-      const element = document.querySelector(
-        `[name="documents.${newIndex}.documentType"]`
-      );
-      if (element) element.focus();
-    }, 100);
-  };
-
-  const removeDocument = (index) => {
-    if (formik.values.documents.length <= 1) {
-      alert("At least one document is required");
-      return;
-    }
-    const updated = formik.values.documents.filter((_, i) => i !== index);
-    formik.setFieldValue("documents", updated);
-
-    // Reset touched state for removed document
-    if (formik.touched.documents) {
-      const newTouched = { ...formik.touched.documents };
-      delete newTouched[index];
-      formik.setTouched(newTouched);
-    }
-  };
-
-  const handleFileChange = (index, event) => {
-    const file = event.target.files[0];
-    if (file) {
-      // Validate file type
-      if (!SUPPORTED_FORMATS.includes(file.type)) {
-        alert("Please upload JPG, PNG, or PDF files only");
-        event.target.value = "";
-        return;
-      }
-      // Validate file size
-      if (file.size > MAX_FILE_SIZE) {
-        alert("File size must be less than 5MB");
-        event.target.value = "";
-        return;
-      }
-      formik.setFieldValue(`documents.${index}.documentFile`, file);
-    }
-  };
-
-  const getFileStatus = (doc) => {
-    if (doc.documentFile) {
-      if (doc.documentFile instanceof File) {
-        return `📎 ${doc.documentFile.name} (${(doc.documentFile.size / 1024).toFixed(1)} KB)`;
-      }
-      return "📎 File uploaded";
-    }
-    return "No file selected";
-  };
-
-  console.log(formik.errors);
-
+  const canAddMore = totalDocuments < MAX_DOCUMENTS;
 
   return (
     <form onSubmit={formik.handleSubmit}>
       <Accordion
         title="Other Documents"
-        subtitle={`Upload additional supporting documents (${formik.values.documents.length}/${MAX_DOCUMENTS})`}
+        subtitle={`Documents (${totalDocuments}/${MAX_DOCUMENTS})`}
         icon={RiFileList3Line}
         open={open}
         onToggle={onToggle}
       >
-        <div className="space-y-2">
-          {formik.values.documents.map((doc, index) => (
-            <div
-              key={index}
-              id={`document-${index}`}
-              className="p-4 border border-gray-200 rounded-lg hover:border-primary transition-colors duration-200"
-            >
-              <div className="flex justify-between items-start mb-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-gray-600">
-                    Document #{index + 1}
-                  </span>
-                  {doc.documentFile && doc.documentType && (
-                    <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
-                      ✓ Completed
-                    </span>
-                  )}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => removeDocument(index)}
-                  className="text-gray-400 hover:text-red-600 transition-colors p-1"
-                  disabled={formik.values.documents.length <= 1}
-                  title="Remove document"
-                >
-                  <RiDeleteBin6Line size={18} />
-                </button>
-              </div>
+        <div className="space-y-3">
+          {/* =========================
+              EXISTING / SAMPLE DOCUMENTS - NO FORMIK
+          ========================== */}
+          {initialDocuments.length > 0 && (
+            <div className="space-y-2">
+              {/* <p className="text-xs font-semibold text-gray-500">
+                Documents
+              </p> */}
 
-              <div className="grid grid-cols-12 gap-4 items-start">
-                {/* Document Type */}
-                <div className="col-span-12 md:col-span-4">
-                  <SelectInput
-                    label="Document Type"
-                    name={`documents.${index}.documentType`}
-                    options={documentTypes}
-                    placeholder="Select Document Type"
-                    value={doc.documentType}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    className="w-full"
-                    disabled={step && !isEditing}
-                  />
-                  <ErrorMsg
-                    error={
-                      formik.touched.documents?.[index]?.documentType &&
-                      formik.errors.documents?.[index]?.documentType
-                    }
-                  />
-                </div>
-
-                {/* Upload */}
-                <div className="col-span-12 md:col-span-6">
-                  <div className="relative">
-                    <UploadInput
-                      label="Upload Document"
-                      name={`documents.${index}.documentFile`}
-                      accept=".jpg,.jpeg,.png,.pdf"
-                      onChange={(e) => handleFileChange(index, e)}
-                      className="w-full"
-                      disabled={step && !isEditing}
-                    />
-                    {doc.documentFile && (
-                      <div className="mt-1 text-xs text-gray-600 truncate">
-                        {getFileStatus(doc)}
-                      </div>
-                    )}
-                  </div>
-                  <ErrorMsg
-                    error={
-                      formik.touched.documents?.[index]?.documentFile &&
-                      formik.errors.documents?.[index]?.documentFile
-                    }
-                  />
-                </div>
-
-                {/* Status & Actions */}
-                {/* <div className="col-span-12 md:col-span-2 flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const input = document.querySelector(
-                        `input[name="documents.${index}.documentFile"]`
-                      );
-                      if (input) input.click();
-                    }}
-                    className="w-full h-10 px-3 rounded-lg bg-gray-100 text-gray-600 flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors text-sm"
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                {initialDocuments.map((doc, index) => (
+                  <div
+                    key={`existing-${index}`}
+                    className="flex items-center gap-2 px-3 py-2 border border-gray-300/70 rounded-lg bg-gray-50 cursor-pointer"
                   >
-                    <RiUploadCloud2Line size={16} />
-                    Browse
-                  </button>
-                </div> */}
+                    <div className="w-8 h-8 shrink-0 rounded-md border border-primary/30 bg-primary/10 flex items-center justify-center">
+                      <RiFileList3Line size={16} className="text-primary" />
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-medium text-gray-700 truncate">
+                        {doc.documentType || "Document"}
+                      </p>
+
+                      <p className="text-[10px] text-gray-400 truncate">
+                        {doc.documentFile?.name ||
+                          doc.fileName ||
+                          "Uploaded document"}
+                      </p>
+                    </div>
+
+                    <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded-full bg-green-100 text-green-700">
+                      ✓
+                    </span>
+                  </div>
+                ))}
               </div>
-            </div>
-          ))}
-
-          {/* Add Document Button */}
-          <div className="flex md:flex-row flex-col items-center justify-between pt-2 border-t border-gray-200">
-            <button
-              type="button"
-              onClick={addDocument}
-              disabled={(step && !isEditing) || !canAddMore}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${!((step && !isEditing) || !canAddMore)
-                ? "text-primary cursor-pointer border-primary"
-                : "text-gray-400 cursor-not-allowed border border-gray-200"
-                }`}
-            >
-              <RiAddLine size={20} />
-              <span className="text-sm font-medium">
-                Add Another Document {(step && !isEditing) || !canAddMore && `(Max ${MAX_DOCUMENTS})`}
-              </span>
-            </button>
-            <span className="text-xs text-gray-400">
-              {formik.values.documents.length} of {MAX_DOCUMENTS} documents
-            </span>
-          </div>
-
-          {/* Form Errors */}
-          {formik.errors.documents && typeof formik.errors.documents === 'string' && (
-            <div className="mt-2 p-3 bg-red-50 rounded-lg border border-red-200">
-              <ErrorMsg error={formik.errors.documents} />
             </div>
           )}
-        </div>
 
-        <div className="flex justify-end mt-6 pt-4 border-t border-gray-200 gap-3">
-          {step === "prepd" && !isEditing &&
-              <Button
-                type="button"
-                onClick={() => setIsEditing(!isEditing)}
-                btnName={"Edit Document"}
-                style="bg-primary hover:bg-primary text-white w-full sm:w-auto"
-              />
-            }
-            {(!step || isEditing) &&
+          {/* =========================
+              NEW DOCUMENTS FORMIK ONLY
+          ========================== */}
+
+          {formik.values.documents.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-gray-500 uppercase">
+                New Documents
+              </p>
+
+              {formik.values.documents.map((doc, index) => (
+                <div
+                  key={`new-${index}`}
+                  className="p-3 border border-primary/20 rounded-lg"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-medium text-gray-600">
+                      New Document #{index + 1}
+                    </span>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const updated = formik.values.documents.filter(
+                          (_, i) => i !== index,
+                        );
+
+                        formik.setFieldValue("documents", updated);
+                      }}
+                      className="text-gray-400 hover:text-red-600"
+                    >
+                      <RiDeleteBin6Line size={18} />
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-12 gap-3">
+                    <div className="col-span-12 md:col-span-5">
+                      <SelectInput
+                        label="Document Type"
+                        name={`documents.${index}.documentType`}
+                        options={documentTypes}
+                        placeholder="Select Document Type"
+                        value={doc.documentType}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                      />
+
+                      <ErrorMsg
+                        error={
+                          formik.touched.documents?.[index]?.documentType &&
+                          formik.errors.documents?.[index]?.documentType
+                        }
+                      />
+                    </div>
+
+                    <div className="col-span-12 md:col-span-7">
+                      <UploadInput
+                        label="Upload Document"
+                        name={`documents.${index}.documentFile`}
+                        accept=".jpg,.jpeg,.png,.pdf"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+
+                          if (!file) return;
+
+                          if (!SUPPORTED_FORMATS.includes(file.type)) {
+                            alert("Please upload JPG, PNG, or PDF files only");
+                            e.target.value = "";
+                            return;
+                          }
+
+                          if (file.size > MAX_FILE_SIZE) {
+                            alert("File size must be less than 5MB");
+                            e.target.value = "";
+                            return;
+                          }
+
+                          formik.setFieldValue(
+                            `documents.${index}.documentFile`,
+                            file,
+                          );
+                        }}
+                      />
+
+                      {doc.documentFile && (
+                        <p className="mt-1 text-xs text-gray-500 truncate">
+                          📎 {doc.documentFile.name}
+                        </p>
+                      )}
+
+                      <ErrorMsg
+                        error={
+                          formik.touched.documents?.[index]?.documentFile &&
+                          formik.errors.documents?.[index]?.documentFile
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* ADD DOCUMENT */}
+          {permission && canAddMore && (
+            <button
+              type="button"
+              onClick={() => {
+                const last =
+                  formik.values.documents[formik.values.documents.length - 1];
+
+                // Check previous NEW document only
+                if (last && (!last.documentType || !last.documentFile)) {
+                  alert("Please complete the previous document first");
+                  return;
+                }
+
+                formik.setFieldValue("documents", [
+                  ...formik.values.documents,
+                  {
+                    documentType: "",
+                    documentFile: null,
+                  },
+                ]);
+              }}
+              className="flex items-center gap-2 px-3 py-2 text-sm text-primary border border-primary/20 rounded-lg hover:bg-primary/5"
+            >
+              <RiAddLine size={18} />
+              Add Another Document
+            </button>
+          )}
+
+          {/* SAVE ONLY IF NEW DOC EXISTS */}
+          {formik.values.documents.length > 0 && (
+            <div className="flex justify-end pt-2 border-t">
               <Button
                 type="submit"
                 btnName="Save & Continue"
-                style="bg-primary text-white hover:bg-primary cursor-pointer w-full sm:w-auto"
-              />}
-            {/* {formik.isSubmitting ? "Saving..." : "Save"} */}
+                style="bg-primary hover:bg-primary text-white text-sm"
+              />
+            </div>
+          )}
         </div>
       </Accordion>
     </form>

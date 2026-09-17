@@ -22,12 +22,12 @@ const Accordion = ({
         <div className="flex items-center gap-4">
           {Icon && (
             <div className="h-10 w-10 rounded-lg bg-blue-50 flex items-center justify-center">
-              <Icon className="text-blue-600 text-lg" />
+              <Icon className="text-primary text-lg" />
             </div>
           )}
 
           <div>
-            <h3 className="text-sm font-semibold text-slate-800">
+            <h3 className="text-sm font-semibold font-sans text-slate-700">
               {title}
             </h3>
 

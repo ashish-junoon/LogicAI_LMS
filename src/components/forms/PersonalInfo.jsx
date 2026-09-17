@@ -11,19 +11,19 @@ import ErrorMsg from "../utils/ErrorMsg";
 import { gender, meritalStatus, religion } from "../../content/data";
 import { useState } from "react";
 
-const PersonalInfo = ({ onNext, open, onToggle, step }) => {
-  const [isEditing, setIsEditing] = useState(false)
+const PersonalInfo = ({ onNext, open, onToggle, step, permission }) => {
+  const [isEditing, setIsEditing] = useState(false);
 
   const formik = useFormik({
     initialValues: {
-      customerName: step === "prepd" ? "Rajesh Kumar" : "",
-      fathername: step === "prepd" ? "Suresh Kumar" : "",
-      dob: step === "prepd" ? "1990-01-15" : "",
-      mobile: step === "prepd" ? "XXXXXX" : "",
-      email: step === "prepd" ? "rajesh@example.com" : "",
-      religion: step === "prepd" ? "Hindu" : "",
-      maritalStatus: step === "prepd" ? "Married" : "",
-      gender: step === "prepd" ? "Male" : "",
+      customerName: "Rajesh Kumar",
+      fathername: "Suresh Kumar",
+      dob: "1990-01-15",
+      mobile: "9898747454",
+      email: "rajesh@example.com",
+      religion: "Hindu",
+      maritalStatus: "Married",
+      gender: "Male",
     },
 
     // validationSchema: Yup.object({
@@ -54,8 +54,8 @@ const PersonalInfo = ({ onNext, open, onToggle, step }) => {
 
     onSubmit: async (values) => {
       console.log(values);
-            onNext();
-setIsEditing(false);
+      onNext();
+      setIsEditing(false);
     },
   });
 
@@ -69,7 +69,6 @@ setIsEditing(false);
         open={open}
       >
         <div className="grid max-md:grid-cols-2 grid-cols-4 gap-2">
-
           <div>
             <TextInput
               label="Customer Name"
@@ -77,14 +76,11 @@ setIsEditing(false);
               value={formik.values.customerName}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              disabled={step && !isEditing}
+              disabled={!isEditing}
             />
 
             <ErrorMsg
-              error={
-                formik.touched.customerName &&
-                formik.errors.customerName
-              }
+              error={formik.touched.customerName && formik.errors.customerName}
             />
           </div>
 
@@ -95,14 +91,11 @@ setIsEditing(false);
               value={formik.values.fathername}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              disabled={step && !isEditing}
+              disabled={!isEditing}
             />
 
             <ErrorMsg
-              error={
-                formik.touched.fathername &&
-                formik.errors.fathername
-              }
+              error={formik.touched.fathername && formik.errors.fathername}
             />
           </div>
 
@@ -113,15 +106,10 @@ setIsEditing(false);
               value={formik.values.dob}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              disabled={step && !isEditing}
+              disabled={!isEditing}
             />
 
-            <ErrorMsg
-              error={
-                formik.touched.dob &&
-                formik.errors.dob
-              }
-            />
+            <ErrorMsg error={formik.touched.dob && formik.errors.dob} />
           </div>
 
           <div>
@@ -129,20 +117,13 @@ setIsEditing(false);
               label="Mobile"
               name="mobile"
               value={formik.values.mobile}
-              onChange={step === "prepd" ? (e) => {
-                if (e.target.value.length < 6) return;
-                formik.setFieldValue('mobile', e.target.value)
-              } : formik.handleChange}
+              onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               maxLength={10}
+              disabled={!isEditing}
             />
 
-            <ErrorMsg
-              error={
-                formik.touched.mobile &&
-                formik.errors.mobile
-              }
-            />
+            <ErrorMsg error={formik.touched.mobile && formik.errors.mobile} />
           </div>
 
           <div>
@@ -152,15 +133,10 @@ setIsEditing(false);
               value={formik.values.email}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              disabled={step && !isEditing}
+              disabled={!isEditing}
             />
 
-            <ErrorMsg
-              error={
-                formik.touched.email &&
-                formik.errors.email
-              }
-            />
+            <ErrorMsg error={formik.touched.email && formik.errors.email} />
           </div>
 
           <div>
@@ -172,14 +148,11 @@ setIsEditing(false);
               value={formik.values.religion}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              disabled={step && !isEditing}
+              disabled={!isEditing}
             />
 
             <ErrorMsg
-              error={
-                formik.touched.religion &&
-                formik.errors.religion
-              }
+              error={formik.touched.religion && formik.errors.religion}
             />
           </div>
 
@@ -192,13 +165,12 @@ setIsEditing(false);
               value={formik.values.maritalStatus}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              disabled={step && !isEditing}
+              disabled={!isEditing}
             />
 
             <ErrorMsg
               error={
-                formik.touched.maritalStatus &&
-                formik.errors.maritalStatus
+                formik.touched.maritalStatus && formik.errors.maritalStatus
               }
             />
           </div>
@@ -212,35 +184,40 @@ setIsEditing(false);
               value={formik.values.gender}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              disabled={step && !isEditing}
+              disabled={!isEditing}
             />
 
-            <ErrorMsg
-              error={
-                formik.touched.gender &&
-                formik.errors.gender
-              }
-            />
+            <ErrorMsg error={formik.touched.gender && formik.errors.gender} />
           </div>
-
         </div>
 
-        <div className="flex justify-end mt-6 gap-3">
-          {step === "prepd" && !isEditing &&
-            <Button
-              type="button"
-              onClick={() => setIsEditing(!isEditing)}
-              btnName={"Edit Personal Info"}
-              style="bg-primary hover:bg-primary text-white w-full sm:w-auto"
-            />}
-          {(!step || isEditing) &&
-            <Button
-              type="submit"
-              btnName="Save & Continue"
-              style="bg-primary hover:bg-primary text-white"
-            />}
-
-        </div>
+        {permission && (
+          <div className="flex justify-end mt-6 gap-1">
+            {!isEditing && (
+              <Button
+                type="button"
+                onClick={() => setIsEditing(true)}
+                btnName={"Edit"}
+                style="bg-primary hover:bg-primary text-white w-full sm:w-auto text-sm"
+              />
+            )}
+            {isEditing && (
+              <>
+                <Button
+                  onClick={() => setIsEditing(false)}
+                  type="button"
+                  btnName="Cancel"
+                  style="bg-primary hover:bg-primary text-white text-sm"
+                />
+                <Button
+                  type="submit"
+                  btnName="Save & Continue"
+                  style="bg-primary hover:bg-primary text-white text-sm"
+                />
+              </>
+            )}
+          </div>
+        )}
       </Accordion>
     </form>
   );

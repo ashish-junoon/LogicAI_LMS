@@ -57,7 +57,7 @@ const DateInput = ({
 
   return (
     <div>
-      <label htmlFor={id} className="block mb-1 text-sm font-medium text-black">
+      <label htmlFor={id} className="block mb-0.5 text-sm font-medium text-black">
         {label}
         {required ? <span className="text-danger text-sm">*</span> : ""}
       </label>
@@ -74,7 +74,7 @@ const DateInput = ({
           name={name}
           id={id}
           placeholder={placeholder}
-          className="bg-white border border-gray-300 text-gray-800 text-sm uppercase rounded focus:ring-primary focus:border-primary block w-full pl-10 p-1 focus:shadow-sm focus:outline-light"
+          className={`${disabled ? "bg-gray-100" : "bg-white"} border border-gray-300 text-gray-800 text-sm uppercase rounded-md focus:ring-primary focus:border-primary block w-full pl-10 py-1.5 focus:shadow-sm focus:outline-light`}
           // value={value}
           value={formatDate(value)}
           onChange={onChange}

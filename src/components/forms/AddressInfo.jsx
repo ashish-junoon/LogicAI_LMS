@@ -9,41 +9,41 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { districtList, houseType, statesList } from "../../content/data";
 
-const AddressInfo = ({ onNext, open, onToggle, step }) => {
+const AddressInfo = ({ onNext, open, onToggle, step, permission }) => {
   const [isEditing, setIsEditing] = useState(false)
   const [isSameAsCurrent, setIsSameAsCurrent] = useState(false);
 
   const formik = useFormik({
     initialValues: {
       // Aadhaar Address (readonly)
-      aadhaarAddress: step === "prepd" ? "123 Main Street, Near Market" : "",
-      aadhaarPincode: step === "prepd" ? "110001" : "",
-      aadhaarState: step === "prepd" ? "Delhi" : "",
-      aadhaarDistrict: step === "prepd" ? "New Delhi" : "",
-      aadhaarCity: step === "prepd" ? "Delhi" : "",
-      aadhaarLocality: step === "prepd" ? "Connaught Place" : "",
+      aadhaarAddress: "123 Main Street, Near Market",
+      aadhaarPincode: "110001",
+      aadhaarState: "Delhi",
+      aadhaarDistrict: "New Delhi",
+      aadhaarCity: "Delhi",
+      aadhaarLocality: "Connaught Place",
 
       // Current Address
-      currentAddress: step === "prepd" ? "456 Park Avenue" : "",
-      currentPincode: step === "prepd" ? "1100" : "",
-      currentState: step === "prepd" ? "Delhi" : "",
-      currentDistrict: step === "prepd" ? "New Delhi" : "",
-      currentCity: step === "prepd" ? "Delhi" : "",
-      currentLocality: step === "prepd" ? "Rajendra Place" : "",
-      currentLandmark: step === "prepd" ? "Near Metro Station" : "",
-      currentResidenceType: step === "prepd" ? "Owned" : "",
-      currentYearsAtAddress: step === "prepd" ? "5" : "",
+      currentAddress: "456 Park Avenue",
+      currentPincode: "1100",
+      currentState: "Delhi",
+      currentDistrict: "New Delhi",
+      currentCity: "Delhi",
+      currentLocality: "Rajendra Place",
+      currentLandmark: "Near Metro Station",
+      currentResidenceType: "Owned",
+      currentYearsAtAddress: "5",
 
       // Permanent Address
-      permanentAddress: step === "prepd" ? "789 Green Valley" : "",
-      permanentPincode: step === "prepd" ? "110003" : "",
-      permanentState: step === "prepd" ? "Delhi" : "",
-      permanentDistrict: step === "prepd" ? "New Delhi" : "",
-      permanentCity: step === "prepd" ? "Delhi" : "",
-      permanentLocality: step === "prepd" ? "Vasant Vihar" : "",
-      permanentLandmark: step === "prepd" ? "Near Park" : "",
-      permanentResidenceType: step === "prepd" ? "Rented" : "",
-      permanentYearsAtAddress: step === "prepd" ? "3" : "",
+      permanentAddress: "789 Green Valley",
+      permanentPincode: "110003",
+      permanentState: "Delhi",
+      permanentDistrict: "New Delhi",
+      permanentCity: "Delhi",
+      permanentLocality: "Vasant Vihar",
+      permanentLandmark: "Near Park",
+      permanentResidenceType: "Rented",
+      permanentYearsAtAddress: "3",
     },
 
     validationSchema: Yup.object({
@@ -291,7 +291,7 @@ setIsEditing(false);
                 value={formik.values.currentAddress}
                 onChange={handleCurrentFieldChange}
                 onBlur={formik.handleBlur}
-                disabled={step && !isEditing}
+                disabled={!isEditing}
               />
               <ErrorMsg
                 error={
@@ -304,12 +304,9 @@ setIsEditing(false);
                 label="Current Pincode"
                 name="currentPincode"
                 value={formik.values.currentPincode}
-                onChange={step === "prepd" ? (e) => {
-                  if (e.target.value.length < 4) return;
-                  handleCurrentFieldChange(e)
-                } : handleCurrentFieldChange}
+                onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                disabled={step && !isEditing}
+                disabled={!isEditing}
                 maxLength={6}
               />
               <ErrorMsg
@@ -327,7 +324,7 @@ setIsEditing(false);
                 onChange={handleCurrentFieldChange}
                 onBlur={formik.handleBlur}
                 options={statesList}
-                disabled={step && !isEditing}
+                disabled={!isEditing}
               />
               <ErrorMsg
                 error={
@@ -344,7 +341,7 @@ setIsEditing(false);
                 onChange={handleCurrentFieldChange}
                 onBlur={formik.handleBlur}
                 options={districtList}
-                disabled={step && !isEditing}
+                disabled={!isEditing}
               />
               <ErrorMsg
                 error={
@@ -360,7 +357,7 @@ setIsEditing(false);
                 value={formik.values.currentCity}
                 onChange={handleCurrentFieldChange}
                 onBlur={formik.handleBlur}
-                disabled={step && !isEditing}
+                disabled={!isEditing}
               />
               <ErrorMsg
                 error={formik.touched.currentCity && formik.errors.currentCity}
@@ -373,7 +370,7 @@ setIsEditing(false);
                 value={formik.values.currentLocality}
                 onChange={handleCurrentFieldChange}
                 onBlur={formik.handleBlur}
-                disabled={step && !isEditing}
+                disabled={!isEditing}
               />
               <ErrorMsg
                 error={
@@ -389,7 +386,7 @@ setIsEditing(false);
                 value={formik.values.currentLandmark}
                 onChange={handleCurrentFieldChange}
                 onBlur={formik.handleBlur}
-                disabled={step && !isEditing}
+                disabled={!isEditing}
               />
               <ErrorMsg
                 error={
@@ -407,7 +404,7 @@ setIsEditing(false);
                 onChange={handleCurrentFieldChange}
                 onBlur={formik.handleBlur}
                 options={houseType}
-                disabled={step && !isEditing}
+                disabled={!isEditing}
               />
               <ErrorMsg
                 error={
@@ -429,7 +426,7 @@ setIsEditing(false);
                   label: String(i + 1),
                   value: String(i + 1),
                 }))}
-                disabled={step && !isEditing}
+                disabled={!isEditing}
               />
               <ErrorMsg
                 error={
@@ -447,13 +444,13 @@ setIsEditing(false);
             <h3 className="text-lg font-semibold text-gray-700 mr-4">
               Permanent Address
             </h3>
-            {step !== "prepd" && <label className="flex items-center space-x-2 cursor-pointer">
+            {isEditing && <label className="flex items-center space-x-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={isSameAsCurrent}
                 onChange={handleSameAsCurrent}
                 className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
-                disabled={step && !isEditing}
+                disabled={!isEditing}
               />
               <span className="text-sm text-gray-600">
                 Same as Current Address
@@ -469,7 +466,7 @@ setIsEditing(false);
                 value={formik.values.permanentAddress}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                disabled={isSameAsCurrent || (step && !isEditing)}
+                disabled={isSameAsCurrent || (!isEditing)}
                 className={isSameAsCurrent ? "bg-gray-100" : ""}
               />
               <ErrorMsg
@@ -486,7 +483,7 @@ setIsEditing(false);
                 value={formik.values.permanentPincode}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                disabled={isSameAsCurrent || (step && !isEditing)}
+                disabled={isSameAsCurrent || (!isEditing)}
                 className={isSameAsCurrent ? "bg-gray-100" : ""}
               />
               <ErrorMsg
@@ -505,7 +502,7 @@ setIsEditing(false);
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 options={statesList}
-                disabled={isSameAsCurrent || (step && !isEditing)}
+                disabled={isSameAsCurrent || (!isEditing)}
                 className={isSameAsCurrent ? "bg-gray-100" : ""}
               />
               <ErrorMsg
@@ -523,7 +520,7 @@ setIsEditing(false);
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 options={districtList}
-                disabled={isSameAsCurrent || (step && !isEditing)}
+                disabled={isSameAsCurrent || (!isEditing)}
                 className={isSameAsCurrent ? "bg-gray-100" : ""}
               />
               <ErrorMsg
@@ -540,7 +537,7 @@ setIsEditing(false);
                 value={formik.values.permanentCity}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                disabled={isSameAsCurrent || (step && !isEditing)}
+                disabled={isSameAsCurrent || (!isEditing)}
                 className={isSameAsCurrent ? "bg-gray-100" : ""}
               />
               <ErrorMsg
@@ -556,7 +553,7 @@ setIsEditing(false);
                 value={formik.values.permanentLocality}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                disabled={isSameAsCurrent || (step && !isEditing)}
+                disabled={isSameAsCurrent || (!isEditing)}
                 className={isSameAsCurrent ? "bg-gray-100" : ""}
               />
               <ErrorMsg
@@ -573,7 +570,7 @@ setIsEditing(false);
                 value={formik.values.permanentLandmark}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                disabled={isSameAsCurrent || (step && !isEditing)}
+                disabled={isSameAsCurrent || (!isEditing)}
                 className={isSameAsCurrent ? "bg-gray-100" : ""}
               />
               <ErrorMsg
@@ -592,7 +589,7 @@ setIsEditing(false);
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 options={houseType}
-                disabled={isSameAsCurrent || (step && !isEditing)}
+                disabled={isSameAsCurrent || (!isEditing)}
                 className={isSameAsCurrent ? "bg-gray-100" : ""}
               />
               <ErrorMsg
@@ -610,7 +607,7 @@ setIsEditing(false);
                 value={formik.values.permanentYearsAtAddress}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                disabled={isSameAsCurrent || (step && !isEditing)}
+                disabled={isSameAsCurrent || (!isEditing)}
                 className={isSameAsCurrent ? "bg-gray-100" : ""}
                 options={Array.from({ length: 20 }, (_, i) => ({
                   label: String(i + 1),
@@ -628,22 +625,30 @@ setIsEditing(false);
           </div>
         </div>
 
-        <div className="flex justify-end mt-6 gap-3">
-          {step === "prepd" && !isEditing &&
+        {permission && <div className="flex justify-end mt-6 gap-3">
+          {!isEditing &&
             <Button
               type="button"
-              onClick={() => setIsEditing(!isEditing)}
-              btnName={"Edit Address"}
-              style="bg-primary hover:bg-primary text-white w-full sm:w-auto"
+              onClick={() => setIsEditing(true)}
+              btnName={"Edit"}
+              style="bg-primary hover:bg-primary text-white w-full sm:w-auto text-sm"
             />
           }
-          {(!step || isEditing) &&
+            {isEditing &&
+            <>
+            <Button
+              type="button"
+              btnName="Cancel"
+              onClick={()=> setIsEditing(false)}
+              style="bg-primary hover:bg-primary text-white text-sm"
+            />
             <Button
               type="submit"
               btnName="Save & Continue"
-              style="bg-primary hover:bg-primary text-white"
-            />}
-        </div>
+              style="bg-primary hover:bg-primary text-white text-sm"
+            />
+            </>}
+        </div>}
       </Accordion>
     </form>
   );

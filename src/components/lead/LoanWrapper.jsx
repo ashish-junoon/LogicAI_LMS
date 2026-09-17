@@ -57,7 +57,7 @@ const LoanWrapper = ({ loanData, userData, onAction }) => {
       case "loan":
         return <LoanDetails />;
       case "remarks":
-        return <RemarksHistory />;
+        return <RemarksHistory permission={true} />;
       case "user":
         return <LeadForm />;
       case "documents":

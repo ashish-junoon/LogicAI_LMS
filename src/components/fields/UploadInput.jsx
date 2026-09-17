@@ -53,7 +53,7 @@ function UploadInput({
   return (
     <>
       {/* Label */}
-      <label className="block mb-1 text-sm font-medium text-gray-800">
+      <label className="block mb-0.5 text-sm font-medium text-gray-800">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
 
@@ -65,7 +65,7 @@ function UploadInput({
 
         <label
           htmlFor={id}
-          className={`bg-white border border-gray-300 text-gray-700 text-xs rounded-sm block w-full ${icon ? "pl-10" : "px-3"} py-2 cursor-pointer hover:border-primary focus-within:border-primary overflow-hidden whitespace-nowrap text-ellipsis`}
+          className={`border border-gray-300 text-gray-700 text-xs rounded-md block w-full ${icon ? "pl-10" : "px-3"} ${disabled ? "bg-gray-100" : "bg-white"} py-2 cursor-pointer hover:border-primary focus-within:border-primary overflow-hidden whitespace-nowrap text-ellipsis`}
         >
           <input
             type="file"

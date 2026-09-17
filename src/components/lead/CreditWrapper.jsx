@@ -41,7 +41,11 @@ const CreditWrapper = ({ loanData, userData, onAction }) => {
       case "loaninfo":
         return (
           <>
-            <div className="flex justify-end mb-2">
+            <div className="flex justify-between items-center gap-2 mb-2 text-sm">
+              <div className="flex items-center gap-2">
+                <p className="text-gray-600  font-medium">Current: </p>
+              <p className="text-gray-500">Veledian</p>
+              </div>
               <Button
                 style={"bg-primary text-white"}
                 btnName={"Switch Provider"}
@@ -52,7 +56,7 @@ const CreditWrapper = ({ loanData, userData, onAction }) => {
           </>
         );
       case "remarks":
-        return <RemarksHistory />;
+        return <RemarksHistory permission={true} />;
       case "bsa":
         return <BankStatementAnalyser />;
       case "documents":
@@ -135,8 +139,8 @@ const CreditWrapper = ({ loanData, userData, onAction }) => {
           </div>
 
           <div className="flex justify-end gap-2">
-            <Button style={"border border-gray-200"} btnName={"Cancle"} />
-            <Button style={"bg-primary text-white"} btnName={"Update"} />
+            <Button style={"border border-gray-200 text-sm"} btnName={"Cancle"} onClick={()=> {setswitchLoanProvier(false)}} />
+            <Button style={"bg-primary text-white text-sm"} btnName={"Update"} onClick={()=> {setswitchLoanProvier(false)}} />
           </div>
         </div>
       </Modal>

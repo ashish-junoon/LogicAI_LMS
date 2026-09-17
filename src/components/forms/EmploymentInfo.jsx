@@ -12,18 +12,18 @@ import ErrorMsg from "../utils/ErrorMsg";
 import { sector, employmentType } from "../../content/data";
 import UploadInput from "../fields/UploadInput";
 
-const EmploymentInfo = ({ onNext, open, onToggle, step }) => {
+const EmploymentInfo = ({ onNext, open, onToggle, step, permission }) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const formik = useFormik({
     initialValues: {
-      companyName: step === "prepd" ? "ABC Corporation" : "",
-      sector: step === "prepd" ? "other" : "",
-      employmentType: step === "prepd" ? "salaried" : "",
-      employmentSince: step === "prepd" ? "2020-06-01" : "",
-      monthlySalary: step === "prepd" ? "75000" : "",
-      salaryDate: step === "prepd" ? "2026-08-05" : "",
-      salarySlip: step === "prepd" ? null : null,
+      companyName: "ABC Corporation",
+      sector: "other",
+      employmentType: "salaried",
+      employmentSince: "2020-06-01",
+      monthlySalary: "75000",
+      salaryDate: "2026-08-05",
+      salarySlip: null,
     },
 
     // validationSchema: Yup.object({
@@ -55,7 +55,7 @@ const EmploymentInfo = ({ onNext, open, onToggle, step }) => {
               value={formik.values.companyName}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              disabled={step && !isEditing}
+              disabled={!isEditing}
             />
             <ErrorMsg
               error={formik.touched.companyName && formik.errors.companyName}
@@ -71,7 +71,7 @@ const EmploymentInfo = ({ onNext, open, onToggle, step }) => {
               value={formik.values.sector}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              disabled={step && !isEditing}
+              disabled={!isEditing}
             />
             <ErrorMsg error={formik.touched.sector && formik.errors.sector} />
           </div>
@@ -85,7 +85,7 @@ const EmploymentInfo = ({ onNext, open, onToggle, step }) => {
               value={formik.values.employmentType}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              disabled={step && !isEditing}
+              disabled={!isEditing}
             />
             <ErrorMsg
               error={
@@ -101,7 +101,7 @@ const EmploymentInfo = ({ onNext, open, onToggle, step }) => {
               value={formik.values.employmentSince}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              disabled={step && !isEditing}
+              disabled={!isEditing}
             />
             <ErrorMsg
               error={
@@ -118,7 +118,7 @@ const EmploymentInfo = ({ onNext, open, onToggle, step }) => {
               value={formik.values.monthlySalary}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              disabled={step && !isEditing}
+              disabled={!isEditing}
             />
             <ErrorMsg
               error={
@@ -134,7 +134,7 @@ const EmploymentInfo = ({ onNext, open, onToggle, step }) => {
               value={formik.values.salaryDate}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              disabled={step && !isEditing}
+              disabled={!isEditing}
             />
             <ErrorMsg
               error={formik.touched.salaryDate && formik.errors.salaryDate}
@@ -149,7 +149,7 @@ const EmploymentInfo = ({ onNext, open, onToggle, step }) => {
               onChange={(e) =>
                 formik.setFieldValue("salarySlip", e.target.files[0])
               }
-              disabled={step && !isEditing}
+              disabled={!isEditing}
             />
             <ErrorMsg
               error={formik.touched.salarySlip && formik.errors.salarySlip}
@@ -157,22 +157,30 @@ const EmploymentInfo = ({ onNext, open, onToggle, step }) => {
           </div>
         </div>
 
-        <div className="flex justify-end mt-6 gap-3">
-          {step === "prepd" && !isEditing &&
+        {permission && <div className="flex justify-end mt-6 gap-3">
+          {!isEditing &&
+              <Button
+                type="button"
+                onClick={() => setIsEditing(true)}
+                btnName={isEditing ? "Save" : "Edit"}
+                style="bg-primary hover:bg-primary text-white w-full sm:w-auto text-sm"
+                />
+              }
+            {isEditing &&
+            <>
             <Button
               type="button"
-              onClick={() => setIsEditing(!isEditing)}
-              btnName={"Edit Loan"}
-              style="bg-primary hover:bg-primary text-white w-full sm:w-auto"
-            />
-          }
-          {(!step || isEditing) &&
+              onClick={() => setIsEditing(false)}
+              btnName="Cancel"
+              style="bg-primary hover:bg-primary text-white text-sm"
+              />
             <Button
               type="submit"
               btnName="Save & Continue"
-              style="bg-primary text-white hover:bg-primary cursor-pointer w-full sm:w-auto"
-            />}
-        </div>
+              style="bg-primary hover:bg-primary text-white text-sm"
+            />
+            </>}
+        </div>}
       </Accordion>
     </form>
   );

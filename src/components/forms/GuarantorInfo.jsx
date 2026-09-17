@@ -10,24 +10,24 @@ import ErrorMsg from "../utils/ErrorMsg";
 import Button from "../utils/Button";
 import { relationList } from "../../content/data";
 
-const GuarantorInfo = ({ onNext, open, onToggle, step }) => {
+const GuarantorInfo = ({ onNext, open, onToggle, step, permission }) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const formik = useFormik({
     initialValues: {
-      guarantor1Name: step === "prepd" ? "Amit Singh" : "",
-      guarantor1Mobile: step === "prepd" ? "XXXXXX" : "",
-      guarantor1Relation: step === "prepd" ? "Friend" : "",
-      guarantor1Pan: step === "prepd" ? "XXXXXX" : "",
-      guarantor1Aadhaar: step === "prepd" ? "XXXXXX" : "",
-      guarantor1Add: step === "prepd" ? "456 Friends Colony, New Delhi" : "",
+      guarantor1Name: "Amit Singh",
+      guarantor1Mobile: "XXXXXX",
+      guarantor1Relation: "Friend",
+      guarantor1Pan: "XXXXXX",
+      guarantor1Aadhaar: "XXXXXX",
+      guarantor1Add: "456 Friends Colony, New Delhi",
 
-      coborrowerName: step === "prepd" ? "Priya Sharma" : "",
-      coborrowerMobile: step === "prepd" ? "XXXXXX" : "",
-      coborrowerRelation: step === "prepd" ? "Spouse" : "",
-      coborrowerPan: step === "prepd" ? "XXXXXX" : "",
-      coborrowerAadhaar: step === "prepd" ? "XXXXXX" : "",
-      coborrowerAdd: step === "prepd" ? "789 Co-operator Housing Society, Mumbai" : "",
+      coborrowerName: "Priya Sharma",
+      coborrowerMobile: "XXXXXX",
+      coborrowerRelation: "Spouse",
+      coborrowerPan: "XXXXXX",
+      coborrowerAadhaar: "XXXXXX",
+      coborrowerAdd: "789 Co-operator Housing Society, Mumbai",
     },
 
     // validationSchema: Yup.object({
@@ -65,7 +65,7 @@ setIsEditing(false);
                 value={formik.values.coborrowerName}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                disabled={step && !isEditing}
+                disabled={!isEditing}
               />
               <ErrorMsg
                 error={
@@ -79,12 +79,10 @@ setIsEditing(false);
                 label="Mobile Number"
                 name="coborrowerMobile"
                 value={formik.values.coborrowerMobile}
-                onChange={step === "prepd" ? (e) => {
-                  if (e.target.value.length < 6) return;
-                  formik.setFieldValue("coborrowerMobile", e.target.value)
-                } : formik.handleChange}
+                onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 maxLength={10}
+                disabled={!isEditing}
               />
               <ErrorMsg
                 error={
@@ -102,7 +100,7 @@ setIsEditing(false);
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 options={relationList}
-                disabled={step && !isEditing}
+                disabled={!isEditing}
               />
               <ErrorMsg
                 error={
@@ -117,14 +115,11 @@ setIsEditing(false);
                 label="PAN Number"
                 name="coborrowerPan"
                 value={formik.values.coborrowerPan}
-                onChange={step === "prepd" ? (e) => {
-                  if (e.target.value.length < 5) return;
-                  formik.setFieldValue("coborrowerPan", e.target.value.toUpperCase())
-                } : (e) =>
-                  formik.setFieldValue("coborrowerPan", e.target.value.toUpperCase())
+                onChange={formik.handleChange
                 }
                 onBlur={formik.handleBlur}
                 maxLength={10}
+                disabled={!isEditing}
               />
               <ErrorMsg
                 error={formik.touched.coborrowerPan && formik.errors.coborrowerPan}
@@ -136,12 +131,10 @@ setIsEditing(false);
                 label="Aadhaar Number"
                 name="coborrowerAadhaar"
                 value={formik.values.coborrowerAadhaar}
-                onChange={step === "prepd" ? (e) => {
-                  if (e.target.value.length < 6) return;
-                  formik.setFieldValue("coborrowerAadhaar", e.target.value)
-                } : formik.handleChange}
+                onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 maxLength={12}
+                disabled={!isEditing}
               />
               <ErrorMsg
                 error={
@@ -158,7 +151,7 @@ setIsEditing(false);
                 value={formik.values.coborrowerAdd}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                disabled={step && !isEditing}
+                disabled={!isEditing}
               />
               <ErrorMsg
                 error={formik.touched.coborrowerAdd && formik.errors.coborrowerAdd}
@@ -182,7 +175,7 @@ setIsEditing(false);
                 value={formik.values.guarantor1Name}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                disabled={step && !isEditing}
+                disabled={!isEditing}
               />
               <ErrorMsg
                 error={
@@ -196,12 +189,10 @@ setIsEditing(false);
                 label="Mobile Number"
                 name="guarantor1Mobile"
                 value={formik.values.guarantor1Mobile}
-                onChange={step === "prepd" ? (e) => {
-                  if (e.target.value.length < 6) return;
-                  formik.setFieldValue("guarantor1Mobile", e.target.value)
-                } : formik.handleChange}
+                onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 maxLength={10}
+                disabled={!isEditing}
               />
               <ErrorMsg
                 error={
@@ -220,7 +211,7 @@ setIsEditing(false);
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 options={relationList}
-                disabled={step && !isEditing}
+                disabled={!isEditing}
               />
               <ErrorMsg
                 error={
@@ -235,14 +226,10 @@ setIsEditing(false);
                 label="PAN Number"
                 name="guarantor1Pan"
                 value={formik.values.guarantor1Pan}
-                onChange={step === "prepd" ? (e) => {
-                  if (e.target.value.length < 5) return;
-                  formik.setFieldValue("guarantor1Pan", e.target.value.toUpperCase())
-                } : (e) =>
-                  formik.setFieldValue("guarantor1Pan", e.target.value.toUpperCase())
-                }
+                onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 maxLength={10}
+                disabled={!isEditing}
               />
               <ErrorMsg
                 error={
@@ -256,12 +243,10 @@ setIsEditing(false);
                 label="Aadhaar Number"
                 name="guarantor1Aadhaar"
                 value={formik.values.guarantor1Aadhaar}
-                onChange={step === "prepd" ? (e) => {
-                  if (e.target.value.length < 6) return;
-                  formik.setFieldValue("guarantor1Aadhaar", e.target.value)
-                } : formik.handleChange}
+                onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 maxLength={12}
+                disabled={!isEditing}
               />
               <ErrorMsg
                 error={
@@ -278,7 +263,7 @@ setIsEditing(false);
                 value={formik.values.guarantor1Add}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                disabled={step && !isEditing}
+                disabled={!isEditing}
               />
               <ErrorMsg
                 error={
@@ -289,22 +274,30 @@ setIsEditing(false);
           </div>
         </div>
 
-        <div className="flex justify-end mt-6 gap-3">
-          {step === "prepd" && !isEditing &&
+        {permission && <div className="flex justify-end mt-6 gap-3">
+          {!isEditing &&
               <Button
                 type="button"
-                onClick={() => setIsEditing(!isEditing)}
-                btnName={isEditing ? "Save" : "Edit Gaurantor"}
-                style="bg-primary hover:bg-primary text-white w-full sm:w-auto"
+                onClick={() => setIsEditing(true)}
+                btnName={isEditing ? "Save" : "Edit"}
+                style="bg-primary hover:bg-primary text-white w-full sm:w-auto text-sm"
+                />
+              }
+            {isEditing &&
+            <>
+            <Button
+              type="button"
+              onClick={() => setIsEditing(false)}
+              btnName="Cancel"
+              style="bg-primary hover:bg-primary text-white text-sm"
               />
-            }
-            {(!step || isEditing) &&
-              <Button
-                type="submit"
-                btnName="Save & Continue"
-                style="bg-primary text-white hover:bg-primary cursor-pointer w-full sm:w-auto"
-              />}
-        </div>
+            <Button
+              type="submit"
+              btnName="Save & Continue"
+              style="bg-primary hover:bg-primary text-white text-sm"
+            />
+            </>}
+        </div>}
       </Accordion>
     </form>
   );

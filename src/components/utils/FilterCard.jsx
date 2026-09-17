@@ -8,7 +8,7 @@ const FilterCard = ({
 }) => {
   return (
     <div
-      className={`w-full rounded-sm border border-gray-200 bg-white shadow-sm ${className} mt-3`}
+      className={`w-full rounded-lg border border-gray-200 bg-white shadow-sm ${className} mt-3`}
     >
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-3">
