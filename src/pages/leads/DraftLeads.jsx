@@ -59,7 +59,10 @@ const DraftLeads = () => {
       <div className="flex-1">
         {/* header  */}
         <div className="flex justify-between py-0 px-4">
-          <div className="text-md font-medium self-center">Draft Leads</div>
+          <div className="">
+            <p className="text-xl font-medium self-center">Draft Leads</p>
+            <p className="text-sm text-gray-500">Applications started but not yet submitted for review</p>
+          </div>
         </div>
 
         {/* table data */}

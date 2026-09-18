@@ -1,3 +1,10 @@
+
+import { RiDashboardLine, RiBankCard2Line } from "react-icons/ri";
+import { FaMoneyBillTransfer, FaRegObjectUngroup } from "react-icons/fa6";
+import { IoSettings } from "react-icons/io5";
+
+
+
 export const religion = [{ label: "Hindu", value: "Hindu" }];
 
 export const meritalStatus = [
@@ -423,3 +430,60 @@ export const documentType = [
     { label: "Other Bank Statement", value: "OtherBankStatement" },  // newly added Rohit
     // { label: "Other", value: "Other" },
 ]
+
+// Single source of truth for the sidebar. Add / remove / re-nest items here —
+// Sidebar.jsx renders whatever shape this array has, so the nav updates
+// automatically. A top-level item with no `children` is a direct link
+// (see "Dashboard"); an item with `children` renders as a collapsible group.
+export const sidebarData = [
+  {
+    title: "Dashboard",
+    path: "/",
+    icon: RiDashboardLine,
+  },
+  {
+    title: "Lead Management",
+    icon: FaMoneyBillTransfer,
+    children: [
+      { title: "Draft Leads", path: "/leads-draft" },
+      { title: "New Leads", path: "/leads-new" },
+      { title: "Credit Analysis", path: "/leads-assesment" },
+      { title: "Kyc Verification", path: "/leads-kyc" },
+      { title: "Disbursement", path: "/leads-disbursement" },
+      { title: "Rejected Lead", path: "/leads-rejected" },
+    ],
+  },
+  {
+    title: "Loan Management",
+    icon: FaMoneyBillTransfer,
+    children: [{ title: "All Loans", path: "/loan-all" }],
+  },
+  {
+    title: "EMI Collection",
+    icon: RiBankCard2Line,
+    children: [{ title: "Advance EMI", path: "/advance-emi" }],
+  },
+  {
+    title: "Leads Center",
+    icon: FaRegObjectUngroup,
+    children: [{ title: "All Product Leads", path: "/all-leads" }],
+  },
+  {
+    title: "Master",
+    icon: IoSettings,
+    children: [
+      { title: "Loan Product", path: "/product-master" },
+      { title: "Branches", path: "/branches-master" },
+      { title: "Branch Managers", path: "/branch-managers-master" },
+      { title: "Financial Years", path: "/finance-years-master" },
+      { title: "Relationships", path: "/relationships-master" },
+      { title: "State Master", path: "/state-master" },
+      { title: "City Master", path: "/city-master" },
+      { title: "Occupations", path: "/occupations-master" },
+      { title: "Designation Master", path: "/designation-master" },
+      { title: "PD Question Master", path: "/quetionare-master" },
+      { title: "Page Master", path: "/page-master" },
+      { title: "Vendor Master", path: "/vendor-master" },
+    ],
+  },
+];

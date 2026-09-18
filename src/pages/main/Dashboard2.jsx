@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Overview from "../../components/dashboard/Overview";
 import PortfolioHealth from "../../components/dashboard/PortfolioHealth";
 import SectorsGeography from "../../components/dashboard/SectorsGeography";
@@ -9,10 +9,12 @@ import { formatNumber } from "../../components/dashboard/Helper";
 import Collection from "../../components/dashboard/Collection";
 import Icon from "../../components/utils/Icon";
 import SelectInput from "../../components/fields/SelectInput";
+import MultiCheckboxSelect from "../../components/fields/MultiCheckboxSelect";
 
 const Dashboard2 = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [mainData, setMainData] = useState({});
+  const [selectedProducts, setSelectedProducts] = useState([]);  
 
   const tabs = [
     { id: "overview", label: "Overview" },
@@ -23,24 +25,49 @@ const Dashboard2 = () => {
     { id: "collection", label: "Collection" },
   ];
 
-  const renderPage = () => {
-    switch (activeTab) {
-      case "overview":
-        return <Overview mainData={mainData} />;
-      case "portfolio":
-        return <PortfolioHealth />;
-      case "sectors":
-        return <SectorsGeography />;
-      case "team":
-        return <TeamPerformance />;
-      case "customers":
-        return <CustomerProfile />;
-      case "collection":
-        return <Collection />;
-      default:
-        return <Overview />;
-    }
-  };
+  // const renderPage = () => {
+  //   switch (activeTab) {
+  //     case "overview":
+  //       return <Overview mainData={mainData} />;
+  //     case "portfolio":
+  //       return <PortfolioHealth />;
+  //     case "sectors":
+  //       return <SectorsGeography />;
+  //     case "team":
+  //       return <TeamPerformance />;
+  //     case "customers":
+  //       return <CustomerProfile />;
+  //     case "collection":
+  //       return <Collection />;
+  //     default:
+  //       return <Overview />;
+  //   }
+  // };
+
+  const page = useMemo(() => {
+  switch (activeTab) {
+    case "overview":
+      return <Overview mainData={mainData} />;
+
+    case "portfolio":
+      return <PortfolioHealth />;
+
+    case "sectors":
+      return <SectorsGeography />;
+
+    case "team":
+      return <TeamPerformance />;
+
+    case "customers":
+      return <CustomerProfile />;
+
+    case "collection":
+      return <Collection />;
+
+    default:
+      return <Overview mainData={mainData} />;
+  }
+}, [activeTab, mainData]);
 
   const fetchOverview_Main = async () => {
     try {
@@ -63,7 +90,7 @@ const Dashboard2 = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white text-slate-800 text-sm">
+    <div className="min-h-screen bg-white/80 text-slate-800 text-sm">
       <header className="border-b border-slate-100 px-4 py-3 flex items-center justify-between">
         {/* Left */}
         <div className="flex items-center gap-2.5">
@@ -101,29 +128,34 @@ const Dashboard2 = () => {
         </div>
       </header>
 
-      <nav className="max-w-[1400px] mx-auto px-4 py-3 border-b border-gray-200 shadow bg-white">
-        <div className="overflow-x-auto no-scrollbar flex justify-between">
-          <div className="inline-flex min-w-max gap-2">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`shrink-0 whitespace-nowrap px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer ${
-                  activeTab === tab.id
-                    ? "bg-primary text-white shadow"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+      <nav className="mx-auto px-4 py-3 border-b border-gray-200 shadow bg-white">
+        <div className="flex items-center justify-between gap-4">
+          {/* Tabs */}
+          <div className="min-w-0 flex-1 overflow-x-auto no-scrollbar">
+            <div className="inline-flex min-w-max gap-2">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`shrink-0 whitespace-nowrap px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer ${
+                    activeTab === tab.id
+                      ? "bg-primary text-white shadow"
+                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div>
-            <SelectInput
-              // label="Current State"
+          {/* Product */}
+          <div className="relative w-48 shrink-0">
+            <MultiCheckboxSelect
+              label=""
               name="currentState"
-              placeholder="ALL"
+              id="currentState"
+              placeholder="Select product"
               options={[
                 { label: "PaisaUdhar", value: "PU" },
                 { label: "EarlyWages", value: "EW" },
@@ -133,15 +165,18 @@ const Dashboard2 = () => {
                 { label: "SME", value: "SME" },
                 { label: "JLG", value: "JLG" },
               ]}
+              value={selectedProducts}
+              onChange={(e) => {
+                setSelectedProducts(e.target.value);
+              }}
             />
           </div>
         </div>
       </nav>
 
       {/* Content */}
-      <main className="px-2 sm:px-4 py-4 max-w-[1400px] mx-auto">
-        {renderPage()}
-      </main>
+      {/* <main className="px-2 sm:px-4 py-4 mx-auto">{renderPage()}</main> */}
+      <main className="px-2 sm:px-4 py-4 mx-auto">{page}</main>
     </div>
   );
 };

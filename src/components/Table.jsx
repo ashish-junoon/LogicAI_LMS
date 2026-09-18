@@ -3,7 +3,100 @@ import DataTable from "react-data-table-component";
 import { FiSearch, FiFilter, FiDownload } from "react-icons/fi";
 
 const Table = ({ columns, data, handleFilterBtn }) => {
-  const customStyles = {
+  // const customStyles = {
+  //   table: {
+  //     style: {
+  //       backgroundColor: "#FFFFFF",
+  //       minWidth: "max-content",
+  //     },
+  //   },
+
+  //   tableWrapper: {
+  //     style: {
+  //       display: "block",
+  //       width: "100%",
+  //       overflowX: "auto",
+  //       overflowY: "hidden",
+  //       scrollbarWidth: "none",
+  //       msOverflowStyle: "none",
+  //     },
+  //   },
+
+  //   headRow: {
+  //     style: {
+  //       minHeight: "32px",
+  //       height: "32px",
+  //       backgroundColor: "#f0f0fc",
+  //       borderBottom: "1px solid #e8e8fc",
+  //     },
+  //   },
+
+  //   headCells: {
+  //     style: {
+  //       fontSize: "11px",
+  //       fontWeight: "600",
+  //       color: "#53625D",
+  //       paddingLeft: "16px",
+  //       paddingRight: "16px",
+  //       whiteSpace: "nowrap",
+  //     },
+  //   },
+
+  //   rows: {
+  //     style: {
+  //       minHeight: "42px",
+  //       height: "42px",
+  //       fontSize: "12px",
+  //       fontWeight: "500",
+  //       color: "#1F2925",
+  //       backgroundColor: "#FFFFFF",
+  //       borderBottom: "1px solid #DCE6E1",
+  //     },
+
+  //     highlightOnHoverStyle: {
+  //       backgroundColor: "#F7FAF8",
+  //       cursor: "default",
+  //     },
+  //   },
+
+  //   cells: {
+  //     style: {
+  //       paddingLeft: "16px",
+  //       paddingRight: "16px",
+  //       whiteSpace: "nowrap",
+  //     },
+  //   },
+
+  //   pagination: {
+  //     style: {
+  //       minHeight: "45px",
+  //       height: "45px",
+  //       paddingLeft: "0",
+  //       paddingRight: "0",
+  //       borderTop: "0",
+  //       backgroundColor: "#ffffff",
+  //       fontSize: "13px",
+  //       color: "#53625D",
+  //     },
+  //   },
+
+  //   noData: {
+  //     style: {
+  //       minHeight: "120px",
+  //       fontSize: "12px",
+  //       color: "#8A9791",
+  //       backgroundColor: "#FFFFFF",
+  //     },
+  //   },
+
+  //   progress: {
+  //     style: {
+  //       minHeight: "120px",
+  //     },
+  //   },
+  // };
+
+    const customStyles = {
     table: {
       style: {
         backgroundColor: "#FFFFFF",
@@ -24,57 +117,57 @@ const Table = ({ columns, data, handleFilterBtn }) => {
 
     headRow: {
       style: {
-        minHeight: "32px",
-        height: "32px",
-        backgroundColor: "#f0f0fc",
-        borderBottom: "1px solid #e8e8fc",
+        minHeight: "40px",
+        height: "40px",
+        backgroundColor: "#FFFFFF",
+        borderBottom: "1px solid #E2E8F0",
       },
     },
 
     headCells: {
       style: {
-        fontSize: "11px",
-        fontWeight: "600",
-        color: "#53625D",
-        paddingLeft: "16px",
-        paddingRight: "16px",
+        fontSize: "13px",
+        fontWeight: "500",
+        color: "#4F6B8F",
+        paddingLeft: "20px",
+        paddingRight: "20px",
         whiteSpace: "nowrap",
       },
     },
 
     rows: {
       style: {
-        minHeight: "42px",
-        height: "42px",
+        minHeight: "40px",
+        height: "40px",
         fontSize: "12px",
-        fontWeight: "500",
-        color: "#1F2925",
+        fontWeight: "400",
+        color: "#183B63",
         backgroundColor: "#FFFFFF",
-        borderBottom: "1px solid #DCE6E1",
+        borderBottom: "1px solid #E2E8F0",
       },
 
       highlightOnHoverStyle: {
-        backgroundColor: "#F7FAF8",
+        backgroundColor: "#F8FAFC",
         cursor: "default",
       },
     },
 
     cells: {
       style: {
-        paddingLeft: "16px",
-        paddingRight: "16px",
+        paddingLeft: "20px",
+        paddingRight: "20px",
         whiteSpace: "nowrap",
       },
     },
 
     pagination: {
       style: {
-        minHeight: "45px",
-        height: "45px",
-        paddingLeft: "0",
-        paddingRight: "0",
+        minHeight: "48px",
+        height: "48px",
+        paddingLeft: "16px",
+        paddingRight: "16px",
         borderTop: "0",
-        backgroundColor: "#ffffff",
+        backgroundColor: "#FFFFFF",
         fontSize: "13px",
         color: "#53625D",
       },
@@ -83,7 +176,7 @@ const Table = ({ columns, data, handleFilterBtn }) => {
     noData: {
       style: {
         minHeight: "120px",
-        fontSize: "12px",
+        fontSize: "14px",
         color: "#8A9791",
         backgroundColor: "#FFFFFF",
       },
@@ -97,7 +190,7 @@ const Table = ({ columns, data, handleFilterBtn }) => {
   };
 
   return (
-    <div className="m-3 overflow-hidden rounded-md border border-slate-200 bg-white shadow-sm">
+    <div className="m-2 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
       {/* Toolbar */}
       <div className="flex flex-col gap-4 border-b border-slate-200 bg-slate-50 px-5 py-4 md:flex-row md:items-center md:justify-between">
         {/* Search */}
