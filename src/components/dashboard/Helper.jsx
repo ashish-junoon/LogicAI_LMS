@@ -51,7 +51,7 @@ export const KpiCard = ({ icon, label, value, sub, type }) => {
   };
 
   return (
-    <div className="group rounded-lg border border-slate-200 bg-gradient-to-br from-blue-100/70 to-white px-4 py-3 transition-all duration-200 hover:border-slate-300 hover:shadow-md">
+    <div className="group rounded-lg border border-slate-200 bg-gradient-to-br from-primary-100 to-primary-50/50 px-4 py-3 transition-all duration-200 hover:border-slate-300 hover:shadow-md">
       <div className="flex items-start justify-between">
 
         <div className="min-w-0 flex-1">

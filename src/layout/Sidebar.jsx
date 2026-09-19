@@ -1608,7 +1608,7 @@ export default function Sidebar({
               mx-3 mt-3
               flex items-center gap-3
               rounded-xl
-              bg-slate-200
+              bg-primary-100
               px-3 py-3
               border border-slate-100
             "
@@ -1620,8 +1620,8 @@ export default function Sidebar({
                 items-center justify-center
                 rounded-full
                 bg-gradient-to-br
-                from-[#1558bd]
-                to-[#3b82f6]
+                from-primary
+                to-primary-900
                 text-white
                 shadow-sm
               "
@@ -1693,14 +1693,14 @@ export default function Sidebar({
 
                           isActive
                             ? `
-                              bg-[#1558bd]
+                              bg-primary
                               text-white
                               shadow-[0_5px_14px_rgba(21,88,189,0.22)]
                             `
                             : `
                               text-slate-600
                               hover:bg-slate-50
-                              hover:text-[#1558bd]
+                              hover:text-primary
                             `,
                         ].join(" ")
                       }
@@ -1775,7 +1775,7 @@ export default function Sidebar({
                         : "justify-between px-3",
 
                       active
-                        ? "bg-[#1558bd] text-white shadow-[0_5px_14px_rgba(21,88,189,0.18)]"
+                        ? "bg-primary text-white shadow-[0_5px_14px_rgba(21,88,189,0.18)]"
                         : "text-slate-600 hover:bg-slate-50 hover:text-[#1558bd]",
                     ].join(" ")}
                   >
