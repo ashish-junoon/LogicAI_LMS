@@ -899,7 +899,7 @@
 //       {/* mobile scrim */}
 //       {mobileOpen && (
 //         <div
-//           className="fixed inset-0 z-30 bg-ink-900/40 lg:hidden"
+//           className="fixed inset-0 z-30 bg-gray-900/40 lg:hidden"
 //           onClick={onCloseMobile}
 //         />
 //       )}
@@ -922,10 +922,10 @@
 //           </div>
 //           {/* {!collapsed && (
 //             <div className="min-w-0 leading-tight">
-//               <p className="truncate text-sm font-semibold text-ink-900">
+//               <p className="truncate text-sm font-semibold text-gray-900">
 //                 Office Pulse
 //               </p>
-//               <p className="truncate text-xs text-ink-400">Loan Management</p>
+//               <p className="truncate text-xs text-gray-400">Loan Management</p>
 //             </div>
 //           )} */}
 //           {!collapsed && (
@@ -953,7 +953,7 @@
 //                           "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
 //                           isActive
 //                             ? "bg-primary-700 text-primary-50"
-//                             : "text-ink-700 hover:bg-surface",
+//                             : "text-gray-700 hover:bg-surface",
 //                           collapsed ? "lg:justify-center" : "",
 //                         ].join(" ")
 //                       }
@@ -977,7 +977,7 @@
 //                     onClick={() => toggleGroup(item.title)}
 //                     className={[
 //                       "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-//                       active ? "text-primary-700" : "text-ink-700 hover:bg-surface",
+//                       active ? "text-primary-700" : "text-gray-700 hover:bg-surface",
 //                       collapsed ? "lg:justify-center" : "justify-between",
 //                     ].join(" ")}
 //                     title={collapsed ? item.title : undefined}
@@ -1006,7 +1006,7 @@
 //                                 "block rounded-md px-3 py-2 text-sm transition-colors",
 //                                 isActive
 //                                   ? "bg-primary-100/80 font-medium text-primary-700"
-//                                   : "text-ink-500 hover:bg-surface hover:text-ink-900",
+//                                   : "text-gray-500 hover:bg-surface hover:text-gray-900",
 //                               ].join(" ")
 //                             }
 //                           >
@@ -1518,7 +1518,7 @@ export default function Sidebar({
         ====================================================== */}
         <div
           className={[
-            "relative flex h-[72px] shrink-0 items-center",
+            "relative flex h-[65px] shrink-0 items-center",
             "border-b border-slate-200/80",
             "bg-white",
             collapsed
@@ -1535,7 +1535,7 @@ export default function Sidebar({
                 className="
                   h-auto
                   max-h-[42px]
-                  w-[145px]
+                  w-[140px]
                   object-contain
                   object-left
                 "
@@ -1574,7 +1574,7 @@ export default function Sidebar({
             className="
               absolute
               -right-3.5
-              top-[52px]
+              top-[50px]
               hidden
               h-7 w-7
               items-center justify-center
@@ -1608,7 +1608,7 @@ export default function Sidebar({
               mx-3 mt-3
               flex items-center gap-3
               rounded-xl
-              bg-primary-100
+              bg-primary/20
               px-3 py-3
               border border-slate-100
             "
@@ -1766,6 +1766,7 @@ export default function Sidebar({
                     }
                     className={[
                       "group relative flex min-h-[44px]",
+                      "cursor-pointer",
                       "w-full items-center rounded-lg",
                       "text-[13.5px] font-medium",
                       "transition-all duration-200",

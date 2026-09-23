@@ -59,7 +59,7 @@ const DateInput = ({
     <div>
       <label htmlFor={id} className="block mb-0.5 text-sm font-medium text-black">
         {label}
-        {required ? <span className="text-danger text-sm">*</span> : ""}
+        {required ? <span className="text-red-500 text-sm">*</span> : ""}
       </label>
       <div className="relative w-full">
         <div

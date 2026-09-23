@@ -2,6 +2,7 @@
 import { RiDashboardLine, RiBankCard2Line } from "react-icons/ri";
 import { FaMoneyBillTransfer, FaRegObjectUngroup } from "react-icons/fa6";
 import { IoSettings } from "react-icons/io5";
+import { MdLeaderboard } from "react-icons/md";
 
 
 
@@ -443,7 +444,7 @@ export const sidebarData = [
   },
   {
     title: "Lead Management",
-    icon: FaMoneyBillTransfer,
+    icon: MdLeaderboard,
     children: [
       { title: "Draft Leads", path: "/leads-draft" },
       { title: "New Leads", path: "/leads-new" },
@@ -487,3 +488,48 @@ export const sidebarData = [
     ],
   },
 ];
+
+
+
+export const lead = {
+  id: "LD-1001",
+  name: "Rohan Mehta",
+  phone: "+91 98200 11234",
+  email: "rohan.mehta@example.com",
+  product: "Personal Loan",
+  amount: 250000,
+  branch: "Andheri West",
+  stage: "new",
+  status: "New",
+  createdOn: "2026-09-10",
+  disbursementDate: "31st Aug 2026",
+  user: {
+    dob: "1991-04-12",
+    pan: "ABCDE1234F",
+    aadhaar: "XXXX-XXXX-4521",
+    address: "12, Silver Park, Andheri West, Mumbai, Maharashtra - 400058",
+    occupation: "Salaried — IT Services",
+    monthlyIncome: 85000,
+  },
+  documents: [
+    { name: "PAN Card", status: "Uploaded" },
+    { name: "Aadhaar Card", status: "Uploaded" },
+    { name: "Salary Slips (3 months)", status: "Pending" },
+    { name: "Bank Statement (6 months)", status: "Pending" },
+  ],
+  loan: {
+    product: "Personal Loan",
+    amountRequested: 250000,
+    tenureMonths: 24,
+    interestRate: 14.5,
+    purpose: "Home renovation",
+    emi: 12050,
+  },
+  bank: {
+    bankName: "HDFC Bank",
+    accountNumber: "XXXXXXXX7842",
+    ifsc: "HDFC0001234",
+    accountType: "Savings",
+    branch: "Andheri West Branch",
+  },
+};

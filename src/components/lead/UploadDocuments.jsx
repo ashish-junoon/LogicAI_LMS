@@ -82,8 +82,9 @@ const UploadDocuments = () => {
         onClick={() => setOpen(true)}
         btnName={"Add Document"}
         btnIcon={"RiUploadCloud2Line"}
-        icolor={"#5050b8"}
-        style={"flex items-center gap-2 px-3 py-1.5 text-sm text-primary border border-primary/20 rounded-lg hover:bg-primary/5"}
+        // icolor={"#5050b8"}
+        icolor={"#ffffff"}
+        style={"flex items-center gap-2 px-3 py-1 text-sm text-primary font-medium border border-primary/30 rounded-lg bg-primary text-white hover:bg-primary/80"}
       />
 
       <Modal

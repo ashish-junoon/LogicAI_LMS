@@ -33,7 +33,7 @@ const InfoCardSection = ({
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-      <div className="bg-gray-300/90 px-3 py-1 font-semibold text-gray-700 uppercase text-sm">
+      <div className="bg-primary/80 px-3 py-1 font-semibold text-white uppercase text-sm">
         {heading}
       </div>
       <div className="flex flex-col-reverse sm:flex-row">

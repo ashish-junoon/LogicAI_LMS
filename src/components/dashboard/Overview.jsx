@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { COLORS, fmtCr } from "./utils";
-import { formatNumber, InsightCard, KpiCard } from "./Helper";
+import { COLORS, STATUS_RAMP, fmtCr } from "./utils";
+import { formatNumber, InsightCard, KpiCard, Panel } from "./Helper";
 import Chart from "./Chart";
 import {
   CustomerProfile_LoanSizeDistributionAPI,
@@ -39,17 +39,12 @@ const Overview = () => {
     datasets: [
       {
         data: loanStatusDistribution?.map((item) => item?.loan_count),
-        backgroundColor: [
-          COLORS.paid,
-          COLORS.npa,
-          COLORS.pending,
-          COLORS.foreclosure,
-          COLORS.settled,
-          COLORS["Waive Off"],
-          "#64748b",
-        ],
-        borderWidth: 1,
-        borderColor: "#c2c3c4",
+        // backgroundColor: STATUS_RAMP,
+        backgroundColor: loanStatusDistribution?.map(
+        (item) => COLORS[item?.loan_status?.toLowerCase()] || "#64748b"
+      ),
+        borderWidth: 2,
+        borderColor: "#FFFFFF",
       },
     ],
   };
@@ -60,10 +55,10 @@ const Overview = () => {
       {
         label: "Amount",
         data: monthlyDisbursement?.map((m) => m?.disbursed_amount),
-        backgroundColor: "rgba(59,130,246,0.9)",
-        borderColor: "#3b82f6",
+        backgroundColor: "rgba(47,111,166,0.85)",
+        borderColor: COLORS.settled,
         borderWidth: 1,
-        borderRadius: 4,
+        borderRadius: 2,
       },
     ],
   };
@@ -74,21 +69,21 @@ const Overview = () => {
       {
         data: loanSizeDistribution?.map((loan) => loan?.total_loans),
         backgroundColor: [
-          "#3b82f6",
-          "#6366f1",
-          "#8b5cf6",
-          "#a855f7",
-          "#ec4899",
-          "#06d6a0",
+          "#2F6FA6",
+          "#6B54C7",
+          "#1F8F68",
+          "#B9800F",
+          "#C1443C",
+          "#96690F",
         ],
-        borderRadius: 5,
+        borderRadius: 2,
         borderWidth: 0,
       },
     ],
   };
 
   const sortedNPASector = [...(sectorNPA || [])]
-    ?.sort((a, b) => b.total_loans - a.total_loans) // Highest to Lowest
+    ?.sort((a, b) => b.total_loans - a.total_loans)
     ?.slice(0, 10);
 
   const sectorData = {
@@ -97,10 +92,10 @@ const Overview = () => {
       {
         label: "Loans",
         data: sortedNPASector?.map((sector) => sector?.total_loans),
-        backgroundColor: "rgba(6,214,160,0.9)",
-        borderColor: "#06d6a0",
+        backgroundColor: "rgba(31,143,104,0.85)",
+        borderColor: COLORS.paid,
         borderWidth: 1,
-        borderRadius: 4,
+        borderRadius: 2,
       },
     ],
   };
@@ -108,11 +103,7 @@ const Overview = () => {
   const fetchOverview_Main = async () => {
     setIsLoading((prev) => ({ ...prev, loading1: true }));
     try {
-      const req = {
-        from_date: "",
-        to_date: "",
-      };
-
+      const req = { from_date: "", to_date: "" };
       const response = await Overview_MainAPI(req);
       if (response.status) {
         setMainData(response.data);
@@ -129,11 +120,7 @@ const Overview = () => {
   const fetchOverview_Description = async () => {
     setIsLoading((prev) => ({ ...prev, loading2: true }));
     try {
-      const req = {
-        from_date: "",
-        to_date: "",
-      };
-
+      const req = { from_date: "", to_date: "" };
       const response = await Overview_DescriptionAPI(req);
       if (response.status) {
         setOverViewDescription(response.data);
@@ -150,11 +137,7 @@ const Overview = () => {
   const fetchOverview_LoanStatusDistribution = async () => {
     setIsLoading((prev) => ({ ...prev, loading3: true }));
     try {
-      const req = {
-        from_date: "",
-        to_date: "",
-      };
-
+      const req = { from_date: "", to_date: "" };
       const response = await Overview_LoanStatusDistributionAPI(req);
       if (response.status) {
         setloanStatusDistribution(response.data);
@@ -171,11 +154,7 @@ const Overview = () => {
   const fetchOverview_MonthlyDisbursements = async () => {
     setIsLoading((prev) => ({ ...prev, loading4: true }));
     try {
-      const req = {
-        from_date: "",
-        to_date: "",
-      };
-
+      const req = { from_date: "", to_date: "" };
       const response = await Overview_MonthlyDisbursementsAPI(req);
       if (response.status) {
         setmonthlyDisbursement(response.data);
@@ -192,11 +171,7 @@ const Overview = () => {
   const fetchCustomerProfile_LoanSizeDistribution = async () => {
     setIsLoading((prev) => ({ ...prev, loading5: true }));
     try {
-      const req = {
-        from_date: "",
-        to_date: "",
-      };
-
+      const req = { from_date: "", to_date: "" };
       const response = await CustomerProfile_LoanSizeDistributionAPI(req);
       if (response.status) {
         setLoanSizeDistribution(response.data);
@@ -213,11 +188,7 @@ const Overview = () => {
   const fetchPortfolioHealthNPAbySector = async () => {
     setIsLoading((prev) => ({ ...prev, loading6: true }));
     try {
-      const req = {
-        from_date: "",
-        to_date: "",
-      };
-
+      const req = { from_date: "", to_date: "" };
       const response = await PortfolioHealth_NPAbySectorAPI(req);
       if (response.status) {
         setsectorNPA(response.data);
@@ -242,128 +213,69 @@ const Overview = () => {
 
   return (
     <div className="space-y-5">
-      {/* KPI Grid */}
+      {/* KPI strip */}
       {!isLoading?.loading1 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-1">
+        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
           <KpiCard
-            icon="📋"
             label="Total Loans"
             value={mainData?.total_loans?.toLocaleString()}
             sub={`${mainData?.unique_customers?.toLocaleString()} unique customers`}
-            color="#3b82f6"
             type={1}
           />
           <KpiCard
-            icon="💰"
             label="Total Disbursed"
-            value={formatNumber(mainData?.total_disbursed)}
-            sub={`Avg ₹${mainData?.avg_per_loan} per loan`}
-            color="#06d6a0"
-            type={2}
-          />
-          <KpiCard
-            icon="✅"
-            label="Total Collected"
-            value={`₹${formatNumber(mainData?.total_collected)}`}
-            sub={`${mainData?.collection_rate}% collection rate`}
-            color="#6ee7b7"
-            type={3}
+            value={`₹${formatNumber(mainData?.total_disbursed)}`}
+            sub="Principal deployed"
+            type={6}
           />
           <div className="relative group">
             <KpiCard
-              icon="🏦"
-              label="Total Demand"
-              value={`₹${formatNumber(mainData?.demand_amount)}`}
-              sub={`Total Demand Amount`}
-              color="#6ee7b7"
+              label="NPA Demand"
+              value={`₹${formatNumber(mainData?.npa_demand_amount)}`}
+              sub="Hover for breakdown"
               type={3}
             />
-
-            {/* Hover Cards */}
-            <div
-              className="
-      absolute
-      bottom-full
-      left-1/2
-      -translate-x-1/2
-      mb-2
-      z-50
-      flex
-      gap-2
-      whitespace-nowrap
-
-      opacity-0
-      invisible
-      translate-y-2
-      scale-95
-
-      group-hover:opacity-100
-      group-hover:visible
-      group-hover:translate-y-0
-      group-hover:scale-100
-
-      transition-all
-      duration-300
-      ease-out
-    "
-            >
-              <div className="w-44 bg-white border border-gray-200 rounded-lg shadow-lg p-3">
-                <p className="text-xs text-gray-500">NPA Amount</p>
-                <p className="text-lg font-bold text-red-500">{`₹${formatNumber(mainData?.npa_demand_amount)}`}</p>
-                <p className="text-[11px] text-gray-400">NPA Demand Amount</p>
+            <div className="absolute left-0 top-full mt-1 z-30 hidden group-hover:flex flex-col gap-1.5 w-56">
+              <div className="bg-white border border-[#DCE1E6] shadow-lg px-3 py-2">
+                <p className="text-[10px] text-[#8B98A6] uppercase tracking-wide">NPA Demand Amount</p>
+                <p className="text-[15px] font-semibold text-[#C1443C]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                  ₹{formatNumber(mainData?.npa_demand_amount)}
+                </p>
               </div>
-
-              <div className="w-44 bg-white border border-gray-200 rounded-lg shadow-lg p-3">
-                <p className="text-xs text-gray-500">NPA Customers</p>
-                <p className="text-lg font-bold text-red-500">{`₹${formatNumber(mainData?.under_npa_demand_amount)}`}</p>
-                <p className="text-[11px] text-gray-400">
-                  Under NPA Demand Amount
+              <div className="bg-white border border-[#DCE1E6] shadow-lg px-3 py-2">
+                <p className="text-[10px] text-[#8B98A6] uppercase tracking-wide">Under NPA Demand Amount</p>
+                <p className="text-[15px] font-semibold text-[#C1443C]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                  ₹{formatNumber(mainData?.under_npa_demand_amount)}
                 </p>
               </div>
             </div>
           </div>
-          {/* <KpiCard
-            icon="🏦"
-            label="Total Demand"
-            value={`₹${formatNumber(mainData?.demand_amount)}`}
-            // sub={`${mainData?.collection_rate}% collection rate`}
-            color="#6ee7b7"
-            type={3}
-          /> */}
           <KpiCard
-            icon="⚠️"
             label="NPA Rate"
             value={`${mainData?.npa_rate}%`}
             sub={`${mainData?.total_npa?.toLocaleString()} loans at risk`}
-            color="#ef4444"
-            type={4}
+            type={3}
           />
-          {/* <KpiCard
-            icon="🏦"
-            label="Avg Credit Score"
-            value={mainData?.avg_credit_score}
-            sub="Sub-prime segment"
-            color="#f59e0b"
-            type={5}
-          /> */}
           <KpiCard
-            icon="🗺️"
             label="States Covered"
             value={mainData?.states_covered}
             sub="Primarily metro markets"
-            color="#8b5cf6"
-            type={6}
+            type={4}
+          />
+          <KpiCard
+            label="Collection Rate"
+            value={mainData?.collection_rate ? `${mainData.collection_rate}%` : "—"}
+            sub="Of total demand"
+            type={5}
           />
         </div>
       ) : (
-        <div className="text-center py-10 font-semibold">
-          <p>Loading...</p>
-        </div>
+        <div className="text-center py-10 text-[#8B98A6] text-sm">Loading…</div>
       )}
 
       {/* Insights */}
       {!isLoading?.loading2 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
           <InsightCard
             type="success"
             title="Strong Repayment Base"
@@ -377,9 +289,7 @@ const Overview = () => {
           <InsightCard
             type="danger"
             title="High Pending & Foreclosure Volume"
-            body={
-              overViewDescription?.high_pending_and_foreclosure_volume || "N/A"
-            }
+            body={overViewDescription?.high_pending_and_foreclosure_volume || "N/A"}
           />
           <InsightCard
             type="info"
@@ -388,129 +298,78 @@ const Overview = () => {
           />
         </div>
       ) : (
-        <div className="text-center py-10 font-semibold">
-          <p>Loading...</p>
-        </div>
+        <div className="text-center py-10 text-[#8B98A6] text-sm">Loading…</div>
       )}
 
-      {/* Charts Row 1 */}
+      {/* Charts row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         {!isLoading?.loading3 ? (
-          <div className="bg-gray-50/50 border border-gray-200 rounded-xl p-5">
-            {/* <div className="bg-[#131929] border border-[#1f2e47] rounded-xl p-5"> */}
-            <div className="flex justify-between items-center mb-4">
-              <div>
-                <div className="text-sm font-semibold text-gray-900">
-                  Loan Status Distribution
-                </div>
-                <div className="text-[#64748b] text-[11px]">
-                  All {totalLoan?.toLocaleString()} loans
-                </div>
-              </div>
-            </div>
+          <Panel title="Loan Status Distribution" sub={`All ${totalLoan?.toLocaleString()} loans`}>
             <div className="relative max-h-[260px] w-fit m-auto">
               <Chart
                 type="doughnut"
                 data={statusData}
                 options={{
-                  cutout: "55%",
+                  cutout: "60%",
                   plugins: {
                     legend: {
                       display: true,
                       position: "bottom",
-                      labels: { color: "#94a3b8", padding: 5, boxWidth: 10 },
+                      labels: { color: "#5B6B7A", padding: 10, boxWidth: 8, font: { size: 10.5 } },
                     },
                   },
                 }}
               />
             </div>
-          </div>
+          </Panel>
         ) : (
           <SkeletonLoader />
         )}
 
         {!isLoading?.loading4 ? (
-          <div className="bg-gray-50/50 border border-gray-200 rounded-xl p-5">
-            {/* <div className="bg-[#131929] border border-[#1f2e47] rounded-xl p-5"> */}
-            <div className="flex justify-between items-center mb-4">
-              <div>
-                <div className="text-sm font-semibold text-gray-900">
-                  Monthly Disbursements
-                </div>
-                <div className="text-[#64748b] text-[11px]">
-                  Loan volume over time (₹)
-                </div>
-              </div>
-            </div>
+          <Panel title="Monthly Disbursements" sub="Loan volume over time (₹)">
             <div className="relative max-h-[260px]">
               <Chart
                 type="bar"
                 data={monthlyData}
                 options={{
                   scales: {
-                    y: {
-                      ticks: { callback: (v) => fmtCr(v) },
-                      grid: { color: "#c2c3c4" },
-                    },
+                    y: { ticks: { callback: (v) => fmtCr(v) }, grid: { color: "#E8EBEE" } },
                     x: { grid: { display: false } },
                   },
                 }}
               />
             </div>
-          </div>
+          </Panel>
         ) : (
           <SkeletonLoader />
         )}
       </div>
 
-      {/* Charts Row 2 */}
+      {/* Charts row 2 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         {!isLoading?.loading5 ? (
-          <div className="bg-gray-50/50 border border-gray-200 rounded-xl p-5">
-            <div className="flex justify-between items-center mb-4">
-              <div>
-                <div className="text-sm font-semibold text-gray-900">
-                  Loan Size Distribution
-                </div>
-                <div className="text-[#64748b] text-[11px]">
-                  Number of loans by amount bucket
-                </div>
-              </div>
-            </div>
+          <Panel title="Loan Size Distribution" sub="Number of loans by amount bucket">
             <div className="relative max-h-[260px]">
               <Chart
                 type="bar"
                 data={loanDistData}
                 options={{
                   scales: {
-                    y: { grid: { color: "#c2c3c4" } },
+                    y: { grid: { color: "#E8EBEE" } },
                     x: { grid: { display: false } },
                   },
-                  plugins: {
-                    legend: {
-                      display: false,
-                    },
-                  },
+                  plugins: { legend: { display: false } },
                 }}
               />
             </div>
-          </div>
+          </Panel>
         ) : (
           <SkeletonLoader />
         )}
 
         {!isLoading?.loading6 ? (
-          <div className="bg-gray-50/50 border border-gray-200 rounded-xl p-5">
-            <div className="flex justify-between items-center mb-4">
-              <div>
-                <div className="text-sm font-semibold text-gray-900">
-                  Top 10 Sectors by Volume
-                </div>
-                <div className="text-[#64748b] text-[11px]">
-                  Number of loans
-                </div>
-              </div>
-            </div>
+          <Panel title="Top 10 Sectors by Volume" sub="Number of loans">
             <div className="relative max-h-[260px]">
               <Chart
                 type="bar"
@@ -518,16 +377,13 @@ const Overview = () => {
                 options={{
                   indexAxis: "y",
                   scales: {
-                    x: { grid: { color: "#c2c3c4" } },
-                    y: {
-                      grid: { display: false },
-                      ticks: { font: { size: 11 } },
-                    },
+                    x: { grid: { color: "#E8EBEE" } },
+                    y: { grid: { display: false }, ticks: { font: { size: 10.5 } } },
                   },
                 }}
               />
             </div>
-          </div>
+          </Panel>
         ) : (
           <SkeletonLoader />
         )}

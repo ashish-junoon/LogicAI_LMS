@@ -109,9 +109,10 @@ const RemarksHistory = ({
           <div className="flex items-center gap-2">
           {permission && <Button
             btnName={"Add Remarks"}
+            btnIcon={"IoAddCircleOutline"}
             onClick={()=> setOpen(true)}
             // btnIcon={"IoAdd"}
-            style={"bg-primary text-white text-sm font-semibold"}
+            style={"bg-primary text-white text-sm font-medium py-0 rounded-lg"}
           />}
           </div>
         </div>
@@ -119,7 +120,7 @@ const RemarksHistory = ({
 
       {/* Table */}
       <div
-        className="overflow-auto rounded-lg border border-gray-200"
+        className="overflow-auto rounded-lg border border-gray-200 no-scrollbar"
         style={{ maxHeight }}
       >
         <table className="min-w-full divide-y divide-gray-200">
@@ -137,10 +138,10 @@ const RemarksHistory = ({
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Description
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider text-nowrap">
                 Processed By
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider text-nowrap">
                 Processed On
               </th>
             </tr>

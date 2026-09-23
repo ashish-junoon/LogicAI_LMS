@@ -67,7 +67,7 @@ function MultiCheckboxSelect({
                 >
                     {label}
                     {required && (
-                        <span className="ml-1 text-danger">*</span>
+                        <span className="ml-1 text-red-500">*</span>
                     )}
                 </label>
             )}

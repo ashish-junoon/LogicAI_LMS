@@ -177,9 +177,10 @@ const DisbursementList = () => {
       cell: (row) => (
         <Link
           to="/disbursement-detail"
-          className={`p-1.5 rounded-sm text-xs font-medium bg-primary`}
+          className={`p-1.5 px-2 rounded-sm text-xs font-medium bg-primary flex gap-1 text-white items-center`}
         >
           <Icon name="FaRegEye" size={15} color={"white"} />
+          View
         </Link>
       ),
     },
@@ -221,7 +222,9 @@ const DisbursementList = () => {
       <div className="flex-1">
         {/* header */}
         <div className="flex justify-between py-0 px-4">
-          <div className="text-md font-medium self-center">Disbursement List</div>
+          <div className="text-md font-medium self-center">
+            Disbursement List
+          </div>
         </div>
 
         {/* Table data */}

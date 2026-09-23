@@ -6,6 +6,10 @@ import OtherDocsInfo from "../../components/forms/OtherDocsInfo";
 import AddressInfo from "../../components/forms/AddressInfo";
 import MultipleBankInfo from "../../components/forms/MultipleBankInfo";
 import EmploymentInfo from "../../components/forms/EmploymentInfo";
+import PersonalInformation from "../../components/forms/PersonalInformation";
+import KycInformation from "../../components/forms/KycInformation";
+import AddressInformation from "../../components/forms/AddressInformation";
+import MultipleBankInformation from "../../components/forms/MultipleBankInformation";
 // import BusinessSurvey from "../../components/forms/BusinessSurvey";
 
 const initialDocuments = [
@@ -48,6 +52,7 @@ const LeadForm = () => {
               onNext={() => setActiveAccordion(2)}
               permission={false}
             />
+
             <KycInfo
               open={activeAccordion === 2}
               onToggle={() => {
@@ -58,6 +63,7 @@ const LeadForm = () => {
               onNext={() => setActiveAccordion(3)}
               permission={false}
             />
+
             <AddressInfo
               open={activeAccordion === 3}
               onToggle={() => {

@@ -1,162 +1,136 @@
 import React from "react";
 
-// export const KpiCard = ({ icon, label, value, sub, color = '#3b82f6' }) => (
-//   <div className="bg-white border border-gray-200 shadow rounded-lg p-4 relative overflow-hidden">
-//   {/* <div className="bg-[#131929] border border-[#1f2e47] rounded-xl p-5 relative overflow-hidden"> */}
-//     <div className="absolute top-0 left-0 right-0 h-0.5" style={{ background: color }} />
-//     {icon && <div className="absolute top-4 right-4 text-2xl opacity-30">{icon}</div>}
-//     <div className="text-[#64748b] text-[11px] font-semibold uppercase tracking-wider">{label}</div>
-//     {/* <div className="text-[28px] font-bold text-[#e2e8f0] mt-2 leading-none">{value}</div> */}
-//     <div className="text-[30px] font-bold text-[#0d0d0d] mt-2 leading-none">{value}</div>
-//     <div className="text-[#64748b] text-[11px] mt-1">{sub}</div>
-//   </div>
-// );
-
-// export const KpiCard = ({ icon, label, value, sub, type }) => {
-//   const borderColors = {
-//     1: "border-t-[#3b82f6]",
-//     2: "border-t-[#f97316]",
-//     3: "border-t-[#ef4444]",
-//     4: "border-t-[#91008D]",
-//     5: "border-t-[#215E61]",
-//     6: "border-t-[#CB2957]",
-//   };
-
-//   return (
-//     <div className={`bg-white rounded-lg p-5 border border-slate-200 shadow-xl border-t-2 ${borderColors[type]} transition relative`}>
-//       {icon && (
-//         <span className="absolute top-4 right-5 text-xl opacity-30">
-//           {icon}
-//         </span>
-//       )}
-//       <div className="text-xs font-bold uppercase tracking-wider text-slate-700">
-//         {label}
-//       </div>
-//       <div className="font-mono text-3xl font-bold text-slate-800 mt-1.5 leading-tight">
-//         {value || 0}
-//       </div>
-//       <div className="text-sm text-slate-700">{sub}</div>
-//     </div>
-//   );
-// };
-
-export const KpiCard = ({ icon, label, value, sub, type }) => {
-  const colors = {
-    1: "bg-blue-500",
-    2: "bg-orange-500",
-    3: "bg-red-500",
-    4: "bg-violet-500",
-    5: "bg-emerald-500",
-    6: "bg-pink-500",
+// =============================================================
+// KpiCard — self-contained ledger stat cell (own border on all
+// sides, so it holds its shape in any grid/flex context).
+// =============================================================
+export const KpiCard = ({ icon, label, value, sub, color = "#2F6FA6", type }) => {
+  const ruleColors = {
+    1: "#2F6FA6",
+    2: "#B9800F",
+    3: "#C1443C",
+    4: "#6B54C7",
+    5: "#1F8F68",
+    6: "#96690F",
   };
+  const rule = ruleColors[type] || color;
 
   return (
-    <div className="group rounded-lg border border-slate-200 bg-gradient-to-br from-primary-100 to-primary-50/50 px-4 py-3 transition-all duration-200 hover:border-slate-300 hover:shadow-md">
-      <div className="flex items-start justify-between">
-
-        <div className="min-w-0 flex-1">
-
-          <div className="flex items-center gap-2">
-            <span
-              className={`h-2.5 w-2.5 rounded-sm ${
-                colors[type] || "bg-blue-500"
-              }`}
-            />
-            <span className="truncate text-xs font-semibold uppercase tracking-wide text-slate-500">
-              {label}
-            </span>
-          </div>
-
-          <div className="mt-2 flex items-end gap-2">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-700">
-              {value || 0}
-            </h2>
-          </div>
-
-          {sub && (
-            <p className="mt-1 truncate text-xs text-slate-500">
-              {sub}
-            </p>
-          )}
-
-        </div>
-
-        {/* {icon && (
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
-            {icon}
-          </div>
-        )} */}
+    <div
+      className="bg-white border border-[#DCE1E6] pl-3.5 pr-3 py-3 min-w-0"
+      style={{ borderLeft: `3px solid ${rule}` }}
+    >
+      <div className="text-[10px] font-medium uppercase tracking-[0.1em] text-[#8B98A6] truncate">
+        {label}
       </div>
+      <div
+        className="mt-1.5 text-[21px] font-semibold text-[#16202B] leading-none tabular-nums truncate"
+        style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+      >
+        {value || 0}
+      </div>
+      {sub && (
+        <div className="mt-1.5 text-[11px] text-[#8B98A6] truncate">{sub}</div>
+      )}
     </div>
   );
 };
 
-// export const InsightCard = ({ title, body, type = "info" }) => {
-//   const borderColors = {
-//     info: "border-t-[#3b82f6]",
-//     warn: "border-t-[#f97316]",
-//     danger: "border-t-[#ef4444]",
-//     success: "border-t-[#06d6a0]",
-//   };
-//   return (
-//     <div
-//       className={`bg-white border border-gray-300 border-t-2 shadow-xl rounded-lg py-5 px-3.5 ${borderColors[type]}`}
-//     >
-//       {/* <div className={`bg-[#1a2236] border border-[#1f2e47] border-l-4 rounded-lg p-3.5 ${borderColors[type]}`}> */}
-//       <div className="font-semibold text-[15px] text-gray-900 mb-1">
-//         {title}
-//       </div>
-//       <div className="text-black text-md leading-relaxed" dangerouslySetInnerHTML={{ __html: body }}></div>
-//     </div>
-//   );
-// };
-
+// =============================================================
+// InsightCard — panel with colored top hairline + label tag
+// =============================================================
 export const InsightCard = ({ title, body, type = "info" }) => {
   const styles = {
-    info: "border-blue-400 text-blue-600 bg-blue-50",
-    warn: "border-amber-400 text-amber-600 bg-amber-50",
-    danger: "border-red-400 text-red-600 bg-red-50",
-    success: "border-emerald-400 text-emerald-600 bg-emerald-50",
+    info: { rule: "#2F6FA6", tag: "Note" },
+    warn: { rule: "#B9800F", tag: "Watch" },
+    danger: { rule: "#C1443C", tag: "Risk" },
+    success: { rule: "#1F8F68", tag: "Strong" },
   };
+  const s = styles[type] || styles.info;
 
   return (
-    <div className={`border-l-[3px] ${styles[type]} rounded-r-sm px-3 py-2`}>
-      <div className="flex items-baseline gap-1.5">
-        <span className="opacity-30">|</span>
-        <span className="text-md font-medium text-gray-800">{title}</span>
+    <div
+      className="bg-white border border-[#DCE1E6] px-3.5 py-3"
+      style={{ borderTop: `2px solid ${s.rule}` }}
+    >
+      <div className="flex items-center gap-2 mb-1.5">
+        <span
+          className="text-[7px] font-bold uppercase tracking-[0.12em] px-1.5 py-0.5"
+          style={{ color: s.rule, border: `1px solid ${s.rule}55` }}
+        >
+          {s.tag}
+        </span>
+        {/* <span className={`w-2 h-2 animate-pulse`} style={{backgroundColor: s.rule}}></span> */}
+        <span className="text-[13px] font-medium text-[#16202B] truncate">
+          {title}
+        </span>
       </div>
-      <div 
-        className="text-[14px] text-gray-600 mt-1 leading-tight" 
+      <div
+        className="text-[12.5px] text-[#5B6B7A] leading-relaxed"
         dangerouslySetInnerHTML={{ __html: body }}
       />
     </div>
   );
 };
 
-export const Pill = ({ children, color = "#5050b8" }) => {
+// =============================================================
+// Pill — bordered chip (outline, not filled) for table risk tags
+// =============================================================
+export const Pill = ({ children, color = "#96690F" }) => {
   const colors = {
-    green: "bg-[rgba(6,214,160,0.1)] text-[#06d6a0]",
-    red: "bg-[rgba(239,68,68,0.1)] text-[#ef4444]",
-    yellow: "bg-[rgba(245,158,11,0.1)] text-[#f59e0b]",
-    purple: "bg-[rgba(139,92,246,0.1)] text-[#8b5cf6]",
-    blue: "bg-[rgba(59,130,246,0.1)] text-[#3b82f6]",
+    green: "#1F8F68",
+    red: "#C1443C",
+    yellow: "#B9800F",
+    purple: "#6B54C7",
+    blue: "#2F6FA6",
+    "#5050b8": "#2F6FA6",
   };
+  const c = colors[color] || color;
   return (
     <span
-      className={`inline-block px-2 py-0.5 rounded-full text-[11px] font-semibold ${colors[color]}`}
+      className="inline-block px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide"
+      style={{ color: c, border: `1px solid ${c}55`, background: `${c}0F` }}
     >
       {children}
     </span>
   );
 };
 
-export const ProgressBar = ({ value, color = "#06d6a0" }) => (
-  <div className="h-1.5 bg-[#dcdcdc] rounded overflow-hidden mt-1">
-    {/* <div className="h-full rounded" style={{ width: `${Math.min(value * 3, 100)}%`, background: color }} /> */}
+// =============================================================
+// ProgressBar — thin 1px ledger tick, no rounding
+// =============================================================
+export const ProgressBar = ({ value, color = "#1F8F68" }) => (
+  <div className="h-[3px] bg-[#E8EBEE] mt-1.5 overflow-hidden">
     <div
-      className="h-full rounded"
+      className="h-full"
       style={{ width: `${Math.min(value, 100)}%`, background: color }}
     />
+  </div>
+);
+
+// =============================================================
+// Panel — the base ledger surface used for every chart/table block
+// =============================================================
+export const Panel = ({ title, sub, right, children, className = "" }) => (
+  <div className={`bg-white border border-[#DCE1E6] ${className}`}>
+    {(title || right) && (
+      <div className="flex items-center justify-between gap-3 px-4 pt-3.5 pb-3 border-b border-[#E8EBEE]">
+        <div className="min-w-0">
+          {title && (
+            <div className="text-[12.5px] font-medium text-[#16202B] truncate">
+              {title}
+            </div>
+          )}
+          {sub && (
+            <div className="text-[10.5px] text-[#8B98A6] mt-0.5 truncate">
+              {sub}
+            </div>
+          )}
+        </div>
+        {right}
+      </div>
+    )}
+    <div className="p-4">{children}</div>
   </div>
 );
 
@@ -174,5 +148,3 @@ export function formatNumber(num) {
     return sign + absNum.toString();
   }
 }
-
-// 1f2e47

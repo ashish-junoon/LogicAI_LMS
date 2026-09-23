@@ -139,7 +139,7 @@ export default function Layout() {
           onToggleSidebar={() => setCollapsed((v) => !v)}
           onToggleMobile={() => setMobileOpen((v) => !v)}
         />
-        <main className={`flex-1 ${location.pathname === "/" ? "p-0" : `p-2 lg:p-4`}`}>
+        <main className={`flex-1 ${location.pathname === "/" ? "p-0" : `p-2 lg:p-6`}`}>
           <Outlet />
         </main>
       </div>

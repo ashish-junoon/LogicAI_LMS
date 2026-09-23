@@ -27,16 +27,16 @@ const LeadCenter = () => {
       sortable: true,
       width: "100px",
     },
-    {
-      name: "User Id",
-      selector: (row) => row.userId,
-      sortable: true,
-    },
-    {
-      name: "Lead Id",
-      selector: (row) => row.leadId,
-      sortable: true,
-    },
+    // {
+    //   name: "User Id",
+    //   selector: (row) => row.userId,
+    //   sortable: true,
+    // },
+    // {
+    //   name: "Lead Id",
+    //   selector: (row) => row.leadId,
+    //   sortable: true,
+    // },
     {
       name: "Loan Id",
       selector: (row) => row.loanId,
@@ -59,6 +59,21 @@ const LeadCenter = () => {
       sortable: true,
     },
     {
+      name: "Disbursement Date",
+      selector: (row) => row.disbursement_date,
+      sortable: true,
+    },
+    {
+      name: "Disbursement Amount",
+      selector: (row) => row.disbursement_amount,
+      sortable: true,
+    },
+    {
+      name: "Closing Date",
+      selector: (row) => row.closing_date,
+      sortable: true,
+    },
+    {
       name: "Created By",
       selector: (row) => row.createdBy,
       sortable: true,
@@ -71,9 +86,10 @@ const LeadCenter = () => {
       cell: (row) => (
         <Link
           to="/product-leads-detail"
-          className={`p-1.5 rounded-sm text-xs font-medium bg-primary`}
+          className={`p-1.5 px-2 rounded-sm text-xs font-medium bg-primary flex gap-1 text-white items-center`}
         >
           <Icon name="FaRegEye" size={15} color={"white"} />
+          View
         </Link>
       ),
     },
@@ -96,7 +112,7 @@ const LeadCenter = () => {
             handleFilterBtn={handleFilterBtn}
           >
             <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-5">
-              <div> 
+              <div>
                 <TextInput label={"Search"} placeholder={"Search here"} />
               </div>
 

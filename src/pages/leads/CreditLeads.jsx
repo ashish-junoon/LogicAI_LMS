@@ -100,9 +100,10 @@ const CreditLeads = () => {
       cell: (row) => (
         <Link
           to="/credit-detail"
-          className={`p-1.5 rounded-sm text-xs font-medium bg-primary`}
+          className={`p-1.5 px-2 rounded-sm text-xs font-medium bg-primary flex gap-1 text-white items-center`}
         >
           <Icon name="FaRegEye" size={15} color={"white"} />
+          View
         </Link>
       ),
     },

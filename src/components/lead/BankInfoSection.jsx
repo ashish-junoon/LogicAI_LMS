@@ -17,7 +17,7 @@ const BankInfoSection = () => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         <div className="px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
           <p className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Name</p>
-          <p className="text-xs font-semibold text-gray-800 mt-0.5 font-mono truncate">{bankData.accountHolderName}</p>
+          <p className="text-xs font-semibold text-gray-800 mt-0.5 truncate">{bankData.accountHolderName}</p>
         </div>
         <div className="px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
           <p className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Bank</p>
@@ -25,11 +25,11 @@ const BankInfoSection = () => {
         </div>
         <div className="px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
           <p className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Account</p>
-          <p className="text-xs font-semibold text-gray-800 mt-0.5 font-mono">{bankData.accountNumber}</p>
+          <p className="text-xs font-semibold text-gray-800 mt-0.5">{bankData.accountNumber}</p>
         </div>
         <div className="px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
           <p className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">IFSC</p>
-          <p className="text-xs font-semibold text-gray-800 mt-0.5 font-mono">{bankData.ifscCode}</p>
+          <p className="text-xs font-semibold text-gray-800 mt-0.5">{bankData.ifscCode}</p>
         </div>
       </div>
 

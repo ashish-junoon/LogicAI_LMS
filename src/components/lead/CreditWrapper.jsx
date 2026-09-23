@@ -12,19 +12,29 @@ import Button from "../utils/Button";
 import Modal from "../utils/Modal";
 import SelectInput from "../fields/SelectInput";
 import LeadForm from "../../pages/formPages/LeadForm";
+import LeadFormDetails from "../../pages/formPages/LeadFormDetails";
 
 const CreditWrapper = ({ loanData, userData, onAction }) => {
-  const [activeSection, setActiveSection] = useState("credit");
+  const [activeSection, setActiveSection] = useState("loaninfo");
   const [switchLoanProvier, setswitchLoanProvier] = useState(false);
 
   const handleSwitchProvider = () => {
     setswitchLoanProvier(true);
   };
 
+  const permisions = {
+    personalInfo: true,
+    kycInfo: true,
+    addressInfo: true,
+    bankInfo: true,
+    guarantorInfo: true,
+    employementInfo: true,
+  };
+
   const sections = [
+    { id: "loaninfo", label: "Loan Info", icon: "GiPayMoney" },
     { id: "credit", label: "Credit Analysis", icon: "RiShieldCheckLine" },
     { id: "bsa", label: "Bank Statement Ananlysis", icon: "RiBankCardLine" },
-    { id: "loaninfo", label: "Loan Info", icon: "GiPayMoney" },
     { id: "documents", label: "Documents", icon: "RiFileList3Line" },
     { id: "user", label: "User Details", icon: "RiShieldCheckLine" },
     { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
@@ -33,7 +43,8 @@ const CreditWrapper = ({ loanData, userData, onAction }) => {
   const renderSection = () => {
     switch (activeSection) {
       case "user":
-        return <LeadForm />;
+        // return <LeadForm />;
+        return <LeadFormDetails permisions={permisions} />;
       case "credit":
         return <CreditSection />;
       case "videoKyc":
@@ -44,15 +55,16 @@ const CreditWrapper = ({ loanData, userData, onAction }) => {
             <div className="flex justify-between items-center gap-2 mb-2 text-sm">
               <div className="flex items-center gap-2">
                 <p className="text-gray-600  font-medium">Current: </p>
-              <p className="text-gray-500">Veledian</p>
+                <p className="text-gray-500">Veledian</p>
               </div>
               <Button
+                btnIcon={"MdOutlineSwitchAccessShortcut"}
                 style={"bg-primary text-white"}
                 btnName={"Switch Provider"}
                 onClick={handleSwitchProvider}
               />
             </div>
-            <LoanAnalysis permission={true}  />
+            <LoanAnalysis permission={true} />
           </>
         );
       case "remarks":
@@ -68,9 +80,9 @@ const CreditWrapper = ({ loanData, userData, onAction }) => {
 
   return (
     <>
-      <div className="py-4">
+      {/* <div className="py-4">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-2">
-          {/* Sidebar Navigation */}
+
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sticky top-6">
               <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-3">
@@ -103,7 +115,6 @@ const CreditWrapper = ({ loanData, userData, onAction }) => {
             </div>
           </div>
 
-          {/* Content Area */}
           <div className="lg:col-span-3">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
               <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
@@ -118,6 +129,40 @@ const CreditWrapper = ({ loanData, userData, onAction }) => {
               {renderSection()}
             </div>
           </div>
+        </div>
+      </div> */}
+
+      <div className="py-4">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="border-b border-gray-200 px-4">
+            <nav className="flex items-center gap-1 overflow-x-auto no-scrollbar">
+              {sections.map((section) => {
+                const isActive = activeSection === section.id;
+
+                return (
+                  <button
+                    key={section.id}
+                    onClick={() => setActiveSection(section.id)}
+                    className={`flex items-center gap-2 px-4 py-3 text-[13px] font-medium whitespace-nowrap border-b-2 transition-all cursor-pointer ${
+                      isActive
+                        ? "border-primary text-primary"
+                        : "border-transparent text-gray-500 hover:text-gray-800 hover:border-gray-300"
+                    }`}
+                  >
+                    <Icon
+                      name={section.icon}
+                      color={isActive ? "#5050b8" : "gray"}
+                      size={16}
+                    />
+
+                    {section.label}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+
+          <div className="p-5">{renderSection()}</div>
         </div>
       </div>
 
@@ -139,8 +184,20 @@ const CreditWrapper = ({ loanData, userData, onAction }) => {
           </div>
 
           <div className="flex justify-end gap-2">
-            <Button style={"border border-gray-200 text-sm"} btnName={"Cancle"} onClick={()=> {setswitchLoanProvier(false)}} />
-            <Button style={"bg-primary text-white text-sm"} btnName={"Update"} onClick={()=> {setswitchLoanProvier(false)}} />
+            <Button
+              style={"border border-gray-200 text-sm"}
+              btnName={"Cancle"}
+              onClick={() => {
+                setswitchLoanProvier(false);
+              }}
+            />
+            <Button
+              style={"bg-primary text-white text-sm"}
+              btnName={"Update"}
+              onClick={() => {
+                setswitchLoanProvier(false);
+              }}
+            />
           </div>
         </div>
       </Modal>

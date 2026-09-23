@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { KpiCard, Pill, ProgressBar } from "./Helper";
+import { KpiCard, Pill, ProgressBar, Panel } from "./Helper";
 import Chart from "./Chart";
 import {
   PortfolioHealth_CreditScoreDistributionAPI,
@@ -19,9 +19,9 @@ const PortfolioHealth = () => {
     loading2: false,
     loading3: false,
   });
-  
+
   const sectorList = [...sectorNPA];
-  sectorList?.sort((a,b)=> a.total_npa_per - b.total_npa_per)
+  sectorList?.sort((a, b) => a.total_npa_per - b.total_npa_per);
 
   const npaRateData = {
     labels: sectorNPA?.slice(0, 12)?.map((s) => s.sector),
@@ -32,27 +32,22 @@ const PortfolioHealth = () => {
           ?.slice(0, 12)
           ?.map((s) =>
             s.total_npa_per > 20
-              ? "#ef4444"
+              ? "#C1443C"
               : s.total_npa_per > 15
-                ? "#f97316"
-                : "#f59e0b",
+                ? "#B9800F"
+                : "#1F8F68",
           ),
-        borderRadius: 4,
+        borderRadius: 2,
         borderWidth: 0,
       },
     ],
   };
 
-  const totalLoans = csDistribution?.reduce(
-    (sum, item) => sum + item.total_loans,
-    0,
-  );
+  const totalLoans = csDistribution?.reduce((sum, item) => sum + item.total_loans, 0);
 
   const maxItem =
     csDistribution?.length > 0
-      ? csDistribution.reduce((max, item) =>
-          item.total_loans > max.total_loans ? item : max,
-        )
+      ? csDistribution.reduce((max, item) => (item.total_loans > max.total_loans ? item : max))
       : null;
 
   const creditScoreresult = {
@@ -67,15 +62,8 @@ const PortfolioHealth = () => {
       {
         label: "",
         data: csDistribution?.map((data) => data?.total_loans),
-        backgroundColor: [
-          "#dc2626",
-          "#f97316",
-          "#f59e0b",
-          "#3b82f6",
-          "#06d6a0",
-          "#10b981",
-        ],
-        borderRadius: 5,
+        backgroundColor: ["#C1443C", "#B9800F", "#96690F", "#2F6FA6", "#1F8F68", "#1B7A59"],
+        borderRadius: 2,
         borderWidth: 0,
       },
     ],
@@ -84,11 +72,7 @@ const PortfolioHealth = () => {
   const fetchPortfolioHealthAnalysis = async () => {
     setIsLoading((prev) => ({ ...prev, loading1: true }));
     try {
-      const req = {
-        from_date: "",
-        to_date: "",
-      };
-
+      const req = { from_date: "", to_date: "" };
       const response = await PortfolioHealthAnalysisAPI(req);
       if (response.status) {
         setPortfolioHealthAnalysis(response.data);
@@ -105,18 +89,10 @@ const PortfolioHealth = () => {
   const fetchPortfolioHealthNPAbySector = async () => {
     setIsLoading((prev) => ({ ...prev, loading2: true }));
     try {
-      const req = {
-        from_date: "",
-        to_date: "",
-      };
-
+      const req = { from_date: "", to_date: "" };
       const response = await PortfolioHealth_NPAbySectorAPI(req);
       if (response.status) {
-        const filteredData = response?.data?.filter?.(
-          (l) => l?.total_loans >= 30,
-        );
-        // console.log(filteredData);
-        // setsectorNPA(response.data);
+        const filteredData = response?.data?.filter?.((l) => l?.total_loans >= 30);
         setsectorNPA(filteredData);
       } else {
         toast.info(response.message || "Something went wrong!");
@@ -131,11 +107,7 @@ const PortfolioHealth = () => {
   const fetchCreditScoreDistribution = async () => {
     setIsLoading((prev) => ({ ...prev, loading3: true }));
     try {
-      const req = {
-        from_date: "",
-        to_date: "",
-      };
-
+      const req = { from_date: "", to_date: "" };
       const response = await PortfolioHealth_CreditScoreDistributionAPI(req);
       if (response.status) {
         setcsDistribution(response.data);
@@ -156,72 +128,48 @@ const PortfolioHealth = () => {
   }, []);
 
   return (
-    <div className="space-y-7">
-      {/* <div className="text-[13px] font-bold text-[#64748b] uppercase tracking-wider border-b border-gray-200 pb-2">
-        Portfolio Health Analysis
-      </div> */}
-
+    <div className="space-y-6">
       {/* Status KPIs */}
       {!isLoading?.loading1 ? (
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           <KpiCard
             label="Paid"
             value={PortfolioHealthAnalysis?.total_paid?.toLocaleString("en-IN")}
             sub={`${PortfolioHealthAnalysis?.total_paid_per}%`}
-            color="#06d6a0"
-            type={1}
+            type={5}
           />
           <KpiCard
             label="NPA"
             value={PortfolioHealthAnalysis?.total_npa?.toLocaleString("en-IN")}
             sub={`${PortfolioHealthAnalysis?.total_npa_per}%`}
-            color="#ef4444"
-            type={2}
-          />
-          <KpiCard
-            label="Pending"
-            value={PortfolioHealthAnalysis?.total_pending?.toLocaleString(
-              "en-IN",
-            )}
-            sub={`${PortfolioHealthAnalysis?.total_pending_per}%`}
-            color="#f59e0b"
             type={3}
           />
           <KpiCard
+            label="Pending"
+            value={PortfolioHealthAnalysis?.total_pending?.toLocaleString("en-IN")}
+            sub={`${PortfolioHealthAnalysis?.total_pending_per}%`}
+            type={2}
+          />
+          <KpiCard
             label="Foreclosure"
-            value={PortfolioHealthAnalysis?.total_foreclouser?.toLocaleString(
-              "en-IN",
-            )}
+            value={PortfolioHealthAnalysis?.total_foreclouser?.toLocaleString("en-IN")}
             sub={`${PortfolioHealthAnalysis?.total_foreclouser_per}%`}
-            color="#8b5cf6"
             type={4}
           />
           <KpiCard
             label="Settled"
-            value={PortfolioHealthAnalysis?.total_settled?.toLocaleString(
-              "en-IN",
-            )}
+            value={PortfolioHealthAnalysis?.total_settled?.toLocaleString("en-IN")}
             sub={`${PortfolioHealthAnalysis?.total_settled_per}%`}
-            color="#3b82f6"
-            type={5}
+            type={1}
           />
         </div>
       ) : (
-        <div className="text-center h-4">Loading...</div>
+        <div className="text-center py-6 text-[#8B98A6] text-sm">Loading…</div>
       )}
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <div className="bg-gray-50/50 border border-gray-200 rounded-xl p-5">
-          {/* <div className="bg-[#131929] border border-[#1f2e47] rounded-xl p-5"> */}
-          <div className="flex justify-between items-center mb-4">
-            <div>
-              <div className="text-sm font-semibold">NPA by Sector (Rate)</div>
-              <div className="text-[#64748b] text-[11px]">
-                % of loans in NPA per sector
-              </div>
-            </div>
-          </div>
+        <Panel title="NPA by Sector (Rate)" sub="% of loans in NPA per sector">
           {!isLoading?.loading2 ? (
             <div className="relative max-h-[320px]">
               <Chart
@@ -230,40 +178,19 @@ const PortfolioHealth = () => {
                 options={{
                   indexAxis: "y",
                   scales: {
-                    x: {
-                      max: 30,
-                      ticks: { callback: (v) => v + "%" },
-                      grid: { color: "#c2c3c4" },
-                    },
-                    y: {
-                      grid: { display: false },
-                      ticks: { font: { size: 11 } },
-                    },
+                    x: { max: 30, ticks: { callback: (v) => v + "%" }, grid: { color: "#E8EBEE" } },
+                    y: { grid: { display: false }, ticks: { font: { size: 10.5 } } },
                   },
-                  plugins: {
-                    legend: {
-                      display: false,
-                    },
-                  },
+                  plugins: { legend: { display: false } },
                 }}
               />
             </div>
           ) : (
             <SkeletonLoader />
           )}
-        </div>
+        </Panel>
 
-        <div className="bg-gray-50/50 border border-gray-200 rounded-xl p-5">
-          <div className="flex justify-between items-center mb-4">
-            <div>
-              <div className="text-sm font-semibold">
-                Credit Score Distribution
-              </div>
-              <div className="text-[#64748b] text-[11px]">
-                Borrower risk profile
-              </div>
-            </div>
-          </div>
+        <Panel title="Credit Score Distribution" sub="Borrower risk profile">
           {!isLoading?.loading3 ? (
             <>
               <div className="relative max-h-[260px]">
@@ -271,114 +198,74 @@ const PortfolioHealth = () => {
                   type="bar"
                   data={creditScoreData}
                   options={{
-                    scales: {
-                      y: { grid: { color: "#c2c3c4" } },
-                      x: { grid: { display: false } },
-                    },
-                    plugins: {
-                      legend: {
-                        display: false,
-                      },
-                    },
+                    scales: { y: { grid: { color: "#E8EBEE" } }, x: { grid: { display: false } } },
+                    plugins: { legend: { display: false } },
                   }}
                 />
               </div>
-              <div className="mt-3.5 p-3 bg-gray-200 rounded-lg text-xs text-gray-900">
-                <strong className="text-primary">Risk Note:</strong>{" "}
-                <span className="font-semibold">
-                  {creditScoreresult?.percentage}% of borrowers (
-                  {creditScoreresult?.maxTotalLoans}) fall in the{" "}
-                  {creditScoreresult?.creditScoreRange} range — just below fair
-                  credit threshold. This segment requires closer monitoring.
-                </span>
+              <div className="mt-3.5 p-3 bg-[#F7F8F9] border border-[#E8EBEE] border-l-2 border-l-[#96690F] text-[12px] text-[#5B6B7A] leading-relaxed">
+                <span className="text-[#96690F] font-medium">Risk Note — </span>
+                {creditScoreresult?.percentage}% of borrowers ({creditScoreresult?.maxTotalLoans}) fall
+                in the {creditScoreresult?.creditScoreRange} range — just below fair credit threshold.
+                This segment requires closer monitoring.
               </div>
             </>
           ) : (
             <SkeletonLoader />
           )}
-        </div>
+        </Panel>
       </div>
 
       {/* Sector NPA Table */}
-      <div className="bg-gray-50/50 border border-gray-200 rounded-xl p-5 overflow-x-auto">
-        {/* <div className="bg-[#131929] border border-[#1f2e47] rounded-xl p-5 overflow-x-auto"> */}
-        <div className="flex justify-between items-center mb-4">
-          <div>
-            <div className="text-sm font-semibold">Sector NPA Breakdown</div>
-            <div className="text-[#64748b] text-[11px]">
-              Sectors with ≥30 loans, sorted by NPA rate
-            </div>
-          </div>
-        </div>
+      <Panel title="Sector NPA Breakdown" sub="Sectors with ≥30 loans, sorted by NPA rate" className="overflow-x-auto">
         {!isLoading?.loading2 ? (
           <table className="w-full border-collapse">
             <thead>
               <tr>
-                <th className="text-left px-3 py-2 text-[11px] font-semibold text-[#64748b] uppercase tracking-wider border-b border-gray-500">
-                  Sector
-                </th>
-                <th className="text-left px-3 py-2 text-[11px] font-semibold text-[#64748b] uppercase tracking-wider border-b border-gray-500">
-                  Total Loans
-                </th>
-                <th className="text-left px-3 py-2 text-[11px] font-semibold text-[#64748b] uppercase tracking-wider border-b border-gray-500">
-                  NPA Count
-                </th>
-                <th className="text-left px-3 py-2 text-[11px] font-semibold text-[#64748b] uppercase tracking-wider border-b border-gray-500">
-                  NPA Rate
-                </th>
-                <th className="text-left px-3 py-2 text-[11px] font-semibold text-[#64748b] uppercase tracking-wider border-b border-gray-500">
-                  Risk Level
-                </th>
-                <th className="text-left px-3 py-2 text-[11px] font-semibold text-[#64748b] uppercase tracking-wider border-b border-gray-500">
-                  NPA Rate Bar
-                </th>
+                {["Sector", "Total Loans", "NPA Count", "NPA Rate", "Risk Level", "NPA Rate Bar"].map((h) => (
+                  <th
+                    key={h}
+                    className="text-left px-3 py-2 text-[10px] font-medium text-[#8B98A6] uppercase tracking-[0.08em] border-b border-[#DCE1E6]"
+                  >
+                    {h}
+                  </th>
+                ))}
               </tr>
             </thead>
-
             <tbody>
               {sectorList?.map((s) => {
-                const riskClass =
-                  s.total_npa_per >= 20
-                    ? "red"
-                    : s.total_npa_per >= 15
-                      ? "yellow"
-                      : "green";
-                const riskLabel =
-                  s.total_npa_per >= 20
-                    ? "High"
-                    : s.total_npa_per >= 15
-                      ? "Medium"
-                      : "Low";
+                const riskClass = s.total_npa_per >= 20 ? "red" : s.total_npa_per >= 15 ? "yellow" : "green";
+                const riskLabel = s.total_npa_per >= 20 ? "High" : s.total_npa_per >= 15 ? "Medium" : "Low";
                 return (
-                  <tr
-                    key={s.sector}
-                    className="hover:bg-[rgba(59,130,246,0.04)]"
-                  >
-                    <td className="px-3 py-2.5 text-[13px] font-semibold border-b border-gray-200">
+                  <tr key={s.sector} className="hover:bg-black/[0.02]">
+                    <td className="px-3 py-2.5 text-[13px] font-medium text-[#16202B] border-b border-[#E8EBEE]">
                       {s.sector}
                     </td>
-                    <td className="px-3 py-2.5 text-[13px] border-b border-gray-200">
+                    <td
+                      className="px-3 py-2.5 text-[13px] text-[#5B6B7A] tabular-nums border-b border-[#E8EBEE]"
+                      style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                    >
                       {s.total_loans.toLocaleString()}
                     </td>
-                    <td className="px-3 py-2.5 text-[13px] border-b border-gray-200">
+                    <td
+                      className="px-3 py-2.5 text-[13px] text-[#5B6B7A] tabular-nums border-b border-[#E8EBEE]"
+                      style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                    >
                       {s.npa_count}
                     </td>
-                    <td className="px-3 py-2.5 text-[13px] font-semibold border-b border-gray-200">
+                    <td
+                      className="px-3 py-2.5 text-[13px] font-medium text-[#16202B] tabular-nums border-b border-[#E8EBEE]"
+                      style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                    >
                       {s.total_npa_per}%
                     </td>
-                    <td className="px-3 py-2.5 text-[13px] border-b border-gray-200">
+                    <td className="px-3 py-2.5 border-b border-[#E8EBEE]">
                       <Pill color={riskClass}>{riskLabel}</Pill>
                     </td>
-                    <td className="px-3 py-2.5 text-[13px] border-b border-gray-200 w-40">
+                    <td className="px-3 py-2.5 border-b border-[#E8EBEE] w-40">
                       <ProgressBar
                         value={s.total_npa_per}
-                        color={
-                          s.total_npa_per >= 20
-                            ? "#ef4444"
-                            : s.total_npa_per >= 15
-                              ? "#f97316"
-                              : "#06d6a0"
-                        }
+                        color={s.total_npa_per >= 20 ? "#C1443C" : s.total_npa_per >= 15 ? "#B9800F" : "#1F8F68"}
                       />
                     </td>
                   </tr>
@@ -387,11 +274,9 @@ const PortfolioHealth = () => {
             </tbody>
           </table>
         ) : (
-          <div className="text-center w-full col-span-full py-10">
-            <p>Loading...</p>
-          </div>
+          <div className="text-center w-full py-10 text-[#8B98A6] text-sm">Loading…</div>
         )}
-      </div>
+      </Panel>
     </div>
   );
 };

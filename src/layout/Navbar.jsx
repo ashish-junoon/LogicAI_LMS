@@ -431,7 +431,7 @@ export default function Navbar({ onToggleSidebar, onToggleMobile }) {
       <button
         type="button"
         onClick={onToggleSidebar}
-        className="hidden h-9 w-9 items-center justify-center rounded-lg text-ink-500 hover:bg-surface lg:flex cursor-pointer"
+        className="hidden h-9 w-9 items-center justify-center rounded-lg text-gray-500 hover:bg-surface lg:flex cursor-pointer"
         aria-label="Toggle sidebar"
       >
         <FiMenu size={18} />
@@ -441,7 +441,7 @@ export default function Navbar({ onToggleSidebar, onToggleMobile }) {
       <button
         type="button"
         onClick={onToggleMobile}
-        className="flex h-9 w-9 items-center justify-center rounded-lg text-ink-500 hover:bg-surface lg:hidden cursor-pointer"
+        className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 hover:bg-surface lg:hidden cursor-pointer"
         aria-label="Open menu"
       >
         <FiMenu size={18} />
@@ -449,22 +449,22 @@ export default function Navbar({ onToggleSidebar, onToggleMobile }) {
 
       {/* search */}
       <div className="relative hidden max-w-sm flex-1 sm:block">
-        <FiSearch className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-400" size={16} />
+        <FiSearch className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
         <input
           type="text"
           placeholder="Search leads, loans, customers..."
-          className="w-full rounded-lg border border-surface-border bg-surface py-2 pl-9 pr-3 text-sm text-ink-900 placeholder:text-ink-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100"
+          className="w-full rounded-lg border border-surface-border bg-surface py-2 pl-9 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/40"
         />
       </div>
 
       <div className="ml-auto flex items-center gap-2">
         <button
           type="button"
-          className="relative flex h-9 w-9 items-center justify-center rounded-lg text-ink-500 hover:bg-surface"
+          className="relative flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 hover:bg-surface"
           aria-label="Notifications"
         >
           <FiBell size={18} />
-          <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-danger-600" />
+          <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-red-600" />
         </button>
 
         <div className="relative">
@@ -473,24 +473,24 @@ export default function Navbar({ onToggleSidebar, onToggleMobile }) {
             onClick={() => setMenuOpen((v) => !v)}
             className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-surface"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-600 text-sm font-semibold text-white">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
               AS
             </div>
             <div className="hidden text-left leading-tight sm:block">
-              <p className="text-sm font-medium text-ink-900">Rohit Koli</p>
-              <p className="text-xs text-ink-400">Administrator</p>
+              <p className="text-sm font-medium text-gray-900">Rohit Koli</p>
+              <p className="text-xs text-gray-400">Administrator</p>
             </div>
-            <FiChevronDown size={14} className="hidden text-ink-400 sm:block" />
+            <FiChevronDown size={14} className="hidden text-gray-400 sm:block" />
           </button>
 
           {menuOpen && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
               <div className="absolute right-0 z-20 mt-2 w-48 rounded-lg border border-surface-border bg-white py-1 shadow-card">
-                <button className="flex w-full items-center gap-2 px-3 py-2 text-sm text-ink-700 hover:bg-surface">
+                <button className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-surface">
                   <FiUser size={15} /> My Profile
                 </button>
-                <button className="flex w-full items-center gap-2 px-3 py-2 text-sm text-danger-600 hover:bg-surface">
+                <button className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-surface">
                   <FiLogOut size={15} /> Sign out
                 </button>
               </div>

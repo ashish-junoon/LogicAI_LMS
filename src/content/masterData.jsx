@@ -499,7 +499,10 @@ export const allProductData = [
     phone: "65432 10987",
     createdDate: "2026-07-17",
     createdBy: "Ravi Desai",
-    product: "EW"
+    product: "EW",
+    disbursement_date: "12-12-2025",
+    disbursement_amount: "24000",
+    closing_date: "01-03-2026"
   },
   {
     index: "2",
@@ -510,6 +513,9 @@ export const allProductData = [
     phone: "54321 09876",
     createdDate: "2026-07-16",
     createdBy: "Meena Iyer",
-    product: "PU"
+    product: "PU",
+    disbursement_date: "12-12-2025",
+    disbursement_amount: "24000",
+    closing_date: "01-03-2026"
   }
 ];
