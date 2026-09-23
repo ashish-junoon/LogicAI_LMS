@@ -1,15 +1,4 @@
-import axios from "axios";
-
-const api = axios.create({
-    // baseURL: 'http://10.0.0.20:8088/api',
-    baseURL: 'https://lmsapi.junooncapital.com/api',
-    headers: {
-        "Content-Type": 'application/json'
-    }
-})
-
-// api functions here
-
+import api from './api.js'
 
 // ========================================
 // *Dashboard4 API's

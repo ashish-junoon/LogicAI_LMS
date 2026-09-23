@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Chart from "./Chart";
 import { formatNumber, Pill, Panel } from "./Helper";
-import { TeamPerformance_TeamPerformanceSummaryAPI } from "../../api/functions";
+import { TeamPerformance_TeamPerformanceSummaryAPI } from "../../api/dashboard";
 import { toast } from "react-toastify";
 
 const TeamPerformance = () => {

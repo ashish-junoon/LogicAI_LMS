@@ -7,7 +7,7 @@ import {
   SectorGeographic_DisbursementsbyStateAPI,
   SectorGeographic_HouseTypeSplitAPI,
   SectorGeographic_MonthlyLoanCountAPI,
-} from "../../api/functions";
+} from "../../api/dashboard";
 import { toast } from "react-toastify";
 import SkeletonLoader from "../utils/SkeletonLoader";
 

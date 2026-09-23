@@ -7,7 +7,7 @@ import TeamPerformance from "../../components/dashboard/TeamPerformance";
 import CustomerProfile from "../../components/dashboard/CustomerProfile";
 import Collection from "../../components/dashboard/Collection";
 
-import { Overview_MainAPI } from "../../api/functions";
+import { Overview_MainAPI } from "../../api/dashboard";
 import Icon from "../../components/utils/Icon";
 import MultiCheckboxSelect from "../../components/fields/MultiCheckboxSelect";
 

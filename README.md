@@ -68,7 +68,7 @@ LogicAI_LMS
 │  │  ├─ formPages
 │  │  │  └─ ApplyLoan.jsx
 │  │  ├─ main
-│  │  │  └─ Dashboard.jsx
+│  │  │  └─ functions.jsx
 │  │  └─ master
 │  │     ├─ BranchList.jsx
 │  │     ├─ BranchManagers.jsx

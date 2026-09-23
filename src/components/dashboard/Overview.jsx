@@ -9,7 +9,7 @@ import {
   Overview_MainAPI,
   Overview_MonthlyDisbursementsAPI,
   PortfolioHealth_NPAbySectorAPI,
-} from "../../api/functions";
+} from "../../api/dashboard";
 import { toast } from "react-toastify";
 import SkeletonLoader from "../utils/SkeletonLoader";
 

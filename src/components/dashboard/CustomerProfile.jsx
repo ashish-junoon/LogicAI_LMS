@@ -6,7 +6,7 @@ import {
   CustomerProfile_LoanSizeDistributionAPI,
   CustomerProfileAnalysisAPI,
   PortfolioHealth_CreditScoreDistributionAPI,
-} from "../../api/functions";
+} from "../../api/dashboard";
 import { toast } from "react-toastify";
 import SkeletonLoader from "../utils/SkeletonLoader";
 

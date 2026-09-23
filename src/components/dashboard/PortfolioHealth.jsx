@@ -5,7 +5,7 @@ import {
   PortfolioHealth_CreditScoreDistributionAPI,
   PortfolioHealth_NPAbySectorAPI,
   PortfolioHealthAnalysisAPI,
-} from "../../api/functions";
+} from "../../api/dashboard";
 import { toast } from "react-toastify";
 import SkeletonLoader from "../utils/SkeletonLoader";
 

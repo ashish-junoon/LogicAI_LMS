@@ -7,7 +7,7 @@ import {
   Financials_LoanTenureDistributionAPI,
   Financials_MonthlyRevenueTrendAPI,
   Financials_ROIDistributionAPI,
-} from "../../api/functions.js";
+} from "../../api/dashboard";
 import { toast } from "react-toastify";
 import SkeletonLoader from "../utils/SkeletonLoader";
 
