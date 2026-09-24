@@ -863,9 +863,6 @@
 
 // export default Sidebar;
 
-
-
-
 // import { useState } from "react";
 // import { NavLink, useLocation } from "react-router-dom";
 // import { FiChevronDown, FiLogOut } from "react-icons/fi";
@@ -1022,7 +1019,6 @@
 //           </ul>
 //         </nav>
 
-        
 //         {/* =====================================================
 //             SIGN OUT
 //         ====================================================== */}
@@ -1061,8 +1057,6 @@
 //     </>
 //   );
 // }
-
-
 
 // import { useState } from "react";
 // import { NavLink, useLocation } from "react-router-dom";
@@ -1388,8 +1382,6 @@
 //   );
 // }
 
-
-
 import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
@@ -1469,9 +1461,7 @@ export default function Sidebar({
   };
 
   const isGroupActive = (item) =>
-    item.children?.some(
-      (child) => child.path === location.pathname
-    );
+    item.children?.some((child) => child.path === location.pathname);
 
   return (
     <>
@@ -1503,9 +1493,7 @@ export default function Sidebar({
           "transition-all duration-300 ease-in-out",
 
           // Desktop
-          collapsed
-            ? "lg:w-[78px]"
-            : "lg:w-[260px]",
+          collapsed ? "lg:w-[78px]" : "lg:w-[260px]",
 
           // Mobile
           mobileOpen
@@ -1521,9 +1509,7 @@ export default function Sidebar({
             "relative flex h-[65px] shrink-0 items-center",
             "border-b border-slate-200/80",
             "bg-white",
-            collapsed
-              ? "lg:justify-center px-3"
-              : "px-5",
+            collapsed ? "lg:justify-center px-3" : "px-5",
           ].join(" ")}
         >
           {/* Full Logo */}
@@ -1566,30 +1552,9 @@ export default function Sidebar({
           <button
             type="button"
             onClick={onToggleSidebar}
-            aria-label={
-              collapsed
-                ? "Expand sidebar"
-                : "Collapse sidebar"
-            }
-            className="
-              absolute
-              -right-3.5
-              top-[50px]
-              hidden
-              h-7 w-7
-              items-center justify-center
-              rounded-full
-              border border-slate-200
-              bg-white
-              text-slate-500
-              shadow-md
-              transition-all
-              duration-200
-              hover:border-[#1558bd]
-              hover:bg-[#1558bd]
-              hover:text-white
-              lg:flex cursor-pointer
-            "
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            className="absolute -right-3.5 top-[50px] hidden h-7 w-7 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-md
+              transition-all duration-200 hover:border-[#1558bd] hover:bg-[#1558bd] hover:text-white lg:flex cursor-pointer"
           >
             {collapsed ? (
               <FiChevronRight size={15} />
@@ -1603,32 +1568,10 @@ export default function Sidebar({
             USER PROFILE
         ====================================================== */}
         {!collapsed && (
-          <div
-            className="
-              mx-3 mt-3
-              flex items-center gap-3
-              rounded-xl
-              bg-primary/20
-              px-3 py-3
-              border border-slate-100
-            "
-          >
+          <div className="mx-3 mt-3 flex items-center gap-3 rounded-xl bg-primary/30 px-3 py-3 border border-primary/10">
             {/* Avatar */}
-            <div
-              className="
-                flex h-10 w-10 shrink-0
-                items-center justify-center
-                rounded-full
-                bg-gradient-to-br
-                from-primary
-                to-primary-900
-                text-white
-                shadow-sm
-              "
-            >
-              <span className="text-sm font-bold">
-                RK
-              </span>
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary-900 text-white shadow-sm">
+              <span className="text-sm font-bold">RK</span>
             </div>
 
             {/* User Info */}
@@ -1675,11 +1618,7 @@ export default function Sidebar({
                     <NavLink
                       to={item.path}
                       onClick={onCloseMobile}
-                      title={
-                        collapsed
-                          ? item.title
-                          : undefined
-                      }
+                      title={collapsed ? item.title : undefined}
                       className={({ isActive }) =>
                         [
                           "group relative flex min-h-[44px]",
@@ -1687,9 +1626,7 @@ export default function Sidebar({
                           "text-[13.5px] font-medium",
                           "transition-all duration-200",
 
-                          collapsed
-                            ? "lg:justify-center px-3"
-                            : "gap-3 px-3",
+                          collapsed ? "lg:justify-center px-3" : "gap-3 px-3",
 
                           isActive
                             ? `
@@ -1725,15 +1662,12 @@ export default function Sidebar({
                             size={20}
                             className={[
                               "shrink-0 transition-transform duration-200",
-                              !isActive &&
-                                "group-hover:scale-105",
+                              !isActive && "group-hover:scale-105",
                             ].join(" ")}
                           />
 
                           {!collapsed && (
-                            <span className="truncate">
-                              {item.title}
-                            </span>
+                            <span className="truncate">{item.title}</span>
                           )}
                         </>
                       )}
@@ -1747,23 +1681,15 @@ export default function Sidebar({
               ================================================== */
               const active = isGroupActive(item);
 
-              const open = collapsed
-                ? false
-                : !!openGroups[item.title];
+              const open = collapsed ? false : !!openGroups[item.title];
 
               return (
                 <li key={item.title}>
                   {/* Group Header */}
                   <button
                     type="button"
-                    onClick={() =>
-                      toggleGroup(item.title)
-                    }
-                    title={
-                      collapsed
-                        ? item.title
-                        : undefined
-                    }
+                    onClick={() => toggleGroup(item.title)}
+                    title={collapsed ? item.title : undefined}
                     className={[
                       "group relative flex min-h-[44px]",
                       "cursor-pointer",
@@ -1794,15 +1720,10 @@ export default function Sidebar({
                     )}
 
                     <span className="flex min-w-0 items-center gap-3">
-                      <Icon
-                        size={20}
-                        className="shrink-0"
-                      />
+                      <Icon size={20} className="shrink-0" />
 
                       {!collapsed && (
-                        <span className="truncate">
-                          {item.title}
-                        </span>
+                        <span className="truncate">{item.title}</span>
                       )}
                     </span>
 
@@ -1812,9 +1733,7 @@ export default function Sidebar({
                         className={[
                           "shrink-0",
                           "transition-transform duration-200",
-                          open
-                            ? "rotate-180"
-                            : "",
+                          open ? "rotate-180" : "",
                         ].join(" ")}
                       />
                     )}
@@ -1844,47 +1763,39 @@ export default function Sidebar({
                             pl-4
                           "
                         >
-                          {item.children.map(
-                            (child) => (
-                              <li
-                                key={child.path}
-                                className="relative"
-                              >
-                                <NavLink
-                                  to={child.path}
-                                  onClick={
-                                    onCloseMobile
-                                  }
-                                  className={({
-                                    isActive,
-                                  }) =>
-                                    [
-                                      "relative flex items-center",
-                                      "min-h-[38px]",
-                                      "rounded-lg",
-                                      "px-3",
-                                      "text-[13px]",
-                                      "transition-all duration-150",
+                          {item.children.map((child) => (
+                            <li key={child.path} className="relative">
+                              <NavLink
+                                to={child.path}
+                                onClick={onCloseMobile}
+                                className={({ isActive }) =>
+                                  [
+                                    "relative flex items-center",
+                                    "min-h-[38px]",
+                                    "rounded-lg",
+                                    "px-3",
+                                    "text-[13px]",
+                                    "transition-all duration-150",
 
-                                      isActive
-                                        ? `
+                                    isActive
+                                      ? `
                                           bg-[#edf4ff]
                                           font-semibold
                                           text-[#1558bd]
                                         `
-                                        : `
+                                      : `
                                           text-slate-500
                                           hover:bg-slate-50
                                           hover:text-slate-800
                                         `,
-                                    ].join(" ")
-                                  }
-                                >
-                                  {({ isActive }) => (
-                                    <>
-                                      {isActive && (
-                                        <span
-                                          className="
+                                  ].join(" ")
+                                }
+                              >
+                                {({ isActive }) => (
+                                  <>
+                                    {isActive && (
+                                      <span
+                                        className="
                                             absolute
                                             -left-[18px]
                                             h-5
@@ -1892,16 +1803,15 @@ export default function Sidebar({
                                             rounded-full
                                             bg-[#1558bd]
                                           "
-                                        />
-                                      )}
+                                      />
+                                    )}
 
-                                      {child.title}
-                                    </>
-                                  )}
-                                </NavLink>
-                              </li>
-                            )
-                          )}
+                                    {child.title}
+                                  </>
+                                )}
+                              </NavLink>
+                            </li>
+                          ))}
                         </ul>
                       </div>
                     </div>
@@ -1930,9 +1840,7 @@ export default function Sidebar({
               "text-[13px] font-bold",
               "transition-all duration-200",
 
-              collapsed
-                ? "lg:justify-center px-3"
-                : "gap-3 px-3",
+              collapsed ? "lg:justify-center px-3" : "gap-3 px-3",
 
               "bg-red-50",
               "text-red-500",
@@ -1950,11 +1858,7 @@ export default function Sidebar({
               "
             />
 
-            {!collapsed && (
-              <span className="tracking-wide">
-                Sign Out
-              </span>
-            )}
+            {!collapsed && <span className="tracking-wide">Sign Out</span>}
           </button>
         </div>
       </aside>

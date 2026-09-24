@@ -11,7 +11,7 @@ import {
 import { toast } from "react-toastify";
 import SkeletonLoader from "../utils/SkeletonLoader";
 
-const SectorsGeography = () => {
+const SectorsGeography = ({selectedProductsName}) => {
   const [disbursementsbyState, setDisbursementsbyState] = useState([]);
   const [sectorNPA, setsectorNPA] = useState([]);
   const [houseChartData, sethouseChartData] = useState({});
@@ -90,7 +90,7 @@ const SectorsGeography = () => {
   const fetchDisbursementsbyState = async () => {
     setIsLoading((prev) => ({ ...prev, loading1: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
       const response = await SectorGeographic_DisbursementsbyStateAPI(req);
       if (response.status) {
         setDisbursementsbyState(response.data);
@@ -107,7 +107,7 @@ const SectorsGeography = () => {
   const fetchPortfolioHealthNPAbySector = async () => {
     setIsLoading((prev) => ({ ...prev, loading2: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
       const response = await PortfolioHealth_NPAbySectorAPI(req);
       if (response.status) {
         setsectorNPA(response.data);
@@ -124,7 +124,7 @@ const SectorsGeography = () => {
   const fetchSectorGeographic_MonthlyLoanCount = async () => {
     setIsLoading((prev) => ({ ...prev, loading3: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
       const response = await SectorGeographic_MonthlyLoanCountAPI(req);
       if (response.status) {
         setMonthlyLoanCount(response.data);
@@ -141,7 +141,7 @@ const SectorsGeography = () => {
   const fetchSectorGeographic_HouseTypeSplit = async () => {
     setIsLoading((prev) => ({ ...prev, loading4: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
       const response = await SectorGeographic_HouseTypeSplitAPI(req);
       if (response.status) {
         sethouseChartData(response.data);
@@ -160,7 +160,7 @@ const SectorsGeography = () => {
     fetchPortfolioHealthNPAbySector();
     fetchSectorGeographic_MonthlyLoanCount();
     fetchSectorGeographic_HouseTypeSplit();
-  }, []);
+  }, [selectedProductsName]);
 
   return (
     <div className="space-y-6">

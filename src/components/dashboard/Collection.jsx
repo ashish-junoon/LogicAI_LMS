@@ -11,7 +11,7 @@ import {
 import { toast } from "react-toastify";
 import SkeletonLoader from "../utils/SkeletonLoader";
 
-const Collection = () => {
+const Collection = ({selectedProductsName}) => {
   const [financialPerformance, setfinancialPerformance] = useState({});
   const [collectionEfficiencySummary, setCollectionEfficiencySummary] = useState({});
   const [loanTenureDistribution, setLoanTenureDistribution] = useState([]);
@@ -85,7 +85,7 @@ const Collection = () => {
   const fetchFinancial_Performance = async () => {
     setIsLoading((prev) => ({ ...prev, loading1: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
       const response = await Financial_PerformanceAPI(req);
       if (response.status) {
         setfinancialPerformance(response.data[0]);
@@ -102,7 +102,7 @@ const Collection = () => {
   const fetchFinancials_CollectionEfficiencySummary = async () => {
     setIsLoading((prev) => ({ ...prev, loading3: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
       const response = await Financials_CollectionEfficiencySummaryAPI(req);
       if (response.status) {
         setCollectionEfficiencySummary(response.data[0]);
@@ -119,7 +119,7 @@ const Collection = () => {
   const fetchloanTenureDistributionDetailData = async () => {
     setIsLoading((prev) => ({ ...prev, loading5: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
       const response = await Financials_LoanTenureDistributionAPI(req);
       if (response.status) {
         setLoanTenureDistribution(response.data);
@@ -136,7 +136,7 @@ const Collection = () => {
   const fetchFinancials_MonthlyRevenueTrend = async () => {
     setIsLoading((prev) => ({ ...prev, loading4: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
       const response = await Financials_MonthlyRevenueTrendAPI(req);
       if (response.status) {
         setMonthlyLoanCount(response.data);
@@ -153,7 +153,7 @@ const Collection = () => {
   const fetchFinancials_ROIDistribution = async () => {
     setIsLoading((prev) => ({ ...prev, loading2: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
       const response = await Financials_ROIDistributionAPI(req);
       if (response.status) {
         setROIDistribution(response.data);
@@ -177,7 +177,7 @@ const Collection = () => {
     fetchloanTenureDistributionDetailData();
     fetchFinancials_MonthlyRevenueTrend();
     fetchFinancials_ROIDistribution();
-  }, []);
+  }, [selectedProductsName]);
 
   const effColors = {
     npa_exposure: "#C1443C",

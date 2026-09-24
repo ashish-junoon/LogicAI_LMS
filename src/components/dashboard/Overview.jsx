@@ -13,7 +13,7 @@ import {
 import { toast } from "react-toastify";
 import SkeletonLoader from "../utils/SkeletonLoader";
 
-const Overview = () => {
+const Overview = ({selectedProductsName}) => {
   const [mainData, setMainData] = useState({});
   const [overViewDescription, setOverViewDescription] = useState({});
   const [loanStatusDistribution, setloanStatusDistribution] = useState([]);
@@ -72,9 +72,11 @@ const Overview = () => {
           "#2F6FA6",
           "#6B54C7",
           "#1F8F68",
-          "#B9800F",
-          "#C1443C",
-          "#96690F",
+          "#EB7F31",
+          "#78A4CB",
+          "#DF301C",
+          "#F62477",
+          "#1B4EF5",
         ],
         borderRadius: 2,
         borderWidth: 0,
@@ -92,7 +94,8 @@ const Overview = () => {
       {
         label: "Loans",
         data: sortedNPASector?.map((sector) => sector?.total_loans),
-        backgroundColor: "rgba(31,143,104,0.85)",
+        // backgroundColor: "rgba(31,143,104,0.85)",
+        backgroundColor: "#66BB6A",
         borderColor: COLORS.paid,
         borderWidth: 1,
         borderRadius: 2,
@@ -103,7 +106,7 @@ const Overview = () => {
   const fetchOverview_Main = async () => {
     setIsLoading((prev) => ({ ...prev, loading1: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
       const response = await Overview_MainAPI(req);
       if (response.status) {
         setMainData(response.data);
@@ -120,7 +123,7 @@ const Overview = () => {
   const fetchOverview_Description = async () => {
     setIsLoading((prev) => ({ ...prev, loading2: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName};
       const response = await Overview_DescriptionAPI(req);
       if (response.status) {
         setOverViewDescription(response.data);
@@ -137,7 +140,7 @@ const Overview = () => {
   const fetchOverview_LoanStatusDistribution = async () => {
     setIsLoading((prev) => ({ ...prev, loading3: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
       const response = await Overview_LoanStatusDistributionAPI(req);
       if (response.status) {
         setloanStatusDistribution(response.data);
@@ -154,7 +157,7 @@ const Overview = () => {
   const fetchOverview_MonthlyDisbursements = async () => {
     setIsLoading((prev) => ({ ...prev, loading4: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
       const response = await Overview_MonthlyDisbursementsAPI(req);
       if (response.status) {
         setmonthlyDisbursement(response.data);
@@ -171,7 +174,7 @@ const Overview = () => {
   const fetchCustomerProfile_LoanSizeDistribution = async () => {
     setIsLoading((prev) => ({ ...prev, loading5: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
       const response = await CustomerProfile_LoanSizeDistributionAPI(req);
       if (response.status) {
         setLoanSizeDistribution(response.data);
@@ -188,7 +191,7 @@ const Overview = () => {
   const fetchPortfolioHealthNPAbySector = async () => {
     setIsLoading((prev) => ({ ...prev, loading6: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
       const response = await PortfolioHealth_NPAbySectorAPI(req);
       if (response.status) {
         setsectorNPA(response.data);
@@ -209,7 +212,7 @@ const Overview = () => {
     fetchOverview_MonthlyDisbursements();
     fetchCustomerProfile_LoanSizeDistribution();
     fetchPortfolioHealthNPAbySector();
-  }, []);
+  }, [selectedProductsName]);
 
   return (
     <div className="space-y-5">
@@ -219,7 +222,8 @@ const Overview = () => {
           <KpiCard
             label="Total Loans"
             value={mainData?.total_loans?.toLocaleString()}
-            sub={`${mainData?.unique_customers?.toLocaleString()} unique customers`}
+            // sub={`${mainData?.unique_customers?.toLocaleString()} unique customers`}
+            sub={`${mainData?.total_loans?.toLocaleString()} loans by customers`}
             type={1}
           />
           <KpiCard

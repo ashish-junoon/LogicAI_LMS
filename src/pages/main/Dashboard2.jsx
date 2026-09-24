@@ -20,6 +20,7 @@ const Dashboard2 = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [mainData, setMainData] = useState({});
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const formattedSelectedProducts = selectedProducts?.join(",") || "ALL";
 
   // =========================================================
   // TABS
@@ -40,21 +41,39 @@ const Dashboard2 = () => {
   const page = useMemo(() => {
     switch (activeTab) {
       case "overview":
-        return <Overview mainData={mainData} />;
+        return (
+          <Overview
+            mainData={mainData}
+            selectedProductsName={formattedSelectedProducts}
+          />
+        );
       case "portfolio":
-        return <PortfolioHealth />;
+        return (
+          <PortfolioHealth selectedProductsName={formattedSelectedProducts} />
+        );
       case "sectors":
-        return <SectorsGeography />;
+        return (
+          <SectorsGeography selectedProductsName={formattedSelectedProducts} />
+        );
       case "team":
-        return <TeamPerformance />;
+        return (
+          <TeamPerformance selectedProductsName={formattedSelectedProducts} />
+        );
       case "customers":
-        return <CustomerProfile />;
+        return (
+          <CustomerProfile selectedProductsName={formattedSelectedProducts} />
+        );
       case "collection":
-        return <Collection />;
+        return <Collection selectedProductsName={formattedSelectedProducts} />;
       default:
-        return <Overview mainData={mainData} />;
+        return (
+          <Overview
+            mainData={mainData}
+            selectedProductsName={formattedSelectedProducts}
+          />
+        );
     }
-  }, [activeTab, mainData]);
+  }, [activeTab, mainData, formattedSelectedProducts]);
 
   // =========================================================
   // API
@@ -62,7 +81,11 @@ const Dashboard2 = () => {
 
   const fetchOverview_Main = async () => {
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = {
+        from_date: "",
+        to_date: "",
+        product_code: formattedSelectedProducts,
+      };
       const response = await Overview_MainAPI(req);
       if (response.status) {
         setMainData(response.data);
@@ -74,7 +97,7 @@ const Dashboard2 = () => {
 
   useEffect(() => {
     fetchOverview_Main();
-  }, []);
+  }, [formattedSelectedProducts]);
 
   // =========================================================
   // PRODUCT OPTIONS
@@ -84,7 +107,8 @@ const Dashboard2 = () => {
     { label: "PaisaUdhar", value: "PU" },
     { label: "EarlyWages", value: "EW" },
     { label: "Instapaise", value: "IP" },
-    { label: "Refyne", value: "RF" },
+    { label: "Refyne Term Loan", value: "RFT" },
+    { label: "Refyne Retail OD", value: "RFR" },
     { label: "MSME", value: "MSME" },
     { label: "SME", value: "SME" },
     { label: "JLG", value: "JLG" },
@@ -140,7 +164,9 @@ const Dashboard2 = () => {
               >
                 ₹
                 {mainData?.total_disbursed
-                  ? Math.floor(mainData.total_disbursed / 10000000).toLocaleString()
+                  ? Math.floor(
+                      mainData.total_disbursed / 10000000,
+                    ).toLocaleString()
                   : 0}
                 <span className="ml-0.5 text-[10px] font-medium">Cr</span>
               </span>
