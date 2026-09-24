@@ -18,29 +18,31 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 import { bankList } from "../../content/data";
+import { useLoanDetails } from "../../provider/loanContext";
 
 const MultipleBankInformation = ({
   onNext,
   permission,
   step,
 }) => {
+  const {loanDetails} = useLoanDetails();
   const [bankAccounts, setBankAccounts] = useState([
     {
       id: 1,
       bankName: "State Bank of India",
       ifscCode: "SBIN00002",
-      accountNumber: "320895544887",
+      accountNumber: loanDetails?.account_number,
       accountHolderName: "Rajesh Kumar",
       bankDocument: null,
     },
-    {
-      id: 2,
-      bankName: "HDFC Bank",
-      ifscCode: "HDFC0001234",
-      accountNumber: "50100234567890",
-      accountHolderName: "Rajesh Kumar",
-      bankDocument: null,
-    },
+    // {
+    //   id: 2,
+    //   bankName: "HDFC Bank",
+    //   ifscCode: "HDFC0001234",
+    //   accountNumber: "50100234567890",
+    //   accountHolderName: "Rajesh Kumar",
+    //   bankDocument: null,
+    // },
   ]);
 
   const [isEditing, setIsEditing] = useState(false);

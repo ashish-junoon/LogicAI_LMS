@@ -68,3 +68,25 @@ export function StatusBadge({ label, variant = "neutral", dot = true }) {
     </span>
   );
 }
+
+
+export const mask = (value) => {
+  if(!value) return "";
+  return "X".repeat(value?.length - 4) + value?.slice(-4)
+}
+
+export const formatDate = (date) => {
+  if (!date) return "";
+
+  // Already DD/MM/YYYY
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(date)) {
+    return date;
+  }
+
+  // YYYYMMDD
+  if (/^\d{8}$/.test(date)) {
+    return `${date.slice(6, 8)}/${date.slice(4, 6)}/${date.slice(0, 4)}`;
+  }
+
+  return date;
+};

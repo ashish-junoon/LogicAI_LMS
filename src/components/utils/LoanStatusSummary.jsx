@@ -9,9 +9,9 @@ import {
 } from "react-icons/ri";
 
 const LoanStatusSummary = ({ lead }) => {
-  const isClosed = lead.stage === "closed";
-  const isNpa = lead.stage === "npa";
-  const isOverDue = lead.stage === "overdue";
+  const isClosed = lead?.loan_status?.toLowerCase() === "closed" || "settle" || "foreclosure";
+  const isNpa = lead?.stage === "npa";
+  const isOverDue = lead?.stage === "overdue";
 
   return (
     <div
@@ -92,7 +92,7 @@ const LoanStatusSummary = ({ lead }) => {
             </div>
 
             <p className="mt-1 text-xs font-semibold text-slate-700">
-              ₹{lead.amount?.toLocaleString("en-IN") || "0"}
+              ₹{lead?.loan_amount?.toLocaleString("en-IN") || "0"}
             </p>
           </div>
 
@@ -113,7 +113,7 @@ const LoanStatusSummary = ({ lead }) => {
             </div>
 
             <p className="mt-1 text-xs font-semibold text-slate-700">
-              {lead.disbursementDate || "-"}
+              {lead?.disbursement_date?.split(" ")[0] || "-"}
             </p>
           </div>
 
@@ -136,7 +136,7 @@ const LoanStatusSummary = ({ lead }) => {
             </div>
 
             <p className="mt-1 truncate text-xs font-semibold text-slate-700">
-              {lead.loanId || lead.id || "-"}
+              {lead?.loan_id || lead?.id || "-"}
             </p>
           </div>
         </div>

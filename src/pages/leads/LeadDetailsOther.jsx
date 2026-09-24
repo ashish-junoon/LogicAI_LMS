@@ -8,34 +8,37 @@ import { lead } from "../../content/data";
 import { GetLoanById } from "../../api/loan";
 import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useLoanDetails } from "../../provider/loanContext";
 
 const LeadDetailsOther = () => {
-    const { state } = useLocation();
-    const [leadDetails, setLeadDetails] = useState({});
-    const [loading, setLoading] = useState(false);
-  console.log("state", state)
+  const { state } = useLocation();
+  const [leadDetails, setLeadDetails] = useState({});
+  const [loading, setLoading] = useState(false);
+  const {setLoanDetails} = useLoanDetails();
+  // console.log("state", state)
 
-    const fetchLoans = async () => {
-      try {
-        setLoading(true);
-        const res = await GetLoanById({
-          loan_id: state?.loan_id,
-          product_code: state?.product_code,
-        })
-        if(res?.status) {
-          setLeadDetails(res?.data)
-        }
-      } catch (error) {
-        console.log(error);
-        toast.error(error?.message || "Something went wrong")
-      } finally {
-        setLoading(false);
+  const fetchLoans = async () => {
+    try {
+      setLoading(true);
+      const res = await GetLoanById({
+        loan_id: state?.loan_id,
+        product_code: state?.product_code,
+      })
+      if (res?.status) {
+        setLeadDetails(res?.data)
+        setLoanDetails(res?.data)
       }
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.message || "Something went wrong")
+    } finally {
+      setLoading(false);
     }
-  
-    useEffect(() => {
-      fetchLoans();
-    }, [])
+  }
+
+  useEffect(() => {
+    fetchLoans();
+  }, [])
 
 
   return (
@@ -45,14 +48,18 @@ const LeadDetailsOther = () => {
       <Breadcrumbs
         items={[
           { label: "All Leads", path: "/all-leads" },
-          { label: "LD-0001" },
+          { label: state?.loan_id },
         ]}
       />
-      <UserHeader lead={
-        leadDetails
-        // {...lead, stage: "closed", status: "Closed"}
-        } />
-      <OtherLeadsWrapper />
+      <UserHeader lead={{
+        ...leadDetails,
+        ...state
+      }} />
+      {/* // {...lead, stage: "closed", status: "Closed"} */}
+      <OtherLeadsWrapper loanData={{
+        ...leadDetails,
+        ...state
+      }} />
     </div>
   );
 };

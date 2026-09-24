@@ -16,8 +16,10 @@ import Button from "../utils/Button";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import DownloadDoc from "../fields/DownloadDoc";
+import { useLoanDetails } from "../../provider/loanContext";
 
 const KycInformation = ({ onNext, permission }) => {
+  const { loanDetails } = useLoanDetails
   const [isEditing, setIsEditing] = useState(false);
 
   const [verified, setVerified] = useState({
@@ -27,13 +29,14 @@ const KycInformation = ({ onNext, permission }) => {
 
   const formik = useFormik({
     initialValues: {
-      panNumber: "QSNWS0000S",
+      panNumber: loanDetails?.pan_card_number ?? "N/A",
       panFile: null,
-
-      aadhaarNumber: "989854547171",
+      aadhaarNumber: loanDetails?.aadhaar_number ?? "N/A",
       aadhaarFront: null,
       aadhaarBack: null,
     },
+
+    enableReinitialize: true,
 
     // validationSchema: Yup.object({
     //   panNumber: Yup.string()
@@ -190,29 +193,31 @@ const KycInformation = ({ onNext, permission }) => {
             {/* =================================================
                 AADHAAR NUMBER
             ================================================== */}
-            <div>
-              <div className="relative">
-                <TextInput
-                  label="Aadhaar Number"
-                  name="aadhaarNumber"
-                  maxLength={12}
-                  value={formik.values.aadhaarNumber}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  disabled={!isEditing}
-                />
+            {loanDetails?.aadhaar_number &&
+              <div>
+                <div className="relative">
+                  <TextInput
+                    label="Aadhaar Number"
+                    name="aadhaarNumber"
+                    maxLength={12}
+                    value={formik.values.aadhaarNumber}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    disabled={!isEditing}
+                  />
 
-                {/* Verification button */}
-                {isEditing && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setVerified((prev) => ({
-                        ...prev,
-                        aadhaar: true,
-                      }))
-                    }
-                    className="
+
+                  {/* Verification button */}
+                  {isEditing && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setVerified((prev) => ({
+                          ...prev,
+                          aadhaar: true,
+                        }))
+                      }
+                      className="
                       absolute
                       right-1
                       top-[25px]
@@ -230,25 +235,25 @@ const KycInformation = ({ onNext, permission }) => {
                       hover:bg-green-100
                       cursor-pointer
                     "
-                  >
-                    {verified.aadhaar ? (
-                      <>
-                        <RiCheckboxCircleFill size={14} />
-                        Verified
-                      </>
-                    ) : (
-                      <>
-                        <RiErrorWarningLine size={14} />
-                        Verify
-                      </>
-                    )}
-                  </button>
-                )}
+                    >
+                      {verified.aadhaar ? (
+                        <>
+                          <RiCheckboxCircleFill size={14} />
+                          Verified
+                        </>
+                      ) : (
+                        <>
+                          <RiErrorWarningLine size={14} />
+                          Verify
+                        </>
+                      )}
+                    </button>
+                  )}
 
-                {/* Read-only verified badge */}
-                {!isEditing && verified.aadhaar && (
-                  <div
-                    className="
+                  {/* Read-only verified badge */}
+                  {!isEditing && (
+                    <div
+                      className="
                       absolute
                       right-2
                       top-[30px]
@@ -263,19 +268,20 @@ const KycInformation = ({ onNext, permission }) => {
                       font-medium
                       text-green-700
                     "
-                  >
-                    <RiCheckboxCircleFill size={14} />
-                    Verified
-                  </div>
-                )}
-              </div>
+                    >
+                      <RiCheckboxCircleFill size={14} />
+                      Verified
+                    </div>
+                  )}
+                </div>
 
-              <ErrorMsg
-                error={
-                  formik.touched.aadhaarNumber && formik.errors.aadhaarNumber
-                }
-              />
-            </div>
+                <ErrorMsg
+                  error={
+                    formik.touched.aadhaarNumber && formik.errors.aadhaarNumber
+                  }
+                />
+              </div>
+            }
 
             {/* =================================================
                 AADHAAR FRONT

@@ -93,9 +93,13 @@ import AddressInformation from "../../components/forms/AddressInformation";
 import MultipleBankInformation from "../../components/forms/MultipleBankInformation";
 import GuarantorInformation from "../../components/forms/GuarantorInformation";
 import EmploymentInformation from "../../components/forms/EmploymentInformation";
+import PersonalInfocard from "./PersonalInfocard";
+import KycInformationCard from "./KycInformationCard";
+import AddressInformationCard from "./AddressInformationCard";
+import BankInfoCard from "./BankInfoCard";
 
-const LeadFormDetails = ({ permisions, loanData }) => {
-  console.log("LeadFormDetails", loanData)
+const LeadInformationPage = ({ permisions, loanData }) => {
+  console.log("LeadInformationPage", loanData)
   const [selected, setSelected] = useState("Personal Information");
 
   const tabs = [
@@ -130,16 +134,16 @@ const LeadFormDetails = ({ permisions, loanData }) => {
   const renderTabs = (tab) => {
     switch (tab) {
       case "Personal Information":
-        return <PersonalInformation permission={permisions?.personalInfo} />;
+        return <PersonalInfocard permission={permisions?.personalInfo} />;
 
       case "KYC Details":
-        return <KycInformation permission={permisions?.kycInfo} />;
+        return <KycInformationCard permission={permisions?.kycInfo} />;
 
       case "Address Information":
-        return <AddressInformation permission={permisions?.addressInfo} />;
+        return <AddressInformationCard permission={permisions?.addressInfo} />;
 
       case "Bank Details":
-        return <MultipleBankInformation permission={permisions?.bankInfo} />;
+        return <BankInfoCard permission={permisions?.bankInfo} />;
 
       // case "Co Borrower/Guarantor's Details":
       //   return <GuarantorInformation permission={permisions?.guarantorInfo} />;
@@ -189,4 +193,4 @@ const LeadFormDetails = ({ permisions, loanData }) => {
   );
 };
 
-export default LeadFormDetails;
+export default LeadInformationPage;
