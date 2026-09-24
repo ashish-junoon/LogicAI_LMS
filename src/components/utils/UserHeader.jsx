@@ -12,32 +12,32 @@ const UserHeader = ({ lead, permisssion }) => {
       <div className="bg-[linear-gradient(120deg,#5050b8_0%,#265FAA_55%,#3878C7_100%)] px-5 pb-14 pt-5 sm:px-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
-            <Avatar name={lead.name} size="lg" ring />
+            <Avatar name={lead?.customer_name} size="lg" ring />
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-lg font-semibold text-white">
-                  {lead.name}
+                  {lead?.customer_name}
                 </h1>
                 <StatusBadge
-                  label={lead.status}
+                  label={lead?.loan_status}
                   variant={
-                    lead.stage === "rejected"
+                    lead?.stage === "rejected"
                       ? "danger"
-                      : lead.stage === "draft"
+                      : lead?.stage === "draft"
                         ? "neutral"
                         : "primary"
                   }
                 />
               </div>
               <p className="text-sm text-white/75">
-                {lead.id} &middot; {lead.product} &middot; {lead.branch}{" "}
-                &middot; ₹{lead.amount.toLocaleString("en-IN")}
+                {lead?.id} &middot; {lead?.product || "N/A"} &middot; {lead?.branch}{" "}
+                &middot; ₹{lead?.loan_amount?.toLocaleString("en-IN")}
               </p>
             </div>
           </div>
           {permisssion && (
             <div className="flex gap-2">
-              {lead.stage !== "rejected" ? (
+              {lead?.stage !== "rejected" ? (
                 <>
                   <Button
                     btnIcon="IoCloseCircleOutline"
@@ -56,7 +56,7 @@ const UserHeader = ({ lead, permisssion }) => {
                 </>
               ) : (
                 <span className="rounded-lg bg-white/10 px-3 py-2 text-sm text-white/90">
-                  {lead.rejectionReason}
+                  {lead?.rejectionReason}
                 </span>
               )}
             </div>
@@ -74,9 +74,9 @@ const UserHeader = ({ lead, permisssion }) => {
           ) : (
             <div className="p-4 border border-surface-border rounded-xl shadow-raised">
               <JourneyStepper
-                currentKey={lead.stage}
+                currentKey={lead?.stage}
                 rejectedAt={
-                  lead.stage === "rejected" ? "credit-analysis" : null
+                  lead?.stage === "rejected" ? "credit-analysis" : null
                 }
               />
             </div>

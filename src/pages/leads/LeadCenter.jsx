@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Icon from "../../components/utils/Icon";
 import { IoPerson } from "react-icons/io5";
 import DataTable from "react-data-table-component";
@@ -10,11 +10,44 @@ import { allProductData } from "../../content/masterData";
 import FilterCard from "../../components/utils/FilterCard";
 import SelectInput from "../../components/fields/SelectInput";
 import DateInput from "../../components/fields/DateInput";
+import { GetAllLoans } from "../../api/loan";
+import { toast } from "react-toastify";
 
 const LeadCenter = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isOpenFilter, setIsOpenFilter] = useState(false);
+  const [loanData, setLoanData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
+  const [totalRows, setTotalRows] = useState(0);
   const navigate = useNavigate();
+
+
+  const fetchLoans = async () => {
+    try {
+      setLoading(true);
+      const res = await GetAllLoans({
+        pageNo: page,
+        page_size: perPage,
+      })
+      if(res?.status) {
+        setLoanData(res?.data)
+        setTotalRows(res?.total_count)
+        // console.log("res data", res?.data)
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.message || "Something went wrong")
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchLoans();
+  }, [page, perPage])
+
 
   const handleFilterBtn = () => {
     setIsOpenFilter((prev) => !prev);
@@ -22,70 +55,14 @@ const LeadCenter = () => {
 
   const columns = [
     {
-      name: "Sr No",
-      selector: (row) => row.index,
-      sortable: true,
-      width: "100px",
-    },
-    // {
-    //   name: "User Id",
-    //   selector: (row) => row.userId,
-    //   sortable: true,
-    // },
-    // {
-    //   name: "Lead Id",
-    //   selector: (row) => row.leadId,
-    //   sortable: true,
-    // },
-    {
-      name: "Loan Id",
-      selector: (row) => row.loanId,
-      sortable: true,
-    },
-    {
-      name: "Name",
-      selector: (row) => row.name,
-      sortable: true,
-    },
-    {
-      name: "Phone",
-      selector: (row) => row.phone,
-      sortable: true,
-      right: true,
-    },
-    {
-      name: "Product Name",
-      selector: (row) => row.product,
-      sortable: true,
-    },
-    {
-      name: "Disbursement Date",
-      selector: (row) => row.disbursement_date,
-      sortable: true,
-    },
-    {
-      name: "Disbursement Amount",
-      selector: (row) => row.disbursement_amount,
-      sortable: true,
-    },
-    {
-      name: "Closing Date",
-      selector: (row) => row.closing_date,
-      sortable: true,
-    },
-    {
-      name: "Created By",
-      selector: (row) => row.createdBy,
-      sortable: true,
-    },
-    {
       name: "Actions",
-      selector: (row) => row.status,
+      selector: (row) => row?.status || "-",
       sortable: true,
       center: true,
       cell: (row) => (
         <Link
           to="/product-leads-detail"
+          state={{loan_id: row?.loan_id, product_code: row?.product_name}}
           className={`p-1.5 px-2 rounded-sm text-xs font-medium bg-primary flex gap-1 text-white items-center`}
         >
           <Icon name="FaRegEye" size={15} color={"white"} />
@@ -93,6 +70,79 @@ const LeadCenter = () => {
         </Link>
       ),
     },
+    // {
+    //   name: "Sr No",
+    //   selector: (row) => row?.index || "-",
+    //   sortable: true,
+    //   width: "100px",
+    // },
+    // {
+    //   name: "User Id",
+    //   selector: (row) => row?.userId || "-",
+    //   sortable: true,
+    // },
+    // {
+    //   name: "Lead Id",
+    //   selector: (row) => row?.leadId || "-",
+    //   sortable: true,
+    // },
+    {
+      name: "Loan Id",
+      selector: (row) => row?.loan_id || "-",
+      sortable: true,
+    },
+    {
+      name: "Name",
+      selector: (row) => row?.customer_name || "-",
+      sortable: true,
+    },
+    {
+      name: "Phone",
+      selector: (row) => row?.mobile_no || "-",
+      sortable: true,
+      right: true,
+    },
+    {
+      name: "Prod. Name",
+      selector: (row) => row?.product_name || "-",
+      sortable: true,
+    },
+    {
+      name: "Disb. Date",
+      selector: (row) => row?.disbursement_date?.split(" ")[0] || "-",
+      sortable: true,
+    },
+    {
+      name: "Disb. Amt",
+      selector: (row) => row?.disbursement_amount || "-",
+      sortable: true,
+    },
+    {
+      name: "EMI Date",
+      selector: (row) => row?.emi_paid_date?.split(" ")[0] || "-",
+      sortable: true,
+    },
+     {
+      name: "Repay. Date",
+      selector: (row) => row?.repayment_date?.split(" ")[0] || "-",
+      sortable: true,
+    },
+     {
+      name: "Repay. Amt",
+      selector: (row) => row?.repayment_amount || "-",
+      sortable: true,
+    },
+    {
+      name: "Closing Amt",
+      selector: (row) => row?.closing_amt || "-",
+      sortable: true,
+    },
+    // {
+    //   name: "Created By",
+    //   selector: (row) => row?.createdBy || "-",
+    //   sortable: true,
+    // },
+    
   ];
 
   return (
@@ -151,9 +201,13 @@ const LeadCenter = () => {
 
         {/* table data */}
         <Table
-          data={allProductData}
+          data={loanData}
           columns={columns}
           handleFilterBtn={handleFilterBtn}
+          paginationServer
+          paginationTotalRows={totalRows}
+          onChangePage={(page) => {console.log(page); setPage(page)}}
+          onChangeRowsPerPage={(perPage) => {console.log(perPage); setPerPage(perPage)}}
         />
       </div>
     </>

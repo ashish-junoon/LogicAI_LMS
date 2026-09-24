@@ -2,7 +2,7 @@ import React from "react";
 import DataTable from "react-data-table-component";
 import { FiSearch, FiFilter, FiDownload } from "react-icons/fi";
 
-const Table = ({ columns, data, handleFilterBtn }) => {
+const Table = ({ columns, data, handleFilterBtn, ...props }) => {
   // const customStyles = {
   //   table: {
   //     style: {
@@ -100,14 +100,14 @@ const Table = ({ columns, data, handleFilterBtn }) => {
     table: {
       style: {
         backgroundColor: "#FFFFFF",
-        minWidth: "max-content",
+        minWidth: "max-content"
       },
     },
 
     tableWrapper: {
       style: {
         display: "block",
-        width: "100%",
+        width: "115%",
         overflowX: "auto",
         overflowY: "hidden",
         scrollbarWidth: "none",
@@ -228,6 +228,7 @@ const Table = ({ columns, data, handleFilterBtn }) => {
         striped={false}
         responsive
         pagination
+        {...props}
       />
     </div>
   );

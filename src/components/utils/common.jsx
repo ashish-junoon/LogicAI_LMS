@@ -1,6 +1,6 @@
 function colorFor(name) {
   let hash = 0;
-  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  for (let i = 0; i < name?.length; i++) hash = name?.charCodeAt(i) + ((hash << 5) - hash);
   return PALETTE[Math.abs(hash) % PALETTE.length];
 }
 
@@ -21,7 +21,7 @@ const SIZES = {
 
 export default function Avatar({ name, size = "md", ring = false }) {
   const initials = name
-    .split(" ")
+    ?.split(" ")
     .map((n) => n[0])
     .join("")
     .slice(0, 2)
