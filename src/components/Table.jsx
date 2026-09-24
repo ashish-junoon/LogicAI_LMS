@@ -107,7 +107,7 @@ const Table = ({ columns, data, handleFilterBtn, ...props }) => {
     tableWrapper: {
       style: {
         display: "block",
-        width: "115%",
+        width: "100%",
         overflowX: "auto",
         overflowY: "hidden",
         scrollbarWidth: "none",

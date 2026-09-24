@@ -34,6 +34,8 @@ import DesignationMaster from './pages/master/DesignationMaster'
 import PDQuestionsMaster from './pages/master/PDQuestionsMaster'
 import PageMaster from './pages/master/PageMaster'
 import VendorMaster from './pages/master/VendorMaster'
+import BusinessTradesMaster from './pages/master/BusinessTradesMaster'
+import BankMaster from './pages/master/BankMaster'
 
 function App() {
 
@@ -60,6 +62,8 @@ function App() {
           <Route path='/quetionare-master' element={<PDQuestionsMaster />} /> 
           <Route path='/page-master' element={<PageMaster />} /> 
           <Route path='/vendor-master' element={<VendorMaster />} /> 
+          <Route path='/business-trade-master' element={<BusinessTradesMaster />} /> 
+          <Route path='/bank-master' element={<BankMaster />} /> 
           {/* <Route path='/product-master' element={<CreateLoanProduct />} />  */}
 
           {/* Leads Section  */}

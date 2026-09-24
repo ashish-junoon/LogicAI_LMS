@@ -485,6 +485,8 @@ export const sidebarData = [
       { title: "PD Question Master", path: "/quetionare-master" },
       { title: "Page Master", path: "/page-master" },
       { title: "Vendor Master", path: "/vendor-master" },
+      { title: "Business Trade Master", path: "/business-trade-master" },
+      { title: "Bank Master", path: "/bank-master" },
     ],
   },
 ];

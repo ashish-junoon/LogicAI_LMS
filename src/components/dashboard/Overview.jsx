@@ -13,7 +13,7 @@ import {
 import { toast } from "react-toastify";
 import SkeletonLoader from "../utils/SkeletonLoader";
 
-const Overview = ({selectedProductsName}) => {
+const Overview = ({ selectedProductsName }) => {
   const [mainData, setMainData] = useState({});
   const [overViewDescription, setOverViewDescription] = useState({});
   const [loanStatusDistribution, setloanStatusDistribution] = useState([]);
@@ -41,8 +41,8 @@ const Overview = ({selectedProductsName}) => {
         data: loanStatusDistribution?.map((item) => item?.loan_count),
         // backgroundColor: STATUS_RAMP,
         backgroundColor: loanStatusDistribution?.map(
-        (item) => COLORS[item?.loan_status?.toLowerCase()] || "#64748b"
-      ),
+          (item) => COLORS[item?.loan_status?.toLowerCase()] || "#64748b",
+        ),
         borderWidth: 2,
         borderColor: "#FFFFFF",
       },
@@ -106,7 +106,11 @@ const Overview = ({selectedProductsName}) => {
   const fetchOverview_Main = async () => {
     setIsLoading((prev) => ({ ...prev, loading1: true }));
     try {
-      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
+      const req = {
+        from_date: "",
+        to_date: "",
+        product_code: selectedProductsName,
+      };
       const response = await Overview_MainAPI(req);
       if (response.status) {
         setMainData(response.data);
@@ -123,7 +127,11 @@ const Overview = ({selectedProductsName}) => {
   const fetchOverview_Description = async () => {
     setIsLoading((prev) => ({ ...prev, loading2: true }));
     try {
-      const req = { from_date: "", to_date: "", product_code: selectedProductsName};
+      const req = {
+        from_date: "",
+        to_date: "",
+        product_code: selectedProductsName,
+      };
       const response = await Overview_DescriptionAPI(req);
       if (response.status) {
         setOverViewDescription(response.data);
@@ -140,7 +148,11 @@ const Overview = ({selectedProductsName}) => {
   const fetchOverview_LoanStatusDistribution = async () => {
     setIsLoading((prev) => ({ ...prev, loading3: true }));
     try {
-      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
+      const req = {
+        from_date: "",
+        to_date: "",
+        product_code: selectedProductsName,
+      };
       const response = await Overview_LoanStatusDistributionAPI(req);
       if (response.status) {
         setloanStatusDistribution(response.data);
@@ -157,7 +169,11 @@ const Overview = ({selectedProductsName}) => {
   const fetchOverview_MonthlyDisbursements = async () => {
     setIsLoading((prev) => ({ ...prev, loading4: true }));
     try {
-      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
+      const req = {
+        from_date: "",
+        to_date: "",
+        product_code: selectedProductsName,
+      };
       const response = await Overview_MonthlyDisbursementsAPI(req);
       if (response.status) {
         setmonthlyDisbursement(response.data);
@@ -174,7 +190,11 @@ const Overview = ({selectedProductsName}) => {
   const fetchCustomerProfile_LoanSizeDistribution = async () => {
     setIsLoading((prev) => ({ ...prev, loading5: true }));
     try {
-      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
+      const req = {
+        from_date: "",
+        to_date: "",
+        product_code: selectedProductsName,
+      };
       const response = await CustomerProfile_LoanSizeDistributionAPI(req);
       if (response.status) {
         setLoanSizeDistribution(response.data);
@@ -191,7 +211,11 @@ const Overview = ({selectedProductsName}) => {
   const fetchPortfolioHealthNPAbySector = async () => {
     setIsLoading((prev) => ({ ...prev, loading6: true }));
     try {
-      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
+      const req = {
+        from_date: "",
+        to_date: "",
+        product_code: selectedProductsName,
+      };
       const response = await PortfolioHealth_NPAbySectorAPI(req);
       if (response.status) {
         setsectorNPA(response.data);
@@ -232,23 +256,39 @@ const Overview = ({selectedProductsName}) => {
             sub="Principal deployed"
             type={6}
           />
+          <KpiCard
+            label="Total Collected"
+            value={`₹${formatNumber(mainData?.total_collected)}`}
+            sub={`${107.69}% collection rate`}
+            type={5}
+          />
           <div className="relative group">
             <KpiCard
-              label="NPA Demand"
-              value={`₹${formatNumber(mainData?.npa_demand_amount)}`}
+              label="Total Demand"
+              value={`₹${formatNumber(mainData?.demand_amount)}`}
               sub="Hover for breakdown"
               type={3}
             />
             <div className="absolute left-0 top-full mt-1 z-30 hidden group-hover:flex flex-col gap-1.5 w-56">
               <div className="bg-white border border-[#DCE1E6] shadow-lg px-3 py-2">
-                <p className="text-[10px] text-[#8B98A6] uppercase tracking-wide">NPA Demand Amount</p>
-                <p className="text-[15px] font-semibold text-[#C1443C]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                <p className="text-[10px] text-[#8B98A6] uppercase tracking-wide">
+                  NPA Demand Amount
+                </p>
+                <p
+                  className="text-[15px] font-semibold text-[#C1443C]"
+                  style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                >
                   ₹{formatNumber(mainData?.npa_demand_amount)}
                 </p>
               </div>
               <div className="bg-white border border-[#DCE1E6] shadow-lg px-3 py-2">
-                <p className="text-[10px] text-[#8B98A6] uppercase tracking-wide">Under NPA Demand Amount</p>
-                <p className="text-[15px] font-semibold text-[#C1443C]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                <p className="text-[10px] text-[#8B98A6] uppercase tracking-wide">
+                  Under NPA Demand Amount
+                </p>
+                <p
+                  className="text-[15px] font-semibold text-[#C1443C]"
+                  style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                >
                   ₹{formatNumber(mainData?.under_npa_demand_amount)}
                 </p>
               </div>
@@ -266,12 +306,12 @@ const Overview = ({selectedProductsName}) => {
             sub="Primarily metro markets"
             type={4}
           />
-          <KpiCard
+          {/* <KpiCard
             label="Collection Rate"
             value={mainData?.collection_rate ? `${mainData.collection_rate}%` : "—"}
             sub="Of total demand"
             type={5}
-          />
+          /> */}
         </div>
       ) : (
         <div className="text-center py-10 text-[#8B98A6] text-sm">Loading…</div>
@@ -293,7 +333,9 @@ const Overview = ({selectedProductsName}) => {
           <InsightCard
             type="danger"
             title="High Pending & Foreclosure Volume"
-            body={overViewDescription?.high_pending_and_foreclosure_volume || "N/A"}
+            body={
+              overViewDescription?.high_pending_and_foreclosure_volume || "N/A"
+            }
           />
           <InsightCard
             type="info"
@@ -308,7 +350,10 @@ const Overview = ({selectedProductsName}) => {
       {/* Charts row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         {!isLoading?.loading3 ? (
-          <Panel title="Loan Status Distribution" sub={`All ${totalLoan?.toLocaleString()} loans`}>
+          <Panel
+            title="Loan Status Distribution"
+            sub={`All ${totalLoan?.toLocaleString()} loans`}
+          >
             <div className="relative max-h-[260px] w-fit m-auto">
               <Chart
                 type="doughnut"
@@ -319,7 +364,12 @@ const Overview = ({selectedProductsName}) => {
                     legend: {
                       display: true,
                       position: "bottom",
-                      labels: { color: "#5B6B7A", padding: 10, boxWidth: 8, font: { size: 10.5 } },
+                      labels: {
+                        color: "#5B6B7A",
+                        padding: 10,
+                        boxWidth: 8,
+                        font: { size: 10.5 },
+                      },
                     },
                   },
                 }}
@@ -338,7 +388,10 @@ const Overview = ({selectedProductsName}) => {
                 data={monthlyData}
                 options={{
                   scales: {
-                    y: { ticks: { callback: (v) => fmtCr(v) }, grid: { color: "#E8EBEE" } },
+                    y: {
+                      ticks: { callback: (v) => fmtCr(v) },
+                      grid: { color: "#E8EBEE" },
+                    },
                     x: { grid: { display: false } },
                   },
                 }}
@@ -353,7 +406,10 @@ const Overview = ({selectedProductsName}) => {
       {/* Charts row 2 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         {!isLoading?.loading5 ? (
-          <Panel title="Loan Size Distribution" sub="Number of loans by amount bucket">
+          <Panel
+            title="Loan Size Distribution"
+            sub="Number of loans by amount bucket"
+          >
             <div className="relative max-h-[260px]">
               <Chart
                 type="bar"
@@ -382,7 +438,10 @@ const Overview = ({selectedProductsName}) => {
                   indexAxis: "y",
                   scales: {
                     x: { grid: { color: "#E8EBEE" } },
-                    y: { grid: { display: false }, ticks: { font: { size: 10.5 } } },
+                    y: {
+                      grid: { display: false },
+                      ticks: { font: { size: 10.5 } },
+                    },
                   },
                 }}
               />

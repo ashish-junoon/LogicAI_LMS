@@ -16,6 +16,21 @@ import MultiCheckboxSelect from "../../components/fields/MultiCheckboxSelect";
 // <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 // Both fall back to system fonts cleanly if omitted.
 
+// =========================================================
+// PRODUCT OPTIONS
+// =========================================================
+
+const productOptions = [
+  { label: "PaisaUdhar", value: "PU" },
+  { label: "EarlyWages", value: "EW" },
+  { label: "Instapaise", value: "IP" },
+  { label: "Refyne Term Loan", value: "RFT" },
+  { label: "Refyne Retail OD", value: "RFR" },
+  { label: "MSME", value: "MSME" },
+  { label: "SME", value: "SME" },
+  { label: "JLG", value: "JLG" },
+];
+
 const Dashboard2 = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [mainData, setMainData] = useState({});
@@ -98,21 +113,6 @@ const Dashboard2 = () => {
   useEffect(() => {
     fetchOverview_Main();
   }, [formattedSelectedProducts]);
-
-  // =========================================================
-  // PRODUCT OPTIONS
-  // =========================================================
-
-  const productOptions = [
-    { label: "PaisaUdhar", value: "PU" },
-    { label: "EarlyWages", value: "EW" },
-    { label: "Instapaise", value: "IP" },
-    { label: "Refyne Term Loan", value: "RFT" },
-    { label: "Refyne Retail OD", value: "RFR" },
-    { label: "MSME", value: "MSME" },
-    { label: "SME", value: "SME" },
-    { label: "JLG", value: "JLG" },
-  ];
 
   // =========================================================
   // RENDER
