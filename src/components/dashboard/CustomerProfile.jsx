@@ -10,7 +10,7 @@ import {
 import { toast } from "react-toastify";
 import SkeletonLoader from "../utils/SkeletonLoader";
 
-const CustomerProfile = () => {
+const CustomerProfile = ({selectedProductsName}) => {
   const [CustomerProfileAnalysis, setCustomerProfileAnalysis] = useState({});
   const [csDistribution, setcsDistribution] = useState([]);
   const [LoanSizeDistribution, setLoanSizeDistribution] = useState([]);
@@ -50,7 +50,7 @@ const CustomerProfile = () => {
   const fetchCustomerProfileAnalysis = async () => {
     setIsLoading((prev) => ({ ...prev, loading1: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
       const response = await CustomerProfileAnalysisAPI(req);
       if (response.status) {
         setCustomerProfileAnalysis(response.data);
@@ -67,7 +67,7 @@ const CustomerProfile = () => {
   const fetchCreditScoreDistribution = async () => {
     setIsLoading((prev) => ({ ...prev, loading2: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
       const response = await PortfolioHealth_CreditScoreDistributionAPI(req);
       if (response.status) {
         setcsDistribution(response.data);
@@ -84,7 +84,7 @@ const CustomerProfile = () => {
   const fetchCustomerProfile_LoanSizeDistribution = async () => {
     setIsLoading((prev) => ({ ...prev, loading3: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
       const response = await CustomerProfile_LoanSizeDistributionAPI(req);
       if (response.status) {
         setLoanSizeDistribution(response.data);
@@ -101,7 +101,7 @@ const CustomerProfile = () => {
   const fetchCustomerProfile_Description = async () => {
     setIsLoading((prev) => ({ ...prev, loading4: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
       const response = await CustomerProfile_DescriptionAPI(req);
       if (response.status) {
         setprofileDescription(response.data);
@@ -120,7 +120,7 @@ const CustomerProfile = () => {
     fetchCreditScoreDistribution();
     fetchCustomerProfile_LoanSizeDistribution();
     fetchCustomerProfile_Description();
-  }, []);
+  }, [selectedProductsName]);
 
   return (
     <div className="space-y-6">

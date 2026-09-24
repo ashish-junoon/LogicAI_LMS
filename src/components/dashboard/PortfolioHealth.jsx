@@ -9,7 +9,7 @@ import {
 import { toast } from "react-toastify";
 import SkeletonLoader from "../utils/SkeletonLoader";
 
-const PortfolioHealth = () => {
+const PortfolioHealth = ({selectedProductsName}) => {
   const [PortfolioHealthAnalysis, setPortfolioHealthAnalysis] = useState({});
   const [csDistribution, setcsDistribution] = useState([]);
   const [sectorNPA, setsectorNPA] = useState([]);
@@ -72,7 +72,7 @@ const PortfolioHealth = () => {
   const fetchPortfolioHealthAnalysis = async () => {
     setIsLoading((prev) => ({ ...prev, loading1: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
       const response = await PortfolioHealthAnalysisAPI(req);
       if (response.status) {
         setPortfolioHealthAnalysis(response.data);
@@ -89,7 +89,7 @@ const PortfolioHealth = () => {
   const fetchPortfolioHealthNPAbySector = async () => {
     setIsLoading((prev) => ({ ...prev, loading2: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName};
       const response = await PortfolioHealth_NPAbySectorAPI(req);
       if (response.status) {
         const filteredData = response?.data?.filter?.((l) => l?.total_loans >= 30);
@@ -107,7 +107,7 @@ const PortfolioHealth = () => {
   const fetchCreditScoreDistribution = async () => {
     setIsLoading((prev) => ({ ...prev, loading3: true }));
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
       const response = await PortfolioHealth_CreditScoreDistributionAPI(req);
       if (response.status) {
         setcsDistribution(response.data);
@@ -125,7 +125,7 @@ const PortfolioHealth = () => {
     fetchPortfolioHealthAnalysis();
     fetchPortfolioHealthNPAbySector();
     fetchCreditScoreDistribution();
-  }, []);
+  }, [selectedProductsName]);
 
   return (
     <div className="space-y-6">

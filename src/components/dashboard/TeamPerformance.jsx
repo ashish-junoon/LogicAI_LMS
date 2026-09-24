@@ -4,7 +4,7 @@ import { formatNumber, Pill, Panel } from "./Helper";
 import { TeamPerformance_TeamPerformanceSummaryAPI } from "../../api/dashboard";
 import { toast } from "react-toastify";
 
-const TeamPerformance = () => {
+const TeamPerformance = ({selectedProductsName}) => {
   const [RMPaidNpa, setRMPaidNpa] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -50,7 +50,7 @@ const TeamPerformance = () => {
   const fetchTeamPerformance_TeamPerformanceSummary = async () => {
     setIsLoading(true);
     try {
-      const req = { from_date: "", to_date: "" };
+      const req = { from_date: "", to_date: "", product_code: selectedProductsName };
       const response = await TeamPerformance_TeamPerformanceSummaryAPI(req);
       if (response.status) {
         setRMPaidNpa(response.data);
@@ -66,7 +66,7 @@ const TeamPerformance = () => {
 
   useEffect(() => {
     fetchTeamPerformance_TeamPerformanceSummary();
-  }, []);
+  }, [selectedProductsName]);
 
   return (
     <div className="space-y-6">
