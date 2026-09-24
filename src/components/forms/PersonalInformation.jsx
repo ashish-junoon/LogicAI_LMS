@@ -19,21 +19,27 @@ import {
   meritalStatus,
   religion,
 } from "../../content/data";
+import { useLoanDetails } from "../../provider/loanContext";
 
 const PersonalInformation = ({ permission }) => {
+  const { loanDetails } = useLoanDetails();
   const [isEditing, setIsEditing] = useState(false);
+
+  console.log("loandetails------", loanDetails)
 
   const formik = useFormik({
     initialValues: {
-      customerName: "Rajesh Kumar",
-      fathername: "Suresh Kumar",
-      dob: "1990-01-15",
-      mobile: "9898747454",
-      email: "rajesh@example.com",
-      religion: "Hindu",
-      maritalStatus: "Married",
-      gender: "Male",
+      customerName: loanDetails?.customer_name || "N/A",
+      fathername: "",
+      dob: loanDetails?.dob,
+      mobile: loanDetails?.mobile_number,
+      email: "",
+      religion: "",
+      maritalStatus: "",
+      gender: loanDetails?.gender,
     },
+
+    enableReinitialize: true,
 
     // validationSchema: Yup.object({
     //   customerName: Yup.string()
@@ -163,26 +169,28 @@ const PersonalInformation = ({ permission }) => {
             "
           >
             {/* Customer Name */}
-            <div>
-              <TextInput
-                label="Customer Name"
-                name="customerName"
-                value={formik.values.customerName}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                disabled={!isEditing}
-              />
+            {loanDetails?.customer_name &&
+              <div>
+                <TextInput
+                  label="Customer Name"
+                  name="customerName"
+                  value={formik.values.customerName}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  disabled={!isEditing}
+                />
 
-              <ErrorMsg
-                error={
-                  formik.touched.customerName &&
-                  formik.errors.customerName
-                }
-              />
-            </div>
+                <ErrorMsg
+                  error={
+                    formik.touched.customerName &&
+                    formik.errors.customerName
+                  }
+                />
+              </div>
+            }
 
             {/* Father Name */}
-            <div>
+            {loanDetails?.father_name && <div>
               <TextInput
                 label="Father Name"
                 name="fathername"
@@ -198,7 +206,7 @@ const PersonalInformation = ({ permission }) => {
                   formik.errors.fathername
                 }
               />
-            </div>
+            </div>}
 
             {/* DOB */}
             <div>
@@ -220,7 +228,7 @@ const PersonalInformation = ({ permission }) => {
             </div>
 
             {/* Mobile */}
-            <div>
+            {loanDetails?.mobile_number && <div>
               <TextInput
                 label="Mobile Number"
                 name="mobile"
@@ -237,10 +245,10 @@ const PersonalInformation = ({ permission }) => {
                   formik.errors.mobile
                 }
               />
-            </div>
+            </div>}
 
             {/* Email */}
-            <div>
+            {loanDetails?.email && <div>
               <TextInput
                 label="Email Address"
                 name="email"
@@ -256,10 +264,10 @@ const PersonalInformation = ({ permission }) => {
                   formik.errors.email
                 }
               />
-            </div>
+            </div>}
 
             {/* Religion */}
-            <div>
+            {loanDetails?.religion && <div>
               <SelectInput
                 label="Religion"
                 name="religion"
@@ -277,10 +285,10 @@ const PersonalInformation = ({ permission }) => {
                   formik.errors.religion
                 }
               />
-            </div>
+            </div>}
 
             {/* Marital Status */}
-            <div>
+            {loanDetails?.marital_status && <div>
               <SelectInput
                 label="Marital Status"
                 name="maritalStatus"
@@ -298,10 +306,10 @@ const PersonalInformation = ({ permission }) => {
                   formik.errors.maritalStatus
                 }
               />
-            </div>
+            </div>}
 
             {/* Gender */}
-            <div>
+            {loanDetails?.gender && <div>
               <SelectInput
                 label="Gender"
                 name="gender"
@@ -319,7 +327,7 @@ const PersonalInformation = ({ permission }) => {
                   formik.errors.gender
                 }
               />
-            </div>
+            </div>}
           </div>
 
           {/* =================================================

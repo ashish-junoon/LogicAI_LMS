@@ -21,7 +21,7 @@ const LoanDetails = ({ activeLoan }) => {
     },
     {
       label: "Interest Rate",
-      value: `${activeLoan?.interest_rate ?? "0"}% PD`,
+      value: `${activeLoan?.roI_percentage ?? "0"}%`,
       icon: RiPercentLine,
     },
     {
@@ -29,19 +29,19 @@ const LoanDetails = ({ activeLoan }) => {
       value: activeLoan?.tenure ?? "-",
       icon: RiTimeLine,
     },
-    {
-      label: "Repay Frequency",
-      value: activeLoan?.repayment_frequency ?? "-",
-      icon: RiExchangeDollarLine,
-    },
+    // {
+    //   label: "Repay Frequency",
+    //   value: activeLoan?.repayment_frequency ?? "-",
+    //   icon: RiExchangeDollarLine,
+    // },
     {
       label: "Disbursed Amount",
-      value: `₹${activeLoan?.disbursed_amount ?? "0"}`,
+      value: `₹${activeLoan?.disbursement_amount ?? "0"}`,
       icon: RiWallet3Line,
     },
     {
       label: "Disbursement Date",
-      value: activeLoan?.disbursement_date ?? "-",
+      value: activeLoan?.disbursement_date?.split(" ")[0] ?? "-",
       icon: RiCalendarLine,
     },
     {
@@ -51,7 +51,7 @@ const LoanDetails = ({ activeLoan }) => {
     },
     {
       label: "Repayment Date",
-      value: activeLoan?.repayment_date ?? "-",
+      value: activeLoan?.repayment_date?.split(" ")[0] ?? "-",
       icon: RiCalendarLine,
     },
     {
@@ -61,33 +61,39 @@ const LoanDetails = ({ activeLoan }) => {
       status: true,
     },
     {
-      label: "Current Tenure",
-      value: activeLoan?.current_tenure ?? "-",
-      icon: RiTimeLine,
+      label: "Annual Percentage Rate",
+      value: activeLoan?.annualPercentageRate ?? "-",
+      icon: RiBankCardLine,
+      status: true,
     },
-    {
-      label: "DPD",
-      value: `${activeLoan?.penalty_days ?? 0} Days`,
-      icon: RiAlertLine,
-      danger: Number(activeLoan?.penalty_days) > 0,
-    },
-    {
-      label: "DPD/Penal Charges",
-      value: `₹${activeLoan?.penal_charges ?? "0"}`,
-      icon: RiAlertLine,
-      danger: Number(activeLoan?.penal_charges) > 0,
-    },
-    {
-      label: "Current Interest",
-      value: `₹${activeLoan?.due_interest_on_current_day ?? "0"}`,
-      icon: RiPercentLine,
-    },
-    {
-      label: "Total Outstanding",
-      value: `₹${activeLoan?.due_amount_on_current_day ?? "0"}`,
-      icon: RiMoneyRupeeCircleLine,
-      highlight: true,
-    },
+    // {
+    //   label: "Current Tenure",
+    //   value: activeLoan?.current_tenure ?? "-",
+    //   icon: RiTimeLine,
+    // },
+    // {
+    //   label: "DPD",
+    //   value: `${activeLoan?.penalty_days ?? 0} Days`,
+    //   icon: RiAlertLine,
+    //   danger: Number(activeLoan?.penalty_days) > 0,
+    // },
+    // {
+    //   label: "DPD/Penal Charges",
+    //   value: `₹${activeLoan?.penal_charges ?? "0"}`,
+    //   icon: RiAlertLine,
+    //   danger: Number(activeLoan?.penal_charges) > 0,
+    // },
+    // {
+    //   label: "Current Interest",
+    //   value: `₹${activeLoan?.due_interest_on_current_day ?? "0"}`,
+    //   icon: RiPercentLine,
+    // },
+    // {
+    //   label: "Total Outstanding",
+    //   value: `₹${activeLoan?.due_amount_on_current_day ?? "0"}`,
+    //   icon: RiMoneyRupeeCircleLine,
+    //   highlight: true,
+    // },
   ];
 
   return (

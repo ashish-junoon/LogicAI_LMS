@@ -8,8 +8,10 @@ import LoanAnalysis from "./LoanAnalysis";
 import LeadForm from "../../pages/formPages/LeadForm";
 import LoanOverview from "./LoanOverview";
 import LeadFormDetails from "../../pages/formPages/LeadFormDetails";
+import LeadInformationPage from "../informationCard/LeadInformationPage";
 
 const OtherLeadsWrapper = ({ loanData, userData, onAction }) => {
+  console.log("otherleadwrapper",loanData)
 
 const [activeSection, setActiveSection] = useState("user");
 
@@ -23,10 +25,10 @@ const sections = [
 const renderSection = () => {
   switch (activeSection) {
     case "user":
-      return <LeadFormDetails />;
+      return <LeadInformationPage loanData={loanData} />;
     // return <LeadForm />;
     case "loanInfo":
-      return <LoanOverview />;
+      return <LoanOverview activeLoan={loanData} />;
     case "documents":
       return <DocumentsList permission={false} />;
     case "remarks":
