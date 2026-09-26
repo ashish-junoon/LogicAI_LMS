@@ -262,14 +262,15 @@ const Overview = ({ selectedProductsName }) => {
             sub={`${107.69}% collection rate`}
             type={5}
           />
-          <div className="relative group">
+          {/* <div className="relative group"> */}
             <KpiCard
               label="Total Demand"
               value={`₹${formatNumber(mainData?.demand_amount)}`}
-              sub="Hover for breakdown"
+              sub="Total Demand Amount"
+              // sub="Hover for breakdown"
               type={3}
             />
-            <div className="absolute left-0 top-full mt-1 z-30 hidden group-hover:flex flex-col gap-1.5 w-56">
+            {/* <div className="absolute left-0 top-full mt-1 z-30 hidden group-hover:flex flex-col gap-1.5 w-56">
               <div className="bg-white border border-[#DCE1E6] shadow-lg px-3 py-2">
                 <p className="text-[10px] text-[#8B98A6] uppercase tracking-wide">
                   NPA Demand Amount
@@ -293,7 +294,7 @@ const Overview = ({ selectedProductsName }) => {
                 </p>
               </div>
             </div>
-          </div>
+          </div> */}
           <KpiCard
             label="NPA Rate"
             value={`${mainData?.npa_rate}%`}

@@ -85,14 +85,8 @@
 
 // export default LeadFormDetails;
 
-import React, { useState } from "react";
+import { useState } from "react";
 
-import PersonalInformation from "../../components/forms/PersonalInformation";
-import KycInformation from "../../components/forms/KycInformation";
-import AddressInformation from "../../components/forms/AddressInformation";
-import MultipleBankInformation from "../../components/forms/MultipleBankInformation";
-import GuarantorInformation from "../../components/forms/GuarantorInformation";
-import EmploymentInformation from "../../components/forms/EmploymentInformation";
 import PersonalInfocard from "./PersonalInfocard";
 import KycInformationCard from "./KycInformationCard";
 import AddressInformationCard from "./AddressInformationCard";
@@ -118,15 +112,7 @@ const LeadInformationPage = ({ permisions, loanData }) => {
     {
       name: "Bank Details",
       permission: permisions?.bankInfo,
-    },
-    // {
-    //   name: "Co Borrower/Guarantor's Details",
-    //   permission: permisions?.guarantorInfo,
-    // },
-    // {
-    //   name: "Employment Information",
-    //   permission: permisions?.employementInfo,
-    // },
+    }
   ];
 
   const visibleTabs = tabs.filter((tab) => tab.permission !== false);
@@ -144,14 +130,6 @@ const LeadInformationPage = ({ permisions, loanData }) => {
 
       case "Bank Details":
         return <BankInfoCard permission={permisions?.bankInfo} />;
-
-      // case "Co Borrower/Guarantor's Details":
-      //   return <GuarantorInformation permission={permisions?.guarantorInfo} />;
-
-      case "Employment Information":
-        return (
-          <EmploymentInformation permission={permisions?.employementInfo} />
-        );
 
       default:
         return null;

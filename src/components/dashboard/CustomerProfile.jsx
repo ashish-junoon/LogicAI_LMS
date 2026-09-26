@@ -125,13 +125,13 @@ const CustomerProfile = ({selectedProductsName}) => {
   return (
     <div className="space-y-6">
       {!isLoading?.loading1 ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <KpiCard
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+          {/* <KpiCard
             label="Unique Customers"
             value={CustomerProfileAnalysis?.unique_customers?.toLocaleString()}
             sub={`Across ${CustomerProfileAnalysis?.total_loans?.toLocaleString()} loans`}
             type={1}
-          />
+          /> */}
           <KpiCard
             label="Avg Monthly Salary"
             value={`₹${formatNumber(CustomerProfileAnalysis?.avg_monthly_salary)}`}
@@ -194,10 +194,10 @@ const CustomerProfile = ({selectedProductsName}) => {
 
       {!isLoading?.loading4 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-          <InsightCard type="info" title="Repeat Borrowers" body={profileDescription?.repeat_borrowers} />
-          <InsightCard type="warn" title="Sub-prime Credit Concentration" body={profileDescription?.sub_prime_credit_concentration} />
-          <InsightCard type="success" title="Stable Salary Profile" body={profileDescription?.stable_Salary_Profile} />
-          <InsightCard type="info" title={`${profileDescription?.sector_name} Dominance`} body={profileDescription?.sector_dominance} />
+          <InsightCard hidetype type="info" title="Repeat Borrowers" body={profileDescription?.repeat_borrowers} />
+          <InsightCard hidetype type="warn" title="Sub-prime Credit Concentration" body={profileDescription?.sub_prime_credit_concentration} />
+          <InsightCard hidetype type="success" title="Stable Salary Profile" body={profileDescription?.stable_Salary_Profile} />
+          <InsightCard hidetype type="info" title={`${profileDescription?.sector_name} Dominance`} body={profileDescription?.sector_dominance} />
         </div>
       ) : (
         <div className="text-center py-10 text-[#8B98A6] text-sm">Loading…</div>

@@ -1,106 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { FiSearch, FiFilter, FiDownload } from "react-icons/fi";
 
-const Table = ({ columns, data, handleFilterBtn, ...props }) => {
-  // const customStyles = {
-  //   table: {
-  //     style: {
-  //       backgroundColor: "#FFFFFF",
-  //       minWidth: "max-content",
-  //     },
-  //   },
+const Table = ({
+  columns,
+  data,
+  handleFilterBtn,
+  searchText,
+  onSearchChange,
+  debounceDelay = 500,
+  ...props
+}) => {
+  const [localSearch, setLocalSearch] = useState(searchText);
 
-  //   tableWrapper: {
-  //     style: {
-  //       display: "block",
-  //       width: "100%",
-  //       overflowX: "auto",
-  //       overflowY: "hidden",
-  //       scrollbarWidth: "none",
-  //       msOverflowStyle: "none",
-  //     },
-  //   },
+  // Keep local search synced with parent
+  useEffect(() => {
+    setLocalSearch(searchText);
+  }, [searchText]);
 
-  //   headRow: {
-  //     style: {
-  //       minHeight: "32px",
-  //       height: "32px",
-  //       backgroundColor: "#f0f0fc",
-  //       borderBottom: "1px solid #e8e8fc",
-  //     },
-  //   },
+  // Debounce search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onSearchChange?.(localSearch);
+    }, debounceDelay);
 
-  //   headCells: {
-  //     style: {
-  //       fontSize: "11px",
-  //       fontWeight: "600",
-  //       color: "#53625D",
-  //       paddingLeft: "16px",
-  //       paddingRight: "16px",
-  //       whiteSpace: "nowrap",
-  //     },
-  //   },
+    return () => clearTimeout(timer);
+  }, [localSearch, debounceDelay, onSearchChange]);
 
-  //   rows: {
-  //     style: {
-  //       minHeight: "42px",
-  //       height: "42px",
-  //       fontSize: "12px",
-  //       fontWeight: "500",
-  //       color: "#1F2925",
-  //       backgroundColor: "#FFFFFF",
-  //       borderBottom: "1px solid #DCE6E1",
-  //     },
-
-  //     highlightOnHoverStyle: {
-  //       backgroundColor: "#F7FAF8",
-  //       cursor: "default",
-  //     },
-  //   },
-
-  //   cells: {
-  //     style: {
-  //       paddingLeft: "16px",
-  //       paddingRight: "16px",
-  //       whiteSpace: "nowrap",
-  //     },
-  //   },
-
-  //   pagination: {
-  //     style: {
-  //       minHeight: "45px",
-  //       height: "45px",
-  //       paddingLeft: "0",
-  //       paddingRight: "0",
-  //       borderTop: "0",
-  //       backgroundColor: "#ffffff",
-  //       fontSize: "13px",
-  //       color: "#53625D",
-  //     },
-  //   },
-
-  //   noData: {
-  //     style: {
-  //       minHeight: "120px",
-  //       fontSize: "12px",
-  //       color: "#8A9791",
-  //       backgroundColor: "#FFFFFF",
-  //     },
-  //   },
-
-  //   progress: {
-  //     style: {
-  //       minHeight: "120px",
-  //     },
-  //   },
-  // };
-
-    const customStyles = {
+  const customStyles = {
     table: {
       style: {
         backgroundColor: "#FFFFFF",
-        minWidth: "max-content"
+        minWidth: "max-content",
       },
     },
 
@@ -198,6 +129,8 @@ const Table = ({ columns, data, handleFilterBtn, ...props }) => {
           <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
 
           <input
+            value={localSearch}
+            onChange={(e) => setLocalSearch?.(e.target.value)}
             type="text"
             placeholder="Search..."
             className="w-full rounded-md border border-slate-300 bg-white py-2 pl-10 pr-4 text-sm text-slate-700 placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-100"
@@ -206,7 +139,10 @@ const Table = ({ columns, data, handleFilterBtn, ...props }) => {
 
         {/* Right Actions */}
         <div className="flex items-center gap-3">
-          <button onClick={handleFilterBtn} className="flex cursor-pointer items-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-400 hover:bg-slate-100">
+          <button
+            onClick={handleFilterBtn}
+            className="flex cursor-pointer items-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-400 hover:bg-slate-100"
+          >
             <FiFilter size={16} />
           </button>
 

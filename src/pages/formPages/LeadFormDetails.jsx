@@ -115,14 +115,14 @@ const LeadFormDetails = ({ permisions, loanData }) => {
       name: "Bank Details",
       permission: permisions?.bankInfo,
     },
-    // {
-    //   name: "Co Borrower/Guarantor's Details",
-    //   permission: permisions?.guarantorInfo,
-    // },
-    // {
-    //   name: "Employment Information",
-    //   permission: permisions?.employementInfo,
-    // },
+    {
+      name: "Co Borrower/Guarantor's Details",
+      permission: permisions?.guarantorInfo,
+    },
+    {
+      name: "Employment Information",
+      permission: permisions?.employementInfo,
+    },
   ];
 
   const visibleTabs = tabs.filter((tab) => tab.permission !== false);
@@ -141,8 +141,8 @@ const LeadFormDetails = ({ permisions, loanData }) => {
       case "Bank Details":
         return <MultipleBankInformation permission={permisions?.bankInfo} />;
 
-      // case "Co Borrower/Guarantor's Details":
-      //   return <GuarantorInformation permission={permisions?.guarantorInfo} />;
+      case "Co Borrower/Guarantor's Details":
+        return <GuarantorInformation permission={permisions?.guarantorInfo} />;
 
       case "Employment Information":
         return (

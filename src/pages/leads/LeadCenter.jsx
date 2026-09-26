@@ -1,12 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Icon from "../../components/utils/Icon";
-import { IoPerson } from "react-icons/io5";
-import DataTable from "react-data-table-component";
 import Table from "../../components/Table";
-import Modal from "../../components/utils/Modal";
 import TextInput from "../../components/fields/TextInput";
 import { Link, useNavigate } from "react-router-dom";
-import { allProductData } from "../../content/masterData";
 import FilterCard from "../../components/utils/FilterCard";
 import SelectInput from "../../components/fields/SelectInput";
 import DateInput from "../../components/fields/DateInput";
@@ -14,40 +10,40 @@ import { GetAllLoans } from "../../api/loan";
 import { toast } from "react-toastify";
 
 const LeadCenter = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isOpenFilter, setIsOpenFilter] = useState(false);
   const [loanData, setLoanData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
-  const navigate = useNavigate();
-
+  const [searchText, setSearchText] = useState("");
 
   const fetchLoans = async () => {
     try {
       setLoading(true);
+
       const res = await GetAllLoans({
         pageNo: page,
         page_size: perPage,
-      })
-      if(res?.status) {
-        setLoanData(res?.data)
-        setTotalRows(res?.total_count)
-        // console.log("res data", res?.data)
+        searchText: searchText,
+      });
+
+      if (res?.status) {
+        setLoanData(res?.data);
+        setTotalRows(res?.total_count);
+      } else {
+        setLoanData([]);
       }
     } catch (error) {
-      console.log(error);
-      toast.error(error?.message || "Something went wrong")
+      toast.error(error?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     fetchLoans();
-  }, [page, perPage])
-
+  }, [page, perPage, searchText]);
 
   const handleFilterBtn = () => {
     setIsOpenFilter((prev) => !prev);
@@ -62,7 +58,7 @@ const LeadCenter = () => {
       cell: (row) => (
         <Link
           to="/product-leads-detail"
-          state={{loan_id: row?.loan_id, product_code: row?.product_name}}
+          state={{ loan_id: row?.loan_id, product_code: row?.product_name }}
           className={`p-1.5 px-2 rounded-sm text-xs font-medium bg-primary flex gap-1 text-white items-center`}
         >
           <Icon name="FaRegEye" size={15} color={"white"} />
@@ -122,12 +118,12 @@ const LeadCenter = () => {
       selector: (row) => row?.emi_paid_date?.split(" ")[0] || "-",
       sortable: true,
     },
-     {
+    {
       name: "Repay. Date",
       selector: (row) => row?.repayment_date?.split(" ")[0] || "-",
       sortable: true,
     },
-     {
+    {
       name: "Repay. Amt",
       selector: (row) => row?.repayment_amount || "-",
       sortable: true,
@@ -142,7 +138,6 @@ const LeadCenter = () => {
     //   selector: (row) => row?.createdBy || "-",
     //   sortable: true,
     // },
-    
   ];
 
   return (
@@ -206,8 +201,14 @@ const LeadCenter = () => {
           handleFilterBtn={handleFilterBtn}
           paginationServer
           paginationTotalRows={totalRows}
-          onChangePage={(page) => {console.log(page); setPage(page)}}
-          onChangeRowsPerPage={(perPage) => {console.log(perPage); setPerPage(perPage)}}
+          onChangePage={(page) => {
+            setPage(page);
+          }}
+          onChangeRowsPerPage={(perPage) => {
+            setPerPage(perPage);
+          }}
+          onSearchChange={setSearchText}
+          searchText={searchText}
         />
       </div>
     </>

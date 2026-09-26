@@ -4,7 +4,14 @@ import React from "react";
 // KpiCard — self-contained ledger stat cell (own border on all
 // sides, so it holds its shape in any grid/flex context).
 // =============================================================
-export const KpiCard = ({ icon, label, value, sub, color = "#2F6FA6", type }) => {
+export const KpiCard = ({
+  icon,
+  label,
+  value,
+  sub,
+  color = "#2F6FA6",
+  type,
+}) => {
   const ruleColors = {
     1: "#2F6FA6",
     2: "#B9800F",
@@ -39,7 +46,7 @@ export const KpiCard = ({ icon, label, value, sub, color = "#2F6FA6", type }) =>
 // =============================================================
 // InsightCard — panel with colored top hairline + label tag
 // =============================================================
-export const InsightCard = ({ title, body, type = "info" }) => {
+export const InsightCard = ({ title, body, type = "info", hidetype }) => {
   const styles = {
     info: { rule: "#2F6FA6", tag: "Note" },
     warn: { rule: "#B9800F", tag: "Watch" },
@@ -54,13 +61,19 @@ export const InsightCard = ({ title, body, type = "info" }) => {
       style={{ borderTop: `2px solid ${s.rule}` }}
     >
       <div className="flex items-center gap-2 mb-1.5">
-        <span
-          className="text-[7px] font-bold uppercase tracking-[0.12em] px-1.5 py-0.5"
-          style={{ color: s.rule, border: `1px solid ${s.rule}55` }}
-        >
-          {s.tag}
-        </span>
-        {/* <span className={`w-2 h-2 animate-pulse`} style={{backgroundColor: s.rule}}></span> */}
+        {hidetype ? (
+          <span
+            className={`w-2 h-2 animate-pulse`}
+            style={{ backgroundColor: s.rule }}
+          ></span>
+        ) : (
+          <span
+            className="text-[7px] font-bold uppercase tracking-[0.12em] px-1.5 py-0.5"
+            style={{ color: s.rule, border: `1px solid ${s.rule}55` }}
+          >
+            {s.tag}
+          </span>
+        )}
         <span className="text-[13px] font-medium text-[#16202B] truncate">
           {title}
         </span>

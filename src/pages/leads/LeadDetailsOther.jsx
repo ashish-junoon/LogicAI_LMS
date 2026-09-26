@@ -9,6 +9,7 @@ import { GetLoanById } from "../../api/loan";
 import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useLoanDetails } from "../../provider/loanContext";
+import LoanHeader from "../../components/utils/LoanHeader";
 
 const LeadDetailsOther = () => {
   const { state } = useLocation();
@@ -43,7 +44,6 @@ const LeadDetailsOther = () => {
 
   return (
     <div>
-      {/* <LeadStatus currentStep={3} /> */}
       {/* <InfoCard /> */}
       <Breadcrumbs
         items={[
@@ -51,7 +51,7 @@ const LeadDetailsOther = () => {
           { label: state?.loan_id },
         ]}
       />
-      <UserHeader lead={{
+      <LoanHeader lead={{
         ...leadDetails,
         ...state
       }} />

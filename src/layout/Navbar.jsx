@@ -426,7 +426,7 @@ export default function Navbar({ onToggleSidebar, onToggleMobile }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-3 border-b border-surface-border bg-white px-4 lg:px-6">
+    <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-3 border-b border-surface-border bg-white px-4 lg:px-6">
       {/* collapse toggle — desktop */}
       <button
         type="button"
@@ -485,7 +485,7 @@ export default function Navbar({ onToggleSidebar, onToggleMobile }) {
 
           {menuOpen && (
             <>
-              <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
+              <div className="fixed inset-0 z-50" onClick={() => setMenuOpen(false)} />
               <div className="absolute right-0 z-20 mt-2 w-48 rounded-lg border border-surface-border bg-white py-1 shadow-card">
                 <button className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-surface">
                   <FiUser size={15} /> My Profile

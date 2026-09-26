@@ -34,8 +34,13 @@ const productOptions = [
 const Dashboard2 = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [mainData, setMainData] = useState({});
-  const [selectedProducts, setSelectedProducts] = useState([]);
-  const formattedSelectedProducts = selectedProducts?.join(",") || "ALL";
+  const [selectedProducts, setSelectedProducts] = useState(
+    productOptions?.map((p) => p.value),
+  );
+  // const formattedSelectedProducts = selectedProducts?.join(",") || "ALL";
+  const formattedSelectedProducts =  selectedProducts?.length === productOptions?.length
+    ? "ALL"
+    : selectedProducts?.join(",");
 
   // =========================================================
   // TABS

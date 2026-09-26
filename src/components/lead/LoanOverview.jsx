@@ -5,9 +5,7 @@ import {
   RiMoneyRupeeCircleLine,
   RiPercentLine,
   RiTimeLine,
-  RiAlertLine,
   RiWallet3Line,
-  RiExchangeDollarLine,
 } from "react-icons/ri";
 
 const LoanDetails = ({ activeLoan }) => {
@@ -15,7 +13,7 @@ const LoanDetails = ({ activeLoan }) => {
 
   const loanDetails = [
     {
-      label: "Loan Amount",
+      label: "Max Loan Amount",
       value: `₹${activeLoan?.loan_amount ?? "0"}`,
       icon: RiMoneyRupeeCircleLine,
     },

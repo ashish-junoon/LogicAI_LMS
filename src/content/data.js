@@ -494,15 +494,16 @@ export const sidebarData = [
 
 
 export const lead = {
-  id: "LD-1001",
-  name: "Rohan Mehta",
+  loan_id: "LD-1001",
+  customer_name: "Rohan Mehta",
   phone: "+91 98200 11234",
   email: "rohan.mehta@example.com",
-  product: "Personal Loan",
-  amount: 250000,
+  product_code: "Personal Loan",
+  loan_amount: 250000,
   branch: "Andheri West",
   stage: "new",
   status: "New",
+  loan_status: "new",
   createdOn: "2026-09-10",
   disbursementDate: "31st Aug 2026",
   user: {

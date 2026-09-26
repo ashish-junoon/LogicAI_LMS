@@ -9,9 +9,10 @@ import {
 } from "react-icons/ri";
 
 const LoanStatusSummary = ({ lead }) => {
-  const isClosed = lead?.loan_status?.toLowerCase() === "closed" || "settle" || "foreclosure";
+  const isClosed = ["closed", "settle", "foreclosure"]?.includes(
+    lead?.loan_status?.toLowerCase(),
+  );
   const isNpa = lead?.stage === "npa";
-  const isOverDue = lead?.stage === "overdue";
 
   return (
     <div

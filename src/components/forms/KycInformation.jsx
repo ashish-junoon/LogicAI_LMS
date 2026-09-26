@@ -29,9 +29,9 @@ const KycInformation = ({ onNext, permission }) => {
 
   const formik = useFormik({
     initialValues: {
-      panNumber: loanDetails?.pan_card_number ?? "N/A",
+      panNumber: loanDetails?.pan_card_number ?? "ABCDE3333F",
       panFile: null,
-      aadhaarNumber: loanDetails?.aadhaar_number ?? "N/A",
+      aadhaarNumber: loanDetails?.aadhaar_number ?? "987654321000",
       aadhaarFront: null,
       aadhaarBack: null,
     },
@@ -193,7 +193,7 @@ const KycInformation = ({ onNext, permission }) => {
             {/* =================================================
                 AADHAAR NUMBER
             ================================================== */}
-            {loanDetails?.aadhaar_number &&
+
               <div>
                 <div className="relative">
                   <TextInput
@@ -281,7 +281,6 @@ const KycInformation = ({ onNext, permission }) => {
                   }
                 />
               </div>
-            }
 
             {/* =================================================
                 AADHAAR FRONT
