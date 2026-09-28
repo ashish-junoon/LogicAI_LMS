@@ -3,105 +3,26 @@ import { COLORS, STATUS_RAMP, fmtCr } from "./utils";
 import { formatNumber, InsightCard, KpiCard, Panel } from "./Helper";
 import Chart from "./Chart";
 import {
-  CustomerProfile_LoanSizeDistributionAPI,
   Overview_DescriptionAPI,
-  Overview_LoanStatusDistributionAPI,
   Overview_MainAPI,
-  Overview_MonthlyDisbursementsAPI,
   PortfolioHealth_NPAbySectorAPI,
 } from "../../api/dashboard";
 import { toast } from "react-toastify";
 import SkeletonLoader from "../utils/SkeletonLoader";
+import LoanStatusPiechart from "./overview/LoanStatusPiechart";
+import DisbursmentBarchart from "./overview/DisbursmentBarchart";
+import LoanSizeBarchart from "./overview/LoanSizeChart";
+import LoanVolumeBarchart from "./overview/LoanVolumeBarchart";
 
 const Overview = ({ selectedProductsName }) => {
   const [mainData, setMainData] = useState({});
   const [overViewDescription, setOverViewDescription] = useState({});
-  const [loanStatusDistribution, setloanStatusDistribution] = useState([]);
-  const [monthlyDisbursement, setmonthlyDisbursement] = useState([]);
-  const [loanSizeDistribution, setLoanSizeDistribution] = useState([]);
-  const [sectorNPA, setsectorNPA] = useState([]);
 
   const [isLoading, setIsLoading] = useState({
     loading1: false,
     loading2: false,
-    loading3: false,
-    loading4: false,
-    loading5: false,
-    loading6: false,
   });
 
-  const totalLoan = loanStatusDistribution?.reduce(
-    (acc, val) => val?.loan_count + acc,
-    0,
-  );
-  const statusData = {
-    labels: loanStatusDistribution?.map((item) => item?.loan_status),
-    datasets: [
-      {
-        data: loanStatusDistribution?.map((item) => item?.loan_count),
-        // backgroundColor: STATUS_RAMP,
-        backgroundColor: loanStatusDistribution?.map(
-          (item) => COLORS[item?.loan_status?.toLowerCase()] || "#64748b",
-        ),
-        borderWidth: 2,
-        borderColor: "#FFFFFF",
-      },
-    ],
-  };
-
-  const monthlyData = {
-    labels: monthlyDisbursement?.map((m) => m?.month_name),
-    datasets: [
-      {
-        label: "Amount",
-        data: monthlyDisbursement?.map((m) => m?.disbursed_amount),
-        backgroundColor: "rgba(47,111,166,0.85)",
-        borderColor: COLORS.settled,
-        borderWidth: 1,
-        borderRadius: 2,
-      },
-    ],
-  };
-
-  const loanDistData = {
-    labels: loanSizeDistribution?.map((range) => range?.loan_size_range),
-    datasets: [
-      {
-        data: loanSizeDistribution?.map((loan) => loan?.total_loans),
-        backgroundColor: [
-          "#2F6FA6",
-          "#6B54C7",
-          "#1F8F68",
-          "#EB7F31",
-          "#78A4CB",
-          "#DF301C",
-          "#F62477",
-          "#1B4EF5",
-        ],
-        borderRadius: 2,
-        borderWidth: 0,
-      },
-    ],
-  };
-
-  const sortedNPASector = [...(sectorNPA || [])]
-    ?.sort((a, b) => b.total_loans - a.total_loans)
-    ?.slice(0, 10);
-
-  const sectorData = {
-    labels: sortedNPASector?.map((sector) => sector?.sector),
-    datasets: [
-      {
-        label: "Loans",
-        data: sortedNPASector?.map((sector) => sector?.total_loans),
-        // backgroundColor: "rgba(31,143,104,0.85)",
-        backgroundColor: "#66BB6A",
-        borderColor: COLORS.paid,
-        borderWidth: 1,
-        borderRadius: 2,
-      },
-    ],
-  };
 
   const fetchOverview_Main = async () => {
     setIsLoading((prev) => ({ ...prev, loading1: true }));
@@ -115,7 +36,8 @@ const Overview = ({ selectedProductsName }) => {
       if (response.status) {
         setMainData(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        // console.info(response.message || "Something went wrong!");
+        console.log(response?.message + " error in overview main api")
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -136,7 +58,8 @@ const Overview = ({ selectedProductsName }) => {
       if (response.status) {
         setOverViewDescription(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        // console.info(response.message || "Something went wrong!");
+        console.log(response?.message + " error in overview description api")
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -145,68 +68,6 @@ const Overview = ({ selectedProductsName }) => {
     }
   };
 
-  const fetchOverview_LoanStatusDistribution = async () => {
-    setIsLoading((prev) => ({ ...prev, loading3: true }));
-    try {
-      const req = {
-        from_date: "",
-        to_date: "",
-        product_code: selectedProductsName,
-      };
-      const response = await Overview_LoanStatusDistributionAPI(req);
-      if (response.status) {
-        setloanStatusDistribution(response.data);
-      } else {
-        toast.info(response.message || "Something went wrong!");
-      }
-    } catch (error) {
-      toast.error(error.message || "Something went wrong. Please try again.");
-    } finally {
-      setIsLoading((prev) => ({ ...prev, loading3: false }));
-    }
-  };
-
-  const fetchOverview_MonthlyDisbursements = async () => {
-    setIsLoading((prev) => ({ ...prev, loading4: true }));
-    try {
-      const req = {
-        from_date: "",
-        to_date: "",
-        product_code: selectedProductsName,
-      };
-      const response = await Overview_MonthlyDisbursementsAPI(req);
-      if (response.status) {
-        setmonthlyDisbursement(response.data);
-      } else {
-        toast.info(response.message || "Something went wrong!");
-      }
-    } catch (error) {
-      toast.error(error.message || "Something went wrong. Please try again.");
-    } finally {
-      setIsLoading((prev) => ({ ...prev, loading4: false }));
-    }
-  };
-
-  const fetchCustomerProfile_LoanSizeDistribution = async () => {
-    setIsLoading((prev) => ({ ...prev, loading5: true }));
-    try {
-      const req = {
-        from_date: "",
-        to_date: "",
-        product_code: selectedProductsName,
-      };
-      const response = await CustomerProfile_LoanSizeDistributionAPI(req);
-      if (response.status) {
-        setLoanSizeDistribution(response.data);
-      } else {
-        toast.info(response.message || "Something went wrong!");
-      }
-    } catch (error) {
-      toast.error(error.message || "Something went wrong. Please try again.");
-    } finally {
-      setIsLoading((prev) => ({ ...prev, loading5: false }));
-    }
-  };
 
   const fetchPortfolioHealthNPAbySector = async () => {
     setIsLoading((prev) => ({ ...prev, loading6: true }));
@@ -220,7 +81,8 @@ const Overview = ({ selectedProductsName }) => {
       if (response.status) {
         setsectorNPA(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        // console.info(response.message || "Something went wrong!");
+        console.log(response?.message + " error in PortfolioHealth_NPAbySectorAPI")
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -232,10 +94,6 @@ const Overview = ({ selectedProductsName }) => {
   useEffect(() => {
     fetchOverview_Main();
     fetchOverview_Description();
-    fetchOverview_LoanStatusDistribution();
-    fetchOverview_MonthlyDisbursements();
-    fetchCustomerProfile_LoanSizeDistribution();
-    fetchPortfolioHealthNPAbySector();
   }, [selectedProductsName]);
 
   return (
@@ -263,14 +121,14 @@ const Overview = ({ selectedProductsName }) => {
             type={5}
           />
           {/* <div className="relative group"> */}
-            <KpiCard
-              label="Total Demand"
-              value={`₹${formatNumber(mainData?.demand_amount)}`}
-              sub="Total Demand Amount"
-              // sub="Hover for breakdown"
-              type={3}
-            />
-            {/* <div className="absolute left-0 top-full mt-1 z-30 hidden group-hover:flex flex-col gap-1.5 w-56">
+          <KpiCard
+            label="Total Demand"
+            value={`₹${formatNumber(mainData?.demand_amount)}`}
+            sub="Total Demand Amount"
+            // sub="Hover for breakdown"
+            type={3}
+          />
+          {/* <div className="absolute left-0 top-full mt-1 z-30 hidden group-hover:flex flex-col gap-1.5 w-56">
               <div className="bg-white border border-[#DCE1E6] shadow-lg px-3 py-2">
                 <p className="text-[10px] text-[#8B98A6] uppercase tracking-wide">
                   NPA Demand Amount
@@ -350,107 +208,14 @@ const Overview = ({ selectedProductsName }) => {
 
       {/* Charts row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        {!isLoading?.loading3 ? (
-          <Panel
-            title="Loan Status Distribution"
-            sub={`All ${totalLoan?.toLocaleString()} loans`}
-          >
-            <div className="relative max-h-[260px] w-fit m-auto">
-              <Chart
-                type="doughnut"
-                data={statusData}
-                options={{
-                  cutout: "60%",
-                  plugins: {
-                    legend: {
-                      display: true,
-                      position: "bottom",
-                      labels: {
-                        color: "#5B6B7A",
-                        padding: 10,
-                        boxWidth: 8,
-                        font: { size: 10.5 },
-                      },
-                    },
-                  },
-                }}
-              />
-            </div>
-          </Panel>
-        ) : (
-          <SkeletonLoader />
-        )}
-
-        {!isLoading?.loading4 ? (
-          <Panel title="Monthly Disbursements" sub="Loan volume over time (₹)">
-            <div className="relative max-h-[260px]">
-              <Chart
-                type="bar"
-                data={monthlyData}
-                options={{
-                  scales: {
-                    y: {
-                      ticks: { callback: (v) => fmtCr(v) },
-                      grid: { color: "#E8EBEE" },
-                    },
-                    x: { grid: { display: false } },
-                  },
-                }}
-              />
-            </div>
-          </Panel>
-        ) : (
-          <SkeletonLoader />
-        )}
+        <LoanStatusPiechart selectedProductsName={selectedProductsName} />
+        <DisbursmentBarchart selectedProductsName={selectedProductsName} />
       </div>
 
       {/* Charts row 2 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        {!isLoading?.loading5 ? (
-          <Panel
-            title="Loan Size Distribution"
-            sub="Number of loans by amount bucket"
-          >
-            <div className="relative max-h-[260px]">
-              <Chart
-                type="bar"
-                data={loanDistData}
-                options={{
-                  scales: {
-                    y: { grid: { color: "#E8EBEE" } },
-                    x: { grid: { display: false } },
-                  },
-                  plugins: { legend: { display: false } },
-                }}
-              />
-            </div>
-          </Panel>
-        ) : (
-          <SkeletonLoader />
-        )}
-
-        {!isLoading?.loading6 ? (
-          <Panel title="Top 10 Sectors by Volume" sub="Number of loans">
-            <div className="relative max-h-[260px]">
-              <Chart
-                type="bar"
-                data={sectorData}
-                options={{
-                  indexAxis: "y",
-                  scales: {
-                    x: { grid: { color: "#E8EBEE" } },
-                    y: {
-                      grid: { display: false },
-                      ticks: { font: { size: 10.5 } },
-                    },
-                  },
-                }}
-              />
-            </div>
-          </Panel>
-        ) : (
-          <SkeletonLoader />
-        )}
+        <LoanSizeBarchart selectedProductsName={selectedProductsName} />
+        <LoanVolumeBarchart selectedProductsName={selectedProductsName} />
       </div>
     </div>
   );

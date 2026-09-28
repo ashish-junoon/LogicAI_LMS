@@ -118,7 +118,7 @@ const Collection = () => {
       if (response.status) {
         setfinancialPerformance(response.data[0]);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -139,7 +139,7 @@ const Collection = () => {
       if (response.status) {
         setCollectionEfficiencySummary(response.data[0]);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -160,7 +160,7 @@ const Collection = () => {
       if (response.status) {
         setLoanTenureDistribution(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -181,7 +181,7 @@ const Collection = () => {
       if (response.status) {
         setMonthlyLoanCount(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -202,7 +202,7 @@ const Collection = () => {
       if (response.status) {
         setROIDistribution(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");

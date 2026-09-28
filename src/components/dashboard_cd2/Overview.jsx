@@ -117,7 +117,7 @@ const Overview = () => {
       if (response.status) {
         setMainData(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -138,7 +138,7 @@ const Overview = () => {
       if (response.status) {
         setOverViewDescription(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -159,7 +159,7 @@ const Overview = () => {
       if (response.status) {
         setloanStatusDistribution(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -180,7 +180,7 @@ const Overview = () => {
       if (response.status) {
         setmonthlyDisbursement(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -201,7 +201,7 @@ const Overview = () => {
       if (response.status) {
         setLoanSizeDistribution(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -222,7 +222,7 @@ const Overview = () => {
       if (response.status) {
         setsectorNPA(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");

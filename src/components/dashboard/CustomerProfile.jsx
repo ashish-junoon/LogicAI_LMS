@@ -9,6 +9,7 @@ import {
 } from "../../api/dashboard";
 import { toast } from "react-toastify";
 import SkeletonLoader from "../utils/SkeletonLoader";
+import LoanSizeChart from "./overview/LoanSizeChart";
 
 const CustomerProfile = ({selectedProductsName}) => {
   const [CustomerProfileAnalysis, setCustomerProfileAnalysis] = useState({});
@@ -55,7 +56,7 @@ const CustomerProfile = ({selectedProductsName}) => {
       if (response.status) {
         setCustomerProfileAnalysis(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -72,7 +73,7 @@ const CustomerProfile = ({selectedProductsName}) => {
       if (response.status) {
         setcsDistribution(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -89,7 +90,7 @@ const CustomerProfile = ({selectedProductsName}) => {
       if (response.status) {
         setLoanSizeDistribution(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -106,7 +107,7 @@ const CustomerProfile = ({selectedProductsName}) => {
       if (response.status) {
         setprofileDescription(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -173,9 +174,9 @@ const CustomerProfile = ({selectedProductsName}) => {
           )}
         </Panel>
 
-        <Panel title="Loan Size Distribution" sub="Portfolio concentration by loan band">
+        {/* <Panel title="Loan Size Distribution" sub="Portfolio concentration by loan band">
           {!isLoading?.loading3 ? (
-            <div className="relative max-h-[320px] w-fit m-auto">
+            <div className="relative max-h-80 w-fit m-auto">
               <Chart
                 type="pie"
                 data={loanDistDetailData}
@@ -189,7 +190,8 @@ const CustomerProfile = ({selectedProductsName}) => {
           ) : (
             <SkeletonLoader />
           )}
-        </Panel>
+        </Panel> */}
+        <LoanSizeChart selectedProductsName={selectedProductsName} type="pie" />
       </div>
 
       {!isLoading?.loading4 ? (

@@ -24,7 +24,7 @@ const LoanDetails = ({ activeLoan }) => {
     },
     {
       label: "Tenure",
-      value: activeLoan?.tenure ?? "-",
+      value: activeLoan?.tenure + (['EW', 'PU', 'IP'].some((code) => code === activeLoan?.product_code) ? ' days':'') ?? "-",
       icon: RiTimeLine,
     },
     // {

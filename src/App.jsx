@@ -36,6 +36,7 @@ import PageMaster from './pages/master/PageMaster'
 import VendorMaster from './pages/master/VendorMaster'
 import BusinessTradesMaster from './pages/master/BusinessTradesMaster'
 import BankMaster from './pages/master/BankMaster'
+import DepartmentMaster from './pages/master/DepartmentMaster'
 
 function App() {
 
@@ -58,6 +59,7 @@ function App() {
           <Route path='/city-master' element={<CityList />} />
           <Route path='/occupations-master' element={<Occupations />} /> 
           <Route path='/product-master' element={<LoanProductMaster />} /> 
+          <Route path='/department-master' element={<DepartmentMaster />} /> 
           <Route path='/designation-master' element={<DesignationMaster />} /> 
           <Route path='/quetionare-master' element={<PDQuestionsMaster />} /> 
           <Route path='/page-master' element={<PageMaster />} /> 

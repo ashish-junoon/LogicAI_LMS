@@ -99,7 +99,7 @@ const SectorsGeography = () => {
       if (response.status) {
         setDisbursementsbyState(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -120,7 +120,7 @@ const SectorsGeography = () => {
       if (response.status) {
         setsectorNPA(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -141,7 +141,7 @@ const SectorsGeography = () => {
       if (response.status) {
         setMonthlyLoanCount(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -162,7 +162,7 @@ const SectorsGeography = () => {
       if (response.status) {
         sethouseChartData(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");

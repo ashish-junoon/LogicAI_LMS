@@ -38,7 +38,7 @@ const Table = ({
     tableWrapper: {
       style: {
         display: "block",
-        width: "100%",
+        width: "105%",
         overflowX: "auto",
         overflowY: "hidden",
         scrollbarWidth: "none",
@@ -63,6 +63,8 @@ const Table = ({
         paddingLeft: "20px",
         paddingRight: "20px",
         whiteSpace: "nowrap",
+        width: "max-content",
+        minWidth: "max-content",
       },
     },
 
@@ -88,6 +90,8 @@ const Table = ({
         paddingLeft: "20px",
         paddingRight: "20px",
         whiteSpace: "nowrap",
+        width: "max-content",
+        minWidth: "max-content",
       },
     },
 

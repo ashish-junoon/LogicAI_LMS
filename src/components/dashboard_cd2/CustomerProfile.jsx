@@ -74,7 +74,7 @@ const CustomerProfile = () => {
       if (response.status) {
         setCustomerProfileAnalysis(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -95,7 +95,7 @@ const CustomerProfile = () => {
       if (response.status) {
         setcsDistribution(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -116,7 +116,7 @@ const CustomerProfile = () => {
       if (response.status) {
         setLoanSizeDistribution(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -137,7 +137,7 @@ const CustomerProfile = () => {
       if (response.status) {
         setprofileDescription(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");

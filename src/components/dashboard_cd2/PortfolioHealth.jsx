@@ -93,7 +93,7 @@ const PortfolioHealth = () => {
       if (response.status) {
         setPortfolioHealthAnalysis(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -119,7 +119,7 @@ const PortfolioHealth = () => {
         // setsectorNPA(response.data);
         setsectorNPA(filteredData);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -140,7 +140,7 @@ const PortfolioHealth = () => {
       if (response.status) {
         setcsDistribution(response.data);
       } else {
-        toast.info(response.message || "Something went wrong!");
+        console.info(response.message || "Something went wrong!");
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");

@@ -481,6 +481,7 @@ export const sidebarData = [
       { title: "State Master", path: "/state-master" },
       { title: "City Master", path: "/city-master" },
       { title: "Occupations", path: "/occupations-master" },
+      { title: "Department Master", path: "/department-master" },
       { title: "Designation Master", path: "/designation-master" },
       { title: "PD Question Master", path: "/quetionare-master" },
       { title: "Page Master", path: "/page-master" },

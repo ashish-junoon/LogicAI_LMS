@@ -10,6 +10,7 @@ import Collection from "../../components/dashboard/Collection";
 import { Overview_MainAPI } from "../../api/dashboard";
 import Icon from "../../components/utils/Icon";
 import MultiCheckboxSelect from "../../components/fields/MultiCheckboxSelect";
+import { toast } from "react-toastify";
 
 // NOTE: this redesign assumes 'Inter' (sans) and 'IBM Plex Mono' (tabular
 // data / KPI figures) are available — add once, globally, e.g. in index.html:
@@ -45,7 +46,6 @@ const Dashboard2 = () => {
   // =========================================================
   // TABS
   // =========================================================
-
   const tabs = [
     { id: "overview", label: "Overview", icon: "MdSpaceDashboard" },
     { id: "portfolio", label: "Portfolio Health", icon: "MdAccountBalance" },
@@ -57,7 +57,6 @@ const Dashboard2 = () => {
   // =========================================================
   // PAGE
   // =========================================================
-
   const page = useMemo(() => {
     switch (activeTab) {
       case "overview":
@@ -215,7 +214,7 @@ const Dashboard2 = () => {
           </div>
 
           {/* Product filter */}
-          <div className="hidden sm:block w-[210px] shrink-0 py-2">
+          <div className="hidden sm:block w-52.5 shrink-0 py-2">
             <MultiCheckboxSelect
               label=""
               name="products"
@@ -223,7 +222,11 @@ const Dashboard2 = () => {
               placeholder="All Products"
               options={productOptions}
               value={selectedProducts}
-              onChange={(e) => setSelectedProducts(e.target.value)}
+              onChange={(e) => {
+                // check for empty selection
+                if(e.target.value?.length === 0) return toast.info('There must be atleast one product selected')
+                setSelectedProducts(e.target.value)
+              }}
             />
           </div>
         </div>
@@ -237,7 +240,11 @@ const Dashboard2 = () => {
             placeholder="All Products"
             options={productOptions}
             value={selectedProducts}
-            onChange={(e) => setSelectedProducts(e.target.value)}
+            onChange={(e) =>  {
+                // check for empty selection
+                if(e.target.value?.length === 0) return toast.info('There must be atleast one product selected')
+                setSelectedProducts(e.target.value)
+              }}
           />
         </div>
       </div>

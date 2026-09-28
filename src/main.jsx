@@ -7,12 +7,14 @@ import { IconContext } from 'react-icons'
 import { LoanProvider } from './provider/loanContext.jsx'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <IconContext.Provider value={{ color: "", className: "global-class-name" }}>
-      <LoanProvider>
-        <App />
-      </LoanProvider>
-    </IconContext.Provider>
-    <ToastContainer />
-  </StrictMode>,
+  // <StrictMode>
+    <>
+      <IconContext.Provider value={{ color: "", className: "global-class-name" }}>
+        <LoanProvider>
+          <App />
+        </LoanProvider>
+      </IconContext.Provider>
+      <ToastContainer />
+    </>
+  // </StrictMode>
 )

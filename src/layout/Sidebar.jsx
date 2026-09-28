@@ -1392,8 +1392,8 @@ import {
 } from "react-icons/fi";
 
 import { sidebarData } from "../content/data";
-import officepulselogo from "../assets/img/officepulselogo.png";
-import officepulsefav from "../assets/img/officepulsefav.png";
+import officepulselogo2 from "../assets/img/officepulselogo2.png";
+import officepulsefav2 from "../assets/img/officepulsefav2.png";
 
 export default function Sidebar({
   collapsed,
@@ -1516,7 +1516,7 @@ export default function Sidebar({
           {!collapsed ? (
             <div className="flex w-full items-center">
               <img
-                src={officepulselogo}
+                src={officepulselogo2}
                 alt="OfficePulse"
                 className="
                   h-auto
@@ -1539,7 +1539,7 @@ export default function Sidebar({
               "
             >
               <img
-                src={officepulsefav}
+                src={officepulsefav2}
                 alt="OfficePulse"
                 className="h-full w-full object-contain"
               />

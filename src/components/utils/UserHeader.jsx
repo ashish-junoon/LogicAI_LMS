@@ -5,7 +5,7 @@ import JourneyStepper from "./JourneyStepper";
 import LoanStatusSummary from "./LoanStatusSummary";
 
 const UserHeader = ({ lead, permisssion }) => {
-  console.log(lead);
+  console.log("lead in userHeader? ",lead);
   // const {loanDetails} = useLoanDetails();
 
   return (
@@ -70,7 +70,7 @@ const UserHeader = ({ lead, permisssion }) => {
       <div className="-mt-8 px-5 pb-5 sm:px-6">
         <div className="rounded-xl bg-white">
           {/* {lead?.stage == "active" || lead?.stage == "closed" ? ( */}
-          {["active", "closed", "npa", "due", "overdue"]?.includes(lead?.loan_status?.toLowerCase()) ? (
+          {["active", "closed", "npa", "due", "overdue"]?.includes(lead?.status?.toLowerCase() || lead?.loan_status?.toLowerCase()) ? (
             <div>
               <LoanStatusSummary lead={lead} />
             </div>
