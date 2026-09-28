@@ -13,7 +13,7 @@ const LoanVolumeBarchart = memo(({ selectedProductsName }) => {
 
     useEffect(() => {
         fetchPortfolioHealthNPAbySector();
-    }, []);
+    }, [selectedProductsName]);
 
     const fetchPortfolioHealthNPAbySector = async () => {
         setIsLoading(true);

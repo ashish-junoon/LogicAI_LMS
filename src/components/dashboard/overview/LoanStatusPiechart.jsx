@@ -31,7 +31,7 @@ const LoanStatusPiechart = memo(({ selectedProductsName }) => {
 
     useEffect(() => {
         fetchOverview_LoanStatusDistribution();
-    }, []);
+    }, [selectedProductsName]);
 
     const fetchOverview_LoanStatusDistribution = async () => {
         setIsLoading(true);

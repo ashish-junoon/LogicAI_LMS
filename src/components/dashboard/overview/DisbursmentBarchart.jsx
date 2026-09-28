@@ -12,7 +12,7 @@ const DisbursmentBarchart = memo(({ selectedProductsName }) => {
 
     useEffect(() => {
         fetchOverview_MonthlyDisbursements();
-    }, []);
+    }, [selectedProductsName]);
 
 
     const fetchOverview_MonthlyDisbursements = async () => {

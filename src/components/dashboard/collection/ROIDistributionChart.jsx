@@ -39,7 +39,7 @@ const ROIDistributionChart = memo(({ selectedProductsName }) => {
 
     useEffect(() => {
         fetchFinancials_ROIDistribution();
-    }, []);
+    }, [selectedProductsName]);
 
     return (
         <Panel title="ROI Distribution" sub="Interest rate bands">
