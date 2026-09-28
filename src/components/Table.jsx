@@ -38,7 +38,7 @@ const Table = ({
     tableWrapper: {
       style: {
         display: "block",
-        width: "105%",
+        width: "110%",
         overflowX: "auto",
         overflowY: "hidden",
         scrollbarWidth: "none",

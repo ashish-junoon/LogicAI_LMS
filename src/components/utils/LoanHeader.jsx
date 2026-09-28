@@ -21,6 +21,10 @@ const LoanHeader = ({ lead, permisssion }) => {
                   {loanDetails?.customer_name}
                 </h1>
                 <StatusBadge
+                  label={lead?.product_code === "IP" ? "InstaPaisa" : lead?.product_code === "RFT" ? "Refyne Term Loan": lead?.product_code === "EW" ? "EarlyWages": lead?.product_code === "PU" ? "PaisaUdhar": lead?.product_code === "RFR" && "Refyne Retail OD"}
+                  variant={"primary"}
+                />
+                <StatusBadge
                   label={lead?.loan_status}
                   variant={
                     lead?.loan_status === "rejected"

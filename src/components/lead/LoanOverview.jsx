@@ -24,7 +24,7 @@ const LoanDetails = ({ activeLoan }) => {
     },
     {
       label: "Tenure",
-      value: activeLoan?.tenure + (['EW', 'PU', 'IP'].some((code) => code === activeLoan?.product_code) ? ' days':'') ?? "-",
+      value: activeLoan?.tenure + (['PU', 'IP'].some((code) => code === activeLoan?.product_code) ? ' days':['RFT', 'RFR'].some((code) => code === activeLoan?.product_code) ? ' months':'') ?? "-",
       icon: RiTimeLine,
     },
     // {

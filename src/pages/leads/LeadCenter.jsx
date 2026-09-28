@@ -110,7 +110,7 @@ const LeadCenter = () => {
     },
     {
       name: "Disb. Amt",
-      selector: (row) => row?.disbursement_amount || "-",
+      selector: (row) => (row?.disbursement_amount) ? "₹" + row?.disbursement_amount : "-",
       sortable: true,
     },
     {
@@ -125,12 +125,12 @@ const LeadCenter = () => {
     },
     {
       name: "Repay. Amt",
-      selector: (row) => row?.repayment_amount || "-",
+      selector: (row) => row?.repayment_amount ? "₹" + row?.repayment_amount : "-",
       sortable: true,
     },
     {
       name: "Closing Amt",
-      selector: (row) => row?.closing_amt || "-",
+      selector: (row) => row?.closing_amt ? "₹" +row?.closing_amt : "-",
       sortable: true,
     },
     // {

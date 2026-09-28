@@ -88,5 +88,15 @@ export const formatDate = (date) => {
     return `${date.slice(6, 8)}/${date.slice(4, 6)}/${date.slice(0, 4)}`;
   }
 
+  // Valid date string
+  const parsedDate = new Date(date);
+  if (!Number.isNaN(parsedDate.getTime())) {
+    const day = String(parsedDate.getDate()).padStart(2, "0");
+    const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
+    const year = parsedDate.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  }
+
   return date;
 };
