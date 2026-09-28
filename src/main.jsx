@@ -7,7 +7,7 @@ import { IconContext } from 'react-icons'
 import { LoanProvider } from './provider/loanContext.jsx'
 
 createRoot(document.getElementById('root')).render(
-  // <StrictMode>
+  <StrictMode>
     <>
       <IconContext.Provider value={{ color: "", className: "global-class-name" }}>
         <LoanProvider>
@@ -16,5 +16,5 @@ createRoot(document.getElementById('root')).render(
       </IconContext.Provider>
       <ToastContainer />
     </>
-  // </StrictMode>
+  </StrictMode>
 )
