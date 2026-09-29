@@ -31,7 +31,7 @@ const BankMaster = () => {
 
       const response = await GetAllBanks();
 
-      if (response?.code === 1 || response?.code === 0) {
+      if (response?.status) {
         const transformedData = (response?.data || []).map((bank, index) => ({
           ...bank,
           sn: index + 1,
@@ -47,9 +47,9 @@ const BankMaster = () => {
 
       toast.error(
         error?.response?.data?.title ||
-          error?.response?.data?.errors?.request?.[0] ||
-          error?.message ||
-          "Something went wrong!"
+        error?.response?.data?.errors?.request?.[0] ||
+        error?.message ||
+        "Something went wrong!"
       );
     } finally {
       setIsLoading(false);
@@ -82,6 +82,57 @@ const BankMaster = () => {
     });
 
     setIsModalOpen(true);
+  };
+
+  // =========================================================
+  // TOGGLE BANK STATUS
+  // =========================================================
+
+  const handleToggleStatus = async (row) => {
+    const nextStatus = !row.is_active;
+
+    // Optimistic update
+    setBankList((prev) =>
+      prev.map((bank) =>
+        bank.id !== row.id ? bank : { ...bank, is_active: nextStatus }
+      )
+    );
+
+    try {
+      const response = await UpdateBank({
+        id: row.id,
+        bank_name: row.bank_name,
+        is_active: nextStatus,
+      });
+
+      if (response?.status) {
+        toast.success(response?.msg || "Status updated successfully!");
+      } else {
+        // Revert on failure
+        setBankList((prev) =>
+          prev.map((bank) =>
+            bank.id !== row.id ? bank : { ...bank, is_active: row.is_active }
+          )
+        );
+        toast.info(response?.msg || "Unable to update status!");
+      }
+    } catch (error) {
+      // Revert on error
+      setBankList((prev) =>
+        prev.map((bank) =>
+          bank.id !== row.id ? bank : { ...bank, is_active: row.is_active }
+        )
+      );
+
+      console.error("Error toggling bank status:", error);
+
+      toast.error(
+        error?.response?.data?.title ||
+        error?.response?.data?.errors?.request?.[0] ||
+        error?.message ||
+        "Something went wrong!"
+      );
+    }
   };
 
   // =========================================================
@@ -122,14 +173,14 @@ const BankMaster = () => {
           response = await CreateBank(req);
         }
 
-        if (response?.code === 1 || response?.code === 0) {
+        if (response?.status) {
           await fetchAllBanks();
 
           toast.success(
             response?.msg ||
-              (isEdit
-                ? "Bank updated successfully!"
-                : "Bank added successfully!")
+            (isEdit
+              ? "Bank updated successfully!"
+              : "Bank added successfully!")
           );
 
           setIsModalOpen(false);
@@ -141,9 +192,9 @@ const BankMaster = () => {
         } else {
           toast.info(
             response?.msg ||
-              (isEdit
-                ? "Unable to update bank!"
-                : "Unable to add bank!")
+            (isEdit
+              ? "Unable to update bank!"
+              : "Unable to add bank!")
           );
         }
       } catch (error) {
@@ -154,9 +205,9 @@ const BankMaster = () => {
 
         toast.error(
           error?.response?.data?.title ||
-            error?.response?.data?.errors?.request?.[0] ||
-            error?.message ||
-            "Something went wrong!"
+          error?.response?.data?.errors?.request?.[0] ||
+          error?.message ||
+          "Something went wrong!"
         );
       }
     },
@@ -200,7 +251,6 @@ const BankMaster = () => {
         </div>
       ),
     },
-
     {
       name: "Status",
       center: true,
@@ -208,18 +258,7 @@ const BankMaster = () => {
       selector: (row) => (
         <TogleInput
           checked={row.is_active}
-          onChange={() => {
-            setBankList((prev) =>
-              prev.map((bank) =>
-                bank.id !== row.id
-                  ? bank
-                  : {
-                      ...bank,
-                      is_active: !bank.is_active,
-                    }
-              )
-            );
-          }}
+          onChange={() => handleToggleStatus(row)}
         />
       ),
     },
@@ -292,7 +331,7 @@ const BankMaster = () => {
                 <p className="mt-1 text-xs text-red-500">
                   {bankFormik.errors.bank_name}
                 </p>
-            )}
+              )}
 
           </div>
 

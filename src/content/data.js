@@ -475,7 +475,7 @@ export const sidebarData = [
     children: [
       { title: "Loan Product", path: "/product-master" },
       { title: "Branches", path: "/branches-master" },
-      { title: "Branch Managers", path: "/branch-managers-master" },
+      // { title: "Branch Managers", path: "/branch-managers-master" },
       { title: "Financial Years", path: "/finance-years-master" },
       { title: "Relationships", path: "/relationships-master" },
       { title: "State Master", path: "/state-master" },

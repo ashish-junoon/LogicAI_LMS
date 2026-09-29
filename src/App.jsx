@@ -53,7 +53,7 @@ function App() {
           {/* master pages */}
           <Route path='/branches-master' element={<BranchList />} />
           <Route path='/finance-years-master' element={<FinantialYears />} />
-          <Route path='/branch-managers-master' element={<BranchManagers />} />
+          {/* <Route path='/branch-managers-master' element={<BranchManagers />} /> */}
           <Route path='/relationships-master' element={<Relationships />} />
           <Route path='/state-master' element={<StateList />} />
           <Route path='/city-master' element={<CityList />} />

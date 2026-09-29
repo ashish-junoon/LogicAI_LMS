@@ -11,12 +11,12 @@ import {
   CreateBranch,
   CreateBusinessTrade,
   GetAllBusinessTrades,
-  UpdateBranch,
   UpdateBusinessTrade,
 } from "../../api/mastersApi";
 import { toast } from "react-toastify";
 import Loader from "../../components/utils/Loader";
 import { useFormik } from "formik";
+import * as Yup from 'yup';
 
 const BusinessTradesMaster = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -61,6 +61,54 @@ const BusinessTradesMaster = () => {
     setIsModalOpen(true);
   };
 
+  //? TO TOGGLE BUSINESS TRADE STATUS
+  const handleToggleStatus = async (row) => {
+    const nextStatus = !row.is_active;
+
+    // Optimistic update
+    setBusinessTrades((prev) =>
+      prev.map((branch) =>
+        branch.id !== row.id ? branch : { ...branch, is_active: nextStatus },
+      ),
+    );
+
+    try {
+      const req = {
+        id: row.id,
+        business_trade: row.business_trade,
+        is_active: nextStatus,
+        created_by: "ADMIN",
+      };
+
+      const response = await UpdateBusinessTrade(req);
+
+      if (!response?.status) {
+        // Revert on failure
+        setBusinessTrades((prev) =>
+          prev.map((branch) =>
+            branch.id !== row.id ? branch : { ...branch, is_active: row.is_active },
+          ),
+        );
+        toast.info(response?.msg || "Unable to update status!");
+      } else {
+        toast.success(response?.msg || "Status updated successfully!");
+      }
+    } catch (error) {
+      // Revert on error
+      setBusinessTrades((prev) =>
+        prev.map((branch) =>
+          branch.id !== row.id ? branch : { ...branch, is_active: row.is_active },
+        ),
+      );
+      toast.error(
+        error?.response?.data?.title ||
+        error?.response?.data?.errors?.request?.[0] ||
+        error?.message ||
+        "Something went wrong!",
+      );
+    }
+  };
+
   //? FORMIK FUNCTION TO ADD/EDIT BRANCH DATA
   const BusinessTradeFormik = useFormik({
     initialValues: {
@@ -69,6 +117,14 @@ const BusinessTradesMaster = () => {
     },
 
     enableReinitialize: true,
+
+    validationSchema: Yup.object({
+      business_trade: Yup.string()
+        .trim()
+        .required("Business trade name is required")
+        .min(2, "Business trade must be at least 2 characters")
+        .max(100, "Business trade cannot exceed 100 characters"),
+    }),
 
     onSubmit: async (values, { resetForm }) => {
       try {
@@ -86,13 +142,13 @@ const BusinessTradesMaster = () => {
           response = await CreateBusinessTrade(req);
         }
 
-        if (response?.code === 1) {
+        if (response?.status) {
           fetchAllBranches();
           toast.success(
             response.msg ||
-              (isEdit
-                ? "Business Trade updated successfully!"
-                : "Business Trade created successfully!"),
+            (isEdit
+              ? "Business Trade updated successfully!"
+              : "Business Trade created successfully!"),
           );
           setIsModalOpen(false);
           resetForm();
@@ -101,7 +157,7 @@ const BusinessTradesMaster = () => {
         } else {
           toast.info(
             response?.msg ||
-              (isEdit ? "Unable to update Business Trade!" : "Unable to add Business Trade!"),
+            (isEdit ? "Unable to update Business Trade!" : "Unable to add Business Trade!"),
           );
         }
       } catch (error) {
@@ -112,9 +168,9 @@ const BusinessTradesMaster = () => {
 
         toast.error(
           error?.response?.data?.title ||
-            error?.response?.data?.errors?.request?.[0] ||
-            error?.message ||
-            "Something went wrong!",
+          error?.response?.data?.errors?.request?.[0] ||
+          error?.message ||
+          "Something went wrong!",
         );
       }
     },
@@ -149,18 +205,7 @@ const BusinessTradesMaster = () => {
       selector: (row) => (
         <TogleInput
           checked={row.is_active}
-          onChange={() => {
-            setBusinessTrades((prev) =>
-              prev.map((branch) =>
-                branch.id !== row.id
-                  ? branch
-                  : {
-                      ...branch,
-                      is_active: !branch.is_active,
-                    },
-              ),
-            );
-          }}
+          onChange={() => handleToggleStatus(row)}
         />
       ),
     },
@@ -173,6 +218,12 @@ const BusinessTradesMaster = () => {
   // if(isLoading){
   //   return <Loader />
   // }
+
+  const ErrorText = ({ name }) =>
+    BusinessTradeFormik.touched[name] && BusinessTradeFormik.errors[name] ? (
+      <p className="mt-1 text-xs text-red-500">{BusinessTradeFormik.errors[name]}</p>
+    ) : null;
+
 
   return (
     <>
@@ -201,14 +252,17 @@ const BusinessTradesMaster = () => {
       >
         <form onSubmit={BusinessTradeFormik.handleSubmit}>
           <div className="grid grid-cols-2 gap-3 mt-6">
-            <TextInput
-              label="Business Trade"
-              name={"business_trade"}
-              value={BusinessTradeFormik.values.business_trade}
-              onChange={BusinessTradeFormik.handleChange}
-              onBlur={BusinessTradeFormik.handleBlur}
-              placeholder="Enter Business name"
-            />
+            <div>
+              <TextInput
+                label="Business Trade"
+                name={"business_trade"}
+                value={BusinessTradeFormik.values.business_trade}
+                onChange={BusinessTradeFormik.handleChange}
+                onBlur={BusinessTradeFormik.handleBlur}
+                placeholder="Enter Business name"
+              />
+              <ErrorText name='business_trade' />
+            </div>
 
             <SelectInput
               label="Status"
