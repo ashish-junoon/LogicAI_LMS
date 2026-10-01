@@ -9,13 +9,13 @@ import LeadForm from "../../pages/formPages/LeadForm";
 import DocumentsList from "./DocumentsList";
 import LeadFormDetails from "../../pages/formPages/LeadFormDetails";
 import LiveKYC from "../common/LiveKYC";
+import DocumentSignature from "../common/DocumentSignature";
 
-const KycWrapper = ({}) => {
+const SignatureWrapper = ({}) => {
   const [activeSection, setActiveSection] = useState("document");
   const sections = [
     { id: "document", label: "Documents", icon: "PiBookOpenTextDuotone" },
-    { id: "videokyc", label: "Video KYC", icon: "RiShieldCheckLine" },
-    // { id: "esign", label: "e-Signature", icon: "FaSignature" },
+    { id: "esign", label: "e-Signature", icon: "FaSignature" },
     { id: "user", label: "User Details", icon: "PiBookOpenTextDuotone" },
     { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
   ];
@@ -25,14 +25,23 @@ const KycWrapper = ({}) => {
       case "user":
         return <LeadFormDetails />;
       case "videokyc":
-        return <>
-        {/* <VideoKYC /> 
+        return (
+          <>
+            {/* <VideoKYC /> 
         <br />  */}
-        <LiveKYC /></>
+            <LiveKYC />
+          </>
+        );
       case "remarks":
         return <RemarksHistory permission={true} />;
       case "esign":
-        return <ESignatureStatus />;
+        return (
+          <>
+            <DocumentSignature />
+            <br />
+            <ESignatureStatus />
+          </>
+        );
       case "document":
         return <DocumentsList permission={true} />;
       default:
@@ -94,7 +103,6 @@ const KycWrapper = ({}) => {
     // </div>
     <div className="py-4">
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-
         <div className="border-b border-gray-200 px-4">
           <nav className="flex items-center gap-1 overflow-x-auto no-scrollbar">
             {sections.map((section) => {
@@ -122,13 +130,11 @@ const KycWrapper = ({}) => {
             })}
           </nav>
         </div>
-        
-        <div className="p-5">
-          {renderSection()}
-        </div>
+
+        <div className="p-5">{renderSection()}</div>
       </div>
     </div>
   );
 };
 
-export default KycWrapper;
+export default SignatureWrapper;

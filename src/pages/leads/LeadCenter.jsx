@@ -201,6 +201,7 @@ const LeadCenter = () => {
           handleFilterBtn={handleFilterBtn}
           paginationServer
           paginationTotalRows={totalRows}
+          serverSideSearch={true}
           onChangePage={(page) => {
             setPage(page);
           }}

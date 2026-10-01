@@ -32,7 +32,7 @@ function TextInput({ label, icon, type="text", name, id, placeholder, onChange, 
                     maxLength={maxLength}
                     spellCheck="false"
                     // className={`bg-white border border-gray-300 text-gray-800 text-sm rounded focus:ring-1 focus:ring-primary focus:border-primary outline-0 block w-full ${icon ? "ps-10" : "px-2"} p-1 focus:shadow-sm focus:outline-light ${disabled ? " bg-zinc-100" : ""} ${style}`}
-                    className={`bg-white border border-gray-300 text-gray-700 text-sm rounded-md focus:ring-0.5 focus:ring-primary focus:border-primary outline-0 block w-full ${icon ? "ps-10" : "px-2"} py-1.5 focus:shadow-sm focus:outline-light ${disabled ? "bg-zinc-100" : ""} ${style}`}
+                    className={`bg-white border border-gray-300 text-gray-700 text-sm rounded-md focus:ring-0.5 focus:ring-primary focus:border-primary outline-0 block w-full ${icon ? "ps-10" : "px-2"} py-1.5 focus:shadow-sm focus:outline-light ${disabled ? "bg-zinc-100" : ""} ${style} ${readOnly && 'bg-gray-500'}`}
                 />
                 {/* rounded-lg border border-gray-300 px-3 py-2 text-sm */}
                 {type === "password" && !hideEye && (

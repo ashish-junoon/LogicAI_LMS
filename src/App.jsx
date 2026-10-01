@@ -37,6 +37,10 @@ import VendorMaster from './pages/master/VendorMaster'
 import BusinessTradesMaster from './pages/master/BusinessTradesMaster'
 import BankMaster from './pages/master/BankMaster'
 import DepartmentMaster from './pages/master/DepartmentMaster'
+import ClientLiveKYC from './components/common/ClientLiveKYC'
+import ESignatureLeads from './pages/leads/SignatureLeads'
+import ESignature from './pages/formPages/ESignature'
+import DocumentMaster from './pages/master/DocumentMaster'
 
 function App() {
 
@@ -66,6 +70,7 @@ function App() {
           <Route path='/vendor-master' element={<VendorMaster />} /> 
           <Route path='/business-trade-master' element={<BusinessTradesMaster />} /> 
           <Route path='/bank-master' element={<BankMaster />} /> 
+          <Route path='/document-master' element={<DocumentMaster />} /> 
           {/* <Route path='/product-master' element={<CreateLoanProduct />} />  */}
 
           {/* Leads Section  */}
@@ -75,6 +80,7 @@ function App() {
           <Route path='/leads-disbursement' element={<DisbursementList />} />
           <Route path='/leads-rejected' element={<RejectedLeads />} />
           <Route path='/leads-kyc' element={<KycLeads />} />
+          <Route path='/leads-signature' element={<ESignatureLeads />} />
 
           {/* Loan Section  */}
           <Route path='/loan-all' element={<AllLoans />} />
@@ -83,16 +89,21 @@ function App() {
           <Route path='/credit-detail' element={<CreditDetails />} />
           <Route path='/kyc-detail' element={<Kyc />} />
           <Route path='/disbursement-detail' element={<DisbursementDetails />} />
+          <Route path='/esign-detail' element={<ESignature />} />
 
           <Route path='/all-leads' element={<LeadCenter />} />
           <Route path='/product-leads-detail' element={<LeadDetailsOther />} />
           
           <Route path='/loan-detail' element={<LoanManagement />} />
           
+          <Route path='/loan-detail' element={<LoanManagement />} />
+          
 
           <Route path='*' element={<Navigate to="/"/>} />
         </Route>
-        <Route path='/login' element={<Login />} />
+          <Route path='/login' element={<Login />} />
+          {/* Client Pages */}
+          <Route path='/client-kyc-page' element={<ClientLiveKYC />} />
       </Routes>
     </Router>
   )

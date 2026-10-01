@@ -449,7 +449,8 @@ export const sidebarData = [
       { title: "Draft Leads", path: "/leads-draft" },
       { title: "New Leads", path: "/leads-new" },
       { title: "Credit Analysis", path: "/leads-assesment" },
-      { title: "Kyc Verification", path: "/leads-kyc" },
+      { title: "Loan Verification", path: "/leads-kyc" },
+      { title: "E Signature", path: "/leads-signature" },
       { title: "Disbursement", path: "/leads-disbursement" },
       { title: "Rejected Lead", path: "/leads-rejected" },
     ],
@@ -488,6 +489,7 @@ export const sidebarData = [
       { title: "Vendor Master", path: "/vendor-master" },
       { title: "Business Trade Master", path: "/business-trade-master" },
       { title: "Bank Master", path: "/bank-master" },
+      { title: "Document Master", path: "/document-master" },
     ],
   },
 ];

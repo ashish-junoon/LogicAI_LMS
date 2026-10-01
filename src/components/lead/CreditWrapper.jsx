@@ -15,7 +15,7 @@ import LeadForm from "../../pages/formPages/LeadForm";
 import LeadFormDetails from "../../pages/formPages/LeadFormDetails";
 
 const CreditWrapper = ({ loanData, userData, onAction }) => {
-  const [activeSection, setActiveSection] = useState("loaninfo");
+  const [activeSection, setActiveSection] = useState("user");
   const [switchLoanProvier, setswitchLoanProvier] = useState(false);
 
   const handleSwitchProvider = () => {
@@ -32,11 +32,11 @@ const CreditWrapper = ({ loanData, userData, onAction }) => {
   };
 
   const sections = [
+    { id: "user", label: "User Details", icon: "RiShieldCheckLine" },
     { id: "loaninfo", label: "Loan Info", icon: "GiPayMoney" },
     { id: "credit", label: "Credit Analysis", icon: "RiShieldCheckLine" },
     { id: "bsa", label: "Bank Statement Ananlysis", icon: "RiBankCardLine" },
     { id: "documents", label: "Documents", icon: "RiFileList3Line" },
-    { id: "user", label: "User Details", icon: "RiShieldCheckLine" },
     { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
   ];
 

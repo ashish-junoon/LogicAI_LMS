@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import { FiSearch, FiFilter, FiDownload } from "react-icons/fi";
 
@@ -8,6 +8,7 @@ const Table = ({
   handleFilterBtn,
   searchText,
   onSearchChange,
+  serverSideSearch=false,
   debounceDelay = 500,
   ...props
 }) => {
@@ -27,6 +28,41 @@ const Table = ({
     return () => clearTimeout(timer);
   }, [localSearch, debounceDelay, onSearchChange]);
 
+  // =========================================================
+  // LOCAL FILTER
+  // =========================================================
+  const filteredData = useMemo(() => {
+    // If parent/API is handling search,
+    // don't filter data locally.
+    if (serverSideSearch) {
+      return data;
+    }
+
+    // No search
+    if (!localSearch?.trim()) {
+      return data;
+    }
+
+    const search = localSearch.toLowerCase().trim();
+
+    return data.filter((item) =>
+      Object.values(item || {}).some((value) => {
+        if (value === null || value === undefined) {
+          return false;
+        }
+
+        // Don't search objects/functions
+        if (typeof value === "object") {
+          return false;
+        }
+
+        return String(value)
+          .toLowerCase()
+          .includes(search);
+      })
+    );
+  }, [data, localSearch, serverSideSearch]);
+
   const customStyles = {
     table: {
       style: {
@@ -38,7 +74,7 @@ const Table = ({
     tableWrapper: {
       style: {
         display: "block",
-        width: "110%",
+        width: "100%",
         overflowX: "auto",
         overflowY: "hidden",
         scrollbarWidth: "none",
@@ -134,7 +170,7 @@ const Table = ({
 
           <input
             value={localSearch}
-            onChange={(e) => setLocalSearch?.(e.target.value)}
+            onChange={(e) => setLocalSearch?.(e?.target?.value)}
             type="text"
             placeholder="Search..."
             className="w-full rounded-md border border-slate-300 bg-white py-2 pl-10 pr-4 text-sm text-slate-700 placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-100"
@@ -161,7 +197,7 @@ const Table = ({
 
       <DataTable
         columns={columns}
-        data={data}
+        data={filteredData}
         customStyles={customStyles}
         highlightOnHover={false}
         pointerOnHover={false}
