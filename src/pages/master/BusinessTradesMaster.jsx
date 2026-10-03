@@ -8,7 +8,6 @@ import SelectInput from "../../components/fields/SelectInput";
 import TogleInput from "../../components/fields/TogleInput";
 import Button from "../../components/utils/Button";
 import {
-  CreateBranch,
   CreateBusinessTrade,
   GetAllBusinessTrades,
   UpdateBusinessTrade,
@@ -246,7 +245,7 @@ const BusinessTradesMaster = () => {
 
       {/* Add Branch Modal */}
       <Modal
-        title={isEdit ? "Update Branch" : "Add New Branch"}
+        title={isEdit ? "Update Business Trade" : "Add Business Trade"}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       >

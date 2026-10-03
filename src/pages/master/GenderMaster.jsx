@@ -6,31 +6,30 @@ import TextInput from "../../components/fields/TextInput";
 import TogleInput from "../../components/fields/TogleInput";
 import Button from "../../components/utils/Button";
 import {
-  GetAllDesignations,
-  CreateDesignation,
-  UpdateDesignation,
+  GetAllGenders,
+  CreateGender,
+  UpdateGender,
 } from "../../api/mastersApi";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-const DesignationMaster = () => {
+const GenderMaster = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [designations, setDesignations] = useState([]);
+  const [genders, setGenders] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const [isEdit, setIsEdit] = useState(false);
-  const [editingDesignationId, setEditingDesignationId] =
-    useState(null);
+  const [editingGenderId, setEditingGenderId] = useState(null);
 
   // =========================================================
-  // FETCH ALL DESIGNATIONS
+  // FETCH ALL GENDERS
   // =========================================================
-  const fetchAllDesignations = async () => {
+  const fetchAllGenders = async () => {
     try {
       setIsLoading(true);
 
-      const response = await GetAllDesignations();
+      const response = await GetAllGenders();
 
       const transformedData =
         response?.data?.map((item, index) => ({
@@ -38,18 +37,15 @@ const DesignationMaster = () => {
           sn: index + 1,
         })) || [];
 
-      setDesignations(transformedData);
+      setGenders(transformedData);
     } catch (error) {
-      console.error(
-        "Error fetching designations:",
-        error
-      );
+      console.error("Error fetching genders:", error);
 
       toast.error(
         error?.response?.data?.title ||
           error?.response?.data?.errors?.request?.[0] ||
           error?.message ||
-          "Failed to fetch designations!"
+          "Failed to fetch genders!"
       );
     } finally {
       setIsLoading(false);
@@ -59,54 +55,48 @@ const DesignationMaster = () => {
   // =========================================================
   // FORMIK
   // =========================================================
-  const designationFormik = useFormik({
+  const genderFormik = useFormik({
     initialValues: {
-      designation: "",
+      gender: "",
       is_active: true,
     },
 
     enableReinitialize: true,
 
     validationSchema: Yup.object({
-      designation: Yup.string()
+      gender: Yup.string()
         .trim()
-        .required("Designation is required")
-        .min(
-          2,
-          "Designation must be at least 2 characters"
-        )
-        .max(
-          100,
-          "Designation cannot exceed 100 characters"
-        ),
+        .required("Gender is required")
+        .min(2, "Gender must be at least 2 characters")
+        .max(100, "Gender cannot exceed 100 characters"),
     }),
 
     onSubmit: async (values, { resetForm }) => {
       try {
         const req = {
-          designation: values.designation.trim(),
+          gender: values.gender.trim(),
           is_active: values.is_active,
         };
 
         let response;
 
         if (isEdit) {
-          response = await UpdateDesignation({
-            id: editingDesignationId,
+          response = await UpdateGender({
+            id: editingGenderId,
             ...req,
           });
         } else {
-          response = await CreateDesignation(req);
+          response = await CreateGender(req);
         }
 
         if (response?.status) {
-          await fetchAllDesignations();
+          await fetchAllGenders();
 
           toast.success(
             response?.message ||
               (isEdit
-                ? "Designation updated successfully!"
-                : "Designation created successfully!")
+                ? "Gender updated successfully!"
+                : "Gender created successfully!")
           );
 
           closeModal();
@@ -115,15 +105,15 @@ const DesignationMaster = () => {
           toast.info(
             response?.message ||
               (isEdit
-                ? "Unable to update designation!"
-                : "Unable to create designation!")
+                ? "Unable to update gender!"
+                : "Unable to create gender!")
           );
         }
       } catch (error) {
         console.error(
           isEdit
-            ? "Error updating designation:"
-            : "Error creating designation:",
+            ? "Error updating gender:"
+            : "Error creating gender:",
           error
         );
 
@@ -138,15 +128,15 @@ const DesignationMaster = () => {
   });
 
   // =========================================================
-  // ADD DESIGNATION
+  // ADD GENDER
   // =========================================================
-  const handleAddDesignation = () => {
+  const handleAddGender = () => {
     setIsEdit(false);
-    setEditingDesignationId(null);
+    setEditingGenderId(null);
 
-    designationFormik.resetForm({
+    genderFormik.resetForm({
       values: {
-        designation: "",
+        gender: "",
         is_active: true,
       },
     });
@@ -155,14 +145,14 @@ const DesignationMaster = () => {
   };
 
   // =========================================================
-  // EDIT DESIGNATION
+  // EDIT GENDER
   // =========================================================
-  const handleEditDesignation = (row) => {
+  const handleEditGender = (row) => {
     setIsEdit(true);
-    setEditingDesignationId(row?.id);
+    setEditingGenderId(row?.id);
 
-    designationFormik.setValues({
-      designation: row?.designation || "",
+    genderFormik.setValues({
+      gender: row?.gender || "",
       is_active:
         typeof row?.is_active === "boolean"
           ? row.is_active
@@ -179,7 +169,7 @@ const DesignationMaster = () => {
     const nextStatus = !row?.is_active;
 
     // Optimistic update
-    setDesignations((prev) =>
+    setGenders((prev) =>
       prev.map((item) =>
         item.id === row?.id
           ? {
@@ -191,22 +181,20 @@ const DesignationMaster = () => {
     );
 
     try {
-      const req = {
+      const response = await UpdateGender({
         id: row?.id,
-        designation: row?.designation,
+        gender: row?.gender,
         is_active: nextStatus,
-      };
-
-      const response = await UpdateDesignation(req);
+      });
 
       if (response?.status) {
         toast.success(
           response?.message ||
-            "Designation status updated successfully!"
+            "Gender status updated successfully!"
         );
       } else {
-        // Revert
-        setDesignations((prev) =>
+        // Revert if API fails
+        setGenders((prev) =>
           prev.map((item) =>
             item.id === row?.id
               ? {
@@ -219,12 +207,12 @@ const DesignationMaster = () => {
 
         toast.info(
           response?.message ||
-            "Unable to update designation status!"
+            "Unable to update gender status!"
         );
       }
     } catch (error) {
-      // Revert
-      setDesignations((prev) =>
+      // Revert if API throws an error
+      setGenders((prev) =>
         prev.map((item) =>
           item.id === row?.id
             ? {
@@ -235,10 +223,7 @@ const DesignationMaster = () => {
         )
       );
 
-      console.error(
-        "Error updating designation status:",
-        error
-      );
+      console.error("Error updating gender status:", error);
 
       toast.error(
         error?.response?.data?.title ||
@@ -254,13 +239,12 @@ const DesignationMaster = () => {
   // =========================================================
   const closeModal = () => {
     setIsModalOpen(false);
-
     setIsEdit(false);
-    setEditingDesignationId(null);
+    setEditingGenderId(null);
 
-    designationFormik.resetForm({
+    genderFormik.resetForm({
       values: {
-        designation: "",
+        gender: "",
         is_active: true,
       },
     });
@@ -277,14 +261,12 @@ const DesignationMaster = () => {
       width: "60px",
       center: true,
     },
-
     {
-      name: "Designation",
-      selector: (row) => row?.designation || "-",
+      name: "Gender",
+      selector: (row) => row?.gender || "-",
       sortable: true,
       grow: 1,
     },
-
     {
       name: "Action",
       width: "100px",
@@ -293,7 +275,7 @@ const DesignationMaster = () => {
         <div className="flex items-center justify-center">
           <button
             type="button"
-            onClick={() => handleEditDesignation(row)}
+            onClick={() => handleEditGender(row)}
             className="
               w-7 h-7
               flex items-center justify-center
@@ -311,7 +293,6 @@ const DesignationMaster = () => {
         </div>
       ),
     },
-
     {
       name: "Status",
       width: "100px",
@@ -329,7 +310,7 @@ const DesignationMaster = () => {
   // FETCH ON LOAD
   // =========================================================
   useEffect(() => {
-    fetchAllDesignations();
+    fetchAllGenders();
   }, []);
 
   return (
@@ -339,17 +320,17 @@ const DesignationMaster = () => {
         <div className="flex justify-between items-center px-4">
           <div>
             <h2 className="text-md font-medium text-slate-800">
-              Designation Master
+              Gender Master
             </h2>
 
             <p className="text-[11px] text-slate-400">
-              Manage designations
+              Manage genders
             </p>
           </div>
 
           <button
             type="button"
-            onClick={handleAddDesignation}
+            onClick={handleAddGender}
             className="
               flex items-center
               gap-2
@@ -369,14 +350,13 @@ const DesignationMaster = () => {
               size={15}
               color="white"
             />
-
-            Add Designation
+            Add Gender
           </button>
         </div>
 
         {/* TABLE */}
         <Table
-          data={designations}
+          data={genders}
           columns={columns}
           loading={isLoading}
         />
@@ -384,31 +364,27 @@ const DesignationMaster = () => {
 
       {/* MODAL */}
       <Modal
-        title={
-          isEdit
-            ? "Update Designation"
-            : "Add Designation"
-        }
+        title={isEdit ? "Update Gender" : "Add Gender"}
         isOpen={isModalOpen}
         onClose={closeModal}
       >
         <form
-          onSubmit={designationFormik.handleSubmit}
+          onSubmit={genderFormik.handleSubmit}
           className="pt-2"
         >
           <TextInput
-            label="Designation"
-            name="designation"
-            placeholder="Enter designation"
-            value={designationFormik.values.designation}
-            onChange={designationFormik.handleChange}
-            onBlur={designationFormik.handleBlur}
+            label="Gender"
+            name="gender"
+            placeholder="Enter gender"
+            value={genderFormik.values.gender}
+            onChange={genderFormik.handleChange}
+            onBlur={genderFormik.handleBlur}
           />
 
-          {designationFormik.touched.designation &&
-            designationFormik.errors.designation && (
+          {genderFormik.touched.gender &&
+            genderFormik.errors.gender && (
               <p className="mt-1 text-xs text-red-500">
-                {designationFormik.errors.designation}
+                {genderFormik.errors.gender}
               </p>
             )}
 
@@ -428,8 +404,8 @@ const DesignationMaster = () => {
               btnName={isEdit ? "Update" : "Submit"}
               type="submit"
               disabled={
-                !designationFormik.isValid ||
-                designationFormik.isSubmitting
+                !genderFormik.isValid ||
+                genderFormik.isSubmitting
               }
               style="
                 bg-primary
@@ -446,4 +422,4 @@ const DesignationMaster = () => {
   );
 };
 
-export default DesignationMaster;
+export default GenderMaster;

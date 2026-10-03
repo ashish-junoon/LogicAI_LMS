@@ -20,7 +20,7 @@ const renderSection = () => {
     case "user":
       return <LeadInformationPage loanData={loanData} />;
     case "loanInfo":
-      return <LoanOverview activeLoan={loanData} />;
+      return <LoanOverview activeLoan={loanData[0]} />;
     default:
       return null;
   }

@@ -38,9 +38,15 @@ import BusinessTradesMaster from './pages/master/BusinessTradesMaster'
 import BankMaster from './pages/master/BankMaster'
 import DepartmentMaster from './pages/master/DepartmentMaster'
 import ClientLiveKYC from './components/common/ClientLiveKYC'
-import ESignatureLeads from './pages/leads/SignatureLeads'
-import ESignature from './pages/formPages/ESignature'
 import DocumentMaster from './pages/master/DocumentMaster'
+import TelecallingLeads from './pages/leads/TelecallingLeads'
+import Telecalling from './pages/leads/Telecalling'
+import BusinessTypeMaster from './pages/master/BusinessTypeMaster'
+import EmployementTypeMaster from './pages/master/EmployementTypeMaster'
+import SectorMaster from './pages/master/SectorMaster'
+import ReligionMaster from './pages/master/ReligionMaster'
+import GenderMaster from './pages/master/GenderMaster'
+import ResidenceType from './pages/master/ResidenceType'
 
 function App() {
 
@@ -65,10 +71,16 @@ function App() {
           <Route path='/product-master' element={<LoanProductMaster />} /> 
           <Route path='/department-master' element={<DepartmentMaster />} /> 
           <Route path='/designation-master' element={<DesignationMaster />} /> 
+          <Route path='/employement-type-master' element={<EmployementTypeMaster />} /> 
+          <Route path='/sector-master' element={<SectorMaster />} /> 
+          <Route path='/religion-master' element={<ReligionMaster />} /> 
+          <Route path='/gender-master' element={<GenderMaster />} /> 
+          <Route path='/residence-type-master' element={<ResidenceType />} /> 
           <Route path='/quetionare-master' element={<PDQuestionsMaster />} /> 
           <Route path='/page-master' element={<PageMaster />} /> 
           <Route path='/vendor-master' element={<VendorMaster />} /> 
           <Route path='/business-trade-master' element={<BusinessTradesMaster />} /> 
+          <Route path='/business-type-master' element={<BusinessTypeMaster />} /> 
           <Route path='/bank-master' element={<BankMaster />} /> 
           <Route path='/document-master' element={<DocumentMaster />} /> 
           {/* <Route path='/product-master' element={<CreateLoanProduct />} />  */}
@@ -80,7 +92,7 @@ function App() {
           <Route path='/leads-disbursement' element={<DisbursementList />} />
           <Route path='/leads-rejected' element={<RejectedLeads />} />
           <Route path='/leads-kyc' element={<KycLeads />} />
-          <Route path='/leads-signature' element={<ESignatureLeads />} />
+          <Route path='/leads-telecalling' element={<TelecallingLeads />} />
 
           {/* Loan Section  */}
           <Route path='/loan-all' element={<AllLoans />} />
@@ -88,8 +100,8 @@ function App() {
           <Route path='/leads-detail' element={<LeadDetails />} />
           <Route path='/credit-detail' element={<CreditDetails />} />
           <Route path='/kyc-detail' element={<Kyc />} />
+          <Route path='/telecalling-detail' element={<Telecalling />} />
           <Route path='/disbursement-detail' element={<DisbursementDetails />} />
-          <Route path='/esign-detail' element={<ESignature />} />
 
           <Route path='/all-leads' element={<LeadCenter />} />
           <Route path='/product-leads-detail' element={<LeadDetailsOther />} />

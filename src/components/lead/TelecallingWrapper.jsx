@@ -1,23 +1,20 @@
 import React, { useState } from "react";
 
 // Components
-import VideoKYC from "../common/VideoKYC";
 import Icon from "../utils/Icon";
 import RemarksHistory from "./RemarksHistory";
-import ESignatureStatus from "../common/ESignatureStatus";
-import LeadForm from "../../pages/formPages/LeadForm";
 import DocumentsList from "./DocumentsList";
 import LeadFormDetails from "../../pages/formPages/LeadFormDetails";
 import LiveKYC from "../common/LiveKYC";
 import DocumentSignature from "../common/DocumentSignature";
 
-const KycWrapper = ({}) => {
-  const [activeSection, setActiveSection] = useState("document");
+const TelecallinWrapper = ({}) => {
+  const [activeSection, setActiveSection] = useState("user");
   const sections = [
+      { id: "user", label: "User Details", icon: "PiBookOpenTextDuotone" },
+      { id: "videokyc", label: "Video KYC", icon: "RiShieldCheckLine" },
     { id: "document", label: "Documents", icon: "PiBookOpenTextDuotone" },
-    // { id: "videokyc", label: "Video KYC", icon: "RiShieldCheckLine" },
-    { id: "esign", label: "e-Signature", icon: "FaSignature" },
-    { id: "user", label: "User Details", icon: "PiBookOpenTextDuotone" },
+    // { id: "esign", label: "e-Signature", icon: "FaSignature" },
     { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
   ];
 
@@ -132,4 +129,4 @@ const KycWrapper = ({}) => {
   );
 };
 
-export default KycWrapper;
+export default TelecallinWrapper;

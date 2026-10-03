@@ -6,31 +6,30 @@ import TextInput from "../../components/fields/TextInput";
 import TogleInput from "../../components/fields/TogleInput";
 import Button from "../../components/utils/Button";
 import {
-  GetAllDesignations,
-  CreateDesignation,
-  UpdateDesignation,
+  GetAllSectors,
+  CreateSector,
+  UpdateSector,
 } from "../../api/mastersApi";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-const DesignationMaster = () => {
+const SectorMaster = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [designations, setDesignations] = useState([]);
+  const [sectors, setSectors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const [isEdit, setIsEdit] = useState(false);
-  const [editingDesignationId, setEditingDesignationId] =
-    useState(null);
+  const [editingSectorId, setEditingSectorId] = useState(null);
 
   // =========================================================
-  // FETCH ALL DESIGNATIONS
+  // FETCH ALL SECTORS
   // =========================================================
-  const fetchAllDesignations = async () => {
+  const fetchAllSectors = async () => {
     try {
       setIsLoading(true);
 
-      const response = await GetAllDesignations();
+      const response = await GetAllSectors();
 
       const transformedData =
         response?.data?.map((item, index) => ({
@@ -38,18 +37,15 @@ const DesignationMaster = () => {
           sn: index + 1,
         })) || [];
 
-      setDesignations(transformedData);
+      setSectors(transformedData);
     } catch (error) {
-      console.error(
-        "Error fetching designations:",
-        error
-      );
+      console.error("Error fetching sectors:", error);
 
       toast.error(
         error?.response?.data?.title ||
           error?.response?.data?.errors?.request?.[0] ||
           error?.message ||
-          "Failed to fetch designations!"
+          "Failed to fetch sectors!"
       );
     } finally {
       setIsLoading(false);
@@ -59,54 +55,48 @@ const DesignationMaster = () => {
   // =========================================================
   // FORMIK
   // =========================================================
-  const designationFormik = useFormik({
+  const sectorFormik = useFormik({
     initialValues: {
-      designation: "",
+      sector: "",
       is_active: true,
     },
 
     enableReinitialize: true,
 
     validationSchema: Yup.object({
-      designation: Yup.string()
+      sector: Yup.string()
         .trim()
-        .required("Designation is required")
-        .min(
-          2,
-          "Designation must be at least 2 characters"
-        )
-        .max(
-          100,
-          "Designation cannot exceed 100 characters"
-        ),
+        .required("Sector is required")
+        .min(2, "Sector must be at least 2 characters")
+        .max(100, "Sector cannot exceed 100 characters"),
     }),
 
     onSubmit: async (values, { resetForm }) => {
       try {
         const req = {
-          designation: values.designation.trim(),
+          sector: values.sector.trim(),
           is_active: values.is_active,
         };
 
         let response;
 
         if (isEdit) {
-          response = await UpdateDesignation({
-            id: editingDesignationId,
+          response = await UpdateSector({
+            id: editingSectorId,
             ...req,
           });
         } else {
-          response = await CreateDesignation(req);
+          response = await CreateSector(req);
         }
 
         if (response?.status) {
-          await fetchAllDesignations();
+          await fetchAllSectors();
 
           toast.success(
             response?.message ||
               (isEdit
-                ? "Designation updated successfully!"
-                : "Designation created successfully!")
+                ? "Sector updated successfully!"
+                : "Sector created successfully!")
           );
 
           closeModal();
@@ -115,15 +105,15 @@ const DesignationMaster = () => {
           toast.info(
             response?.message ||
               (isEdit
-                ? "Unable to update designation!"
-                : "Unable to create designation!")
+                ? "Unable to update sector!"
+                : "Unable to create sector!")
           );
         }
       } catch (error) {
         console.error(
           isEdit
-            ? "Error updating designation:"
-            : "Error creating designation:",
+            ? "Error updating sector:"
+            : "Error creating sector:",
           error
         );
 
@@ -138,15 +128,15 @@ const DesignationMaster = () => {
   });
 
   // =========================================================
-  // ADD DESIGNATION
+  // ADD SECTOR
   // =========================================================
-  const handleAddDesignation = () => {
+  const handleAddSector = () => {
     setIsEdit(false);
-    setEditingDesignationId(null);
+    setEditingSectorId(null);
 
-    designationFormik.resetForm({
+    sectorFormik.resetForm({
       values: {
-        designation: "",
+        sector: "",
         is_active: true,
       },
     });
@@ -155,14 +145,14 @@ const DesignationMaster = () => {
   };
 
   // =========================================================
-  // EDIT DESIGNATION
+  // EDIT SECTOR
   // =========================================================
-  const handleEditDesignation = (row) => {
+  const handleEditSector = (row) => {
     setIsEdit(true);
-    setEditingDesignationId(row?.id);
+    setEditingSectorId(row?.id);
 
-    designationFormik.setValues({
-      designation: row?.designation || "",
+    sectorFormik.setValues({
+      sector: row?.sector || "",
       is_active:
         typeof row?.is_active === "boolean"
           ? row.is_active
@@ -179,7 +169,7 @@ const DesignationMaster = () => {
     const nextStatus = !row?.is_active;
 
     // Optimistic update
-    setDesignations((prev) =>
+    setSectors((prev) =>
       prev.map((item) =>
         item.id === row?.id
           ? {
@@ -193,20 +183,20 @@ const DesignationMaster = () => {
     try {
       const req = {
         id: row?.id,
-        designation: row?.designation,
+        sector: row?.sector,
         is_active: nextStatus,
       };
 
-      const response = await UpdateDesignation(req);
+      const response = await UpdateSector(req);
 
       if (response?.status) {
         toast.success(
           response?.message ||
-            "Designation status updated successfully!"
+            "Sector status updated successfully!"
         );
       } else {
         // Revert
-        setDesignations((prev) =>
+        setSectors((prev) =>
           prev.map((item) =>
             item.id === row?.id
               ? {
@@ -219,12 +209,12 @@ const DesignationMaster = () => {
 
         toast.info(
           response?.message ||
-            "Unable to update designation status!"
+            "Unable to update sector status!"
         );
       }
     } catch (error) {
       // Revert
-      setDesignations((prev) =>
+      setSectors((prev) =>
         prev.map((item) =>
           item.id === row?.id
             ? {
@@ -236,7 +226,7 @@ const DesignationMaster = () => {
       );
 
       console.error(
-        "Error updating designation status:",
+        "Error updating sector status:",
         error
       );
 
@@ -256,11 +246,11 @@ const DesignationMaster = () => {
     setIsModalOpen(false);
 
     setIsEdit(false);
-    setEditingDesignationId(null);
+    setEditingSectorId(null);
 
-    designationFormik.resetForm({
+    sectorFormik.resetForm({
       values: {
-        designation: "",
+        sector: "",
         is_active: true,
       },
     });
@@ -279,8 +269,8 @@ const DesignationMaster = () => {
     },
 
     {
-      name: "Designation",
-      selector: (row) => row?.designation || "-",
+      name: "Sector",
+      selector: (row) => row?.sector || "-",
       sortable: true,
       grow: 1,
     },
@@ -293,7 +283,7 @@ const DesignationMaster = () => {
         <div className="flex items-center justify-center">
           <button
             type="button"
-            onClick={() => handleEditDesignation(row)}
+            onClick={() => handleEditSector(row)}
             className="
               w-7 h-7
               flex items-center justify-center
@@ -329,7 +319,7 @@ const DesignationMaster = () => {
   // FETCH ON LOAD
   // =========================================================
   useEffect(() => {
-    fetchAllDesignations();
+    fetchAllSectors();
   }, []);
 
   return (
@@ -339,17 +329,17 @@ const DesignationMaster = () => {
         <div className="flex justify-between items-center px-4">
           <div>
             <h2 className="text-md font-medium text-slate-800">
-              Designation Master
+              Sector Master
             </h2>
 
             <p className="text-[11px] text-slate-400">
-              Manage designations
+              Manage sectors
             </p>
           </div>
 
           <button
             type="button"
-            onClick={handleAddDesignation}
+            onClick={handleAddSector}
             className="
               flex items-center
               gap-2
@@ -370,13 +360,13 @@ const DesignationMaster = () => {
               color="white"
             />
 
-            Add Designation
+            Add Sector
           </button>
         </div>
 
         {/* TABLE */}
         <Table
-          data={designations}
+          data={sectors}
           columns={columns}
           loading={isLoading}
         />
@@ -384,31 +374,27 @@ const DesignationMaster = () => {
 
       {/* MODAL */}
       <Modal
-        title={
-          isEdit
-            ? "Update Designation"
-            : "Add Designation"
-        }
+        title={isEdit ? "Update Sector" : "Add Sector"}
         isOpen={isModalOpen}
         onClose={closeModal}
       >
         <form
-          onSubmit={designationFormik.handleSubmit}
+          onSubmit={sectorFormik.handleSubmit}
           className="pt-2"
         >
           <TextInput
-            label="Designation"
-            name="designation"
-            placeholder="Enter designation"
-            value={designationFormik.values.designation}
-            onChange={designationFormik.handleChange}
-            onBlur={designationFormik.handleBlur}
+            label="Sector"
+            name="sector"
+            placeholder="Enter sector"
+            value={sectorFormik.values.sector}
+            onChange={sectorFormik.handleChange}
+            onBlur={sectorFormik.handleBlur}
           />
 
-          {designationFormik.touched.designation &&
-            designationFormik.errors.designation && (
+          {sectorFormik.touched.sector &&
+            sectorFormik.errors.sector && (
               <p className="mt-1 text-xs text-red-500">
-                {designationFormik.errors.designation}
+                {sectorFormik.errors.sector}
               </p>
             )}
 
@@ -428,8 +414,8 @@ const DesignationMaster = () => {
               btnName={isEdit ? "Update" : "Submit"}
               type="submit"
               disabled={
-                !designationFormik.isValid ||
-                designationFormik.isSubmitting
+                !sectorFormik.isValid ||
+                sectorFormik.isSubmitting
               }
               style="
                 bg-primary
@@ -446,4 +432,4 @@ const DesignationMaster = () => {
   );
 };
 
-export default DesignationMaster;
+export default SectorMaster;

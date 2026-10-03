@@ -6,31 +6,31 @@ import TextInput from "../../components/fields/TextInput";
 import TogleInput from "../../components/fields/TogleInput";
 import Button from "../../components/utils/Button";
 import {
-  GetAllDesignations,
-  CreateDesignation,
-  UpdateDesignation,
+  GetAllResidenceTypes,
+  CreateResidenceType,
+  UpdateResidenceType,
 } from "../../api/mastersApi";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-const DesignationMaster = () => {
+const ResidenceType = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [designations, setDesignations] = useState([]);
+  const [residenceTypes, setResidenceTypes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const [isEdit, setIsEdit] = useState(false);
-  const [editingDesignationId, setEditingDesignationId] =
+  const [editingResidenceTypeId, setEditingResidenceTypeId] =
     useState(null);
 
   // =========================================================
-  // FETCH ALL DESIGNATIONS
+  // FETCH ALL RESIDENCE TYPES
   // =========================================================
-  const fetchAllDesignations = async () => {
+  const fetchAllResidenceTypes = async () => {
     try {
       setIsLoading(true);
 
-      const response = await GetAllDesignations();
+      const response = await GetAllResidenceTypes();
 
       const transformedData =
         response?.data?.map((item, index) => ({
@@ -38,18 +38,15 @@ const DesignationMaster = () => {
           sn: index + 1,
         })) || [];
 
-      setDesignations(transformedData);
+      setResidenceTypes(transformedData);
     } catch (error) {
-      console.error(
-        "Error fetching designations:",
-        error
-      );
+      console.error("Error fetching residence types:", error);
 
       toast.error(
         error?.response?.data?.title ||
           error?.response?.data?.errors?.request?.[0] ||
           error?.message ||
-          "Failed to fetch designations!"
+          "Failed to fetch residence types!"
       );
     } finally {
       setIsLoading(false);
@@ -59,54 +56,48 @@ const DesignationMaster = () => {
   // =========================================================
   // FORMIK
   // =========================================================
-  const designationFormik = useFormik({
+  const residenceTypeFormik = useFormik({
     initialValues: {
-      designation: "",
+      residence_type: "",
       is_active: true,
     },
 
     enableReinitialize: true,
 
     validationSchema: Yup.object({
-      designation: Yup.string()
+      residence_type: Yup.string()
         .trim()
-        .required("Designation is required")
-        .min(
-          2,
-          "Designation must be at least 2 characters"
-        )
-        .max(
-          100,
-          "Designation cannot exceed 100 characters"
-        ),
+        .required("Residence type is required")
+        .min(2, "Residence type must be at least 2 characters")
+        .max(100, "Residence type cannot exceed 100 characters"),
     }),
 
     onSubmit: async (values, { resetForm }) => {
       try {
         const req = {
-          designation: values.designation.trim(),
+          residence_type: values.residence_type.trim(),
           is_active: values.is_active,
         };
 
         let response;
 
         if (isEdit) {
-          response = await UpdateDesignation({
-            id: editingDesignationId,
+          response = await UpdateResidenceType({
+            id: editingResidenceTypeId,
             ...req,
           });
         } else {
-          response = await CreateDesignation(req);
+          response = await CreateResidenceType(req);
         }
 
         if (response?.status) {
-          await fetchAllDesignations();
+          await fetchAllResidenceTypes();
 
           toast.success(
             response?.message ||
               (isEdit
-                ? "Designation updated successfully!"
-                : "Designation created successfully!")
+                ? "Residence type updated successfully!"
+                : "Residence type created successfully!")
           );
 
           closeModal();
@@ -115,15 +106,15 @@ const DesignationMaster = () => {
           toast.info(
             response?.message ||
               (isEdit
-                ? "Unable to update designation!"
-                : "Unable to create designation!")
+                ? "Unable to update residence type!"
+                : "Unable to create residence type!")
           );
         }
       } catch (error) {
         console.error(
           isEdit
-            ? "Error updating designation:"
-            : "Error creating designation:",
+            ? "Error updating residence type:"
+            : "Error creating residence type:",
           error
         );
 
@@ -138,15 +129,15 @@ const DesignationMaster = () => {
   });
 
   // =========================================================
-  // ADD DESIGNATION
+  // ADD RESIDENCE TYPE
   // =========================================================
-  const handleAddDesignation = () => {
+  const handleAddResidenceType = () => {
     setIsEdit(false);
-    setEditingDesignationId(null);
+    setEditingResidenceTypeId(null);
 
-    designationFormik.resetForm({
+    residenceTypeFormik.resetForm({
       values: {
-        designation: "",
+        residence_type: "",
         is_active: true,
       },
     });
@@ -155,14 +146,14 @@ const DesignationMaster = () => {
   };
 
   // =========================================================
-  // EDIT DESIGNATION
+  // EDIT RESIDENCE TYPE
   // =========================================================
-  const handleEditDesignation = (row) => {
+  const handleEditResidenceType = (row) => {
     setIsEdit(true);
-    setEditingDesignationId(row?.id);
+    setEditingResidenceTypeId(row?.id);
 
-    designationFormik.setValues({
-      designation: row?.designation || "",
+    residenceTypeFormik.setValues({
+      residence_type: row?.residence_type || "",
       is_active:
         typeof row?.is_active === "boolean"
           ? row.is_active
@@ -179,7 +170,7 @@ const DesignationMaster = () => {
     const nextStatus = !row?.is_active;
 
     // Optimistic update
-    setDesignations((prev) =>
+    setResidenceTypes((prev) =>
       prev.map((item) =>
         item.id === row?.id
           ? {
@@ -191,22 +182,20 @@ const DesignationMaster = () => {
     );
 
     try {
-      const req = {
+      const response = await UpdateResidenceType({
         id: row?.id,
-        designation: row?.designation,
+        residence_type: row?.residence_type,
         is_active: nextStatus,
-      };
-
-      const response = await UpdateDesignation(req);
+      });
 
       if (response?.status) {
         toast.success(
           response?.message ||
-            "Designation status updated successfully!"
+            "Residence type status updated successfully!"
         );
       } else {
-        // Revert
-        setDesignations((prev) =>
+        // Revert if API fails
+        setResidenceTypes((prev) =>
           prev.map((item) =>
             item.id === row?.id
               ? {
@@ -219,12 +208,12 @@ const DesignationMaster = () => {
 
         toast.info(
           response?.message ||
-            "Unable to update designation status!"
+            "Unable to update residence type status!"
         );
       }
     } catch (error) {
-      // Revert
-      setDesignations((prev) =>
+      // Revert if API throws an error
+      setResidenceTypes((prev) =>
         prev.map((item) =>
           item.id === row?.id
             ? {
@@ -236,7 +225,7 @@ const DesignationMaster = () => {
       );
 
       console.error(
-        "Error updating designation status:",
+        "Error updating residence type status:",
         error
       );
 
@@ -254,13 +243,12 @@ const DesignationMaster = () => {
   // =========================================================
   const closeModal = () => {
     setIsModalOpen(false);
-
     setIsEdit(false);
-    setEditingDesignationId(null);
+    setEditingResidenceTypeId(null);
 
-    designationFormik.resetForm({
+    residenceTypeFormik.resetForm({
       values: {
-        designation: "",
+        residence_type: "",
         is_active: true,
       },
     });
@@ -277,14 +265,12 @@ const DesignationMaster = () => {
       width: "60px",
       center: true,
     },
-
     {
-      name: "Designation",
-      selector: (row) => row?.designation || "-",
+      name: "Residence Type",
+      selector: (row) => row?.residence_type || "-",
       sortable: true,
       grow: 1,
     },
-
     {
       name: "Action",
       width: "100px",
@@ -293,7 +279,7 @@ const DesignationMaster = () => {
         <div className="flex items-center justify-center">
           <button
             type="button"
-            onClick={() => handleEditDesignation(row)}
+            onClick={() => handleEditResidenceType(row)}
             className="
               w-7 h-7
               flex items-center justify-center
@@ -311,7 +297,6 @@ const DesignationMaster = () => {
         </div>
       ),
     },
-
     {
       name: "Status",
       width: "100px",
@@ -329,7 +314,7 @@ const DesignationMaster = () => {
   // FETCH ON LOAD
   // =========================================================
   useEffect(() => {
-    fetchAllDesignations();
+    fetchAllResidenceTypes();
   }, []);
 
   return (
@@ -339,17 +324,17 @@ const DesignationMaster = () => {
         <div className="flex justify-between items-center px-4">
           <div>
             <h2 className="text-md font-medium text-slate-800">
-              Designation Master
+              Residence Type Master
             </h2>
 
             <p className="text-[11px] text-slate-400">
-              Manage designations
+              Manage residence types
             </p>
           </div>
 
           <button
             type="button"
-            onClick={handleAddDesignation}
+            onClick={handleAddResidenceType}
             className="
               flex items-center
               gap-2
@@ -369,14 +354,13 @@ const DesignationMaster = () => {
               size={15}
               color="white"
             />
-
-            Add Designation
+            Add Residence Type
           </button>
         </div>
 
         {/* TABLE */}
         <Table
-          data={designations}
+          data={residenceTypes}
           columns={columns}
           loading={isLoading}
         />
@@ -386,29 +370,29 @@ const DesignationMaster = () => {
       <Modal
         title={
           isEdit
-            ? "Update Designation"
-            : "Add Designation"
+            ? "Update Residence Type"
+            : "Add Residence Type"
         }
         isOpen={isModalOpen}
         onClose={closeModal}
       >
         <form
-          onSubmit={designationFormik.handleSubmit}
+          onSubmit={residenceTypeFormik.handleSubmit}
           className="pt-2"
         >
           <TextInput
-            label="Designation"
-            name="designation"
-            placeholder="Enter designation"
-            value={designationFormik.values.designation}
-            onChange={designationFormik.handleChange}
-            onBlur={designationFormik.handleBlur}
+            label="Residence Type"
+            name="residence_type"
+            placeholder="Enter residence type"
+            value={residenceTypeFormik.values.residence_type}
+            onChange={residenceTypeFormik.handleChange}
+            onBlur={residenceTypeFormik.handleBlur}
           />
 
-          {designationFormik.touched.designation &&
-            designationFormik.errors.designation && (
+          {residenceTypeFormik.touched.residence_type &&
+            residenceTypeFormik.errors.residence_type && (
               <p className="mt-1 text-xs text-red-500">
-                {designationFormik.errors.designation}
+                {residenceTypeFormik.errors.residence_type}
               </p>
             )}
 
@@ -417,27 +401,17 @@ const DesignationMaster = () => {
               btnName="Cancel"
               type="button"
               onClick={closeModal}
-              style="
-                border
-                border-gray-200
-                hover:bg-gray-100
-              "
+              style="border border-gray-200 hover:bg-gray-100"
             />
 
             <Button
               btnName={isEdit ? "Update" : "Submit"}
               type="submit"
               disabled={
-                !designationFormik.isValid ||
-                designationFormik.isSubmitting
+                !residenceTypeFormik.isValid ||
+                residenceTypeFormik.isSubmitting
               }
-              style="
-                bg-primary
-                text-white
-                hover:bg-primary/90
-                disabled:opacity-50
-                disabled:cursor-not-allowed
-              "
+              style="bg-primary text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
         </form>
@@ -446,4 +420,4 @@ const DesignationMaster = () => {
   );
 };
 
-export default DesignationMaster;
+export default ResidenceType;

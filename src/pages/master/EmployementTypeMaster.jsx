@@ -6,31 +6,31 @@ import TextInput from "../../components/fields/TextInput";
 import TogleInput from "../../components/fields/TogleInput";
 import Button from "../../components/utils/Button";
 import {
-  GetAllDesignations,
-  CreateDesignation,
-  UpdateDesignation,
+  GetAllEmploymentTypes,
+  CreateEmploymentType,
+  UpdateEmploymentType,
 } from "../../api/mastersApi";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-const DesignationMaster = () => {
+const EmployementTypeMaster = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [designations, setDesignations] = useState([]);
+  const [employmentTypes, setEmploymentTypes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const [isEdit, setIsEdit] = useState(false);
-  const [editingDesignationId, setEditingDesignationId] =
+  const [editingEmploymentTypeId, setEditingEmploymentTypeId] =
     useState(null);
 
   // =========================================================
-  // FETCH ALL DESIGNATIONS
+  // FETCH ALL EMPLOYMENT TYPES
   // =========================================================
-  const fetchAllDesignations = async () => {
+  const fetchAllEmploymentTypes = async () => {
     try {
       setIsLoading(true);
 
-      const response = await GetAllDesignations();
+      const response = await GetAllEmploymentTypes();
 
       const transformedData =
         response?.data?.map((item, index) => ({
@@ -38,10 +38,10 @@ const DesignationMaster = () => {
           sn: index + 1,
         })) || [];
 
-      setDesignations(transformedData);
+      setEmploymentTypes(transformedData);
     } catch (error) {
       console.error(
-        "Error fetching designations:",
+        "Error fetching employment types:",
         error
       );
 
@@ -49,7 +49,7 @@ const DesignationMaster = () => {
         error?.response?.data?.title ||
           error?.response?.data?.errors?.request?.[0] ||
           error?.message ||
-          "Failed to fetch designations!"
+          "Failed to fetch employment types!"
       );
     } finally {
       setIsLoading(false);
@@ -59,54 +59,54 @@ const DesignationMaster = () => {
   // =========================================================
   // FORMIK
   // =========================================================
-  const designationFormik = useFormik({
+  const employmentTypeFormik = useFormik({
     initialValues: {
-      designation: "",
+      employment_type: "",
       is_active: true,
     },
 
     enableReinitialize: true,
 
     validationSchema: Yup.object({
-      designation: Yup.string()
+      employment_type: Yup.string()
         .trim()
-        .required("Designation is required")
+        .required("Employment type is required")
         .min(
           2,
-          "Designation must be at least 2 characters"
+          "Employment type must be at least 2 characters"
         )
         .max(
           100,
-          "Designation cannot exceed 100 characters"
+          "Employment type cannot exceed 100 characters"
         ),
     }),
 
     onSubmit: async (values, { resetForm }) => {
       try {
         const req = {
-          designation: values.designation.trim(),
+          employment_type: values.employment_type.trim(),
           is_active: values.is_active,
         };
 
         let response;
 
         if (isEdit) {
-          response = await UpdateDesignation({
-            id: editingDesignationId,
+          response = await UpdateEmploymentType({
+            id: editingEmploymentTypeId,
             ...req,
           });
         } else {
-          response = await CreateDesignation(req);
+          response = await CreateEmploymentType(req);
         }
 
         if (response?.status) {
-          await fetchAllDesignations();
+          await fetchAllEmploymentTypes();
 
           toast.success(
             response?.message ||
               (isEdit
-                ? "Designation updated successfully!"
-                : "Designation created successfully!")
+                ? "Employment type updated successfully!"
+                : "Employment type created successfully!")
           );
 
           closeModal();
@@ -115,15 +115,15 @@ const DesignationMaster = () => {
           toast.info(
             response?.message ||
               (isEdit
-                ? "Unable to update designation!"
-                : "Unable to create designation!")
+                ? "Unable to update employment type!"
+                : "Unable to create employment type!")
           );
         }
       } catch (error) {
         console.error(
           isEdit
-            ? "Error updating designation:"
-            : "Error creating designation:",
+            ? "Error updating employment type:"
+            : "Error creating employment type:",
           error
         );
 
@@ -138,15 +138,15 @@ const DesignationMaster = () => {
   });
 
   // =========================================================
-  // ADD DESIGNATION
+  // ADD EMPLOYMENT TYPE
   // =========================================================
-  const handleAddDesignation = () => {
+  const handleAddEmploymentType = () => {
     setIsEdit(false);
-    setEditingDesignationId(null);
+    setEditingEmploymentTypeId(null);
 
-    designationFormik.resetForm({
+    employmentTypeFormik.resetForm({
       values: {
-        designation: "",
+        employment_type: "",
         is_active: true,
       },
     });
@@ -155,14 +155,14 @@ const DesignationMaster = () => {
   };
 
   // =========================================================
-  // EDIT DESIGNATION
+  // EDIT EMPLOYMENT TYPE
   // =========================================================
-  const handleEditDesignation = (row) => {
+  const handleEditEmploymentType = (row) => {
     setIsEdit(true);
-    setEditingDesignationId(row?.id);
+    setEditingEmploymentTypeId(row?.id);
 
-    designationFormik.setValues({
-      designation: row?.designation || "",
+    employmentTypeFormik.setValues({
+      employment_type: row?.employment_type || "",
       is_active:
         typeof row?.is_active === "boolean"
           ? row.is_active
@@ -179,7 +179,7 @@ const DesignationMaster = () => {
     const nextStatus = !row?.is_active;
 
     // Optimistic update
-    setDesignations((prev) =>
+    setEmploymentTypes((prev) =>
       prev.map((item) =>
         item.id === row?.id
           ? {
@@ -193,20 +193,20 @@ const DesignationMaster = () => {
     try {
       const req = {
         id: row?.id,
-        designation: row?.designation,
+        employment_type: row?.employment_type,
         is_active: nextStatus,
       };
 
-      const response = await UpdateDesignation(req);
+      const response = await UpdateEmploymentType(req);
 
       if (response?.status) {
         toast.success(
           response?.message ||
-            "Designation status updated successfully!"
+            "Employment type status updated successfully!"
         );
       } else {
         // Revert
-        setDesignations((prev) =>
+        setEmploymentTypes((prev) =>
           prev.map((item) =>
             item.id === row?.id
               ? {
@@ -219,12 +219,12 @@ const DesignationMaster = () => {
 
         toast.info(
           response?.message ||
-            "Unable to update designation status!"
+            "Unable to update employment type status!"
         );
       }
     } catch (error) {
       // Revert
-      setDesignations((prev) =>
+      setEmploymentTypes((prev) =>
         prev.map((item) =>
           item.id === row?.id
             ? {
@@ -236,7 +236,7 @@ const DesignationMaster = () => {
       );
 
       console.error(
-        "Error updating designation status:",
+        "Error updating employment type status:",
         error
       );
 
@@ -256,11 +256,11 @@ const DesignationMaster = () => {
     setIsModalOpen(false);
 
     setIsEdit(false);
-    setEditingDesignationId(null);
+    setEditingEmploymentTypeId(null);
 
-    designationFormik.resetForm({
+    employmentTypeFormik.resetForm({
       values: {
-        designation: "",
+        employment_type: "",
         is_active: true,
       },
     });
@@ -279,8 +279,8 @@ const DesignationMaster = () => {
     },
 
     {
-      name: "Designation",
-      selector: (row) => row?.designation || "-",
+      name: "Employment Type",
+      selector: (row) => row?.employment_type || "-",
       sortable: true,
       grow: 1,
     },
@@ -293,7 +293,7 @@ const DesignationMaster = () => {
         <div className="flex items-center justify-center">
           <button
             type="button"
-            onClick={() => handleEditDesignation(row)}
+            onClick={() => handleEditEmploymentType(row)}
             className="
               w-7 h-7
               flex items-center justify-center
@@ -329,7 +329,7 @@ const DesignationMaster = () => {
   // FETCH ON LOAD
   // =========================================================
   useEffect(() => {
-    fetchAllDesignations();
+    fetchAllEmploymentTypes();
   }, []);
 
   return (
@@ -339,17 +339,17 @@ const DesignationMaster = () => {
         <div className="flex justify-between items-center px-4">
           <div>
             <h2 className="text-md font-medium text-slate-800">
-              Designation Master
+              Employment Type Master
             </h2>
 
             <p className="text-[11px] text-slate-400">
-              Manage designations
+              Manage employment types
             </p>
           </div>
 
           <button
             type="button"
-            onClick={handleAddDesignation}
+            onClick={handleAddEmploymentType}
             className="
               flex items-center
               gap-2
@@ -370,13 +370,13 @@ const DesignationMaster = () => {
               color="white"
             />
 
-            Add Designation
+            Add Employment Type
           </button>
         </div>
 
         {/* TABLE */}
         <Table
-          data={designations}
+          data={employmentTypes}
           columns={columns}
           loading={isLoading}
         />
@@ -386,29 +386,34 @@ const DesignationMaster = () => {
       <Modal
         title={
           isEdit
-            ? "Update Designation"
-            : "Add Designation"
+            ? "Update Employment Type"
+            : "Add Employment Type"
         }
         isOpen={isModalOpen}
         onClose={closeModal}
       >
         <form
-          onSubmit={designationFormik.handleSubmit}
+          onSubmit={employmentTypeFormik.handleSubmit}
           className="pt-2"
         >
           <TextInput
-            label="Designation"
-            name="designation"
-            placeholder="Enter designation"
-            value={designationFormik.values.designation}
-            onChange={designationFormik.handleChange}
-            onBlur={designationFormik.handleBlur}
+            label="Employment Type"
+            name="employment_type"
+            placeholder="Enter employment type"
+            value={
+              employmentTypeFormik.values.employment_type
+            }
+            onChange={employmentTypeFormik.handleChange}
+            onBlur={employmentTypeFormik.handleBlur}
           />
 
-          {designationFormik.touched.designation &&
-            designationFormik.errors.designation && (
+          {employmentTypeFormik.touched.employment_type &&
+            employmentTypeFormik.errors.employment_type && (
               <p className="mt-1 text-xs text-red-500">
-                {designationFormik.errors.designation}
+                {
+                  employmentTypeFormik.errors
+                    .employment_type
+                }
               </p>
             )}
 
@@ -428,8 +433,8 @@ const DesignationMaster = () => {
               btnName={isEdit ? "Update" : "Submit"}
               type="submit"
               disabled={
-                !designationFormik.isValid ||
-                designationFormik.isSubmitting
+                !employmentTypeFormik.isValid ||
+                employmentTypeFormik.isSubmitting
               }
               style="
                 bg-primary
@@ -446,4 +451,4 @@ const DesignationMaster = () => {
   );
 };
 
-export default DesignationMaster;
+export default EmployementTypeMaster;

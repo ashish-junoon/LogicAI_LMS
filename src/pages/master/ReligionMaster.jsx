@@ -6,31 +6,30 @@ import TextInput from "../../components/fields/TextInput";
 import TogleInput from "../../components/fields/TogleInput";
 import Button from "../../components/utils/Button";
 import {
-  GetAllDesignations,
-  CreateDesignation,
-  UpdateDesignation,
+  GetAllReligions,
+  CreateReligion,
+  UpdateReligion,
 } from "../../api/mastersApi";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-const DesignationMaster = () => {
+const ReligionMaster = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [designations, setDesignations] = useState([]);
+  const [religions, setReligions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const [isEdit, setIsEdit] = useState(false);
-  const [editingDesignationId, setEditingDesignationId] =
-    useState(null);
+  const [editingReligionId, setEditingReligionId] = useState(null);
 
   // =========================================================
-  // FETCH ALL DESIGNATIONS
+  // FETCH ALL RELIGIONS
   // =========================================================
-  const fetchAllDesignations = async () => {
+  const fetchAllReligions = async () => {
     try {
       setIsLoading(true);
 
-      const response = await GetAllDesignations();
+      const response = await GetAllReligions();
 
       const transformedData =
         response?.data?.map((item, index) => ({
@@ -38,18 +37,15 @@ const DesignationMaster = () => {
           sn: index + 1,
         })) || [];
 
-      setDesignations(transformedData);
+      setReligions(transformedData);
     } catch (error) {
-      console.error(
-        "Error fetching designations:",
-        error
-      );
+      console.error("Error fetching religions:", error);
 
       toast.error(
         error?.response?.data?.title ||
           error?.response?.data?.errors?.request?.[0] ||
           error?.message ||
-          "Failed to fetch designations!"
+          "Failed to fetch religions!"
       );
     } finally {
       setIsLoading(false);
@@ -59,54 +55,48 @@ const DesignationMaster = () => {
   // =========================================================
   // FORMIK
   // =========================================================
-  const designationFormik = useFormik({
+  const religionFormik = useFormik({
     initialValues: {
-      designation: "",
+      religion: "",
       is_active: true,
     },
 
     enableReinitialize: true,
 
     validationSchema: Yup.object({
-      designation: Yup.string()
+      religion: Yup.string()
         .trim()
-        .required("Designation is required")
-        .min(
-          2,
-          "Designation must be at least 2 characters"
-        )
-        .max(
-          100,
-          "Designation cannot exceed 100 characters"
-        ),
+        .required("Religion is required")
+        .min(2, "Religion must be at least 2 characters")
+        .max(100, "Religion cannot exceed 100 characters"),
     }),
 
     onSubmit: async (values, { resetForm }) => {
       try {
         const req = {
-          designation: values.designation.trim(),
+          religion: values.religion.trim(),
           is_active: values.is_active,
         };
 
         let response;
 
         if (isEdit) {
-          response = await UpdateDesignation({
-            id: editingDesignationId,
+          response = await UpdateReligion({
+            id: editingReligionId,
             ...req,
           });
         } else {
-          response = await CreateDesignation(req);
+          response = await CreateReligion(req);
         }
 
         if (response?.status) {
-          await fetchAllDesignations();
+          await fetchAllReligions();
 
           toast.success(
             response?.message ||
               (isEdit
-                ? "Designation updated successfully!"
-                : "Designation created successfully!")
+                ? "Religion updated successfully!"
+                : "Religion created successfully!")
           );
 
           closeModal();
@@ -115,15 +105,15 @@ const DesignationMaster = () => {
           toast.info(
             response?.message ||
               (isEdit
-                ? "Unable to update designation!"
-                : "Unable to create designation!")
+                ? "Unable to update religion!"
+                : "Unable to create religion!")
           );
         }
       } catch (error) {
         console.error(
           isEdit
-            ? "Error updating designation:"
-            : "Error creating designation:",
+            ? "Error updating religion:"
+            : "Error creating religion:",
           error
         );
 
@@ -138,15 +128,15 @@ const DesignationMaster = () => {
   });
 
   // =========================================================
-  // ADD DESIGNATION
+  // ADD RELIGION
   // =========================================================
-  const handleAddDesignation = () => {
+  const handleAddReligion = () => {
     setIsEdit(false);
-    setEditingDesignationId(null);
+    setEditingReligionId(null);
 
-    designationFormik.resetForm({
+    religionFormik.resetForm({
       values: {
-        designation: "",
+        religion: "",
         is_active: true,
       },
     });
@@ -155,14 +145,14 @@ const DesignationMaster = () => {
   };
 
   // =========================================================
-  // EDIT DESIGNATION
+  // EDIT RELIGION
   // =========================================================
-  const handleEditDesignation = (row) => {
+  const handleEditReligion = (row) => {
     setIsEdit(true);
-    setEditingDesignationId(row?.id);
+    setEditingReligionId(row?.id);
 
-    designationFormik.setValues({
-      designation: row?.designation || "",
+    religionFormik.setValues({
+      religion: row?.religion || "",
       is_active:
         typeof row?.is_active === "boolean"
           ? row.is_active
@@ -179,7 +169,7 @@ const DesignationMaster = () => {
     const nextStatus = !row?.is_active;
 
     // Optimistic update
-    setDesignations((prev) =>
+    setReligions((prev) =>
       prev.map((item) =>
         item.id === row?.id
           ? {
@@ -193,20 +183,20 @@ const DesignationMaster = () => {
     try {
       const req = {
         id: row?.id,
-        designation: row?.designation,
+        religion: row?.religion,
         is_active: nextStatus,
       };
 
-      const response = await UpdateDesignation(req);
+      const response = await UpdateReligion(req);
 
       if (response?.status) {
         toast.success(
           response?.message ||
-            "Designation status updated successfully!"
+            "Religion status updated successfully!"
         );
       } else {
         // Revert
-        setDesignations((prev) =>
+        setReligions((prev) =>
           prev.map((item) =>
             item.id === row?.id
               ? {
@@ -219,12 +209,12 @@ const DesignationMaster = () => {
 
         toast.info(
           response?.message ||
-            "Unable to update designation status!"
+            "Unable to update religion status!"
         );
       }
     } catch (error) {
       // Revert
-      setDesignations((prev) =>
+      setReligions((prev) =>
         prev.map((item) =>
           item.id === row?.id
             ? {
@@ -236,7 +226,7 @@ const DesignationMaster = () => {
       );
 
       console.error(
-        "Error updating designation status:",
+        "Error updating religion status:",
         error
       );
 
@@ -256,11 +246,11 @@ const DesignationMaster = () => {
     setIsModalOpen(false);
 
     setIsEdit(false);
-    setEditingDesignationId(null);
+    setEditingReligionId(null);
 
-    designationFormik.resetForm({
+    religionFormik.resetForm({
       values: {
-        designation: "",
+        religion: "",
         is_active: true,
       },
     });
@@ -279,8 +269,8 @@ const DesignationMaster = () => {
     },
 
     {
-      name: "Designation",
-      selector: (row) => row?.designation || "-",
+      name: "Religion",
+      selector: (row) => row?.religion || "-",
       sortable: true,
       grow: 1,
     },
@@ -293,7 +283,7 @@ const DesignationMaster = () => {
         <div className="flex items-center justify-center">
           <button
             type="button"
-            onClick={() => handleEditDesignation(row)}
+            onClick={() => handleEditReligion(row)}
             className="
               w-7 h-7
               flex items-center justify-center
@@ -329,7 +319,7 @@ const DesignationMaster = () => {
   // FETCH ON LOAD
   // =========================================================
   useEffect(() => {
-    fetchAllDesignations();
+    fetchAllReligions();
   }, []);
 
   return (
@@ -339,17 +329,17 @@ const DesignationMaster = () => {
         <div className="flex justify-between items-center px-4">
           <div>
             <h2 className="text-md font-medium text-slate-800">
-              Designation Master
+              Religion Master
             </h2>
 
             <p className="text-[11px] text-slate-400">
-              Manage designations
+              Manage religions
             </p>
           </div>
 
           <button
             type="button"
-            onClick={handleAddDesignation}
+            onClick={handleAddReligion}
             className="
               flex items-center
               gap-2
@@ -370,13 +360,13 @@ const DesignationMaster = () => {
               color="white"
             />
 
-            Add Designation
+            Add Religion
           </button>
         </div>
 
         {/* TABLE */}
         <Table
-          data={designations}
+          data={religions}
           columns={columns}
           loading={isLoading}
         />
@@ -384,31 +374,27 @@ const DesignationMaster = () => {
 
       {/* MODAL */}
       <Modal
-        title={
-          isEdit
-            ? "Update Designation"
-            : "Add Designation"
-        }
+        title={isEdit ? "Update Religion" : "Add Religion"}
         isOpen={isModalOpen}
         onClose={closeModal}
       >
         <form
-          onSubmit={designationFormik.handleSubmit}
+          onSubmit={religionFormik.handleSubmit}
           className="pt-2"
         >
           <TextInput
-            label="Designation"
-            name="designation"
-            placeholder="Enter designation"
-            value={designationFormik.values.designation}
-            onChange={designationFormik.handleChange}
-            onBlur={designationFormik.handleBlur}
+            label="Religion"
+            name="religion"
+            placeholder="Enter religion"
+            value={religionFormik.values.religion}
+            onChange={religionFormik.handleChange}
+            onBlur={religionFormik.handleBlur}
           />
 
-          {designationFormik.touched.designation &&
-            designationFormik.errors.designation && (
+          {religionFormik.touched.religion &&
+            religionFormik.errors.religion && (
               <p className="mt-1 text-xs text-red-500">
-                {designationFormik.errors.designation}
+                {religionFormik.errors.religion}
               </p>
             )}
 
@@ -428,8 +414,8 @@ const DesignationMaster = () => {
               btnName={isEdit ? "Update" : "Submit"}
               type="submit"
               disabled={
-                !designationFormik.isValid ||
-                designationFormik.isSubmitting
+                !religionFormik.isValid ||
+                religionFormik.isSubmitting
               }
               style="
                 bg-primary
@@ -446,4 +432,4 @@ const DesignationMaster = () => {
   );
 };
 
-export default DesignationMaster;
+export default ReligionMaster;

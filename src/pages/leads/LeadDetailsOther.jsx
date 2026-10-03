@@ -17,6 +17,7 @@ const LeadDetailsOther = () => {
   const [loading, setLoading] = useState(false);
   const {setLoanDetails} = useLoanDetails();
   // console.log("state", state)
+  
 
   const fetchLoans = async () => {
     try {

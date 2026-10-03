@@ -12,7 +12,7 @@ const JOURNEY_STEPS = [
   { key: "new", label: "New" },
   { key: "credit-analysis", label: "Credit Analysis" },
   { key: "kyc", label: "KYC" },
-  { key: "esign", label: "E Signature" },
+  { key: "tele", label: "Telecalling" },
   { key: "disbursement", label: "Disbursement" },
 ];
 

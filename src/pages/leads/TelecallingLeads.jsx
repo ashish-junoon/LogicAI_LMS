@@ -11,7 +11,7 @@ import {
 import Table from "../../components/Table";
 import { Link, useNavigate } from "react-router-dom";
 
-const ESignatureLeads = () => {
+const TelecallingLeads = () => {
 
   const columns = [
     {
@@ -95,7 +95,7 @@ const ESignatureLeads = () => {
       center: true,
       cell: (row) => (
         <Link
-          to="/esign-detail"
+          to="/telecalling-detail"
           className={`p-1.5 px-2 rounded-sm text-xs font-medium bg-primary flex gap-1 text-white items-center`}
         >
           <Icon name="FaRegEye" size={15} color={"white"} />
@@ -110,7 +110,7 @@ const ESignatureLeads = () => {
       <div className="flex-1">
         {/* header  */}
         <div className="flex justify-between py-0 px-4">
-          <div className="text-md font-medium self-center">E-Sign Leads</div>
+          <div className="text-md font-medium self-center">Telecalling Leads</div>
         </div>
 
         {/* table data */}
@@ -120,4 +120,4 @@ const ESignatureLeads = () => {
   );
 };
 
-export default ESignatureLeads;
+export default TelecallingLeads;

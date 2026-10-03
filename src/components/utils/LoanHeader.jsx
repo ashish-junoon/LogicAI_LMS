@@ -14,11 +14,11 @@ const LoanHeader = ({ lead, permisssion }) => {
       <div className="bg-[linear-gradient(120deg,#5050b8_0%,#265FAA_55%,#3878C7_100%)] px-5 pb-14 pt-5 sm:px-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
-            <Avatar name={loanDetails?.customer_name} size="lg" ring />
+            <Avatar name={loanDetails[0]?.customer_name} size="lg" ring />
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-lg font-semibold text-white">
-                  {loanDetails?.customer_name}
+                  {loanDetails[0]?.customer_name}
                 </h1>
                 <StatusBadge
                   label={lead?.product_code === "IP" ? "InstaPaisa" : lead?.product_code === "RFT" ? "Refyne Term Loan": lead?.product_code === "EW" ? "EarlyWages": lead?.product_code === "PU" ? "PaisaUdhar": lead?.product_code === "RFR" && "Refyne Retail OD"}
@@ -76,7 +76,7 @@ const LoanHeader = ({ lead, permisssion }) => {
           {/* {lead?.stage == "active" || lead?.stage == "closed" ? ( */}
           {/* {["active", "closed", "npa", "due", "overdue"]?.includes(lead?.loan_status?.toLowerCase()) && ( */}
             <div>
-              <LoanStatusSummary lead={lead} />
+              <LoanStatusSummary lead={lead[0]} />
             </div>
           {/* )} */}
         </div>
