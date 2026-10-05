@@ -8,40 +8,40 @@ import { useLoanDetails } from "../../provider/loanContext";
 import { formatDate, mask } from "../utils/common";
 
 const PersonalInfocard = ({ permission, onEdit }) => {
-  const { loanDetails } = useLoanDetails();
+  const { singleLoanDetails } = useLoanDetails();
 
   const details = [
     {
       label: "Customer Name",
-      value: loanDetails?.customer_name,
+      value: singleLoanDetails?.customer_name,
     },
     {
       label: "Father Name",
-      value: loanDetails?.father_name,
+      value: singleLoanDetails?.father_name,
     },
     {
       label: "Date of Birth",
-      value: mask(formatDate(loanDetails?.dob)),
+      value: mask(formatDate(singleLoanDetails?.dob)),
     },
     {
       label: "Mobile Number",
-      value: mask(loanDetails?.mobile_number),
+      value: mask(singleLoanDetails?.mobile_number),
     },
     {
       label: "Email Address",
-      value: loanDetails?.email,
+      value: singleLoanDetails?.email,
     },
     {
       label: "Religion",
-      value: loanDetails?.religion,
+      value: singleLoanDetails?.religion,
     },
     {
       label: "Marital Status",
-      value: loanDetails?.marital_status,
+      value: singleLoanDetails?.marital_status,
     },
     {
       label: "Gender",
-      value: loanDetails?.gender,
+      value: singleLoanDetails?.gender,
     },
   ];
 

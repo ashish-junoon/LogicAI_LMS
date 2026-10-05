@@ -1,24 +1,19 @@
 import { useEffect, useState } from "react";
-import InfoCard from "../../components/common/InfoCard";
 import OtherLeadsWrapper from "../../components/lead/OtherLeadsWrapper";
 import Breadcrumbs from "../../components/utils/Breadcrumbs";
-import LeadStatus from "../../components/utils/LeadStatus";
-import UserHeader from "../../components/utils/UserHeader";
-import { lead } from "../../content/data";
 import { GetLoanById } from "../../api/loan";
 import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useLoanDetails } from "../../provider/loanContext";
 import LoanHeader from "../../components/utils/LoanHeader";
+import Loader from "../../components/utils/Loader";
 
 const LeadDetailsOther = () => {
   const { state } = useLocation();
   const [leadDetails, setLeadDetails] = useState({});
   const [loading, setLoading] = useState(false);
-  const {setLoanDetails} = useLoanDetails();
-  // console.log("state", state)
+  const {setLoanDetails, setsingleLoanDetails} = useLoanDetails();
   
-
   const fetchLoans = async () => {
     try {
       setLoading(true);
@@ -29,6 +24,8 @@ const LeadDetailsOther = () => {
       if (res?.status) {
         setLeadDetails(res?.data)
         setLoanDetails(res?.data)
+        const transformedData = res?.data?.find(data=> data?.loan_id == state?.loan_id)
+        setsingleLoanDetails(transformedData)
       }
     } catch (error) {
       console.log(error);
@@ -42,8 +39,9 @@ const LeadDetailsOther = () => {
     fetchLoans();
   }, [])
 
-
   return (
+    <>
+    {loading && <Loader />}
     <div>
       {/* <InfoCard /> */}
       <Breadcrumbs
@@ -62,6 +60,7 @@ const LeadDetailsOther = () => {
         ...state
       }} />
     </div>
+    </>
   );
 };
 

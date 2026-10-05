@@ -4,10 +4,11 @@ import { useState } from "react";
 import Icon from "../utils/Icon";
 import LoanOverview from "./LoanOverview";
 import LeadInformationPage from "../informationCard/LeadInformationPage";
+import LoanOverviewMultiple from "./LoanOverviewMultiple";
+import { useLoanDetails } from "../../provider/loanContext";
 
 const OtherLeadsWrapper = ({ loanData, userData, onAction }) => {
-  console.log("otherleadwrapper",loanData)
-
+const { loanDetails } = useLoanDetails();
 const [activeSection, setActiveSection] = useState("user");
 
 const sections = [
@@ -20,7 +21,7 @@ const renderSection = () => {
     case "user":
       return <LeadInformationPage loanData={loanData} />;
     case "loanInfo":
-      return <LoanOverview activeLoan={loanData[0]} />;
+      return <LoanOverviewMultiple activeLoan={loanDetails} />;
     default:
       return null;
   }

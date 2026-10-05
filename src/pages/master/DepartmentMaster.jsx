@@ -442,4 +442,4 @@ const DepartmentMaster = () => {
   );
 };
 
-export default DepartmentMaster;d
+export default DepartmentMaster;

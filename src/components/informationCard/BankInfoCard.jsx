@@ -9,13 +9,13 @@ import { mask } from "../utils/common";
 import { bankListData } from "../../content/data";
 
 const BankInfoCard = () => {
-  const { loanDetails } = useLoanDetails();
+  const { singleLoanDetails } = useLoanDetails();
 
   const bankDetails = {
-    bankName: loanDetails?.bank_name || "-",
-    accountNumber: mask(loanDetails?.account_number) || "-",
-    ifscCode: loanDetails?.ifsc_code || "-",
-    accountHolderName: loanDetails?.customer_name || "-",
+    bankName: singleLoanDetails?.bank_name || "-",
+    accountNumber: mask(singleLoanDetails?.account_number) || "-",
+    ifscCode: singleLoanDetails?.ifsc_code || "-",
+    accountHolderName: singleLoanDetails?.customer_name || "-",
   };
 
   return (
@@ -81,7 +81,7 @@ const BankInfoCard = () => {
       ====================================================== */}
 
       <div className="p-4">
-        {loanDetails?.account_number ? (
+        {singleLoanDetails?.account_number ? (
           <div
             className="
               rounded-xl
@@ -115,7 +115,7 @@ const BankInfoCard = () => {
                 </p>
 
                 <p className="truncate text-sm font-semibold text-slate-800">
-                  {bankListData?.find((bank) => bank.bankId === loanDetails?.ifsc_code?.slice(0,4))?.bankName}
+                  {bankListData?.find((bank) => bank.bankId === singleLoanDetails?.ifsc_code?.slice(0,4))?.bankName}
                 </p>
               </div>
             </div>

@@ -7,7 +7,7 @@ import Button from "../utils/Button";
 import { useLoanDetails } from "../../provider/loanContext";
 
 const AddressInformationCard = ({ permission, onEdit }) => {
-  const { loanDetails } = useLoanDetails();
+  const { singleLoanDetails } = useLoanDetails();
 
   const Field = ({ label, value }) => (
     <div>
@@ -121,26 +121,26 @@ const AddressInformationCard = ({ permission, onEdit }) => {
           <div className="col-span-2 max-xl:col-span-2 max-sm:col-span-1">
             <Field
               label="Address"
-              value={loanDetails?.full_address}
+              value={singleLoanDetails?.full_address}
             />
           </div>
 
           {/* State */}
           <Field
             label="State"
-            value={loanDetails?.state}
+            value={singleLoanDetails?.state}
           />
 
           {/* City */}
           <Field
             label="City"
-            value={loanDetails?.city}
+            value={singleLoanDetails?.city}
           />
 
           {/* ZIP */}
           <Field
             label="ZIP / Pincode"
-            value={loanDetails?.zip}
+            value={singleLoanDetails?.zip}
           />
         </div>
       </div>

@@ -10,16 +10,16 @@ import { useLoanDetails } from "../../provider/loanContext";
 import { mask } from "../utils/common";
 
 const KycInformationCard = ({ permission, onEdit }) => {
-  const { loanDetails } = useLoanDetails();
+  const { singleLoanDetails } = useLoanDetails();
 
   const details = [
     {
       label: "Aadhaar Number",
-      value: loanDetails?.aadhaar_number,
+      value: singleLoanDetails?.aadhaar_number,
     },
     {
       label: "PAN Number",
-      value: loanDetails?.pan_card_number,
+      value: singleLoanDetails?.pan_card_number,
     },
   ];
 
@@ -99,7 +99,7 @@ const KycInformationCard = ({ permission, onEdit }) => {
           "
         >
           {/* Aadhaar Number */}
-          {loanDetails?.aadhaar_number && (
+          {singleLoanDetails?.aadhaar_number && (
             <div>
               <p className="mb-1 text-[11px] font-medium text-slate-500">
                 Aadhaar Number
@@ -107,7 +107,7 @@ const KycInformationCard = ({ permission, onEdit }) => {
 
               <div className="flex items-center gap-2">
                 <p className="text-sm font-medium text-slate-800">
-                  {mask(loanDetails?.aadhaar_number)}
+                  {mask(singleLoanDetails?.aadhaar_number)}
                 </p>
 
                 <span
@@ -132,7 +132,7 @@ const KycInformationCard = ({ permission, onEdit }) => {
           )}
 
           {/* PAN Number */}
-          {loanDetails?.pan_card_number && (
+          {singleLoanDetails?.pan_card_number && (
             <div>
               <p className="mb-1 text-[11px] font-medium text-slate-500">
                 PAN Number
@@ -140,7 +140,7 @@ const KycInformationCard = ({ permission, onEdit }) => {
 
               <div className="flex items-center gap-2">
                 <p className="text-sm font-medium text-slate-800">
-                  {mask(loanDetails?.pan_card_number)}
+                  {mask(singleLoanDetails?.pan_card_number)}
                 </p>
 
                 <span

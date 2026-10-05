@@ -5,8 +5,10 @@ import JourneyStepper from "./JourneyStepper";
 import LoanStatusSummary from "./LoanStatusSummary";
 
 const LoanHeader = ({ lead, permisssion }) => {
+  const {singleLoanDetails, loanDetails } = useLoanDetails();
   console.log(lead);
-  const {loanDetails} = useLoanDetails();
+  console.log(loanDetails);
+  console.log(singleLoanDetails?.loan_amount);
 
   return (
     <div className="mb-0 overflow-hidden rounded-2xl border border-surface-border bg-white shadow-card">
@@ -14,22 +16,22 @@ const LoanHeader = ({ lead, permisssion }) => {
       <div className="bg-[linear-gradient(120deg,#5050b8_0%,#265FAA_55%,#3878C7_100%)] px-5 pb-14 pt-5 sm:px-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
-            <Avatar name={loanDetails[0]?.customer_name} size="lg" ring />
+            <Avatar name={singleLoanDetails?.customer_name} size="lg" ring />
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-lg font-semibold text-white">
-                  {loanDetails[0]?.customer_name}
+                  {singleLoanDetails?.customer_name}
                 </h1>
                 <StatusBadge
-                  label={lead?.product_code === "IP" ? "InstaPaisa" : lead?.product_code === "RFT" ? "Refyne Term Loan": lead?.product_code === "EW" ? "EarlyWages": lead?.product_code === "PU" ? "PaisaUdhar": lead?.product_code === "RFR" && "Refyne Retail OD"}
+                  label={lead?.product_code === "IP" ? "InstaPaise" : lead?.product_code === "RFT" ? "Refyne Term Loan": lead?.product_code === "EW" ? "EarlyWages": lead?.product_code === "PU" ? "PaisaUdhar": lead?.product_code === "RFR" && "Refyne Retail OD"}
                   variant={"primary"}
                 />
                 <StatusBadge
-                  label={lead?.loan_status}
+                  label={singleLoanDetails?.loan_status}
                   variant={
-                    lead?.loan_status === "rejected"
+                    singleLoanDetails?.loan_status === "rejected"
                       ? "danger"
-                      : lead?.stage === "draft"
+                      : singleLoanDetails?.stage === "draft"
                         ? "neutral"
                         : "primary"
                   }
@@ -38,7 +40,7 @@ const LoanHeader = ({ lead, permisssion }) => {
               <p className="text-sm text-white/75">
                 {lead?.loan_id}
                 &middot; {lead?.product_code}
-                &middot; ₹{lead?.loan_amount?.toLocaleString("en-IN")}
+                &middot; ₹{singleLoanDetails?.loan_amount?.toLocaleString("en-IN")}
               </p>
             </div>
           </div>
@@ -76,7 +78,7 @@ const LoanHeader = ({ lead, permisssion }) => {
           {/* {lead?.stage == "active" || lead?.stage == "closed" ? ( */}
           {/* {["active", "closed", "npa", "due", "overdue"]?.includes(lead?.loan_status?.toLowerCase()) && ( */}
             <div>
-              <LoanStatusSummary lead={lead[0]} />
+              <LoanStatusSummary lead={singleLoanDetails} />
             </div>
           {/* )} */}
         </div>
