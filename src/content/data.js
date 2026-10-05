@@ -475,6 +475,7 @@ export const sidebarData = [
     icon: IoSettings,
     children: [
       { title: "Branches", path: "/branches-master" },
+      { title: "Loan Purposes", path: "/loan-purpose-master" },
       { title: "Bank Master", path: "/bank-master" },
       { title: "Business Trade Master", path: "/business-trade-master" },
       { title: "Document Master", path: "/document-master" },

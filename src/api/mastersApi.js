@@ -464,3 +464,73 @@ export const UpdateResidenceType = async (req) => {
         throw error;
     }
 }
+
+// ?===========================
+// * Loan Purpose MASTER API'S
+// ?===========================
+
+export const GetAllLoanPurposes = async (req) => {
+    try {
+        const response = await api.get("/Master/GetAllLoanPurposes", req);
+        return response.data;
+    } catch (error) {
+        console.error("GetAllResidenceTypes:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const CreateLoanPurpose = async (req) => {
+    try {
+        const response = await api.post("/Master/CreateLoanPurpose", req);
+        return response.data;
+    } catch (error) {
+        console.error("CreateResidenceType:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const UpdateLoanPurpose = async (req) => {
+    try {
+        const response = await api.put("/Master/UpdateLoanPurpose", req);
+        return response.data;
+    } catch (error) {
+        console.error("UpdateResidenceType:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+
+
+// ?===========================
+// * PD Questions MASTER API'S
+// ?===========================
+
+export const GetAllPDQuestions = async (req) => {
+    try {
+        const response = await api.get("/Master/GetAllQuestionnaires", req);
+        return response.data;
+    } catch (error) {
+        console.error("GetAllResidenceTypes:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const CreatePDQuestion = async (req) => {
+    try {
+        const response = await api.post("/Master/CreateQuestionnaire", req);
+        return response.data;
+    } catch (error) {
+        console.error("CreateResidenceType:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const UpdatePDQuestion = async (req) => {
+    try {
+        const response = await api.put("/Master/UpdateQuestionnaire", req);
+        return response.data;
+    } catch (error) {
+        console.error("UpdateResidenceType:", error.response?.data || error.message);
+        throw error;
+    }
+}
