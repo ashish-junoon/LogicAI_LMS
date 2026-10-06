@@ -1,11 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { IoTrashBin } from "react-icons/io5";
 import Icon from "../../components/utils/Icon";
 import Table from "../../components/Table";
 import Modal from "../../components/utils/Modal";
 import TextInput from "../../components/fields/TextInput";
 import TogleInput from "../../components/fields/TogleInput";
-import SelectInput from "../../components/fields/SelectInput";
 import Button from "../../components/utils/Button";
 import Loader from "../../components/utils/Loader";
 
@@ -17,11 +15,11 @@ import {
   GetAllPDQuestions,
   CreatePDQuestion,
   UpdatePDQuestion,
-  // DeletePDQuestion,
 } from "../../api/mastersApi";
+import SelectInput from "../../components/fields/SelectInput";
 
 // =========================================================
-// LOGGED-IN USER (used for `created_by` field of the API)
+// LOGGED-IN USER
 // =========================================================
 
 const getCreatedBy = () =>
@@ -30,13 +28,9 @@ const getCreatedBy = () =>
   localStorage.getItem("email") ||
   "admin";
 
-// Static categories – replace with API call if needed
-const categories = [
-  { value: "Personal", label: "Personal" },
-  { value: "Business", label: "Business" },
-  { value: "Financial", label: "Financial" },
-  { value: "Credit", label: "Credit" },
-];
+// =========================================================
+// PD QUESTIONS MASTER
+// =========================================================
 
 const PDQuestionsMaster = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -69,7 +63,8 @@ const PDQuestionsMaster = () => {
         setQuestions([]);
 
         toast.info(
-          response?.msg || "Unable to fetch PD questions list!"
+          response?.message ||
+            "Unable to fetch PD questions list!"
         );
       }
     } catch (error) {
@@ -92,31 +87,44 @@ const PDQuestionsMaster = () => {
 
   const questionFormik = useFormik({
     initialValues: {
-      category: "",
+      categorey: "",
+      type: "",
       question: "",
       is_active: true,
     },
 
-    validationSchema: Yup.object({
-      category: Yup.string()
-        .trim()
-        .required("Category is required"),
-      question: Yup.string()
-        .trim()
-        .required("Question is required"),
-    }),
-
     enableReinitialize: true,
 
-    onSubmit: async (values, { resetForm }) => {
+    validationSchema: Yup.object({
+      categorey: Yup.string()
+        .trim()
+        .required("Category is required")
+        .max(100, "Category cannot exceed 100 characters"),
+
+      type: Yup.string()
+        .trim()
+        .required("Type is required")
+        .max(100, "Type cannot exceed 100 characters"),
+
+      question: Yup.string()
+        .trim()
+        .required("Question is required")
+        .max(500, "Question cannot exceed 500 characters"),
+    }),
+
+    onSubmit: async (values) => {
       try {
         const createdBy = getCreatedBy();
 
+        // =====================================================
         // UPDATE
+        // =====================================================
+
         if (isEdit) {
           const req = {
             id: editingQuestionId,
-            category: values.category.trim(),
+            categorey: values.categorey.trim(),
+            type: values.type.trim(),
             question: values.question.trim(),
             is_active: values.is_active,
             created_by: createdBy,
@@ -128,22 +136,28 @@ const PDQuestionsMaster = () => {
             await fetchAllQuestions();
 
             toast.success(
-              response?.msg ||
+              response?.message ||
                 "PD Question updated successfully!"
             );
 
             handleCloseModal();
           } else {
             toast.info(
-              response?.msg || "Unable to update PD question!"
+              response?.message ||
+                "Unable to update PD question!"
             );
           }
         }
+
+        // =====================================================
         // CREATE
+        // =====================================================
+
         else {
           const req = {
             id: 0,
-            category: values.category.trim(),
+            categorey: values.categorey.trim(),
+            type: values.type.trim(),
             question: values.question.trim(),
             is_active: values.is_active,
             created_by: createdBy,
@@ -155,13 +169,15 @@ const PDQuestionsMaster = () => {
             await fetchAllQuestions();
 
             toast.success(
-              response?.msg || "PD Question added successfully!"
+              response?.message ||
+                "PD Question added successfully!"
             );
 
             handleCloseModal();
           } else {
             toast.info(
-              response?.msg || "Unable to add PD question!"
+              response?.message ||
+                "Unable to add PD question!"
             );
           }
         }
@@ -193,7 +209,8 @@ const PDQuestionsMaster = () => {
 
     questionFormik.resetForm({
       values: {
-        category: "",
+        categorey: "",
+        type: "",
         question: "",
         is_active: true,
       },
@@ -208,76 +225,83 @@ const PDQuestionsMaster = () => {
 
   const handleEditQuestion = (question) => {
     setIsEdit(true);
-    setEditingQuestionId(question.id);
+    setEditingQuestionId(question?.id);
 
     questionFormik.setValues({
-      category: question.category || "",
-      question: question.question || "",
-      is_active: question.is_active ?? true,
+      categorey: question?.categorey || "",
+      type: question?.type || "",
+      question: question?.question || "",
+      is_active:
+        typeof question?.is_active === "boolean"
+          ? question.is_active
+          : true,
     });
 
     setIsModalOpen(true);
   };
 
   // =========================================================
-  // TOGGLE PD QUESTION STATUS
+  // TOGGLE STATUS
   // =========================================================
 
   const handleToggleStatus = async (row) => {
-    const nextStatus = !row.is_active;
+    const nextStatus = !row?.is_active;
 
     // Optimistic update
     setQuestions((prev) =>
       prev.map((question) =>
-        question.id !== row.id
-          ? question
-          : {
+        question.id === row?.id
+          ? {
               ...question,
               is_active: nextStatus,
             }
+          : question
       )
     );
 
     try {
       const response = await UpdatePDQuestion({
-        id: row.id,
-        category: row.category,
-        question: row.question,
+        id: row?.id,
+        categorey: row?.categorey,
+        type: row?.type,
+        question: row?.question,
         is_active: nextStatus,
         created_by: getCreatedBy(),
       });
 
       if (response?.status) {
         toast.success(
-          response?.msg || "Status updated successfully!"
+          response?.message ||
+            "Status updated successfully!"
         );
       } else {
-        // Revert on failure
+        // Revert
         setQuestions((prev) =>
           prev.map((question) =>
-            question.id !== row.id
-              ? question
-              : {
+            question.id === row?.id
+              ? {
                   ...question,
-                  is_active: row.is_active,
+                  is_active: row?.is_active,
                 }
+              : question
           )
         );
 
         toast.info(
-          response?.msg || "Unable to update status!"
+          response?.message ||
+            "Unable to update status!"
         );
       }
     } catch (error) {
-      // Revert on error
+      // Revert
       setQuestions((prev) =>
         prev.map((question) =>
-          question.id !== row.id
-            ? question
-            : {
+          question.id === row?.id
+            ? {
                 ...question,
-                is_active: row.is_active,
+                is_active: row?.is_active,
               }
+            : question
         )
       );
 
@@ -295,42 +319,25 @@ const PDQuestionsMaster = () => {
     }
   };
 
-  // // =========================================================
-  // // DELETE PD QUESTION
-  // // =========================================================
+  // =========================================================
+  // CLOSE MODAL
+  // =========================================================
 
-  // const handleDeleteQuestion = async (row) => {
-  //   const confirmDelete = window.confirm(
-  //     "Are you sure you want to delete this question?"
-  //   );
-  //   if (!confirmDelete) return;
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
 
-  //   try {
-  //     setIsLoading(true);
-  //     const response = await DeletePDQuestion(row.id);
+    questionFormik.resetForm({
+      values: {
+        categorey: "",
+        type: "",
+        question: "",
+        is_active: true,
+      },
+    });
 
-  //     if (response?.status) {
-  //       await fetchAllQuestions();
-  //       toast.success(
-  //         response?.msg || "PD Question deleted successfully!"
-  //       );
-  //     } else {
-  //       toast.info(
-  //         response?.msg || "Unable to delete PD question!"
-  //       );
-  //     }
-  //   } catch (error) {
-  //     console.error("Error deleting PD question:", error);
-  //     toast.error(
-  //       error?.response?.data?.title ||
-  //         error?.response?.data?.errors?.request?.[0] ||
-  //         error?.message ||
-  //         "Something went wrong!"
-  //     );
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+    setIsEdit(false);
+    setEditingQuestionId(null);
+  };
 
   // =========================================================
   // INITIAL FETCH
@@ -347,23 +354,33 @@ const PDQuestionsMaster = () => {
   const columns = [
     {
       name: "#",
-      selector: (row, i) => i + 1,
+      selector: (row) => row?.sn,
       sortable: true,
       width: "60px",
       center: true,
     },
+
     {
       name: "Category",
-      selector: (row) => row.categorey,
+      selector: (row) => row?.categorey || "-",
       sortable: true,
-      width: "220px",
+      width: "180px",
     },
+
+    {
+      name: "Type",
+      selector: (row) => row?.type || "-",
+      sortable: true,
+      width: "160px",
+    },
+
     {
       name: "Question",
-      selector: (row) => row.question,
+      selector: (row) => row?.question || "-",
       sortable: true,
       grow: 2,
     },
+
     {
       name: "Action",
       width: "100px",
@@ -372,49 +389,29 @@ const PDQuestionsMaster = () => {
         <button
           type="button"
           onClick={() => handleEditQuestion(row)}
-          className="cursor-pointer"
+          className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-primary/10 transition"
         >
-          <Icon name="FaEdit" size={18} color="black" />
+          <Icon
+            name="FaEdit"
+            size={16}
+            color="5050b8"
+          />
         </button>
       ),
     },
+
     {
       name: "Status",
       width: "100px",
       center: true,
       cell: (row) => (
         <TogleInput
-          checked={row.is_active ?? true}
+          checked={row?.is_active ?? true}
           onChange={() => handleToggleStatus(row)}
         />
       ),
     },
-    // {
-    //   name: "Delete",
-    //   width: "100px",
-    //   center: true,
-    //   cell: (row) => (
-    //     <button
-    //       type="button"
-    //       onClick={() => handleDeleteQuestion(row)}
-    //       className="cursor-pointer"
-    //     >
-    //       <IoTrashBin color="red" size={16} />
-    //     </button>
-    //   ),
-    // },
   ];
-
-  // =========================================================
-  // CLOSE MODAL
-  // =========================================================
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    questionFormik.resetForm();
-    setIsEdit(false);
-    setEditingQuestionId(null);
-  };
 
   // =========================================================
   // UI
@@ -422,56 +419,126 @@ const PDQuestionsMaster = () => {
 
   return (
     <>
-      {isLoading && <Loader text="Loading PD questions..." />}
+      {isLoading && (
+        <Loader text="Loading PD questions..." />
+      )}
 
       <div className="flex-1">
-        {/* Header */}
-        <div className="flex justify-between items-center p-0 px-4">
-          <div className="text-md font-medium self-center">
-            Questions Master
+        {/* HEADER */}
+        <div className="flex justify-between items-center px-4">
+          <div>
+            <h2 className="text-md font-medium text-slate-800">
+              Questions Master
+            </h2>
+
+            <p className="text-[11px] text-slate-400">
+              Manage PD questions
+            </p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleAddQuestion}
-              className="text-sm py-1.5 px-3 rounded-sm bg-primary hover:bg-primary/90 text-white flex justify-between gap-3 cursor-pointer"
-            >
-              Add Question
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={handleAddQuestion}
+            className="
+              flex items-center
+              gap-2
+              py-1.5
+              px-3
+              rounded-sm
+              bg-primary
+              hover:bg-primary/90
+              cursor-pointer
+              text-sm
+              font-medium
+              text-white
+            "
+          >
+            <Icon
+              name="RiAddLine"
+              size={15}
+              color="white"
+            />
+
+            Add Question
+          </button>
         </div>
 
-        {/* Table */}
-        <Table data={questions} columns={columns} />
+        {/* TABLE */}
+        <Table
+          data={questions}
+          columns={columns}
+        />
       </div>
 
-      {/* Add / Edit Modal */}
+      {/* =====================================================
+          ADD / EDIT MODAL
+          ===================================================== */}
+
       <Modal
-        title={isEdit ? "Edit PD Question" : "Add PD Question"}
+        title={
+          isEdit
+            ? "Edit PD Question"
+            : "Add PD Question"
+        }
         isOpen={isModalOpen}
         onClose={handleCloseModal}
       >
-        <form onSubmit={questionFormik.handleSubmit}>
-          <div className="grid grid-cols-2 gap-4 mt-6">
+        <form
+          onSubmit={questionFormik.handleSubmit}
+          className="pt-2"
+        >
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            {/* CATEGORY */}
             <div>
               <SelectInput
-                name="category"
                 label="Category"
-                placeholder="Select category"
-                options={categories}
-                value={questionFormik.values.category}
+                name="categorey"
+                placeholder="Enter category"
+                options={[
+                  {label: "Borrower & Business Details", value: "Borrower & Business Details"},
+                  {label: "Purpose of Loan", value: "Purpose of Loan"},
+                  {label: "Business Operations", value: "Business Operations"},
+                  {label: "Financial Understanding", value: "Financial Understanding"},
+                  {label: "Banking & Cashflow", value: "Banking & Cashflow"},
+                ]}
+                value={questionFormik.values.categorey}
                 onChange={questionFormik.handleChange}
                 onBlur={questionFormik.handleBlur}
               />
-              {questionFormik.touched.category &&
-                questionFormik.errors.category && (
+
+              {questionFormik.touched.categorey &&
+                questionFormik.errors.categorey && (
                   <p className="mt-1 text-xs text-red-500">
-                    {questionFormik.errors.category}
+                    {questionFormik.errors.categorey}
                   </p>
                 )}
             </div>
 
+            {/* TYPE */}
             <div>
+              <SelectInput
+                label="Type"
+                name="type"
+                options={[
+                  {label: "Pre PD", value: "pre-pd"},
+                  {label: "Post PD", value: "post-pd"}
+                ]}
+                placeholder="Enter question type"
+                value={questionFormik.values.type}
+                onChange={questionFormik.handleChange}
+                onBlur={questionFormik.handleBlur}
+              />
+
+              {questionFormik.touched.type &&
+                questionFormik.errors.type && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {questionFormik.errors.type}
+                  </p>
+                )}
+            </div>
+
+            {/* QUESTION */}
+            <div className="col-span-2">
               <TextInput
                 label="Question"
                 name="question"
@@ -480,6 +547,7 @@ const PDQuestionsMaster = () => {
                 onChange={questionFormik.handleChange}
                 onBlur={questionFormik.handleBlur}
               />
+
               {questionFormik.touched.question &&
                 questionFormik.errors.question && (
                   <p className="mt-1 text-xs text-red-500">
@@ -489,20 +557,7 @@ const PDQuestionsMaster = () => {
             </div>
           </div>
 
-          {/* Status toggle inside the modal */}
-          {/* <div className="mt-4 flex items-center gap-3">
-            <span className="text-sm">Active</span>
-            <TogleInput
-              checked={questionFormik.values.is_active}
-              onChange={() =>
-                questionFormik.setFieldValue(
-                  "is_active",
-                  !questionFormik.values.is_active
-                )
-              }
-            />
-          </div> */}
-
+          {/* BUTTONS */}
           <div className="mt-5 flex justify-end gap-2">
             <Button
               btnName="Cancel"
@@ -510,10 +565,21 @@ const PDQuestionsMaster = () => {
               onClick={handleCloseModal}
               style="border border-gray-200 hover:bg-gray-100"
             />
+
             <Button
               btnName={isEdit ? "Update" : "Submit"}
               type="submit"
-              style="bg-primary text-white hover:bg-primary/90"
+              disabled={
+                !questionFormik.isValid ||
+                questionFormik.isSubmitting
+              }
+              style="
+                bg-primary
+                text-white
+                hover:bg-primary/90
+                disabled:opacity-50
+                disabled:cursor-not-allowed
+              "
             />
           </div>
         </form>

@@ -8,6 +8,7 @@ const Login = () => {
     password: "",
     rememberMe: false,
   });
+  
   const [isLoading, setIsLoading] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
 
@@ -40,15 +41,6 @@ const Login = () => {
     return () => clearInterval(interval);
   }, []);
 
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -70,7 +62,7 @@ const Login = () => {
       <div className="flex flex-col md:flex-row w-full bg-white overflow-hidden transition-all duration-300 hover:shadow-[#0b1a2e]/20">
 
         {/* Left Panel - Branding/Info */}
-        <div className="w-full md:w-[45%] bg-linear-to-br from-[#11245B] to-[#1a3a6b] text-white p-8 md:p-12 flex flex-col justify-between relative">
+        <div className="w-full md:w-[45%] bg-linear-to-br from-blue-900 to-primary text-white p-8 md:p-12 flex flex-col justify-between relative">
           {/* Decorative elements */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3" />
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/3" />
@@ -157,7 +149,7 @@ const Login = () => {
           <div className="w-full max-w-sm mx-auto">
             {/* Header */}
             <div className="mb-6">
-              <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+              <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
                 Welcome Back
               </h1>
               <p className="text-gray-500 text-sm mt-1">
@@ -167,11 +159,11 @@ const Login = () => {
 
             {/* Form */}
             <form onSubmit={handleSubmit}>
-              <div className="space-y-3 mb-6">
-                <TextInput label="Email" placeholder={"Enter your email address"} style={"py-1.5"} />
+              <div className="space-y-4 mb-6">
+                <TextInput label="Email" placeholder={"Enter your email address"} style={"py-2.5"} />
                 <div className="space-y-2">
-                  <TextInput label={"Password"} type="password" placeholder="Enter your password" hideEye={false} style={"py-1.5"} />
-                  <div className="text-end text-primary text-sm font-semibold">Forgot Password?</div>
+                  <TextInput label={"Password"} type="password" placeholder="Enter your password" hideEye={false} style={"py-2.5"} />
+                  {/* <div className="text-end text-primary text-sm font-semibold">Forgot Password?</div> */}
                 </div>
               </div>
 
@@ -194,19 +186,6 @@ const Login = () => {
               </button>
             </form>
 
-            {/* Footer Links */}
-            <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm">
-              <span className="text-gray-500">
-                Don't have an account?{" "}
-                <a href="#" className="text-gray-900 font-medium hover:text-emerald-600 transition-colors">
-                  Create account
-                </a>
-              </span>
-              {/* <a href="#" className="text-gray-500 hover:text-gray-900 font-medium transition-colors flex items-center gap-1.5">
-                <Icon name='FaLink' color="" size={12} />
-                Terms and Conditions
-              </a> */}
-            </div>
 
             {/* Divider */}
             {/* <div className="relative my-8">

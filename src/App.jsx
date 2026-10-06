@@ -48,6 +48,7 @@ import ReligionMaster from './pages/master/ReligionMaster'
 import GenderMaster from './pages/master/GenderMaster'
 import ResidenceType from './pages/master/ResidenceType'
 import LoanPurposeMaster from './pages/master/LoanPurposeMaster'
+import ManageUser from './pages/admin/ManageUser'
 
 function App() {
 
@@ -86,6 +87,9 @@ function App() {
           <Route path='/document-master' element={<DocumentMaster />} /> 
           <Route path='/loan-purpose-master' element={<LoanPurposeMaster />} /> 
           {/* <Route path='/product-master' element={<CreateLoanProduct />} />  */}
+
+          {/* ADMIN */}
+          <Route path='/manage-user' element={<ManageUser />} /> 
 
           {/* Leads Section  */}
           <Route path='/leads-draft' element={<DraftLeads />} />
