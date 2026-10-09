@@ -16,6 +16,7 @@ const FinantialYears = () => {
   const columns = [
     { name: "Finantial Year", selector: (row) => row.year, sortable: true },
     { name: "Start Date", selector: (row) => row.start_date },
+    { name: "End Date", selector: (row) => row.end_date },
     { name: "Status", selector: (row) => row.status },
     {
       name: "Action",
@@ -59,7 +60,7 @@ const FinantialYears = () => {
 
           <TextInput label="Start Date" type="date" />
 
-          <TextInput label="Start Date" type="date" />
+          <TextInput label="End Date" type="date" />
 
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">

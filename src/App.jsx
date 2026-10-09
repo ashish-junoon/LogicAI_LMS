@@ -32,7 +32,6 @@ import LeadDetailsOther from './pages/leads/LeadDetailsOther'
 import LeadForm from './pages/formPages/LeadForm'
 import DesignationMaster from './pages/master/DesignationMaster'
 import PDQuestionsMaster from './pages/master/PDQuestionsMaster'
-import PageMaster from './pages/master/PageMaster'
 import VendorMaster from './pages/master/VendorMaster'
 import BusinessTradesMaster from './pages/master/BusinessTradesMaster'
 import BankMaster from './pages/master/BankMaster'
@@ -49,6 +48,9 @@ import GenderMaster from './pages/master/GenderMaster'
 import ResidenceType from './pages/master/ResidenceType'
 import LoanPurposeMaster from './pages/master/LoanPurposeMaster'
 import ManageUser from './pages/admin/ManageUser'
+import LeadSource from './pages/master/LeadSource'
+import PageManagement from './pages/master/PageManagement'
+import GroupManagement from './pages/master/GroupManagement'
 
 function App() {
 
@@ -79,17 +81,19 @@ function App() {
           <Route path='/gender-master' element={<GenderMaster />} /> 
           <Route path='/residence-type-master' element={<ResidenceType />} /> 
           <Route path='/quetionare-master' element={<PDQuestionsMaster />} /> 
-          <Route path='/page-master' element={<PageMaster />} /> 
           <Route path='/vendor-master' element={<VendorMaster />} /> 
           <Route path='/business-trade-master' element={<BusinessTradesMaster />} /> 
           <Route path='/business-type-master' element={<BusinessTypeMaster />} /> 
           <Route path='/bank-master' element={<BankMaster />} /> 
           <Route path='/document-master' element={<DocumentMaster />} /> 
           <Route path='/loan-purpose-master' element={<LoanPurposeMaster />} /> 
+          <Route path='/lead-source-master' element={<LeadSource />} /> 
           {/* <Route path='/product-master' element={<CreateLoanProduct />} />  */}
 
           {/* ADMIN */}
           <Route path='/manage-user' element={<ManageUser />} /> 
+          <Route path='/manage-page' element={<PageManagement />} /> 
+          <Route path='/manage-group' element={<GroupManagement />} /> 
 
           {/* Leads Section  */}
           <Route path='/leads-draft' element={<DraftLeads />} />

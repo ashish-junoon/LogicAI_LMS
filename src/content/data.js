@@ -491,14 +491,17 @@ export const sidebarData = [
       { title: "State Master", path: "/state-master" },
       { title: "City Master", path: "/city-master" },
       { title: "Occupations", path: "/occupations-master" },
-      { title: "Page Master", path: "/page-master" },
       { title: "Vendor Master", path: "/vendor-master" },
+      { title: "Lead Source", path: "/lead-source-master" },
     ],
   },
   {
     title: "Admin",
     icon: MdOutlineAdminPanelSettings,
-    children: [{ title: "Manage Users", path: "/manage-user" }],
+    children: [
+      { title: "Manage Users", path: "/manage-user" },
+      { title: "Manage Page", path: "/manage-page" },
+    ],
   },
 ];
 

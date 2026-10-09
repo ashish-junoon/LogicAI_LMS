@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import { FiSearch, FiFilter, FiDownload } from "react-icons/fi";
+import { toast } from "react-toastify";
 
 const Table = ({
   columns,
@@ -186,7 +187,7 @@ const Table = ({
             <FiFilter size={16} />
           </button>
 
-          <button className="flex cursor-pointer items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary/80">
+          <button onClick={()=> toast.info("Export functionality is in under developement!")} className="flex cursor-pointer items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary/80">
             <FiDownload size={16} />
             Export
           </button>

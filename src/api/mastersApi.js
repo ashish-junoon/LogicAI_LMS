@@ -534,3 +534,39 @@ export const UpdatePDQuestion = async (req) => {
         throw error;
     }
 }
+
+
+
+// ?===========================
+// * VENDOR MASTER API'S
+// ?===========================
+
+export const GetAllVendors = async (req) => {
+    try {
+        const response = await api.get("/Master/GetAllVendors", req);
+        return response.data;
+    } catch (error) {
+        console.error("GetAllVendors:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const UpdateVendor = async (req) => {
+    try {
+        const response = await api.put("/Master/UpdateVendor", req);
+        return response.data;
+    } catch (error) {
+        console.error("UpdateVendor:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const CreateVendor = async (req) => {
+    try {
+        const response = await api.post("/Master/CreateVendor", req);
+        return response.data;
+    } catch (error) {
+        console.error("CreateVendor:", error.response?.data || error.message);
+        throw error;
+    }
+}
