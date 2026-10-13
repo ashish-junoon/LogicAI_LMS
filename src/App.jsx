@@ -51,6 +51,8 @@ import ManageUser from './pages/admin/ManageUser'
 import LeadSource from './pages/master/LeadSource'
 import PageManagement from './pages/master/PageManagement'
 import GroupManagement from './pages/master/GroupManagement'
+import LoanTypeMaster from './pages/master/LoanTypeMaster'
+import QuestionCategoryMaster from './pages/master/QuestionCategory'
 
 function App() {
 
@@ -73,6 +75,7 @@ function App() {
           <Route path='/city-master' element={<CityList />} />
           <Route path='/occupations-master' element={<Occupations />} /> 
           <Route path='/product-master' element={<LoanProductMaster />} /> 
+          <Route path='/loan-type-master' element={<LoanTypeMaster />} /> 
           <Route path='/department-master' element={<DepartmentMaster />} /> 
           <Route path='/designation-master' element={<DesignationMaster />} /> 
           <Route path='/employement-type-master' element={<EmployementTypeMaster />} /> 
@@ -81,6 +84,7 @@ function App() {
           <Route path='/gender-master' element={<GenderMaster />} /> 
           <Route path='/residence-type-master' element={<ResidenceType />} /> 
           <Route path='/quetionare-master' element={<PDQuestionsMaster />} /> 
+          <Route path='/question-category' element={<QuestionCategoryMaster />} /> 
           <Route path='/vendor-master' element={<VendorMaster />} /> 
           <Route path='/business-trade-master' element={<BusinessTradesMaster />} /> 
           <Route path='/business-type-master' element={<BusinessTypeMaster />} /> 

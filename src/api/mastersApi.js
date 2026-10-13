@@ -500,17 +500,15 @@ export const UpdateLoanPurpose = async (req) => {
 }
 
 
-
 // ?===========================
 // * PD Questions MASTER API'S
 // ?===========================
-
 export const GetAllPDQuestions = async (req) => {
     try {
         const response = await api.get("/Master/GetAllQuestionnaires", req);
         return response.data;
     } catch (error) {
-        console.error("GetAllResidenceTypes:", error.response?.data || error.message);
+        console.error("GetAllPDQuestions:", error.response?.data || error.message);
         throw error;
     }
 }
@@ -520,7 +518,7 @@ export const CreatePDQuestion = async (req) => {
         const response = await api.post("/Master/CreateQuestionnaire", req);
         return response.data;
     } catch (error) {
-        console.error("CreateResidenceType:", error.response?.data || error.message);
+        console.error("CreatePDQuestion:", error.response?.data || error.message);
         throw error;
     }
 }
@@ -530,11 +528,114 @@ export const UpdatePDQuestion = async (req) => {
         const response = await api.put("/Master/UpdateQuestionnaire", req);
         return response.data;
     } catch (error) {
-        console.error("UpdateResidenceType:", error.response?.data || error.message);
+        console.error("UpdatePDQuestion:", error.response?.data || error.message);
         throw error;
     }
 }
 
+
+
+// ?===========================
+// * PD Questions Category MASTER API'S
+// ?===========================
+export const GetAllQuestionCategories = async (req) => {
+    try {
+        const response = await api.get("/Master/GetAllQuestionCategorys", req);
+        return response.data;
+    } catch (error) {
+        console.error("GetAllQuestionCategories:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const CreateQuestionCategory = async (req) => {
+    try {
+        const response = await api.post("/Master/CreateQuestionCategory", req);
+        return response.data;
+    } catch (error) {
+        console.error("CreateQuestionCategory:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const UpdateQuestionCategory = async (req) => {
+    try {
+        const response = await api.put("/Master/UpdateQuestionCategory", req);
+        return response.data;
+    } catch (error) {
+        console.error("UpdateQuestionCategory:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+
+// ?===========================
+// * LOAN PRODUCT MASTER API'S
+// ?===========================
+export const GetAllLoanProducts = async (req) => {
+    try {
+        const response = await api.get("/Master/GetAllProducts", req);
+        return response.data;
+    } catch (error) {
+        console.error("GetAllLoanTypesProducts:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const CreateLoanProduct = async (req) => {
+    try {
+        const response = await api.post("/Master/CreateProduct", req);
+        return response.data;
+    } catch (error) {
+        console.error("CreateLoanProduct:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const UpdateLoanProduct = async (req) => {
+    try {
+        const response = await api.put("/Master/UpdateProduct", req);
+        return response.data;
+    } catch (error) {
+        console.error("UpdateLoanProduct:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+
+
+// ?===========================
+// * LOAN Type MASTER API'S
+// ?===========================
+export const GetAllLoanTypes = async (req) => {
+    try {
+        const response = await api.get("/Master/GetAllLoanTypes", req);
+        return response.data;
+    } catch (error) {
+        console.error("GetAllLoanTypes:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const CreateLoanType = async (req) => {
+    try {
+        const response = await api.post("/Master/CreateLoanType", req);
+        return response.data;
+    } catch (error) {
+        console.error("CreateLoanType:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const UpdateLoanType = async (req) => {
+    try {
+        const response = await api.put("/Master/UpdateLoanType", req);
+        return response.data;
+    } catch (error) {
+        console.error("UpdateLoanType:", error.response?.data || error.message);
+        throw error;
+    }
+}
 
 
 // ?===========================

@@ -471,6 +471,8 @@ export const sidebarData = [
     icon: IoSettings,
     children: [
       { title: "Branches", path: "/branches-master" },
+      { title: "Loan Product", path: "/product-master" },
+      { title: "Loan Type", path: "/loan-type-master" },
       { title: "Loan Purposes", path: "/loan-purpose-master" },
       { title: "Bank Master", path: "/bank-master" },
       { title: "Business Trade Master", path: "/business-trade-master" },
@@ -485,7 +487,7 @@ export const sidebarData = [
       { title: "Gender Master", path: "/gender-master" },
       { title: "Residence Type", path: "/residence-type-master" },
       { title: "PD Question Master", path: "/quetionare-master" },
-      { title: "Loan Product", path: "/product-master" },
+      { title: "Question Category", path: "/question-category" },
       // { title: "Branch Managers", path: "/branch-managers-master" },
       { title: "Financial Years", path: "/finance-years-master" },
       { title: "State Master", path: "/state-master" },

@@ -15,8 +15,10 @@ import {
   GetAllPDQuestions,
   CreatePDQuestion,
   UpdatePDQuestion,
+  GetAllQuestionCategories,
 } from "../../api/mastersApi";
 import SelectInput from "../../components/fields/SelectInput";
+import { useNavigate } from "react-router-dom";
 
 // =========================================================
 // LOGGED-IN USER
@@ -36,9 +38,50 @@ const PDQuestionsMaster = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
   const [isEdit, setIsEdit] = useState(false);
   const [editingQuestionId, setEditingQuestionId] = useState(null);
+
+  // Dynamic category options
+  const [categoryOptions, setCategoryOptions] = useState([]);
+
+    const navigate = useNavigate();
+
+  // =========================================================
+  // FETCH ALL QUESTION CATEGORIES (for dropdown)
+  // =========================================================
+
+  const fetchAllCategories = useCallback(async () => {
+    try {
+      const response = await GetAllQuestionCategories();
+
+      // Support multiple response shapes:
+      // - { status, data: [...] }
+      // - { data: [...] }
+      // - direct array
+      const list =
+        (Array.isArray(response) && response) ||
+        response?.data ||
+        [];
+
+      const options = list
+        .filter((c) => c?.is_active !== false) // only show active
+        .map((c) => ({
+          label: c?.category || c?.name || "-",
+          value: c?.category || c?.name || "",
+        }));
+
+      setCategoryOptions(options);
+    } catch (error) {
+      console.error("Error fetching question categories:", error);
+
+      toast.error(
+        error?.response?.data?.title ||
+        error?.response?.data?.errors?.request?.[0] ||
+        error?.message ||
+        "Failed to load question categories!"
+      );
+    }
+  }, []);
 
   // =========================================================
   // FETCH ALL PD QUESTIONS
@@ -64,7 +107,7 @@ const PDQuestionsMaster = () => {
 
         toast.info(
           response?.message ||
-            "Unable to fetch PD questions list!"
+          "Unable to fetch PD questions list!"
         );
       }
     } catch (error) {
@@ -72,9 +115,9 @@ const PDQuestionsMaster = () => {
 
       toast.error(
         error?.response?.data?.title ||
-          error?.response?.data?.errors?.request?.[0] ||
-          error?.message ||
-          "Something went wrong!"
+        error?.response?.data?.errors?.request?.[0] ||
+        error?.message ||
+        "Something went wrong!"
       );
     } finally {
       setIsLoading(false);
@@ -84,7 +127,6 @@ const PDQuestionsMaster = () => {
   // =========================================================
   // FORMIK
   // =========================================================
-
   const questionFormik = useFormik({
     initialValues: {
       categorey: "",
@@ -119,7 +161,6 @@ const PDQuestionsMaster = () => {
         // =====================================================
         // UPDATE
         // =====================================================
-
         if (isEdit) {
           const req = {
             id: editingQuestionId,
@@ -137,14 +178,14 @@ const PDQuestionsMaster = () => {
 
             toast.success(
               response?.message ||
-                "PD Question updated successfully!"
+              "PD Question updated successfully!"
             );
 
             handleCloseModal();
           } else {
             toast.info(
               response?.message ||
-                "Unable to update PD question!"
+              "Unable to update PD question!"
             );
           }
         }
@@ -170,14 +211,14 @@ const PDQuestionsMaster = () => {
 
             toast.success(
               response?.message ||
-                "PD Question added successfully!"
+              "PD Question added successfully!"
             );
 
             handleCloseModal();
           } else {
             toast.info(
               response?.message ||
-                "Unable to add PD question!"
+              "Unable to add PD question!"
             );
           }
         }
@@ -191,9 +232,9 @@ const PDQuestionsMaster = () => {
 
         toast.error(
           error?.response?.data?.title ||
-            error?.response?.data?.errors?.request?.[0] ||
-            error?.message ||
-            "Something went wrong!"
+          error?.response?.data?.errors?.request?.[0] ||
+          error?.message ||
+          "Something went wrong!"
         );
       }
     },
@@ -252,9 +293,9 @@ const PDQuestionsMaster = () => {
       prev.map((question) =>
         question.id === row?.id
           ? {
-              ...question,
-              is_active: nextStatus,
-            }
+            ...question,
+            is_active: nextStatus,
+          }
           : question
       )
     );
@@ -272,7 +313,7 @@ const PDQuestionsMaster = () => {
       if (response?.status) {
         toast.success(
           response?.message ||
-            "Status updated successfully!"
+          "Status updated successfully!"
         );
       } else {
         // Revert
@@ -280,16 +321,16 @@ const PDQuestionsMaster = () => {
           prev.map((question) =>
             question.id === row?.id
               ? {
-                  ...question,
-                  is_active: row?.is_active,
-                }
+                ...question,
+                is_active: row?.is_active,
+              }
               : question
           )
         );
 
         toast.info(
           response?.message ||
-            "Unable to update status!"
+          "Unable to update status!"
         );
       }
     } catch (error) {
@@ -298,9 +339,9 @@ const PDQuestionsMaster = () => {
         prev.map((question) =>
           question.id === row?.id
             ? {
-                ...question,
-                is_active: row?.is_active,
-              }
+              ...question,
+              is_active: row?.is_active,
+            }
             : question
         )
       );
@@ -312,9 +353,9 @@ const PDQuestionsMaster = () => {
 
       toast.error(
         error?.response?.data?.title ||
-          error?.response?.data?.errors?.request?.[0] ||
-          error?.message ||
-          "Something went wrong!"
+        error?.response?.data?.errors?.request?.[0] ||
+        error?.message ||
+        "Something went wrong!"
       );
     }
   };
@@ -345,7 +386,8 @@ const PDQuestionsMaster = () => {
 
   useEffect(() => {
     fetchAllQuestions();
-  }, [fetchAllQuestions]);
+    fetchAllCategories(); // <-- fetch categories on mount
+  }, [fetchAllQuestions, fetchAllCategories]);
 
   // =========================================================
   // TABLE COLUMNS
@@ -436,10 +478,13 @@ const PDQuestionsMaster = () => {
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={handleAddQuestion}
-            className="
+
+
+          <div className="gap-4 flex">
+            <button
+              type="button"
+              onClick={() => { navigate("/question-category") }}
+              className="
               flex items-center
               gap-2
               py-1.5
@@ -452,15 +497,36 @@ const PDQuestionsMaster = () => {
               font-medium
               text-white
             "
-          >
-            <Icon
-              name="RiAddLine"
-              size={15}
-              color="white"
-            />
+            >
+              Add Category
+            </button>
 
-            Add Question
-          </button>
+            <button
+              type="button"
+              onClick={handleAddQuestion}
+              className="
+              flex items-center
+              gap-2
+              py-1.5
+              px-3
+              rounded-sm
+              bg-primary
+              hover:bg-primary/90
+              cursor-pointer
+              text-sm
+              font-medium
+              text-white
+            "
+            >
+              <Icon
+                name="RiAddLine"
+                size={15}
+                color="white"
+              />
+
+              Add Question
+            </button>
+          </div>
         </div>
 
         {/* TABLE */}
@@ -493,14 +559,8 @@ const PDQuestionsMaster = () => {
               <SelectInput
                 label="Category"
                 name="categorey"
-                placeholder="Enter category"
-                options={[
-                  {label: "Borrower & Business Details", value: "Borrower & Business Details"},
-                  {label: "Purpose of Loan", value: "Purpose of Loan"},
-                  {label: "Business Operations", value: "Business Operations"},
-                  {label: "Financial Understanding", value: "Financial Understanding"},
-                  {label: "Banking & Cashflow", value: "Banking & Cashflow"},
-                ]}
+                placeholder="Select category"
+                options={categoryOptions} // <-- dynamic options
                 value={questionFormik.values.categorey}
                 onChange={questionFormik.handleChange}
                 onBlur={questionFormik.handleBlur}
@@ -520,10 +580,10 @@ const PDQuestionsMaster = () => {
                 label="Type"
                 name="type"
                 options={[
-                  {label: "Pre PD", value: "pre-pd"},
-                  {label: "Post PD", value: "post-pd"}
+                  { label: "Pre PD", value: "pre-pd" },
+                  { label: "Post PD", value: "post-pd" },
                 ]}
-                placeholder="Enter question type"
+                placeholder="Select question type"
                 value={questionFormik.values.type}
                 onChange={questionFormik.handleChange}
                 onBlur={questionFormik.handleBlur}
