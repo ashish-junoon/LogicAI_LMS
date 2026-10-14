@@ -6,8 +6,8 @@ import { MdLeaderboard, MdOutlineAdminPanelSettings } from "react-icons/md";
 export const religion = [{ label: "Hindu", value: "Hindu" }];
 
 export const meritalStatus = [
-  { label: "Merried", value: "Merried" },
-  { label: "UnMerried", value: "Unmerried" },
+  { label: "Married", value: "Married" },
+  { label: "Unmarried", value: "Unmarried" },
 ];
 
 export const gender = [

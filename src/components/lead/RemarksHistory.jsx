@@ -19,51 +19,15 @@ const RemarksHistory = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [open, setOpen] = useState(false);
 
-  // Default mock data
-  const defaultRemarks = [
-    {
-      id: 1,
-      status: "Completed",
-      step: "KYC Verification",
-      remark: "All KYC documents verified successfully",
-      description:
-        "Customer's PAN, Aadhar, and address proof verified and approved",
-      processedBy: "Rahul Sharma",
-      processedOn: "2024-01-20 10:30 AM",
-    },
-    {
-      id: 2,
-      status: "In Progress",
-      step: "Document Review",
-      remark: "Income documents under review",
-      description:
-        "Salary slips and bank statements being verified by credit team",
-      processedBy: "Priya Patel",
-      processedOn: "2024-01-19 03:45 PM",
-    },
-    {
-      id: 3,
-      status: "Pending",
-      step: "Video KYC",
-      remark: "Video KYC pending - Customer not available",
-      description:
-        "Customer has been contacted 3 times for video KYC, no response received",
-      processedBy: "Amit Kumar",
-      processedOn: "2024-01-18 09:15 AM",
-    },
-    {
-      id: 6,
-      status: "On Hold",
-      step: "Document Collection",
-      remark: "Awaiting additional documents from customer",
-      description:
-        "Customer needs to submit latest 3 months bank statements and IT returns",
-      processedBy: "Neha Gupta",
-      processedOn: "2024-01-15 04:30 PM",
-    },
-  ];
-
-  const remarkData = remarks.length > 0 ? remarks : defaultRemarks;
+  const remarkData = remarks.map((item) => ({
+    id: item.id,
+    status: item.is_prove ? "Completed" : "Pending",
+    step: item.reason || `Step ${item.step_status || ""}`.trim(),
+    remark: item.remarks || "-",
+    description: item.product_name || "-",
+    processedBy: item.updated_by || "-",
+    processedOn: item.updated_date || "-",
+  }));
 
   // Filter and search remarks
   const getFilteredRemarks = () => {
@@ -74,11 +38,11 @@ const RemarksHistory = ({
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(
         (r) =>
-          r.status.toLowerCase().includes(term) ||
-          r.step.toLowerCase().includes(term) ||
-          r.remark.toLowerCase().includes(term) ||
-          r.description.toLowerCase().includes(term) ||
-          r.processedBy.toLowerCase().includes(term),
+          String(r.status || "").toLowerCase().includes(term) ||
+          String(r.step || "").toLowerCase().includes(term) ||
+          String(r.remark || "").toLowerCase().includes(term) ||
+          String(r.description || "").toLowerCase().includes(term) ||
+          String(r.processedBy || "").toLowerCase().includes(term),
       );
     }
 

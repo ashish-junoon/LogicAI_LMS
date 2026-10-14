@@ -11,9 +11,9 @@ import LeadForm from "../../pages/formPages/LeadForm";
 import LoanAnalysis from "./LoanAnalysis";
 import LeadFormDetails from "../../pages/formPages/LeadFormDetails";
 
-const InfoWrapper = () => {
+const InfoWrapper = ({ customerDetails }) => {
   const [activeSection, setActiveSection] = useState("user");
-
+  console.log("customerDetails...", customerDetails)
   
   const permisions = {
     personalInfo : true,
@@ -36,20 +36,20 @@ const InfoWrapper = () => {
   const renderSection = () => {
     switch (activeSection) {
       case "user":
-        return <LeadFormDetails permisions={permisions} />;
+        return <LeadFormDetails permisions={permisions} customerDetails={customerDetails} />;
         // return <LeadForm />;
       case "loanInfo":
-        return <LoanAnalysis />;
+        return <LoanAnalysis loanData={customerDetails?.loanDetails?.[0]} applicationId={customerDetails?.loanDetails?.[0]?.application_id} />;
       case "documents":
-        return <DocumentsList permission={true} />;
+        return <DocumentsList permission={true} documents={customerDetails?.documents || []} />;
       case "credit":
-        return <CreditInfo />;
+        return <CreditInfo creditData={customerDetails?.cibilDetails?.[0]} />;
       case "videoKyc":
         return <VideoKYC />;
       case "bankInfo":
-        return <BankInfoSection />;
+        return <BankInfoSection bankData={customerDetails?.bankDetails?.[0]} isVerified={customerDetails?.workflowNodes?.[0]?.bank_is_completed} />;
       case "remarks":
-        return <RemarksHistory permission={true} />;
+        return <RemarksHistory permission={true} remarks={customerDetails?.history || []} />;
       default:
         return null;
     }

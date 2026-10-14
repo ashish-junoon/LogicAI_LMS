@@ -26,12 +26,12 @@ const EmploymentInformation = ({
 
   const formik = useFormik({
     initialValues: {
-      companyName: "ABC Corporation",
-      sector: "other",
-      employmentType: "salaried",
-      employmentSince: "2020-06-01",
-      monthlySalary: "75000",
-      salaryDate: "2026-08-05",
+      companyName: "",
+      sector: "",
+      employmentType: "",
+      employmentSince: "",
+      monthlySalary: "",
+      salaryDate: "",
       salarySlip: null,
     },
 

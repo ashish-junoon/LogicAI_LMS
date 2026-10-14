@@ -15,24 +15,21 @@ import DateInput from "../fields/DateInput";
 import ErrorMsg from "../utils/ErrorMsg";
 
 import { gender, meritalStatus, religion } from "../../content/data";
-import { useLoanDetails } from "../../provider/loanContext";
 
-const PersonalInformation = ({ permission }) => {
-  const { loanDetails } = useLoanDetails();
+const PersonalInformation = ({ permission, marketSurvey, personalKyc }) => {
   const [isEditing, setIsEditing] = useState(false);
-
-  console.log("loandetails------", loanDetails);
+  console.log("marketSurvey", marketSurvey)
 
   const formik = useFormik({
     initialValues: {
-      customerName: loanDetails?.customer_name || "N/A",
-      fathername: "",
-      dob: loanDetails?.dob,
-      mobile: loanDetails?.mobile_number,
-      email: "",
+      customerName: marketSurvey?.business_owner_name || personalKyc?.full_name || "",
+      fathername: personalKyc?.father_name || "",
+      dob: personalKyc?.dob || "",
+      mobile: marketSurvey?.business_owner_mobile_no || personalKyc?.alternate_mobile || "",
+      email: marketSurvey?.contact_person_email || personalKyc?.email_id || "",
       religion: "",
-      maritalStatus: "",
-      gender: loanDetails?.gender,
+      maritalStatus: personalKyc?.marital_status || "",
+      gender: personalKyc?.gender || "",
     },
 
     enableReinitialize: true,

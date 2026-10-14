@@ -18,31 +18,33 @@ import * as Yup from "yup";
 
 import { districtList, houseType, statesList } from "../../content/data";
 
-const AddressInformation = ({ onNext, permission }) => {
+const AddressInformation = ({ onNext, permission, addressDetails }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isSameAsAadhaar, setIsSameAsAadhaar] = useState(false);
 
   const formik = useFormik({
     initialValues: {
       // Aadhaar Address - Read Only
-      aadhaarAddress: "123 Main Street, Near Market",
-      aadhaarPincode: "110001",
-      aadhaarState: "Delhi",
-      aadhaarDistrict: "New Delhi",
-      aadhaarCity: "Delhi",
-      aadhaarLocality: "Connaught Place",
+      aadhaarAddress: addressDetails?.permanent_address || "",
+      aadhaarPincode: addressDetails?.permanent_pin_code || "",
+      aadhaarState: addressDetails?.permanent_state || "",
+      aadhaarDistrict: "",
+      aadhaarCity: addressDetails?.permanent_city || "",
+      aadhaarLocality: "",
 
       // Residential Address
-      address: "456 Park Avenue",
-      pincode: "110000",
-      state: "Delhi",
-      district: "New Delhi",
-      city: "Delhi",
-      locality: "Rajendra Place",
-      landmark: "Near Metro Station",
-      residenceType: "Owned",
-      yearsAtAddress: "5",
+      address: addressDetails?.current_address || "",
+      pincode: addressDetails?.current_pin_code || "",
+      state: addressDetails?.current_state || "",
+      district: "",
+      city: addressDetails?.current_city || "",
+      locality: "",
+      landmark: "",
+      residenceType: "",
+      yearsAtAddress: "",
     },
+
+    enableReinitialize: true,
 
     validationSchema: Yup.object({
       address: Yup.string().required("Address is required"),
