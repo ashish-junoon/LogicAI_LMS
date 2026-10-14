@@ -53,6 +53,8 @@ import PageManagement from './pages/master/PageManagement'
 import GroupManagement from './pages/master/GroupManagement'
 import LoanTypeMaster from './pages/master/LoanTypeMaster'
 import QuestionCategoryMaster from './pages/master/QuestionCategory'
+import TelecallerQuetionsMaster from './pages/master/TelecallerQuetionsMaster'
+import ManageRole from './pages/admin/ManageRole'
 
 function App() {
 
@@ -92,21 +94,23 @@ function App() {
           <Route path='/document-master' element={<DocumentMaster />} /> 
           <Route path='/loan-purpose-master' element={<LoanPurposeMaster />} /> 
           <Route path='/lead-source-master' element={<LeadSource />} /> 
+          <Route path='/tellecaller-quetions-master' element={<TelecallerQuetionsMaster />} /> 
           {/* <Route path='/product-master' element={<CreateLoanProduct />} />  */}
 
           {/* ADMIN */}
-          <Route path='/manage-user' element={<ManageUser />} /> 
-          <Route path='/manage-page' element={<PageManagement />} /> 
-          <Route path='/manage-group' element={<GroupManagement />} /> 
+          <Route path='/admin/manage-user' element={<ManageUser />} /> 
+          <Route path='/admin/manage-role' element={<ManageRole />} /> 
+          <Route path='/admin/manage-page' element={<PageManagement />} /> 
+          <Route path='/admin/manage-group' element={<GroupManagement />} /> 
 
           {/* Leads Section  */}
-          <Route path='/leads-draft' element={<DraftLeads />} />
-          <Route path='/leads-new' element={<NewLeads />} />
-          <Route path='/leads-assesment' element={<CreditLeads />} />
-          <Route path='/leads-disbursement' element={<DisbursementList />} />
-          <Route path='/leads-rejected' element={<RejectedLeads />} />
-          <Route path='/leads-kyc' element={<KycLeads />} />
-          <Route path='/leads-telecalling' element={<TelecallingLeads />} />
+          <Route path='/lead-management/leads-draft' element={<DraftLeads />} />
+          <Route path='/lead-management/leads-new' element={<NewLeads />} />
+          <Route path='/lead-management/leads-assesment' element={<CreditLeads />} />
+          <Route path='/lead-management/leads-disbursement' element={<DisbursementList />} />
+          <Route path='/lead-management/leads-rejected' element={<RejectedLeads />} />
+          <Route path='/lead-management/leads-kyc' element={<KycLeads />} />
+          <Route path='/lead-management/leads-telecalling' element={<TelecallingLeads />} />
 
           {/* Loan Section  */}
           <Route path='/loan-all' element={<AllLoans />} />

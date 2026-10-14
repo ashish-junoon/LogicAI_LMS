@@ -14,7 +14,7 @@ const LeadDetails = () => {
   const applicationId = searchParams.get('application_id') || routeLead?.application_id
   const [customerDetails, setCustomerDetails] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [error, setError] = useState('')  
 
   useEffect(() => {
     let isCurrent = true
@@ -80,6 +80,9 @@ const LeadDetails = () => {
         ]),
       )
     : null
+    
+    console.log(scopedDetails)
+
   const marketSurvey = scopedDetails?.marketSurvey?.[0]
   const personalKyc = scopedDetails?.personalKyc?.[0]
   const loanDetails = scopedDetails?.loanDetails?.[0]

@@ -442,13 +442,13 @@ export const sidebarData = [
     title: "Lead Management",
     icon: MdLeaderboard,
     children: [
-      { title: "Draft Leads", path: "/leads-draft" },
-      { title: "New Leads", path: "/leads-new" },
-      { title: "Credit Analysis", path: "/leads-assesment" },
-      { title: "Loan Verification", path: "/leads-kyc" },
-      { title: "Telecalling", path: "/leads-telecalling" },
-      { title: "Disbursement", path: "/leads-disbursement" },
-      { title: "Rejected Lead", path: "/leads-rejected" },
+      { title: "Draft Leads", path: "/lead-management/leads-draft" },
+      { title: "New Leads", path: "/lead-management/leads-new" },
+      { title: "Credit Analysis", path: "/lead-management/leads-assesment" },
+      { title: "Loan Verification", path: "/lead-management/leads-kyc" },
+      { title: "Telecalling", path: "/lead-management/leads-telecalling" },
+      { title: "Disbursement", path: "/lead-management/leads-disbursement" },
+      { title: "Rejected Lead", path: "/lead-management/leads-rejected" },
     ],
   },
   {
@@ -501,8 +501,8 @@ export const sidebarData = [
     title: "Admin",
     icon: MdOutlineAdminPanelSettings,
     children: [
-      { title: "Manage Users", path: "/manage-user" },
-      { title: "Manage Page", path: "/manage-page" },
+      { title: "Manage Users", path: "/admin/manage-user" },
+      { title: "Manage Page", path: "/admin/manage-page" },
     ],
   },
 ];

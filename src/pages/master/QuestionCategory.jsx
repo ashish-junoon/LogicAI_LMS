@@ -336,27 +336,7 @@ const QuestionCategoryMaster = () => {
         {/* HEADER */}
         <div className="flex justify-between items-center px-4">
           <div className="flex gap-4 items-center">
-            <button
-              type="button"
-              onClick={() => navigate(-1)}
-              className="
-              flex items-center
-              gap-2
-              py-1.5
-              px-3
-              rounded-sm
-              bg-primary
-              hover:bg-primary/90
-              cursor-pointer
-              text-sm
-              font-medium
-              text-white
-            "
-            >
-              <Icon name="MdArrowBackIos" size={15} color="white" />
-
-              Back
-            </button>
+            
             <div>
               <h2 className="text-md font-medium text-slate-800">
                 Question Category Master
@@ -368,6 +348,18 @@ const QuestionCategoryMaster = () => {
             </div>
           </div>
 
+          <div className="flex gap-2 items-center">
+            <button
+            type="button"
+            onClick={()=> navigate(-1)}
+            className="flex items-center
+              gap-2 py-1.5 px-3 rounded-sm border border-primary cursor-pointer text-sm font-medium text-primary hover:bg-primary/20"
+          >
+            {/* <Icon name="RiAddLine" size={15} color="white" /> */}
+
+            Go Back
+          </button>
+          
           <button
             type="button"
             onClick={handleAddCategory}
@@ -389,6 +381,7 @@ const QuestionCategoryMaster = () => {
 
             Add Category
           </button>
+          </div>
         </div>
 
         {/* TABLE */}

@@ -436,7 +436,7 @@ const PageManagement = () => {
 
           <div className="flex items-center gap-2">
             <Link
-              to="/manage-group"
+              to="/admin/manage-group"
               className="
                 text-sm py-1.5 px-3 rounded-sm bg-primary
                 hover:bg-primary/90 text-white flex items-center gap-2
