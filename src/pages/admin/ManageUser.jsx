@@ -13,7 +13,12 @@ import SelectInput from "../../components/fields/SelectInput";
 import Button from "../../components/utils/Button";
 
 import { GetAllUsers, CreateUsers, UpdateUsers } from "../../api/userApi.js";
-import { GetAllBranches, GetAllDepartments, GetAllDesignations } from "../../api/mastersApi.js";
+import {
+  GetAllBranches,
+  GetAllDepartments,
+  GetAllDesignations,
+} from "../../api/mastersApi.js";
+import { Link } from "react-router-dom";
 
 const initialValues = {
   full_name: "",
@@ -27,7 +32,7 @@ const initialValues = {
   designation: "",
   role: "",
   report_view: true,
-  is_active: false
+  is_active: false,
 };
 
 const ManageUser = () => {
@@ -120,7 +125,7 @@ const ManageUser = () => {
       setIsLoading(false);
     }
   };
-  
+
   // =========================================================
   // FETCH ALL BRANCH
   // =========================================================
@@ -155,7 +160,7 @@ const ManageUser = () => {
   useEffect(() => {
     fetchAllDesignations();
     fetchAllDepartments();
-    fetchAllBranches()
+    fetchAllBranches();
   }, []);
 
   // GET ALL USERS
@@ -251,7 +256,7 @@ const ManageUser = () => {
           report_view:
             values.report_view === true || values.report_view === "true",
           created_by: "Admin",
-          is_active: values.is_active
+          is_active: values.is_active,
         };
 
         let response;
@@ -517,16 +522,29 @@ const ManageUser = () => {
         <div className="flex justify-between items-center px-4 mb-4">
           <div className="text-md font-medium">Manage User</div>
 
-          <button
-            type="button"
-            onClick={handleAddUser}
-            className="flex items-center gap-2 p-1.5 px-3 rounded-sm
+          <div className="flex items-center gap-2">
+            <Link
+              to="/admin/manage-role"
+              className="
+                text-sm py-1.5 px-3 rounded-sm bg-primary
+                hover:bg-primary/90 text-white flex items-center gap-2
+              "
+            >
+              <Icon name="RiGroupLine" size={15} color="white" />
+              Add Group
+            </Link>
+
+            <button
+              type="button"
+              onClick={handleAddUser}
+              className="flex items-center gap-2 p-1.5 px-3 rounded-sm
               bg-primary hover:bg-primary/90 cursor-pointer
               text-sm font-medium text-white"
-          >
-            Add User
-            <FaUser />
-          </button>
+            >
+              Add User
+              <FaUser />
+            </button>
+          </div>
         </div>
 
         {/* TABLE */}

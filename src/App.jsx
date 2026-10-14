@@ -53,6 +53,8 @@ import PageManagement from './pages/master/PageManagement'
 import GroupManagement from './pages/master/GroupManagement'
 import LoanTypeMaster from './pages/master/LoanTypeMaster'
 import QuestionCategoryMaster from './pages/master/QuestionCategory'
+import TelecallerQuetionsMaster from './pages/master/TelecallerQuetionsMaster'
+import ManageRole from './pages/admin/ManageRole'
 
 function App() {
 
@@ -92,10 +94,12 @@ function App() {
           <Route path='/document-master' element={<DocumentMaster />} /> 
           <Route path='/loan-purpose-master' element={<LoanPurposeMaster />} /> 
           <Route path='/lead-source-master' element={<LeadSource />} /> 
+          <Route path='/tellecaller-quetions-master' element={<TelecallerQuetionsMaster />} /> 
           {/* <Route path='/product-master' element={<CreateLoanProduct />} />  */}
 
           {/* ADMIN */}
           <Route path='/admin/manage-user' element={<ManageUser />} /> 
+          <Route path='/admin/manage-role' element={<ManageRole />} /> 
           <Route path='/admin/manage-page' element={<PageManagement />} /> 
           <Route path='/admin/manage-group' element={<GroupManagement />} /> 
 

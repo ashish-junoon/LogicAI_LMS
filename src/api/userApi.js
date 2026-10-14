@@ -36,6 +36,40 @@ export const UpdateUsers = async (req) => {
     }
 }
 
+// ?===========================
+// * USER MANAGEMENT API'S
+// ?===========================
+
+export const GetAllRoles = async (req) => {
+    try {
+        const response = await api.get("/Admin/GetAllRoles", req);
+        return response.data;
+    } catch (error) {
+        console.error("GetAllRoles:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const CreateRole = async (req) => {
+    try {
+        const response = await api.post("/Admin/CreateRole", req);
+        return response.data;
+    } catch (error) {
+        console.error("CreateRole:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const UpdateRole = async (req) => {
+    try {
+        const response = await api.put("/Admin/UpdateRole", req);
+        return response.data;
+    } catch (error) {
+        console.error("UpdateRole:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
 
 
 // ?===========================

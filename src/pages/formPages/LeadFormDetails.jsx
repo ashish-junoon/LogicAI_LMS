@@ -119,10 +119,10 @@ const LeadFormDetails = ({ permisions, customerDetails }) => {
       name: "Co Borrower/Guarantor's Details",
       permission: permisions?.guarantorInfo,
     },
-    // {
-    //   name: "Employment Information",
-    //   permission: permisions?.employementInfo,
-    // },
+    {
+      name: "Employment Information",
+      permission: permisions?.employementInfo,
+    },
   ];
 
   const visibleTabs = tabs.filter((tab) => tab.permission !== false);

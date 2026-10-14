@@ -1061,7 +1061,7 @@
 
 // export default LiveKYC;
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   RiSendPlaneLine,
   RiVideoChatLine,
@@ -1075,6 +1075,7 @@ import {
 
 import Icon from "../utils/Icon";
 import Button from "../utils/Button";
+import { GetAllTelecallerQuestions } from "../../api/mastersApi";
 
 const PASSING_SCORE = 80;
 
@@ -1082,47 +1083,64 @@ const LiveKYC = () => {
   const [kycStatus, setKycStatus] = useState("pending");
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
+  const [questions, setQuetions] = useState([])
 
-  const questions = [
-    {
-      question: "What is your full name?",
-      answer: "Customer should verbally confirm their full name.",
-    },
-    {
-      question: "Please show your original Aadhaar Card to the camera.",
-      answer:
-        "Customer should show their original Aadhaar Card clearly to the camera.",
-    },
-    {
-      question: "What is your Aadhaar number?",
-      answer: "Customer should verbally confirm their Aadhaar number.",
-    },
-    {
-      question: "Please show your PAN Card clearly to the camera.",
-      answer:
-        "Customer should show their original PAN Card clearly to the camera.",
-    },
-    {
-      question: "What is your PAN number?",
-      answer: "Customer should verbally confirm their PAN number.",
-    },
-    {
-      question: "What is the loan amount you have applied for?",
-      answer:
-        "Customer should verbally confirm the loan amount they have applied for.",
-    },
-    {
-      question: "Do you consent to taking this loan from [Company Name]?",
-      answer:
-        "Customer should clearly confirm whether they consent to taking the loan from [Company Name].",
-    },
-    {
-      question:
-        "Please confirm the purpose for which you are applying for this loan.",
-      answer:
-        "Customer should verbally state the purpose of applying for the loan.",
-    },
-  ];
+  // const questions = [
+  //   {
+  //     question: "What is your full name?",
+  //     answer: "Customer should verbally confirm their full name.",
+  //   },
+  //   {
+  //     question: "Please show your original Aadhaar Card to the camera.",
+  //     answer:
+  //       "Customer should show their original Aadhaar Card clearly to the camera.",
+  //   },
+  //   {
+  //     question: "What is your Aadhaar number?",
+  //     answer: "Customer should verbally confirm their Aadhaar number.",
+  //   },
+  //   {
+  //     question: "Please show your PAN Card clearly to the camera.",
+  //     answer:
+  //       "Customer should show their original PAN Card clearly to the camera.",
+  //   },
+  //   {
+  //     question: "What is your PAN number?",
+  //     answer: "Customer should verbally confirm their PAN number.",
+  //   },
+  //   {
+  //     question: "What is the loan amount you have applied for?",
+  //     answer:
+  //       "Customer should verbally confirm the loan amount they have applied for.",
+  //   },
+  //   {
+  //     question: "Do you consent to taking this loan from [Company Name]?",
+  //     answer:
+  //       "Customer should clearly confirm whether they consent to taking the loan from [Company Name].",
+  //   },
+  //   {
+  //     question:
+  //       "Please confirm the purpose for which you are applying for this loan.",
+  //     answer:
+  //       "Customer should verbally state the purpose of applying for the loan.",
+  //   },
+  // ];
+
+  const fetchAllTelecallerQuestions = async () => {
+    try {
+      const response = await GetAllTelecallerQuestions()
+      if(response.status){
+        const transformedData = response.data?.filter((d)=> d.is_active)
+        setQuetions(transformedData)
+      }
+    } catch (error) {
+      
+    }
+  }
+
+  useEffect(()=> {
+    fetchAllTelecallerQuestions()
+  },[])
 
   // =========================================================
   // SEND LIVE KYC LINK
@@ -1587,7 +1605,7 @@ const LiveKYC = () => {
                                     : "text-gray-600"
                             }`}
                           >
-                            {question.question}
+                            {question.telecaller_question}
                           </p>
 
                           {/* ANSWER */}

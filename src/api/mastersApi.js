@@ -671,3 +671,38 @@ export const CreateVendor = async (req) => {
         throw error;
     }
 }
+
+
+// ?===========================
+// * TELLECALLER QUETION MASTER API'S
+// ?===========================
+
+export const GetAllTelecallerQuestions = async (req) => {
+    try {
+        const response = await api.get("/Master/GetAllTelecallerQuestions", req);
+        return response.data;
+    } catch (error) {
+        console.error("GetAllTelecallerQuestions:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const UpdateTelecallerQuestion = async (req) => {
+    try {
+        const response = await api.put("/Master/UpdateTelecallerQuestion", req);
+        return response.data;
+    } catch (error) {
+        console.error("UpdateTelecallerQuestion:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const CreateTelecallerQuestion = async (req) => {
+    try {
+        const response = await api.post("/Master/CreateTelecallerQuestion", req);
+        return response.data;
+    } catch (error) {
+        console.error("CreateTelecallerQuestion:", error.response?.data || error.message);
+        throw error;
+    }
+}

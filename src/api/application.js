@@ -50,3 +50,14 @@ export const CustomerDetails = async (req) => {
         throw error;
     }
 };
+
+
+export const SaveAdditionalRemark = async (req) => {
+    try {
+        const response = await api.post("/LOS/SaveAdditionalRemark", req);
+        return response.data;
+    } catch (error) {
+        console.error("SaveAdditionalRemark:", error.response?.data || error.message);
+        throw error;
+    }
+};
