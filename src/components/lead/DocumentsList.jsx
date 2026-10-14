@@ -1,26 +1,7 @@
-import {
-  RiDownloadLine,
-  RiEyeLine,
-  RiFileImageLine,
-  RiFilePdfLine,
-  RiUploadCloud2Line,
-} from "react-icons/ri";
 import Icon from "../utils/Icon";
-import { useFormik } from "formik";
-import Modal from "../utils/Modal";
-import SelectInput from "../fields/SelectInput";
-import { documentType } from "../../content/data";
-import { useEffect, useRef, useState } from "react";
-import Button from "../utils/Button";
-import { toast } from "react-toastify";
-import * as Yup from "yup";
-import ErrorMsg from "../utils/ErrorMsg";
 import UploadDocuments from "./UploadDocuments";
 
 const DocumentsList = ({ permission, documents = [] }) => {
-  const [open, setOpen] = useState(false);
-  const fileInputRef = useRef(null);
-
   const getFileIcon = (type) => {
     if (type === "PDF")
       return <Icon name="RiFilePdfLine" color="#5050b8" size={20} />;

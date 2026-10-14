@@ -1,18 +1,24 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 // Components
-import VideoKYC from "../common/VideoKYC";
 import Icon from "../utils/Icon";
 import RemarksHistory from "./RemarksHistory";
-import ESignatureStatus from "../common/ESignatureStatus";
-import LeadForm from "../../pages/formPages/LeadForm";
 import DocumentsList from "./DocumentsList";
 import LeadFormDetails from "../../pages/formPages/LeadFormDetails";
 import LiveKYC from "../common/LiveKYC";
 import DocumentSignature from "../common/DocumentSignature";
 
-const KycWrapper = ({}) => {
+const KycWrapper = ({ customerDetails }) => {
   const [activeSection, setActiveSection] = useState("document");
+  const permisions = {
+    personalInfo: true,
+    kycInfo: true,
+    addressInfo: true,
+    bankInfo: true,
+    guarantorInfo: true,
+    employementInfo: true,
+  };
+
   const sections = [
     { id: "document", label: "Documents", icon: "PiBookOpenTextDuotone" },
     // { id: "videokyc", label: "Video KYC", icon: "RiShieldCheckLine" },
@@ -24,18 +30,18 @@ const KycWrapper = ({}) => {
   const renderSection = () => {
     switch (activeSection) {
       case "user":
-        return <LeadFormDetails />;
+        return <LeadFormDetails permisions={permisions} customerDetails={customerDetails} />;
       case "videokyc":
         return <>
         {/* <VideoKYC /> 
         <br />  */}
         <LiveKYC /></>
       case "remarks":
-        return <RemarksHistory permission={true} />;
+        return <RemarksHistory permission={true} remarks={customerDetails?.history || []} />;
       case "esign":
         return <DocumentSignature />;
       case "document":
-        return <DocumentsList permission={true} />;
+        return <DocumentsList permission={true} documents={customerDetails?.documents || []} />;
       default:
         return null;
     }
