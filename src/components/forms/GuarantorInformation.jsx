@@ -19,26 +19,28 @@ import { relationList } from "../../content/data";
 const GuarantorInformation = ({
   onNext,
   permission ,
+  details,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const formik = useFormik({
     initialValues: {
-      guarantor1Name: "Amit Singh",
-      guarantor1Mobile: "XXXXXX",
-      guarantor1Relation: "Friend",
-      guarantor1Pan: "XXXXXX",
-      guarantor1Aadhaar: "XXXXXX",
-      guarantor1Add: "456 Friends Colony, New Delhi",
+      guarantor1Name: details?.guarantor_name || "",
+      guarantor1Mobile: details?.guarantor_mobile === "System.Byte[]" ? "" : details?.guarantor_mobile || "",
+      guarantor1Relation: details?.guarantor_relation || "",
+      guarantor1Pan: details?.guarantor_pan === "System.Byte[]" ? "" : details?.guarantor_pan || "",
+      guarantor1Aadhaar: details?.guarantor_aahaar_number === "System.Byte[]" ? "" : details?.guarantor_aahaar_number || "",
+      guarantor1Add: details?.guarantor_address || "",
 
-      coborrowerName: "Priya Sharma",
-      coborrowerMobile: "XXXXXX",
-      coborrowerRelation: "Spouse",
-      coborrowerPan: "XXXXXX",
-      coborrowerAadhaar: "XXXXXX",
-      coborrowerAdd:
-        "789 Co-operator Housing Society, Mumbai",
+      coborrowerName: details?.co_borrower_name || "",
+      coborrowerMobile: details?.co_borrower_mobile === "System.Byte[]" ? "" : details?.co_borrower_mobile || "",
+      coborrowerRelation: details?.co_borrower_relation || "",
+      coborrowerPan: details?.co_borrower_pan === "System.Byte[]" ? "" : details?.co_borrower_pan || "",
+      coborrowerAadhaar: details?.co_borrower_aahaar_number === "System.Byte[]" ? "" : details?.co_borrower_aahaar_number || "",
+      coborrowerAdd: details?.co_borrower_address || "",
     },
+
+    enableReinitialize: true,
 
     // validationSchema: Yup.object({
     //   ...

@@ -94,9 +94,9 @@ import MultipleBankInformation from "../../components/forms/MultipleBankInformat
 import GuarantorInformation from "../../components/forms/GuarantorInformation";
 import EmploymentInformation from "../../components/forms/EmploymentInformation";
 
-const LeadFormDetails = ({ permisions, loanData }) => {
-  console.log("LeadFormDetails", loanData)
+const LeadFormDetails = ({ permisions, customerDetails }) => {
   const [selected, setSelected] = useState("Personal Information");
+  console.log("customerDetails", customerDetails)
 
   const tabs = [
     {
@@ -119,10 +119,10 @@ const LeadFormDetails = ({ permisions, loanData }) => {
       name: "Co Borrower/Guarantor's Details",
       permission: permisions?.guarantorInfo,
     },
-    {
-      name: "Employment Information",
-      permission: permisions?.employementInfo,
-    },
+    // {
+    //   name: "Employment Information",
+    //   permission: permisions?.employementInfo,
+    // },
   ];
 
   const visibleTabs = tabs.filter((tab) => tab.permission !== false);
@@ -130,19 +130,19 @@ const LeadFormDetails = ({ permisions, loanData }) => {
   const renderTabs = (tab) => {
     switch (tab) {
       case "Personal Information":
-        return <PersonalInformation permission={permisions?.personalInfo} />;
+        return <PersonalInformation permission={permisions?.personalInfo} marketSurvey={customerDetails?.marketSurvey?.[0]} personalKyc={customerDetails?.personalKyc?.[0]} />;
 
       case "KYC Details":
-        return <KycInformation permission={permisions?.kycInfo} />;
+        return <KycInformation permission={permisions?.kycInfo} personalKyc={customerDetails?.personalKyc?.[0]} documents={customerDetails?.documents || []} />;
 
       case "Address Information":
-        return <AddressInformation permission={permisions?.addressInfo} />;
+        return <AddressInformation permission={permisions?.addressInfo} addressDetails={customerDetails?.addressDetails?.[0]} />;
 
       case "Bank Details":
-        return <MultipleBankInformation permission={permisions?.bankInfo} />;
+        return <MultipleBankInformation permission={permisions?.bankInfo} bankDetails={customerDetails?.bankDetails || []} />;
 
       case "Co Borrower/Guarantor's Details":
-        return <GuarantorInformation permission={permisions?.guarantorInfo} />;
+        return <GuarantorInformation permission={permisions?.guarantorInfo} details={customerDetails?.coBorrowerGuarantor?.[0]} />;
 
       case "Employment Information":
         return (

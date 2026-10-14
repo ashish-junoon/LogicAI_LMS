@@ -359,24 +359,24 @@ const products = [
   },
 ];
 
-const initialLoanProduct = {
-  productId: "home-fixed",
-  productName: "Home Loan - Fixed Rate",
-  productType: "Home Loan",
-  loanAmount: "5000000",
-  interestRate: "8.5%",
-  tenure: 240,
-  processingFee: "1%",
-  emiOption: "Fixed EMI",
-  purpose: "Purchase of new house",
-};
+const toLoanProduct = (loanData) => ({
+  productId: "",
+  productName: loanData?.product_code || loanData?.loan_type || "",
+  productType: loanData?.loan_type || "",
+  loanAmount: loanData?.loan_amount == null ? "" : String(loanData.loan_amount),
+  interestRate: loanData?.interest_rate == null ? "" : `${loanData.interest_rate}%`,
+  tenure: loanData?.tenure || "",
+  processingFee: loanData?.processing_fee == null ? "" : String(loanData.processing_fee),
+  emiOption: "",
+  purpose: loanData?.purpose_of_loan || "",
+});
 
 const formatAmount = (amount) =>
   amount ? `₹${Number(amount).toLocaleString("en-IN")}` : "-";
 
-const LoanAnalysis = ({ permission = false }) => {
-  const [loanProduct, setLoanProduct] = useState(initialLoanProduct);
-  const [editForm, setEditForm] = useState(initialLoanProduct);
+const LoanAnalysis = ({ permission = false, loanData, applicationId }) => {
+  const [loanProduct, setLoanProduct] = useState(() => toLoanProduct(loanData));
+  const [editForm, setEditForm] = useState(() => toLoanProduct(loanData));
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   // Selected product details
@@ -478,7 +478,7 @@ const LoanAnalysis = ({ permission = false }) => {
           </div>
 
           <span className="text-[10px] font-medium text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">
-            LA-1250
+            {loanData?.application_id || applicationId || "-"}
           </span>
         </div>
 

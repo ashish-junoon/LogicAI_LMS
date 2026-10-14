@@ -16,22 +16,26 @@ import Button from "../utils/Button";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import DownloadDoc from "../fields/DownloadDoc";
-import { useLoanDetails } from "../../provider/loanContext";
 
-const KycInformation = ({ onNext, permission }) => {
-  const { loanDetails } = useLoanDetails
+const KycInformation = ({ onNext, permission, personalKyc, documents = [] }) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const [verified, setVerified] = useState({
     pan: false,
     aadhaar: false,
   });
+  const getDocumentUrl = (pattern) =>
+    documents.find((document) => pattern.test(document?.document_type || ""))
+      ?.document_path || "";
+  const aadhaarFrontUrl = getDocumentUrl(/aadhaar.*front|front.*aadhaar/i);
+  const aadhaarBackUrl = getDocumentUrl(/aadhaar.*back|back.*aadhaar/i);
+  const panDocumentUrl = getDocumentUrl(/\bpan\b/i);
 
   const formik = useFormik({
     initialValues: {
-      panNumber: loanDetails?.pan_card_number ?? "ABCDE3333F",
+      panNumber: personalKyc?.pan_number || "",
       panFile: null,
-      aadhaarNumber: loanDetails?.aadhaar_number ?? "987654321000",
+      aadhaarNumber: personalKyc?.uid_number || "",
       aadhaarFront: null,
       aadhaarBack: null,
     },
@@ -251,7 +255,7 @@ const KycInformation = ({ onNext, permission }) => {
                   )}
 
                   {/* Read-only verified badge */}
-                  {!isEditing && (
+                  {!isEditing && formik.values.aadhaarNumber && (
                     <div
                       className="
                       absolute
@@ -270,7 +274,7 @@ const KycInformation = ({ onNext, permission }) => {
                     "
                     >
                       <RiCheckboxCircleFill size={14} />
-                      Verified
+                      Provided
                     </div>
                   )}
                 </div>
@@ -307,7 +311,11 @@ const KycInformation = ({ onNext, permission }) => {
               </div>
             ) : (
               <div>
-                <DownloadDoc fileUrl="" label="Aadhaar Front" />
+                {aadhaarFrontUrl ? (
+                  <DownloadDoc fileUrl={aadhaarFrontUrl} label="Aadhaar Front" />
+                ) : (
+                  <p className="text-xs text-gray-500">No Aadhaar front document uploaded</p>
+                )}
               </div>
             )}
 
@@ -336,7 +344,11 @@ const KycInformation = ({ onNext, permission }) => {
               </div>
             ) : (
               <div>
-                <DownloadDoc fileUrl="" label="Aadhaar Back" />
+                {aadhaarBackUrl ? (
+                  <DownloadDoc fileUrl={aadhaarBackUrl} label="Aadhaar Back" />
+                ) : (
+                  <p className="text-xs text-gray-500">No Aadhaar back document uploaded</p>
+                )}
               </div>
             )}
 
@@ -448,7 +460,11 @@ const KycInformation = ({ onNext, permission }) => {
               </div>
             ) : (
               <div>
-                <DownloadDoc fileUrl="" label="Aadhaar Front" />
+                {panDocumentUrl ? (
+                  <DownloadDoc fileUrl={panDocumentUrl} label="PAN Card" />
+                ) : (
+                  <p className="text-xs text-gray-500">No PAN document uploaded</p>
+                )}
               </div>
             )}
           </div>

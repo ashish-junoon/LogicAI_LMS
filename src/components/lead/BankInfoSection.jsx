@@ -1,35 +1,27 @@
 import Icon from "../utils/Icon";
 
-const BankInfoSection = () => {
-  const bankData = {
-    accountHolderName: "Rahul Kumar",
-    accountNumber: "XXXX-XXXX-XXXX-1234",
-    accountType: "Savings",
-    bankName: "HDFC Bank",
-    branchName: "Electronic City Branch",
-    ifscCode: "HDFC0001234",
-    upiId: "rahul.kumar@hdfc",
-    averageBalance: 75000,
-  };
+const BankInfoSection = ({ bankData, isVerified }) => {
+  const readableValue = (value) =>
+    value && value !== "System.Byte[]" ? value : "-";
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         <div className="px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
           <p className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Name</p>
-          <p className="text-xs font-semibold text-gray-800 mt-0.5 truncate">{bankData.accountHolderName}</p>
+          <p className="text-xs font-semibold text-gray-800 mt-0.5 truncate">{readableValue(bankData?.account_holder_name)}</p>
         </div>
         <div className="px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
           <p className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Bank</p>
-          <p className="text-xs font-semibold text-gray-800 mt-0.5 truncate">{bankData.bankName}</p>
+          <p className="text-xs font-semibold text-gray-800 mt-0.5 truncate">{readableValue(bankData?.bank_name)}</p>
         </div>
         <div className="px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
           <p className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Account</p>
-          <p className="text-xs font-semibold text-gray-800 mt-0.5">{bankData.accountNumber}</p>
+          <p className="text-xs font-semibold text-gray-800 mt-0.5">{readableValue(bankData?.account_number)}</p>
         </div>
         <div className="px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
           <p className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">IFSC</p>
-          <p className="text-xs font-semibold text-gray-800 mt-0.5">{bankData.ifscCode}</p>
+          <p className="text-xs font-semibold text-gray-800 mt-0.5">{readableValue(bankData?.ifsc_code)}</p>
         </div>
       </div>
 
@@ -38,9 +30,11 @@ const BankInfoSection = () => {
           <Icon name="RiSecurePaymentLine" color="#5050b8" />
           <div>
             <h4 className="text-xs font-semibold text-gray-800">Bank Verification Status</h4>
-            <p className="text-xs text-gray-600 mt-0.5">Bank account has been verified successfully</p>
-            <span className="text-[10px] text-green-600 bg-green-100 px-2 py-0.5 rounded-full font-medium inline-block mt-1">
-              ✓ Verified
+            <p className="text-xs text-gray-600 mt-0.5">
+              {isVerified ? "Bank details have been submitted." : "Bank details are pending."}
+            </p>
+            <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium inline-block mt-1 ${isVerified ? "text-green-600 bg-green-100" : "text-amber-700 bg-amber-100"}`}>
+              {isVerified ? "Submitted" : "Pending"}
             </span>
           </div>
         </div>

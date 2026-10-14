@@ -1,621 +1,813 @@
-import React, { useState } from "react";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import {
-  RiAddLine,
-  RiEditLine,
-  RiDeleteBinLine,
-  RiEyeLine,
-} from "react-icons/ri";
+import React, { useEffect, useState, useMemo } from "react";
+import Icon from "../../components/utils/Icon";
 import Table from "../../components/Table";
 import Modal from "../../components/utils/Modal";
 import TextInput from "../../components/fields/TextInput";
 import SelectInput from "../../components/fields/SelectInput";
+import TogleInput from "../../components/fields/TogleInput";
 import Button from "../../components/utils/Button";
+import { toast } from "react-toastify";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import {
+  CreateLoanProduct,
+  GetAllLoanProducts,
+  UpdateLoanProduct,
+  GetAllLoanTypes,
+} from "../../api/mastersApi";
+
+const CALCULATION_METHOD_OPTIONS = [
+  { label: "Simple", value: "Simple" },
+  { label: "Compound", value: "Compound" },
+  { label: "Reducing Balance", value: "Reducing Balance" },
+  { label: "Flat", value: "Flat" },
+];
+
+const YES_NO_OPTIONS = [
+  { label: "Yes", value: "Yes" },
+  { label: "No", value: "No" },
+];
 
 const LoanProductMaster = () => {
-  const [products, setProducts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null);
-  const [viewingProduct, setViewingProduct] = useState(null);
+  const [productList, setProductList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [editingProductId, setEditingProductId] = useState(null);
+  const [loanTypeOptions, setLoanTypeOptions] = useState([]); // <-- dynamic loan types
 
-  // Initial form values
-  const initialValues = {
-    productName: "",
-    category: "",
-    principleAmount: "",
-    lpf: "",
-    interestRate: "",
-    tenure: "",
-    aprRate: "",
-    eirRate: "",
-    mrrRate: "",
-    calculationMethod: "",
-    disbursementChargesRate: "",
-    productId: "",
-    membershipFee: "",
-    preClosureRate: "",
-    flexiEmi: "",
+  // =========================================================
+  // FETCH ALL LOAN TYPES (for dropdown)
+  // =========================================================
+  const fetchLoanTypes = async () => {
+    try {
+      const response = await GetAllLoanTypes();
+      // assume response.data is an array of loan type objects
+      const options = (response?.data || []).filter((item) => item?.is_active).map((item) => ({
+        label: item.loan_type,
+        value: String(item.id),
+      }));
+      setLoanTypeOptions(options);
+    } catch (error) {
+      console.error("Error fetching loan types:", error);
+      toast.error(
+        error?.response?.data?.title ||
+          error?.response?.data?.errors?.request?.[0] ||
+          error?.message ||
+          "Failed to load loan types!"
+      );
+    }
   };
 
-  // Validation schema
-  const validationSchema = Yup.object({
-    productName: Yup.string().required("Product name is required"),
-    category: Yup.string().required("Category is required"),
-    principleAmount: Yup.number()
-      .typeError("Must be a number")
-      .positive("Must be positive")
-      .required("Principle amount is required"),
-    lpf: Yup.number()
-      .typeError("Must be a number")
-      .min(0, "Must be at least 0")
-      .required("LPF is required"),
-    interestRate: Yup.number()
-      .typeError("Must be a number")
-      .min(0, "Must be at least 0")
-      .required("Interest rate is required"),
-    tenure: Yup.number()
-      .typeError("Must be a number")
-      .positive("Must be positive")
-      .integer("Must be a whole number")
-      .required("Tenure is required"),
-    aprRate: Yup.number()
-      .typeError("Must be a number")
-      .min(0, "Must be at least 0")
-      .required("APR rate is required"),
-    eirRate: Yup.number()
-      .typeError("Must be a number")
-      .min(0, "Must be at least 0")
-      .required("EIR rate is required"),
-    mrrRate: Yup.number()
-      .typeError("Must be a number")
-      .min(0, "Must be at least 0")
-      .required("MRR rate is required"),
-    calculationMethod: Yup.string().required("Calculation method is required"),
-    disbursementChargesRate: Yup.number()
-      .typeError("Must be a number")
-      .min(0, "Must be at least 0")
-      .required("Disbursement charges rate is required"),
-    productId: Yup.string().required("Product ID is required"),
-    membershipFee: Yup.number()
-      .typeError("Must be a number")
-      .min(0, "Must be at least 0")
-      .required("Membership fee is required"),
-    preClosureRate: Yup.number()
-      .typeError("Must be a number")
-      .min(0, "Must be at least 0")
-      .required("Pre-closure rate is required"),
-    flexiEmi: Yup.string().required("Flexi EMI option is required"),
-  });
+  // Helper to get label from value
+  const loanTypeLabel = (val) => {
+    const option = loanTypeOptions.find(
+      (o) => Number(o.value) === Number(val)
+    );
+    return option?.label || "-";
+  };
 
-  const formik = useFormik({
-    initialValues,
-    // validationSchema,
-    onSubmit: (values) => {
-      if (editingProduct) {
-        // Update existing product
-        const updatedProducts = products.map((product) =>
-          product.id === editingProduct.id
-            ? { ...values, id: product.id, createdAt: product.createdAt }
-            : product
-        );
-        setProducts(updatedProducts);
+  // =========================================================
+  // FETCHING ALL LOAN PRODUCTS
+  // =========================================================
+  const fetchAllProducts = async () => {
+    try {
+      setIsLoading(true);
+      const response = await GetAllLoanProducts();
+      if (response?.status) {
+        const transformedData = (response.data || []).map((d, i) => ({
+          ...d,
+          sn: i + 1,
+        }));
+        setProductList(transformedData);
       } else {
-        // Add new product
-        const newProduct = {
-          ...values,
-          id: Date.now(),
-          createdAt: new Date().toISOString(),
-        };
-        setProducts([...products, newProduct]);
+        toast.info(response?.msg || "Unable to fetch loan products");
       }
-      handleCloseModal();
-    },
-  });
-
-  const handleOpenModal = (product = null) => {
-    if (product) {
-      setEditingProduct(product);
-      formik.setValues({
-        productName: product.productName,
-        category: product.category,
-        principleAmount: product.principleAmount,
-        lpf: product.lpf,
-        interestRate: product.interestRate,
-        tenure: product.tenure,
-        aprRate: product.aprRate,
-        eirRate: product.eirRate,
-        mrrRate: product.mrrRate,
-        calculationMethod: product.calculationMethod,
-        disbursementChargesRate: product.disbursementChargesRate,
-        productId: product.productId,
-        membershipFee: product.membershipFee,
-        preClosureRate: product.preClosureRate,
-        flexiEmi: product.flexiEmi,
-      });
-    } else {
-      setEditingProduct(null);
-      formik.resetForm();
+    } catch (error) {
+      toast.error(error?.message || "Something went wrong!");
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  // =========================================================
+  // TO ADD PRODUCT
+  // =========================================================
+  const handleAddProduct = () => {
+    setIsEdit(false);
+    setEditingProductId(null);
+    productFormik.resetForm();
     setIsModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setEditingProduct(null);
-    formik.resetForm();
+  // =========================================================
+  // TO EDIT PRODUCT
+  // =========================================================
+  const handleEditProduct = (row) => {
+    setIsEdit(true);
+    setEditingProductId(row.id);
+
+    productFormik.setValues({
+      product_id: row.product_id || "",
+      product_name: row.product_name || "",
+      loan_type: String(row.loan_type ?? ""),
+      category: row.category || "",
+      principle_amount: row.principle_amount ?? "",
+      lpf: row.lpf ?? "",
+      interest_rate: row.interest_rate ?? "",
+      tenure_months: row.tenure_months ?? "",
+      apr_rate: row.apr_rate ?? "",
+      eir_rate: row.eir_rate ?? "",
+      mrr_rate: row.mrr_rate ?? "",
+      calculation_method: row.calculation_method || "",
+      disbursement_charges_rate: row.disbursement_charges_rate ?? "",
+      membership_fee: row.membership_fee ?? "",
+      pre_closure_rate: row.pre_closure_rate ?? "",
+      flexi_emi: row.flexi_emi ? "Yes" : "No",
+      is_active: !!row.is_active,
+      created_by: "Admin",
+    });
+
+    setIsModalOpen(true);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      setProducts(products.filter((product) => product.id !== id));
+  // =========================================================
+  // TO TOGGLE PRODUCT STATUS
+  // =========================================================
+  const handleToggleStatus = async (row) => {
+    const nextStatus = !row?.is_active;
+
+    // Optimistic update
+    setProductList((prev) =>
+      prev.map((p) =>
+        p.id !== row?.id ? p : { ...p, is_active: nextStatus }
+      )
+    );
+
+    try {
+      const req = {
+        id: row?.id,
+        product_id: row?.product_id,
+        loan_type: Number(row?.loan_type),
+        product_name: row?.product_name,
+        category: row?.category,
+        principle_amount: Number(row?.principle_amount),
+        lpf: Number(row?.lpf),
+        interest_rate: Number(row?.interest_rate),
+        tenure_months: Number(row?.tenure_months),
+        apr_rate: Number(row?.apr_rate),
+        eir_rate: Number(row?.eir_rate),
+        mrr_rate: Number(row?.mrr_rate),
+        calculation_method: row?.calculation_method,
+        disbursement_charges_rate: Number(row?.disbursement_charges_rate),
+        membership_fee: Number(row?.membership_fee),
+        pre_closure_rate: Number(row?.pre_closure_rate),
+        flexi_emi: !!row?.flexi_emi,
+        is_active: nextStatus,
+        created_by: "Admin",
+      };
+
+      const response = await UpdateLoanProduct(req);
+
+      if (response?.status) {
+        toast.success(response?.msg || "Status updated successfully!");
+      } else {
+        // Revert on failure
+        setProductList((prev) =>
+          prev.map((p) =>
+            p.id !== row?.id ? p : { ...p, is_active: row?.is_active }
+          )
+        );
+        toast.info(response?.msg || "Unable to update status!");
+      }
+    } catch (error) {
+      // Revert on error
+      setProductList((prev) =>
+        prev.map((p) =>
+          p.id !== row?.id ? p : { ...p, is_active: row?.is_active }
+        )
+      );
+
+      console.error("Error toggling product status:", error);
+
+      toast.error(
+        error?.response?.data?.title ||
+          error?.response?.data?.errors?.request?.[0] ||
+          error?.message ||
+          "Something went wrong!"
+      );
     }
   };
 
-  const handleView = (product) => {
-    setViewingProduct(product);
-    setIsViewModalOpen(true);
-  };
+  // =========================================================
+  // DYNAMIC VALIDATION SCHEMA (depends on loanTypeOptions)
+  // =========================================================
+  const validationSchema = useMemo(
+    () =>
+      Yup.object({
+        product_id: Yup.string()
+          .trim()
+          .required("Product ID is required")
+          .max(50, "Product ID cannot exceed 50 characters"),
 
-  // Format currency
+        product_name: Yup.string()
+          .trim()
+          .required("Product name is required")
+          .min(2, "Product name must be at least 2 characters")
+          .max(100, "Product name cannot exceed 100 characters"),
+
+        loan_type: Yup.string()
+          .required("Loan type is required")
+          .test(
+            "is-valid-loan-type",
+            "Please select a valid loan type",
+            (value) => loanTypeOptions.some((o) => o.value === value)
+          ),
+
+        category: Yup.string()
+          .trim()
+          .required("Category is required"),
+
+        principle_amount: Yup.number()
+          .typeError("Principle amount must be a number")
+          .positive("Principle amount must be positive")
+          .required("Principle amount is required"),
+
+        lpf: Yup.number()
+          .typeError("LPF must be a number")
+          .min(0, "LPF must be at least 0")
+          .required("LPF is required"),
+
+        interest_rate: Yup.number()
+          .typeError("Interest rate must be a number")
+          .min(0, "Interest rate must be at least 0")
+          .required("Interest rate is required"),
+
+        tenure_months: Yup.number()
+          .typeError("Tenure must be a number")
+          .positive("Tenure must be positive")
+          .integer("Tenure must be a whole number")
+          .required("Tenure is required"),
+
+        apr_rate: Yup.number()
+          .typeError("APR rate must be a number")
+          .min(0, "APR rate must be at least 0")
+          .required("APR rate is required"),
+
+        eir_rate: Yup.number()
+          .typeError("EIR rate must be a number")
+          .min(0, "EIR rate must be at least 0")
+          .required("EIR rate is required"),
+
+        mrr_rate: Yup.number()
+          .typeError("MRR rate must be a number")
+          .min(0, "MRR rate must be at least 0")
+          .required("MRR rate is required"),
+
+        calculation_method: Yup.string()
+          .required("Calculation method is required")
+          .oneOf(
+            CALCULATION_METHOD_OPTIONS.map((o) => o.value),
+            "Please select a valid calculation method"
+          ),
+
+        disbursement_charges_rate: Yup.number()
+          .typeError("Disbursement charges rate must be a number")
+          .min(0, "Disbursement charges rate must be at least 0")
+          .required("Disbursement charges rate is required"),
+
+        membership_fee: Yup.number()
+          .typeError("Membership fee must be a number")
+          .min(0, "Membership fee must be at least 0")
+          .required("Membership fee is required"),
+
+        pre_closure_rate: Yup.number()
+          .typeError("Pre-closure rate must be a number")
+          .min(0, "Pre-closure rate must be at least 0")
+          .required("Pre-closure rate is required"),
+
+        flexi_emi: Yup.string()
+          .required("Flexi EMI option is required")
+          .oneOf(["Yes", "No"], "Select Yes or No"),
+      }),
+    [loanTypeOptions]
+  );
+
+  // =========================================================
+  // FORMIK FUNCTION TO ADD/EDIT PRODUCT DATA
+  // =========================================================
+  const productFormik = useFormik({
+    initialValues: {
+      product_id: "",
+      product_name: "",
+      loan_type: "",
+      category: "",
+      principle_amount: "",
+      lpf: "",
+      interest_rate: "",
+      tenure_months: "",
+      apr_rate: "",
+      eir_rate: "",
+      mrr_rate: "",
+      calculation_method: "",
+      disbursement_charges_rate: "",
+      membership_fee: "",
+      pre_closure_rate: "",
+      flexi_emi: "No",
+      is_active: false,
+    },
+
+    enableReinitialize: true,
+    validationSchema,
+
+    onSubmit: async (values, { resetForm }) => {
+      try {
+        const req = {
+          product_id: values.product_id.trim(),
+          loan_type: Number(values.loan_type),
+          product_name: values.product_name.trim(),
+          category: values.category,
+          principle_amount: Number(values.principle_amount),
+          lpf: Number(values.lpf),
+          interest_rate: Number(values.interest_rate),
+          tenure_months: Number(values.tenure_months),
+          apr_rate: Number(values.apr_rate),
+          eir_rate: Number(values.eir_rate),
+          mrr_rate: Number(values.mrr_rate),
+          calculation_method: values.calculation_method,
+          disbursement_charges_rate: Number(values.disbursement_charges_rate),
+          membership_fee: Number(values.membership_fee),
+          pre_closure_rate: Number(values.pre_closure_rate),
+          flexi_emi: values.flexi_emi === "Yes",
+          is_active: isEdit ? !!values.is_active : false,
+          created_by: "Admin",
+        };
+
+        let response;
+
+        if (isEdit) {
+          response = await UpdateLoanProduct({ id: editingProductId, ...req });
+        } else {
+          response = await CreateLoanProduct(req);
+        }
+
+        if (response?.status) {
+          fetchAllProducts();
+          toast.success(
+            response.msg ||
+              (isEdit
+                ? "Loan product updated successfully!"
+                : "Loan product created successfully!")
+          );
+          setIsModalOpen(false);
+          resetForm();
+          setIsEdit(false);
+          setEditingProductId(null);
+        } else {
+          toast.info(
+            response?.msg ||
+              (isEdit
+                ? "Unable to update loan product!"
+                : "Unable to add loan product!")
+          );
+        }
+      } catch (error) {
+        console.error(
+          isEdit
+            ? "Error in updating loan product"
+            : "Error in creating loan product",
+          error
+        );
+
+        toast.error(
+          error?.response?.data?.title ||
+            error?.response?.data?.errors?.request?.[0] ||
+            error?.message ||
+            "Something went wrong!"
+        );
+      }
+    },
+  });
+
   const formatCurrency = (value) => {
+    if (value === "" || value === null || value === undefined) return "-";
+    const num = Number(value);
+    if (!Number.isFinite(num)) return "-";
     return new Intl.NumberFormat("en-IN", {
       style: "currency",
       currency: "INR",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(value);
+    }).format(num);
   };
 
-  // Format percentage
   const formatPercentage = (value) => {
+    if (value === "" || value === null || value === undefined) return "-";
     return `${value}%`;
   };
 
-  // Table columns configuration with correct format
   const columns = [
     {
       name: "#",
-      selector: (row, i) => i + 1,
+      selector: (row) => row?.sn,
       sortable: true,
-      width: 60,
-      center: true,
+      width: "70px",
     },
     {
       name: "Product ID",
-      selector: (row) => row.productId,
+      selector: (row) => row?.product_id || "-",
       sortable: true,
-      width: 120,
     },
     {
       name: "Product Name",
-      selector: (row) => row.productName,
+      selector: (row) => row?.product_name || "-",
       sortable: true,
-      width: 180,
+    },
+    {
+      name: "Loan Type",
+      selector: (row) => loanTypeLabel(row?.loan_type),
+      sortable: true,
     },
     {
       name: "Category",
-      selector: (row) => row.category,
+      selector: (row) => row?.category || "-",
       sortable: true,
-      width: 150,
     },
     {
       name: "Principle Amount",
-      selector: (row) => formatCurrency(row.principleAmount),
+      selector: (row) => formatCurrency(row?.principle_amount),
       sortable: true,
-      width: 150,
       right: true,
     },
     {
       name: "LPF",
-      selector: (row) => formatPercentage(row.lpf),
+      selector: (row) => formatPercentage(row?.lpf),
       sortable: true,
-      width: 100,
       center: true,
     },
     {
       name: "Interest Rate",
-      selector: (row) => formatPercentage(row.interestRate),
+      selector: (row) => formatPercentage(row?.interest_rate),
       sortable: true,
-      width: 120,
       center: true,
     },
     {
       name: "Tenure (Months)",
-      selector: (row) => row.tenure,
+      selector: (row) => row?.tenure_months ?? "-",
       sortable: true,
-      width: 130,
       center: true,
     },
     {
       name: "APR Rate",
-      selector: (row) => formatPercentage(row.aprRate),
+      selector: (row) => formatPercentage(row?.apr_rate),
       sortable: true,
-      width: 100,
       center: true,
     },
     {
       name: "EIR Rate",
-      selector: (row) => formatPercentage(row.eirRate),
+      selector: (row) => formatPercentage(row?.eir_rate),
       sortable: true,
-      width: 100,
       center: true,
     },
     {
       name: "MRR Rate",
-      selector: (row) => formatPercentage(row.mrrRate),
+      selector: (row) => formatPercentage(row?.mrr_rate),
       sortable: true,
-      width: 100,
       center: true,
     },
     {
       name: "Calculation Method",
-      selector: (row) => row.calculationMethod,
+      selector: (row) => row?.calculation_method || "-",
       sortable: true,
-      width: 160,
     },
     {
       name: "Disbursement Charges",
-      selector: (row) => formatPercentage(row.disbursementChargesRate),
+      selector: (row) => formatPercentage(row?.disbursement_charges_rate),
       sortable: true,
-      width: 170,
       center: true,
     },
     {
       name: "Membership Fee",
-      selector: (row) => formatCurrency(row.membershipFee),
+      selector: (row) => formatCurrency(row?.membership_fee),
       sortable: true,
-      width: 130,
       right: true,
     },
     {
       name: "Pre-Closure Rate",
-      selector: (row) => formatPercentage(row.preClosureRate),
+      selector: (row) => formatPercentage(row?.pre_closure_rate),
       sortable: true,
-      width: 140,
       center: true,
     },
     {
       name: "Flexi EMI",
-      selector: (row) => row.flexiEmi,
+      selector: (row) => (row?.flexi_emi ? "Yes" : "No"),
       sortable: true,
-      width: 100,
       center: true,
     },
     {
-      name: "Actions",
+      name: "Action",
+      center: true,
       selector: (row) => (
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => handleView(row)}
-            className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-            title="View"
-          >
-            <RiEyeLine size={18} />
+        <div className="flex gap-5 cursor-pointer">
+          <button onClick={() => handleEditProduct(row)}>
+            <Icon name="FaEdit" size={18} color="black" />
           </button>
-          <button
-            onClick={() => handleOpenModal(row)}
-            className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-            title="Edit"
-          >
-            <RiEditLine size={18} />
-          </button>
-          {/* <button
-            onClick={() => handleDelete(row.id)}
-            className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-            title="Delete"
-          >
-            <RiDeleteBinLine size={18} />
-          </button> */}
         </div>
       ),
-      sortable: false,
-      width: 150,
+    },
+    {
+      name: "Status",
       center: true,
+      selector: (row) => (
+        <TogleInput
+          checked={row?.is_active}
+          onChange={() => handleToggleStatus(row)}
+        />
+      ),
     },
   ];
 
-  // Calculation method options
-  const calculationMethodOptions = [
-    { value: "Simple", label: "Simple" },
-    { value: "Compound", label: "Compound" },
-    { value: "Reducing Balance", label: "Reducing Balance" },
-    { value: "Flat", label: "Flat" },
-  ];
+  useEffect(() => {
+    fetchAllProducts();
+    fetchLoanTypes(); // <-- fetch loan types on mount
+  }, []);
 
-  // Flexi EMI options
-  const flexiEmiOptions = [
-    { value: "Yes", label: "Yes" },
-    { value: "No", label: "No" },
-  ];
+  const ErrorText = ({ name }) =>
+    productFormik.touched[name] && productFormik.errors[name] ? (
+      <p className="mt-1 text-xs text-red-500">{productFormik.errors[name]}</p>
+    ) : null;
 
   return (
-    <div>
+    <>
       <div className="flex-1">
-        {/* header  */}
-        <div className="flex justify-between items-center px-4">
-          <div className="text-md font-medium self-center">Create Loan Product</div>
+        {/* Header */}
+        <div className="flex justify-between items-center p-0 px-4">
+          <div className="text-md font-medium self-center">Loan Products</div>
 
-          <Button
-            onClick={() => handleOpenModal()}
-            btnName="Add Create"
-            style="bg-primary hover:bg-primary text-white flex items-center gap-2"
-            icon={<RiAddLine size={20} />}
-          />
+          <button
+            onClick={handleAddProduct}
+            className="text-sm py-1.5 px-3 rounded-sm bg-primary hover:bg-primary/90 text-white flex justify-between gap-3 cursor-pointer"
+          >
+            New Loan Product
+          </button>
         </div>
 
-        {/* table data */}
-        <Table data={products} columns={columns} />
+        {/* Table */}
+        <Table data={productList} columns={columns} />
       </div>
 
-      {/* View Product Modal */}
+      {/* Add / Edit Product Modal */}
       <Modal
-        title="Product Details"
-        isOpen={isViewModalOpen}
-        onClose={() => setIsViewModalOpen(false)}
-      >
-        {viewingProduct && (
-          <div className="grid grid-cols-3 gap-2 mt-6">
-            {columns
-              .filter((col) => col.name !== "Actions" && col.name !== "#")
-              .map((col) => (
-                <div key={col.name} className="bg-gray-100 border border-gray-200 p-3 rounded-lg">
-                  <p className="text-xs text-gray-500 font-medium">
-                    {col.name}
-                  </p>
-                  <p className="text-sm font-medium text-gray-800">
-                    {typeof col.selector === "function"
-                      ? col.selector(viewingProduct)
-                      : viewingProduct[col.name]}
-                  </p>
-                </div>
-              ))}
-          </div>
-        )}
-        <div className="flex justify-end mt-6">
-          <Button
-            onClick={() => setIsViewModalOpen(false)}
-            btnName="Close"
-            style="bg-gray-200 hover:bg-gray-300 text-gray-700"
-          />
-        </div>
-      </Modal>
-
-      {/* Create/Edit Product Modal */}
-      <Modal
-        title={editingProduct ? "Edit Product" : "Create New Product"}
+        title={isEdit ? "Update Loan Product" : "Add New Loan Product"}
         isOpen={isModalOpen}
-        onClose={handleCloseModal}
+        onClose={() => {
+          setIsModalOpen(false);
+          productFormik.resetForm();
+          setIsEdit(false);
+          setEditingProductId(null);
+        }}
         size="large"
       >
-        <form onSubmit={formik.handleSubmit}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
-            {/* Product ID */}
-            <TextInput
-              label="Product ID"
-              name="productId"
-              placeholder="Enter product ID"
-              value={formik.values.productId}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.productId && formik.errors.productId}
-              required
-            />
+        <form onSubmit={productFormik.handleSubmit}>
+          <div className="grid grid-cols-3 gap-3 mt-6">
+            <div>
+              <TextInput
+                label="Product ID"
+                name="product_id"
+                placeholder="Enter product ID"
+                value={productFormik.values.product_id}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+              />
+              <ErrorText name="product_id" />
+            </div>
 
-            {/* Product Name */}
-            <TextInput
-              label="Product Name"
-              name="productName"
-              placeholder="Enter product name"
-              value={formik.values.productName}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.productName && formik.errors.productName}
-              required
-            />
+            <div>
+              <TextInput
+                label="Product Name"
+                name="product_name"
+                placeholder="Enter product name"
+                value={productFormik.values.product_name}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+              />
+              <ErrorText name="product_name" />
+            </div>
 
-            {/* Category */}
-            <TextInput
-              label="Category"
-              name="category"
-              placeholder="Enter category"
-              value={formik.values.category}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.category && formik.errors.category}
-              required
-            />
+            <div>
+              <SelectInput
+                label="Loan Type"
+                name="loan_type"
+                placeholder="Select loan type"
+                value={productFormik.values.loan_type}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+                options={loanTypeOptions} // <-- dynamic options
+              />
+              <ErrorText name="loan_type" />
+            </div>
 
-            {/* Principle Amount */}
-            <TextInput
-              label="Principle Amount (₹)"
-              name="principleAmount"
-              type="number"
-              placeholder="Enter principle amount"
-              value={formik.values.principleAmount}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={
-                formik.touched.principleAmount && formik.errors.principleAmount
-              }
-              required
-            />
+            <div>
+              <TextInput
+                label="Category"
+                name="category"
+                placeholder="Enter category"
+                value={productFormik.values.category}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+              />
+              <ErrorText name="category" />
+            </div>
 
-            {/* LPF */}
-            <TextInput
-              label="LPF (%)"
-              name="lpf"
-              type="number"
-              step="0.01"
-              placeholder="Enter LPF"
-              value={formik.values.lpf}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.lpf && formik.errors.lpf}
-              required
-            />
+            <div>
+              <TextInput
+                label="Principle Amount (₹)"
+                name="principle_amount"
+                type="number"
+                placeholder="Enter principle amount"
+                value={productFormik.values.principle_amount}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+              />
+              <ErrorText name="principle_amount" />
+            </div>
 
-            {/* Interest Rate */}
-            <TextInput
-              label="Interest Rate (%)"
-              name="interestRate"
-              type="number"
-              step="0.01"
-              placeholder="Enter interest rate"
-              value={formik.values.interestRate}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.interestRate && formik.errors.interestRate}
-              required
-            />
+            <div>
+              <TextInput
+                label="LPF (%)"
+                name="lpf"
+                type="number"
+                step="0.01"
+                placeholder="Enter LPF"
+                value={productFormik.values.lpf}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+              />
+              <ErrorText name="lpf" />
+            </div>
 
-            {/* Tenure */}
-            <TextInput
-              label="Tenure (Months)"
-              name="tenure"
-              type="number"
-              placeholder="Enter tenure"
-              value={formik.values.tenure}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.tenure && formik.errors.tenure}
-              required
-            />
+            <div>
+              <TextInput
+                label="Interest Rate (%)"
+                name="interest_rate"
+                type="number"
+                step="0.01"
+                placeholder="Enter interest rate"
+                value={productFormik.values.interest_rate}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+              />
+              <ErrorText name="interest_rate" />
+            </div>
 
-            {/* APR Rate */}
-            <TextInput
-              label="APR Rate (%)"
-              name="aprRate"
-              type="number"
-              step="0.01"
-              placeholder="Enter APR rate"
-              value={formik.values.aprRate}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.aprRate && formik.errors.aprRate}
-              required
-            />
+            <div>
+              <TextInput
+                label="Tenure (Months)"
+                name="tenure_months"
+                type="number"
+                placeholder="Enter tenure"
+                value={productFormik.values.tenure_months}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+              />
+              <ErrorText name="tenure_months" />
+            </div>
 
-            {/* EIR Rate */}
-            <TextInput
-              label="EIR Rate (%)"
-              name="eirRate"
-              type="number"
-              step="0.01"
-              placeholder="Enter EIR rate"
-              value={formik.values.eirRate}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.eirRate && formik.errors.eirRate}
-              required
-            />
+            <div>
+              <TextInput
+                label="APR Rate (%)"
+                name="apr_rate"
+                type="number"
+                step="0.01"
+                placeholder="Enter APR rate"
+                value={productFormik.values.apr_rate}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+              />
+              <ErrorText name="apr_rate" />
+            </div>
 
-            {/* MRR Rate */}
-            <TextInput
-              label="MRR Rate (%)"
-              name="mrrRate"
-              type="number"
-              step="0.01"
-              placeholder="Enter MRR rate"
-              value={formik.values.mrrRate}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.mrrRate && formik.errors.mrrRate}
-              required
-            />
+            <div>
+              <TextInput
+                label="EIR Rate (%)"
+                name="eir_rate"
+                type="number"
+                step="0.01"
+                placeholder="Enter EIR rate"
+                value={productFormik.values.eir_rate}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+              />
+              <ErrorText name="eir_rate" />
+            </div>
 
-            {/* Calculation Method */}
-            <SelectInput
-              label="Calculation Method"
-              name="calculationMethod"
-              placeholder="Select calculation method"
-              value={formik.values.calculationMethod}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              options={calculationMethodOptions}
-              error={
-                formik.touched.calculationMethod &&
-                formik.errors.calculationMethod
-              }
-              required
-            />
+            <div>
+              <TextInput
+                label="MRR Rate (%)"
+                name="mrr_rate"
+                type="number"
+                step="0.01"
+                placeholder="Enter MRR rate"
+                value={productFormik.values.mrr_rate}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+              />
+              <ErrorText name="mrr_rate" />
+            </div>
 
-            {/* Disbursement Charges Rate */}
-            <TextInput
-              label="Disbursement Charges Rate (%)"
-              name="disbursementChargesRate"
-              type="number"
-              step="0.01"
-              placeholder="Enter disbursement charges rate"
-              value={formik.values.disbursementChargesRate}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={
-                formik.touched.disbursementChargesRate &&
-                formik.errors.disbursementChargesRate
-              }
-              required
-            />
+            <div>
+              <SelectInput
+                label="Calculation Method"
+                name="calculation_method"
+                placeholder="Select calculation method"
+                value={productFormik.values.calculation_method}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+                options={CALCULATION_METHOD_OPTIONS}
+              />
+              <ErrorText name="calculation_method" />
+            </div>
 
-            {/* Membership Fee */}
-            <TextInput
-              label="Membership Fee (₹)"
-              name="membershipFee"
-              type="number"
-              step="0.01"
-              placeholder="Enter membership fee"
-              value={formik.values.membershipFee}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.membershipFee && formik.errors.membershipFee}
-              required
-            />
+            <div>
+              <TextInput
+                label="Disbursement Charges Rate (%)"
+                name="disbursement_charges_rate"
+                type="number"
+                step="0.01"
+                placeholder="Enter disbursement charges rate"
+                value={productFormik.values.disbursement_charges_rate}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+              />
+              <ErrorText name="disbursement_charges_rate" />
+            </div>
 
-            {/* Pre-Closure Rate */}
-            <TextInput
-              label="Pre-Closure Rate (%)"
-              name="preClosureRate"
-              type="number"
-              step="0.01"
-              placeholder="Enter pre-closure rate"
-              value={formik.values.preClosureRate}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.preClosureRate && formik.errors.preClosureRate}
-              required
-            />
+            <div>
+              <TextInput
+                label="Membership Fee (₹)"
+                name="membership_fee"
+                type="number"
+                step="0.01"
+                placeholder="Enter membership fee"
+                value={productFormik.values.membership_fee}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+              />
+              <ErrorText name="membership_fee" />
+            </div>
 
-            {/* Flexi EMI */}
-            <SelectInput
-              label="Flexi EMI"
-              name="flexiEmi"
-              placeholder="Select Flexi EMI option"
-              value={formik.values.flexiEmi}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              options={flexiEmiOptions}
-              error={formik.touched.flexiEmi && formik.errors.flexiEmi}
-              required
-            />
+            <div>
+              <TextInput
+                label="Pre-Closure Rate (%)"
+                name="pre_closure_rate"
+                type="number"
+                step="0.01"
+                placeholder="Enter pre-closure rate"
+                value={productFormik.values.pre_closure_rate}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+              />
+              <ErrorText name="pre_closure_rate" />
+            </div>
+
+            <div>
+              <SelectInput
+                label="Flexi EMI"
+                name="flexi_emi"
+                placeholder="Select Flexi EMI option"
+                value={productFormik.values.flexi_emi}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+                options={YES_NO_OPTIONS}
+              />
+              <ErrorText name="flexi_emi" />
+            </div>
           </div>
 
-          <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200">
+          {/* Buttons */}
+          <div className="flex justify-end gap-2 mt-5">
             <Button
-              type="button"
-              onClick={handleCloseModal}
               btnName="Cancel"
-              style="bg-gray-200 hover:bg-gray-300 text-gray-700"
+              type="button"
+              onClick={() => {
+                setIsModalOpen(false);
+                productFormik.resetForm();
+                setIsEdit(false);
+                setEditingProductId(null);
+              }}
+              style="border text-sm border-gray-200 hover:bg-gray-100"
             />
+
             <Button
+              btnName={isEdit ? "Update" : "Submit"}
               type="submit"
-              btnName={editingProduct ? "Update Product" : "Create Product"}
-              style="bg-primary hover:bg-primary text-white"
+              disabled={!productFormik.isValid || productFormik.isSubmitting}
+              style="bg-primary text-sm text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
         </form>
       </Modal>
-    </div>
+    </>
   );
 };
 

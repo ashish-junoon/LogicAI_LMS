@@ -14,11 +14,11 @@ const UserHeader = ({ lead, permisssion }) => {
       <div className="bg-[linear-gradient(120deg,#5050b8_0%,#265FAA_55%,#3878C7_100%)] px-5 pb-14 pt-5 sm:px-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
-            <Avatar name={lead?.customer_name} size="lg" ring />
+            <Avatar name={lead?.customer_name || lead?.business_owner_name} size="lg" ring />
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-lg font-semibold text-white">
-                  {lead?.customer_name}
+                  {lead?.customer_name || lead?.business_owner_name || "Customer"}
                 </h1>
                 <StatusBadge
                   label={lead?.loan_status}
@@ -32,9 +32,9 @@ const UserHeader = ({ lead, permisssion }) => {
                 />
               </div>
               <p className="text-sm text-white/75">
-                {lead?.loan_id}
-                &middot; {lead?.product_code}
-                &middot; ₹{lead?.loan_amount?.toLocaleString("en-IN")}
+                {lead?.loan_id || lead?.application_id || "-"}
+                &middot; {lead?.product_code || "-"}
+                &middot; {lead?.loan_amount != null ? `₹${Number(lead.loan_amount).toLocaleString("en-IN")}` : "-"}
               </p>
             </div>
           </div>

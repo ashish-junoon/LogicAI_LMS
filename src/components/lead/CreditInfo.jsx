@@ -1,14 +1,8 @@
 import { RiBankCardLine } from "react-icons/ri";
 
-const CreditInfo = () => {
-  const creditData = {
-    score: 765,
-    totalAccounts: 8,
-    activeAccounts: 4,
-    creditUtilization: 32,
-    paymentHistory: "100%",
-    totalOutstanding: 450000,
-  };
+const CreditInfo = ({ creditData }) => {
+  const score = creditData?.credit_score;
+  const hasScore = Number.isFinite(Number(score));
 
   const getScoreColor = (score) => {
     if (score >= 750) return "text-green-600";
@@ -29,12 +23,12 @@ const CreditInfo = () => {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs text-gray-600 font-medium">Credit Score</p>
-            <p className={`text-3xl font-bold ${getScoreColor(creditData.score)}`}>
-              {creditData.score}
+            <p className={`text-3xl font-bold ${hasScore ? getScoreColor(Number(score)) : "text-gray-400"}`}>
+              {hasScore ? score : "—"}
             </p>
             <p className="text-xs text-gray-600 mt-1">
-              Status: <span className={`font-semibold ${getScoreColor(creditData.score)}`}>
-                {creditData.score >= 750 ? "Excellent" : creditData.score >= 700 ? "Good" : "Fair"}
+              Status: <span className={`font-semibold ${hasScore ? getScoreColor(Number(score)) : "text-gray-500"}`}>
+                {creditData?.status || "Not available"}
               </span>
             </p>
           </div>
@@ -47,31 +41,28 @@ const CreditInfo = () => {
       {/* Quick Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         <div className="px-3 py-2 bg-gray-50 rounded-lg border border-gray-100">
-          <p className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Total Accounts</p>
-          <p className="text-base font-semibold text-gray-800">{creditData.totalAccounts}</p>
-          <p className="text-[10px] text-gray-400">Active: {creditData.activeAccounts}</p>
+          <p className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Bureau</p>
+          <p className="text-base font-semibold text-gray-800">{creditData?.bureau_name || "—"}</p>
+          <p className="text-[10px] text-gray-400">{creditData?.customer_type || "—"}</p>
         </div>
         <div className="px-3 py-2 bg-gray-50 rounded-lg border border-gray-100">
-          <p className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Utilization</p>
-          <p className="text-base font-semibold text-gray-800">{creditData.creditUtilization}%</p>
-          <div className="w-full bg-gray-200 rounded-full h-1 mt-1">
-            <div
-              className={`h-1 rounded-full ${creditData.creditUtilization < 30 ? "bg-green-500" : "bg-yellow-500"}`}
-              style={{ width: `${creditData.creditUtilization}%` }}
-            />
-          </div>
+          <p className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Credit Type</p>
+          <p className="text-base font-semibold text-gray-800">{creditData?.credit_type || "—"}</p>
         </div>
         <div className="px-3 py-2 bg-gray-50 rounded-lg border border-gray-100">
-          <p className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Payment History</p>
-          <p className="text-base font-semibold text-green-600">{creditData.paymentHistory}</p>
-          <p className="text-[10px] text-gray-400">On-time</p>
+          <p className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Request ID</p>
+          <p className="text-sm font-semibold text-gray-800 break-all">{creditData?.request_id || "—"}</p>
         </div>
         <div className="px-3 py-2 bg-gray-50 rounded-lg border border-gray-100">
-          <p className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Outstanding</p>
-          <p className="text-base font-semibold text-gray-800">₹{(creditData.totalOutstanding / 100000).toFixed(1)}L</p>
-          <p className="text-[10px] text-gray-400">All accounts</p>
+          <p className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Requested On</p>
+          <p className="text-sm font-semibold text-gray-800">{creditData?.request_date || "—"}</p>
         </div>
       </div>
+      {creditData?.credit_report_link && (
+        <a className="text-xs text-primary hover:underline" href={creditData.credit_report_link} target="_blank" rel="noreferrer">
+          View credit report
+        </a>
+      )}
     </div>
   );
 };
