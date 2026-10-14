@@ -1,26 +1,13 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Icon from "../../components/utils/Icon";
-import { IoPerson } from "react-icons/io5";
-import DataTable from "react-data-table-component";
-import {
-  branchData,
-  allLoansData,
-  PendingLeadsData,
-  NewLeadsData,
-  // GetAllCustomerDetails,
-} from "../../content/masterData"; // adjust path as needed
 import Table from "../../components/Table";
-import Modal from "../../components/utils/Modal";
-import TextInput from "../../components/fields/TextInput";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { GetAllApplications } from "../../api/application";
 
 const KycLeads = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
 
   // Ordered list of steps used to derive the "Pending Step"
   const STEP_CHECKS = [
@@ -148,7 +135,7 @@ const KycLeads = () => {
       center: true,
       cell: (row) => (
         <Link
-          to="/kyc-detail"
+          to={`/kyc-detail?customer_id=${encodeURIComponent(row.customerId ?? "")}&application_id=${encodeURIComponent(row.leadId ?? "")}`}
           state={{ lead: row.raw }}   // pass full record to detail page
           className="p-1.5 px-2 rounded-sm text-xs font-medium bg-primary flex gap-1 text-white items-center"
         >

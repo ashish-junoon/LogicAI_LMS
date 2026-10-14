@@ -145,7 +145,7 @@ const TelecallingLeads = () => {
       center: true,
       cell: (row) => (
         <Link
-          to="/telecalling-detail"
+          to={`/telecalling-detail?customer_id=${encodeURIComponent(row.customerId ?? "")}&application_id=${encodeURIComponent(row.leadId ?? "")}`}
           state={{ lead: row.raw }}   // pass full record to detail page
           className="p-1.5 px-2 rounded-sm text-xs font-medium bg-primary flex gap-1 text-white items-center"
         >

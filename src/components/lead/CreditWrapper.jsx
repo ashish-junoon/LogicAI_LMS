@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 // Components
 import VideoKYC from "../common/VideoKYC";
@@ -11,10 +11,9 @@ import LoanAnalysis from "./LoanAnalysis";
 import Button from "../utils/Button";
 import Modal from "../utils/Modal";
 import SelectInput from "../fields/SelectInput";
-import LeadForm from "../../pages/formPages/LeadForm";
 import LeadFormDetails from "../../pages/formPages/LeadFormDetails";
 
-const CreditWrapper = ({ loanData, userData, onAction }) => {
+const CreditWrapper = ({ customerDetails }) => {
   const [activeSection, setActiveSection] = useState("user");
   const [switchLoanProvier, setswitchLoanProvier] = useState(false);
 
@@ -44,7 +43,7 @@ const CreditWrapper = ({ loanData, userData, onAction }) => {
     switch (activeSection) {
       case "user":
         // return <LeadForm />;
-        return <LeadFormDetails permisions={permisions} />;
+        return <LeadFormDetails permisions={permisions} customerDetails={customerDetails} />;
       case "credit":
         return <CreditSection />;
       case "videoKyc":
@@ -64,15 +63,19 @@ const CreditWrapper = ({ loanData, userData, onAction }) => {
                 onClick={handleSwitchProvider}
               />
             </div>
-            <LoanAnalysis permission={true} />
+            <LoanAnalysis
+              permission={true}
+              loanData={customerDetails?.loanDetails?.[0]}
+              applicationId={customerDetails?.loanDetails?.[0]?.application_id}
+            />
           </>
         );
       case "remarks":
-        return <RemarksHistory permission={true} />;
+        return <RemarksHistory permission={true} remarks={customerDetails?.history || []} />;
       case "bsa":
         return <BankStatementAnalyser />;
       case "documents":
-        return <DocumentsList permission={true} />;
+        return <DocumentsList permission={true} documents={customerDetails?.documents || []} />;
       default:
         return null;
     }

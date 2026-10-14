@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 // Components
 import Icon from "../utils/Icon";
@@ -7,7 +7,7 @@ import Disbursement from "./Disbursement";
 import DocumentsList from "./DocumentsList";
 import LeadFormDetails from "../../pages/formPages/LeadFormDetails";
 
-const DisbursementWrapper = ({}) => {
+const DisbursementWrapper = ({ customerDetails }) => {
   const [activeSection, setActiveSection] = useState("disbursement");
 
   const sections = [
@@ -35,11 +35,11 @@ const DisbursementWrapper = ({}) => {
       case "disbursement":
         return <Disbursement />;
       case "remarks":
-        return <RemarksHistory permission={true} />;
+        return <RemarksHistory permission={true} remarks={customerDetails?.history || []} />;
       case "documents":
-        return <DocumentsList permission={true} />;
+        return <DocumentsList permission={true} documents={customerDetails?.documents || []} />;
       case "userinfo":
-        return <LeadFormDetails permisions={permisions} />;
+        return <LeadFormDetails permisions={permisions} customerDetails={customerDetails} />;
       default:
         return null;
     }

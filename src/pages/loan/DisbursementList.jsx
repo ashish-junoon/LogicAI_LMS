@@ -1,100 +1,63 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import {
-  IoPerson,
-  IoCheckmarkCircle,
-  IoClose,
-  IoSearch,
-} from "react-icons/io5";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { IoCheckmarkCircle } from "react-icons/io5";
 import Table from "../../components/Table";
 import Modal from "../../components/utils/Modal";
-import TextInput from "../../components/fields/TextInput";
 import Icon from "../../components/utils/Icon";
-import { GiOpenFolder } from "react-icons/gi";
-
-// Sample disbursement data (ishe aap apne actual data se replace karenge)
-const disbursementData = [
-  {
-    id: 1,
-    loanId: "LN-2024-001",
-    customerName: "Rajesh Kumar",
-    loanAmount: 500000,
-    interestAmount: 75000,
-    totalPayable: 575000,
-    status: "Pending",
-    createdDate: "2024-01-15",
-    createdBy: "Admin",
-    bankName: "HDFC Bank",
-    accountNumber: "XXXX1234",
-    ifscCode: "HDFC0001234",
-    disbursementDate: "2024-01-20",
-    remarks: "First disbursement",
-    gender: "Male",
-    mobile: "9999999911",
-  },
-  {
-    id: 2,
-    loanId: "LN-2024-002",
-    customerName: "Priya Sharma",
-    loanAmount: 300000,
-    interestAmount: 45000,
-    totalPayable: 345000,
-    status: "Disbursed",
-    createdDate: "2024-01-16",
-    createdBy: "Manager",
-    bankName: "ICICI Bank",
-    accountNumber: "XXXX5678",
-    ifscCode: "ICICI0005678",
-    disbursementDate: "2024-01-18",
-    remarks: "Full amount disbursed",
-    gender: "Female",
-    mobile: "9999999922",
-  },
-  {
-    id: 3,
-    loanId: "LN-2024-003",
-    customerName: "Amit Patel",
-    loanAmount: 750000,
-    interestAmount: 112500,
-    totalPayable: 862500,
-    status: "Ready",
-    createdDate: "2024-01-17",
-    createdBy: "Admin",
-    bankName: "SBI Bank",
-    accountNumber: "XXXX9012",
-    ifscCode: "SBIN0009012",
-    disbursementDate: "2024-01-22",
-    remarks: "Awaiting approval",
-    gender: "Male",
-    mobile: "9999999933",
-  },
-  {
-    id: 4,
-    loanId: "LN-2024-004",
-    customerName: "Sunita Reddy",
-    loanAmount: 200000,
-    interestAmount: 30000,
-    totalPayable: 230000,
-    status: "Disbursed",
-    createdDate: "2024-01-18",
-    createdBy: "Manager",
-    bankName: "Axis Bank",
-    accountNumber: "XXXX3456",
-    ifscCode: "AXIS0003456",
-    disbursementDate: "2024-01-19",
-    remarks: "Partial disbursement",
-    gender: "Female",
-    mobile: "9999999944",
-  },
-];
+import { GetAllApplications } from "../../api/application";
 
 const DisbursementList = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDisburseModalOpen, setIsDisburseModalOpen] = useState(false);
   const [selectedLoan, setSelectedLoan] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("All");
-  const navigate = useNavigate();
+  const [disbursementData, setDisbursementData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const fetchDisbursementLeads = async () => {
+    try {
+      const response = await GetAllApplications({
+        role: "admin",
+        created_by: "admin",
+      });
+
+      if (!response?.status || !Array.isArray(response?.data)) {
+        throw new Error(response?.message || "Failed to fetch disbursement leads.");
+      }
+
+      setDisbursementData(
+        response.data.map((item) => ({
+          id: item.application_id,
+          loanId: item.application_id || "-",
+          customerId: item.customer_id,
+          customerName: item.business_owner_name || "-",
+          loanAmount: Number(item.loan_amount) || 0,
+          interestAmount: Number(item.interest_amount) || 0,
+          totalPayable: Number(item.total_payable) || 0,
+          status: item.status || "Pending",
+          createdDate: item.created_date || "-",
+          createdBy: item.created_by || "-",
+          bankName: item.bank_name || "-",
+          accountNumber: item.account_number || "-",
+          ifscCode: item.ifsc_code || "-",
+          disbursementDate: item.disbursement_date || "",
+          remarks: item.remarks || "",
+          gender: item.gender || "N/A",
+          mobile: item.business_owner_mobile_no || "-",
+          raw: item,
+        })),
+      );
+    } catch (fetchError) {
+      console.error("Error fetching disbursement leads:", fetchError);
+      setError(
+        fetchError?.response?.data?.message ||
+        fetchError?.message ||
+        "Something went wrong while fetching disbursement leads.",
+      );
+      setDisbursementData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Disbursement form state
   const [disburseForm, setDisburseForm] = useState({
@@ -106,21 +69,11 @@ const DisbursementList = () => {
     remarks: "",
   });
 
-  // Filtered data based on search and status
-  const filteredData = disbursementData.filter((item) => {
-    const matchesSearch =
-      item.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.loanId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.bankName.toLowerCase().includes(searchTerm.toLowerCase());
+  useEffect(() => {
+    const fetchTimer = window.setTimeout(fetchDisbursementLeads, 0);
 
-    const matchesStatus =
-      filterStatus === "All" || item.status === filterStatus;
-
-    return matchesSearch && matchesStatus;
-  });
-
-  // Status options for filter
-  const statusOptions = ["All", "Pending", "Ready", "Disbursed", "Failed"];
+    return () => window.clearTimeout(fetchTimer);
+  }, []);
 
   const columns = [
     {
@@ -145,12 +98,12 @@ const DisbursementList = () => {
     },
     {
       name: "Salary",
-      selector: (row) => `₹${row.loanAmount.toLocaleString()}`,
+      selector: (row) => row.salary ? `₹${Number(row.salary).toLocaleString()}` : "-",
       sortable: true,
     },
     {
       name: "Loan Amount",
-      selector: (row) => `₹${row.loanAmount.toLocaleString()}`,
+      selector: (row) => row.loanAmount ? `₹${row.loanAmount.toLocaleString()}` : "-",
       sortable: true,
       right: true,
     },
@@ -176,7 +129,8 @@ const DisbursementList = () => {
       name: "Action",
       cell: (row) => (
         <Link
-          to="/disbursement-detail"
+          to={`/disbursement-detail?customer_id=${encodeURIComponent(row.customerId ?? "")}&application_id=${encodeURIComponent(row.loanId === "-" ? "" : row.loanId)}`}
+          state={{ lead: row.raw }}
           className={`p-1.5 px-2 rounded-sm text-xs font-medium bg-primary flex gap-1 text-white items-center`}
         >
           <Icon name="FaRegEye" size={15} color={"white"} />
@@ -194,7 +148,7 @@ const DisbursementList = () => {
   const handleDisburse = (row) => {
     setSelectedLoan(row);
     setDisburseForm({
-      disbursementAmount: row.loanAmount.toString(),
+      disbursementAmount: String(row.loanAmount || ""),
       disbursementDate: new Date().toISOString().split("T")[0],
       bankName: row.bankName || "",
       accountNumber: row.accountNumber || "",
@@ -212,11 +166,6 @@ const DisbursementList = () => {
     alert(`Loan ${selectedLoan?.loanId} disbursed successfully!`);
   };
 
-  const handleViewDetails = (row) => {
-    // Loan details page par navigate karenge
-    navigate(`/loan-details/${row.id}`);
-  };
-
   return (
     <>
       <div className="flex-1">
@@ -225,11 +174,29 @@ const DisbursementList = () => {
           <div className="text-md font-medium self-center">
             Disbursement List
           </div>
+          <button
+            type="button"
+            onClick={() => {
+              setLoading(true);
+              setError("");
+              fetchDisbursementLeads();
+            }}
+            disabled={loading}
+            className="text-sm px-3 py-1 rounded border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
+          >
+            {loading ? "Refreshing..." : "Refresh"}
+          </button>
         </div>
+
+        {error && !loading && (
+          <div role="alert" className="px-4 py-2 mt-3 text-sm text-red-600">
+            {error}
+          </div>
+        )}
 
         {/* Table data */}
         <div className="">
-          <Table data={filteredData} columns={columns} />
+          <Table data={disbursementData} columns={columns} progressPending={loading} />
         </div>
       </div>
 
