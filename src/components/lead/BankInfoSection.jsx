@@ -2,7 +2,7 @@ import Icon from "../utils/Icon";
 
 const BankInfoSection = ({ bankData, isVerified }) => {
   const readableValue = (value) =>
-    value && value !== "System.Byte[]" ? value : "-";
+    value ? value : "-";
 
   return (
     <div className="space-y-4">

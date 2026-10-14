@@ -5,7 +5,7 @@ import GuarantorInfo from "../../components/forms/GuarantorInfo";
 import OtherDocsInfo from "../../components/forms/OtherDocsInfo";
 import AddressInfo from "../../components/forms/AddressInfo";
 import MultipleBankInfo from "../../components/forms/MultipleBankInfo";
-import EmploymentInfo from "../../components/forms/EmploymentInfo";
+// import EmploymentInfo from "../../components/forms/EmploymentInfo";
 import PersonalInformation from "../../components/forms/PersonalInformation";
 import KycInformation from "../../components/forms/KycInformation";
 import AddressInformation from "../../components/forms/AddressInformation";
@@ -117,7 +117,7 @@ const LeadForm = () => {
             permission={false}
           /> */}
 
-            <EmploymentInfo
+            {/* <EmploymentInfo
               open={activeAccordion === 6}
               onToggle={() => {
                 activeAccordion == 6
@@ -126,7 +126,7 @@ const LeadForm = () => {
               }}
               onNext={() => setActiveAccordion(7)}
               permission={false}
-            />
+            /> */}
 
             <OtherDocsInfo
               open={activeAccordion === 7}

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { toast } from "react-toastify";
 import { useFormik } from "formik";
-import * as Yup from "yup";
 
 import {
   RiTeamLine,
@@ -15,45 +15,98 @@ import ErrorMsg from "../utils/ErrorMsg";
 import Button from "../utils/Button";
 
 import { relationList } from "../../content/data";
+import { SaveCoBorrower } from "../../api/application";
 
 const GuarantorInformation = ({
   onNext,
   permission ,
   details,
+  customerId,
+  applicationId,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const formik = useFormik({
     initialValues: {
       guarantor1Name: details?.guarantor_name || "",
-      guarantor1Mobile: details?.guarantor_mobile === "System.Byte[]" ? "" : details?.guarantor_mobile || "",
+      guarantor1Mobile: details?.guarantor_mobile || "",
       guarantor1Relation: details?.guarantor_relation || "",
-      guarantor1Pan: details?.guarantor_pan === "System.Byte[]" ? "" : details?.guarantor_pan || "",
-      guarantor1Aadhaar: details?.guarantor_aahaar_number === "System.Byte[]" ? "" : details?.guarantor_aahaar_number || "",
+      guarantor1Pan: details?.guarantor_pan || "",
+      guarantor1Aadhaar: details?.guarantor_aahaar_number || "",
       guarantor1Add: details?.guarantor_address || "",
 
       coborrowerName: details?.co_borrower_name || "",
-      coborrowerMobile: details?.co_borrower_mobile === "System.Byte[]" ? "" : details?.co_borrower_mobile || "",
+      coborrowerMobile: details?.co_borrower_mobile || "",
       coborrowerRelation: details?.co_borrower_relation || "",
-      coborrowerPan: details?.co_borrower_pan === "System.Byte[]" ? "" : details?.co_borrower_pan || "",
-      coborrowerAadhaar: details?.co_borrower_aahaar_number === "System.Byte[]" ? "" : details?.co_borrower_aahaar_number || "",
+      coborrowerPan: details?.co_borrower_pan || "",
+      coborrowerAadhaar: details?.co_borrower_aahaar_number || "",
       coborrowerAdd: details?.co_borrower_address || "",
     },
 
     enableReinitialize: true,
 
-    // validationSchema: Yup.object({
-    //   ...
-    // }),
+    onSubmit: async (values) => {
+      const resolvedCustomerId = customerId || details?.customer_id;
+      const resolvedApplicationId =
+        applicationId || details?.application_id;
 
-    onSubmit: (values) => {
-      console.log("Guarantor Information:", values);
+      if (!resolvedCustomerId || !resolvedApplicationId) {
+        toast.error(
+          "Customer and application IDs are required to save co-borrower and guarantor details.",
+        );
+        return;
+      }
 
-      // API call here
+      const updatedBy =
+        localStorage.getItem("username") ||
+        localStorage.getItem("userName") ||
+        localStorage.getItem("email") ||
+        "admin";
+      const request = {
+        customer_id: resolvedCustomerId,
+        application_id: resolvedApplicationId,
+        id: details?.id,
+        co_borrower_name: values.coborrowerName.trim(),
+        co_borrower_mobile: values.coborrowerMobile.trim(),
+        co_borrower_relation: values.coborrowerRelation,
+        co_borrower_pan: values.coborrowerPan.trim(),
+        co_borrower_aahaar_number: values.coborrowerAadhaar.trim(),
+        co_borrower_address: values.coborrowerAdd.trim(),
+        guarantor_name: values.guarantor1Name.trim(),
+        guarantor_mobile: values.guarantor1Mobile.trim(),
+        guarantor_relation: values.guarantor1Relation,
+        guarantor_pan: values.guarantor1Pan.trim(),
+        guarantor_aahaar_number: values.guarantor1Aadhaar.trim(),
+        guarantor_address: values.guarantor1Add.trim(),
+        created_by: details?.created_by || updatedBy,
+        updated_by: updatedBy,
+      };
 
-      setIsEditing(false);
+      try {
+        const response = await SaveCoBorrower(request);
 
-      onNext?.();
+        if (!response?.status) {
+          toast.error(
+            response?.message || "Unable to save co-borrower and guarantor details.",
+          );
+          return;
+        }
+
+        formik.resetForm({ values });
+        setIsEditing(false);
+        toast.success(
+          response?.message || "Co-borrower and guarantor details saved successfully.",
+        );
+        onNext?.();
+      } catch (error) {
+        console.error("Error saving co-borrower and guarantor details:", error);
+        toast.error(
+          error?.response?.data?.message ||
+            error?.response?.data?.title ||
+            error?.message ||
+            "Something went wrong while saving co-borrower and guarantor details.",
+        );
+      }
     },
   });
 
@@ -565,6 +618,7 @@ const GuarantorInformation = ({
 
               <Button
                 type="submit"
+                disabled={formik.isSubmitting}
                 btnName={
                   <span className="flex items-center gap-1.5">
                     <RiCheckLine size={16} />

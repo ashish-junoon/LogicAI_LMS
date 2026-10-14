@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   RiMapPinLine,
   RiEditLine,
@@ -15,33 +15,38 @@ import ErrorMsg from "../utils/ErrorMsg";
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { toast } from "react-toastify";
 
 import { districtList, houseType, statesList } from "../../content/data";
+import { SaveApplicantDetails } from "../../api/application";
 
-const AddressInformation = ({ onNext, permission, addressDetails }) => {
+const AddressInformation = ({
+  onNext,
+  permission,
+  personalKyc,
+  addressDetails,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [isSameAsAadhaar, setIsSameAsAadhaar] = useState(false);
+  const [isSameAsPermanent, setIsSameAsPermanent] = useState(false);
 
   const formik = useFormik({
     initialValues: {
-      // Aadhaar Address - Read Only
-      aadhaarAddress: addressDetails?.permanent_address || "",
-      aadhaarPincode: addressDetails?.permanent_pin_code || "",
-      aadhaarState: addressDetails?.permanent_state || "",
-      aadhaarDistrict: "",
-      aadhaarCity: addressDetails?.permanent_city || "",
-      aadhaarLocality: "",
+      // Permanent Address
+      permanentAddress: addressDetails?.permanent_address || "",
+      permanentPincode: addressDetails?.permanent_pin_code || "",
+      permanentState: addressDetails?.permanent_state || "",
+      permanentCity: addressDetails?.permanent_city || "",
 
       // Residential Address
       address: addressDetails?.current_address || "",
       pincode: addressDetails?.current_pin_code || "",
       state: addressDetails?.current_state || "",
-      district: "",
+      // district: "",
       city: addressDetails?.current_city || "",
-      locality: "",
-      landmark: "",
-      residenceType: "",
-      yearsAtAddress: "",
+      // locality: "",
+      // landmark: "",
+      // residenceType: "",
+      // yearsAtAddress: "",
     },
 
     enableReinitialize: true,
@@ -55,26 +60,75 @@ const AddressInformation = ({ onNext, permission, addressDetails }) => {
 
       state: Yup.string().required("State is required"),
 
-      district: Yup.string().required("District is required"),
+      // district: Yup.string().required("District is required"),
 
       city: Yup.string().required("City is required"),
 
-      locality: Yup.string().required("Locality is required"),
+      // locality: Yup.string().required("Locality is required"),
     }),
 
     onSubmit: async (values) => {
-      const finalValues = {
-        ...values,
-        sameAsAadhaar: isSameAsAadhaar,
+      const customerId = addressDetails?.customer_id || personalKyc?.customer_id;
+      const applicationId =
+        addressDetails?.application_id || personalKyc?.application_id;
+
+      if (!customerId || !applicationId) {
+        toast.error("Customer and application IDs are required to save applicant details.");
+        return;
+      }
+
+      const updatedBy =
+        localStorage.getItem("username") ||
+        localStorage.getItem("userName") ||
+        localStorage.getItem("email") ||
+        "admin";
+      const request = {
+        customer_id: customerId,
+        application_id: applicationId,
+        full_name: personalKyc?.full_name || "",
+        father_name: personalKyc?.father_name || "",
+        dob: personalKyc?.dob || "",
+        gender: personalKyc?.gender || "",
+        marital_status: personalKyc?.marital_status || "",
+        alternate_mobile: personalKyc?.alternate_mobile || "",
+        email_id: personalKyc?.email_id || "",
+        primary_document_type: personalKyc?.primary_document_type || "",
+        uid_number: personalKyc?.uid_number || "",
+        pan_number: personalKyc?.pan_number || "",
+        permanent_address: values.permanentAddress.trim(),
+        permanent_city: values.permanentCity.trim(),
+        permanent_state: values.permanentState,
+        permanent_pin_code: values.permanentPincode.trim(),
+        current_address: values.address.trim(),
+        current_city: values.city.trim(),
+        current_state: values.state,
+        current_pin_code: values.pincode.trim(),
+        created_by: addressDetails?.created_by || updatedBy,
+        updated_by: updatedBy,
       };
 
-      console.log("Address Values:", finalValues);
+      try {
+        const response = await SaveApplicantDetails(request);
 
-      // API call here
+        if (!response?.status) {
+          toast.error(response?.message || "Unable to save applicant details.");
+          return;
+        }
 
-      setIsEditing(false);
-
-      onNext?.();
+        formik.resetForm({ values });
+        setIsSameAsPermanent(false);
+        setIsEditing(false);
+        toast.success(response?.message || "Applicant details saved successfully.");
+        onNext?.();
+      } catch (error) {
+        console.error("Error saving applicant address details:", error);
+        toast.error(
+          error?.response?.data?.message ||
+            error?.response?.data?.title ||
+            error?.message ||
+            "Something went wrong while saving applicant details.",
+        );
+      }
     },
   });
 
@@ -92,35 +146,22 @@ const AddressInformation = ({ onNext, permission, addressDetails }) => {
 
   const handleCancel = () => {
     formik.resetForm();
-    setIsSameAsAadhaar(false);
+    setIsSameAsPermanent(false);
     setIsEditing(false);
   };
 
-  /* =========================================================
-     SAME AS AADHAAR
-  ========================================================== */
-
-  const handleSameAsAadhaar = (e) => {
-    const checked = e.target.checked;
-
-    setIsSameAsAadhaar(checked);
+  const handleSameAsPermanent = (event) => {
+    const checked = event.target.checked;
+    setIsSameAsPermanent(checked);
 
     if (checked) {
-      formik.setValues({
-        ...formik.values,
-
-        address: formik.values.aadhaarAddress,
-        pincode: formik.values.aadhaarPincode,
-        state: formik.values.aadhaarState,
-        district: formik.values.aadhaarDistrict,
-        city: formik.values.aadhaarCity,
-        locality: formik.values.aadhaarLocality,
-
-        // Optional fields
-        landmark: "",
-        residenceType: "",
-        yearsAtAddress: "",
-      });
+      formik.setValues((values) => ({
+        ...values,
+        address: values.permanentAddress,
+        pincode: values.permanentPincode,
+        state: values.permanentState,
+        city: values.permanentCity,
+      }));
     }
   };
 
@@ -222,7 +263,7 @@ const AddressInformation = ({ onNext, permission, addressDetails }) => {
       <form onSubmit={formik.handleSubmit}>
         <div className="p-4">
           {/* =================================================
-              AADHAAR ADDRESS
+              PERMANENT ADDRESS
           ================================================== */}
 
           <div className="mb-6">
@@ -244,27 +285,13 @@ const AddressInformation = ({ onNext, permission, addressDetails }) => {
 
               <div>
                 <h4 className="text-[13px] font-semibold text-slate-700">
-                  Aadhaar Address
+                  Permanent Address
                 </h4>
 
                 <p className="text-[10px] text-slate-400">
-                  Address as per Aadhaar
+                  Customer's permanent address
                 </p>
               </div>
-
-              <span
-                className="
-                  rounded-full
-                  bg-slate-100
-                  px-2
-                  py-0.5
-                  text-[9px]
-                  font-medium
-                  text-slate-500
-                "
-              >
-                READ ONLY
-              </span>
             </div>
 
             <div
@@ -279,61 +306,48 @@ const AddressInformation = ({ onNext, permission, addressDetails }) => {
             >
               <div className="col-span-2 max-xl:col-span-2 max-sm:col-span-1">
                 <TextInput
-                  label="Aadhaar Address"
-                  name="aadhaarAddress"
-                  value={formik.values.aadhaarAddress}
-                  readOnly
-                  style="bg-slate-50 cursor-not-allowed"
+                  label="Permanent Address"
+                  name="permanentAddress"
+                  value={formik.values.permanentAddress}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  disabled={!isEditing}
                 />
               </div>
 
               <div>
                 <TextInput
                   label="Pincode"
-                  name="aadhaarPincode"
-                  value={formik.values.aadhaarPincode}
-                  readOnly
-                  style="bg-slate-50 cursor-not-allowed"
+                  name="permanentPincode"
+                  value={formik.values.permanentPincode}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  maxLength={6}
+                  disabled={!isEditing}
                 />
               </div>
 
               <div>
-                <TextInput
+                <SelectInput
                   label="State"
-                  name="aadhaarState"
-                  value={formik.values.aadhaarState}
-                  readOnly
-                  style="bg-slate-50 cursor-not-allowed"
-                />
-              </div>
-
-              <div>
-                <TextInput
-                  label="District"
-                  name="aadhaarDistrict"
-                  value={formik.values.aadhaarDistrict}
-                  readOnly
-                  style="bg-slate-50 cursor-not-allowed"
+                  name="permanentState"
+                  placeholder="Select State"
+                  value={formik.values.permanentState}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  options={statesList}
+                  disabled={!isEditing}
                 />
               </div>
 
               <div>
                 <TextInput
                   label="City"
-                  name="aadhaarCity"
-                  value={formik.values.aadhaarCity}
-                  readOnly
-                  style="bg-slate-50 cursor-not-allowed"
-                />
-              </div>
-
-              <div>
-                <TextInput
-                  label="Locality"
-                  name="aadhaarLocality"
-                  value={formik.values.aadhaarLocality}
-                  readOnly
-                  style="bg-slate-50 cursor-not-allowed"
+                  name="permanentCity"
+                  value={formik.values.permanentCity}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  disabled={!isEditing}
                 />
               </div>
             </div>
@@ -346,11 +360,11 @@ const AddressInformation = ({ onNext, permission, addressDetails }) => {
           <div className="my-5 border-t border-dashed border-slate-200" />
 
           {/* =================================================
-              RESIDENTIAL ADDRESS
+              CURRENT RESIDENTIAL ADDRESS
           ================================================== */}
 
           <div>
-            {/* TITLE + SAME AS AADHAAR */}
+            {/* TITLE + SAME AS PERMANENT */}
 
             <div className="mb-3 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
@@ -380,41 +394,16 @@ const AddressInformation = ({ onNext, permission, addressDetails }) => {
                 </div>
               </div>
 
-              {/* SAME AS AADHAAR */}
-
               {isEditing && (
-                <label
-                  className="
-                    flex
-                    cursor-pointer
-                    items-center
-                    gap-2
-                    rounded-lg
-                    border
-                    border-primary/20
-                    bg-primary/5
-                    px-3
-                    py-2
-                    transition
-                    hover:bg-primary/10
-                  "
-                >
+                <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 transition hover:bg-primary/10">
                   <input
                     type="checkbox"
-                    checked={isSameAsAadhaar}
-                    onChange={handleSameAsAadhaar}
-                    className="
-                      h-4
-                      w-4
-                      rounded
-                      border-slate-300
-                      text-primary
-                      focus:ring-primary
-                    "
+                    checked={isSameAsPermanent}
+                    onChange={handleSameAsPermanent}
+                    className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary"
                   />
-
                   <span className="text-[11px] font-medium text-slate-600">
-                    Same as Aadhaar Address
+                    Same as Permanent Address
                   </span>
                 </label>
               )}
@@ -441,7 +430,7 @@ const AddressInformation = ({ onNext, permission, addressDetails }) => {
                   value={formik.values.address}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  disabled={!isEditing || isSameAsAadhaar}
+                  disabled={!isEditing || isSameAsPermanent}
                 />
 
                 <ErrorMsg
@@ -459,7 +448,7 @@ const AddressInformation = ({ onNext, permission, addressDetails }) => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   maxLength={6}
-                  disabled={!isEditing || isSameAsAadhaar}
+                  disabled={!isEditing || isSameAsPermanent}
                 />
 
                 <ErrorMsg
@@ -478,14 +467,14 @@ const AddressInformation = ({ onNext, permission, addressDetails }) => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   options={statesList}
-                  disabled={!isEditing || isSameAsAadhaar}
+                  disabled={!isEditing || isSameAsPermanent}
                 />
 
                 <ErrorMsg error={formik.touched.state && formik.errors.state} />
               </div>
 
               {/* District */}
-
+{/* 
               <div>
                 <SelectInput
                   label="District"
@@ -495,13 +484,13 @@ const AddressInformation = ({ onNext, permission, addressDetails }) => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   options={districtList}
-                  disabled={!isEditing || isSameAsAadhaar}
+                  disabled={!isEditing}
                 />
 
                 <ErrorMsg
                   error={formik.touched.district && formik.errors.district}
                 />
-              </div>
+              </div> */}
 
               {/* City */}
 
@@ -512,7 +501,7 @@ const AddressInformation = ({ onNext, permission, addressDetails }) => {
                   value={formik.values.city}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  disabled={!isEditing || isSameAsAadhaar}
+                  disabled={!isEditing || isSameAsPermanent}
                 />
 
                 <ErrorMsg error={formik.touched.city && formik.errors.city} />
@@ -520,23 +509,23 @@ const AddressInformation = ({ onNext, permission, addressDetails }) => {
 
               {/* Locality */}
 
-              <div>
+              {/* <div>
                 <TextInput
                   label="Locality"
                   name="locality"
                   value={formik.values.locality}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  disabled={!isEditing || isSameAsAadhaar}
+                  disabled={!isEditing}
                 />
 
                 <ErrorMsg
                   error={formik.touched.locality && formik.errors.locality}
                 />
-              </div>
+              </div> */}
 
               {/* Landmark */}
-
+{/* 
               <div>
                 <TextInput
                   label="Landmark"
@@ -546,11 +535,11 @@ const AddressInformation = ({ onNext, permission, addressDetails }) => {
                   onBlur={formik.handleBlur}
                   disabled={!isEditing}
                 />
-              </div>
+              </div> */}
 
               {/* Residence Type */}
 
-              <div>
+              {/* <div>
                 <SelectInput
                   label="Residence Type"
                   name="residenceType"
@@ -561,11 +550,11 @@ const AddressInformation = ({ onNext, permission, addressDetails }) => {
                   options={houseType}
                   disabled={!isEditing}
                 />
-              </div>
+              </div> */}
 
               {/* Years */}
 
-              <div>
+              {/* <div>
                 <SelectInput
                   label="Years at Address"
                   name="yearsAtAddress"
@@ -579,7 +568,7 @@ const AddressInformation = ({ onNext, permission, addressDetails }) => {
                   }))}
                   disabled={!isEditing}
                 />
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -626,6 +615,7 @@ const AddressInformation = ({ onNext, permission, addressDetails }) => {
 
               <Button
                 type="submit"
+                disabled={formik.isSubmitting}
                 btnName={
                   <span className="flex items-center gap-1.5">
                     <RiCheckLine size={16} />

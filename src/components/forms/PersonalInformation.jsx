@@ -1,5 +1,4 @@
 import { useFormik } from "formik";
-import * as Yup from "yup";
 import {
   RiUser3Line,
   RiEditLine,
@@ -7,6 +6,7 @@ import {
   RiCloseLine,
 } from "react-icons/ri";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 import Button from "../utils/Button";
 import TextInput from "../fields/TextInput";
@@ -15,10 +15,10 @@ import DateInput from "../fields/DateInput";
 import ErrorMsg from "../utils/ErrorMsg";
 
 import { gender, meritalStatus, religion } from "../../content/data";
+import { SaveMarketSurvey } from "../../api/application";
 
 const PersonalInformation = ({ permission, marketSurvey, personalKyc }) => {
   const [isEditing, setIsEditing] = useState(false);
-  console.log("marketSurvey", marketSurvey)
 
   const formik = useFormik({
     initialValues: {
@@ -54,11 +54,68 @@ const PersonalInformation = ({ permission, marketSurvey, personalKyc }) => {
     // }),
 
     onSubmit: async (values) => {
-      console.log(values);
+      if (!marketSurvey?.customer_id) {
+        toast.error("Customer ID is missing. Customer details cannot be saved.");
+        return;
+      }
 
-      // API call here
+      const updatedBy =
+        localStorage.getItem("username") ||
+        localStorage.getItem("userName") ||
+        localStorage.getItem("email") ||
+        "admin";
+      const request = {
+        customer_id: marketSurvey?.customer_id || "",
+        business_name: marketSurvey?.business_name || "",
+        business_type: marketSurvey?.business_type || "",
+        business_trade: marketSurvey?.business_trade || "",
+        lead_source: marketSurvey?.lead_source || "",
+        market_locality: marketSurvey?.market_locality || "",
+        business_owner_name: values.customerName.trim(),
+        business_owner_mobile_no: values.mobile.trim(),
+        business_owner_uid: marketSurvey?.business_owner_uid || "",
+        contact_person_email: values.email.trim(),
+        contact_person_mobile_no: marketSurvey?.contact_person_mobile_no || "",
+        address: marketSurvey?.address || "",
+        pin_code: marketSurvey?.pin_code || "",
+        state: marketSurvey?.state || "",
+        latitude:
+          marketSurvey?.latitude == null ? "" : String(marketSurvey.latitude),
+        longitude:
+          marketSurvey?.longitude == null ? "" : String(marketSurvey.longitude),
+        lat_long_address: marketSurvey?.lat_long_address || "",
+        interested_for_loan: marketSurvey?.interested_for_loan ?? false,
+        next_meeting_date: null,
+        loan_amount: marketSurvey?.loan_amount ?? 0,
+        market_survey_observations:
+          marketSurvey?.market_survey_observations || "",
+        created_by: marketSurvey?.created_by || updatedBy,
+        updated_by: updatedBy,
+        company_id: marketSurvey?.company_id || "",
+        product_name: marketSurvey?.product_name || "",
+        business_photo: null,
+      };
 
-      setIsEditing(false);
+      try {
+        const response = await SaveMarketSurvey(request);
+
+        if (!response?.status) {
+          toast.error(response?.message || "Unable to save customer details.");
+          return;
+        }
+
+        formik.resetForm({ values });
+        setIsEditing(false);
+        toast.success(response?.message || "Customer details saved successfully.");
+      } catch (error) {
+        console.error("Error saving market survey details:", error);
+        toast.error(
+          error?.response?.data?.message ||
+            error?.response?.data?.title ||
+            error?.message ||
+            "Something went wrong while saving customer details.",
+        );
+      }
     },
   });
 
@@ -334,6 +391,7 @@ const PersonalInformation = ({ permission, marketSurvey, personalKyc }) => {
 
               <Button
                 type="submit"
+                disabled={formik.isSubmitting}
                 btnName={
                   <span className="flex items-center gap-1.5">
                     <RiCheckLine size={16} />

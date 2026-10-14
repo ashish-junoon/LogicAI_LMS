@@ -85,7 +85,7 @@
 
 // export default LeadFormDetails;
 
-import React, { useState } from "react";
+import { useState } from "react";
 
 import PersonalInformation from "../../components/forms/PersonalInformation";
 import KycInformation from "../../components/forms/KycInformation";
@@ -119,10 +119,10 @@ const LeadFormDetails = ({ permisions, customerDetails }) => {
       name: "Co Borrower/Guarantor's Details",
       permission: permisions?.guarantorInfo,
     },
-    {
-      name: "Employment Information",
-      permission: permisions?.employementInfo,
-    },
+    // {
+    //   name: "Employment Information",
+    //   permission: permisions?.employementInfo,
+    // },
   ];
 
   const visibleTabs = tabs.filter((tab) => tab.permission !== false);
@@ -133,21 +133,51 @@ const LeadFormDetails = ({ permisions, customerDetails }) => {
         return <PersonalInformation permission={permisions?.personalInfo} marketSurvey={customerDetails?.marketSurvey?.[0]} personalKyc={customerDetails?.personalKyc?.[0]} />;
 
       case "KYC Details":
-        return <KycInformation permission={permisions?.kycInfo} personalKyc={customerDetails?.personalKyc?.[0]} documents={customerDetails?.documents || []} />;
+        return <KycInformation permission={permisions?.kycInfo} personalKyc={customerDetails?.personalKyc?.[0]} addressDetails={customerDetails?.addressDetails?.[0]} documents={customerDetails?.documents || []} />;
 
       case "Address Information":
-        return <AddressInformation permission={permisions?.addressInfo} addressDetails={customerDetails?.addressDetails?.[0]} />;
+        return <AddressInformation permission={permisions?.addressInfo} personalKyc={customerDetails?.personalKyc?.[0]} addressDetails={customerDetails?.addressDetails?.[0]} />;
 
       case "Bank Details":
-        return <MultipleBankInformation permission={permisions?.bankInfo} bankDetails={customerDetails?.bankDetails || []} />;
+        return (
+          <MultipleBankInformation
+            permission={permisions?.bankInfo}
+            bankDetails={customerDetails?.bankDetails || []}
+            customerId={
+              customerDetails?.bankDetails?.[0]?.customer_id ||
+              customerDetails?.personalKyc?.[0]?.customer_id ||
+              customerDetails?.marketSurvey?.[0]?.customer_id
+            }
+            applicationId={
+              customerDetails?.bankDetails?.[0]?.application_id ||
+              customerDetails?.personalKyc?.[0]?.application_id ||
+              customerDetails?.marketSurvey?.[0]?.application_id
+            }
+          />
+        );
 
       case "Co Borrower/Guarantor's Details":
-        return <GuarantorInformation permission={permisions?.guarantorInfo} details={customerDetails?.coBorrowerGuarantor?.[0]} />;
-
-      case "Employment Information":
         return (
-          <EmploymentInformation permission={permisions?.employementInfo} />
+          <GuarantorInformation
+            permission={permisions?.guarantorInfo}
+            details={customerDetails?.coBorrowerGuarantor?.[0]}
+            customerId={
+              customerDetails?.coBorrowerGuarantor?.[0]?.customer_id ||
+              customerDetails?.personalKyc?.[0]?.customer_id ||
+              customerDetails?.marketSurvey?.[0]?.customer_id
+            }
+            applicationId={
+              customerDetails?.coBorrowerGuarantor?.[0]?.application_id ||
+              customerDetails?.personalKyc?.[0]?.application_id ||
+              customerDetails?.marketSurvey?.[0]?.application_id
+            }
+          />
         );
+
+      // case "Employment Information":
+      //   return (
+      //     <EmploymentInformation permission={permisions?.employementInfo} />
+      //   );
 
       default:
         return null;

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { toast } from "react-toastify";
 import {
   RiCheckboxCircleFill,
   RiEditLine,
@@ -14,10 +15,16 @@ import ErrorMsg from "../utils/ErrorMsg";
 import Button from "../utils/Button";
 
 import { useFormik } from "formik";
-import * as Yup from "yup";
 import DownloadDoc from "../fields/DownloadDoc";
+import { SaveApplicantDetails } from "../../api/application";
 
-const KycInformation = ({ onNext, permission, personalKyc, documents = [] }) => {
+const KycInformation = ({
+  onNext,
+  permission,
+  personalKyc,
+  addressDetails,
+  documents = [],
+}) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const [verified, setVerified] = useState({
@@ -68,13 +75,66 @@ const KycInformation = ({ onNext, permission, personalKyc, documents = [] }) => 
     // }),
 
     onSubmit: async (values) => {
-      console.log("KYC Values:", values);
+      const customerId = personalKyc?.customer_id || addressDetails?.customer_id;
+      const applicationId =
+        personalKyc?.application_id || addressDetails?.application_id;
 
-      // API call here
+      if (!customerId || !applicationId) {
+        toast.error("Customer and application IDs are required to save applicant details.");
+        return;
+      }
 
-      setIsEditing(false);
+      const updatedBy =
+        localStorage.getItem("username") ||
+        localStorage.getItem("userName") ||
+        localStorage.getItem("email") ||
+        "admin";
+      const request = {
+        customer_id: customerId,
+        application_id: applicationId,
+        full_name: personalKyc?.full_name || "",
+        father_name: personalKyc?.father_name || "",
+        dob: personalKyc?.dob || "",
+        gender: personalKyc?.gender || "",
+        marital_status: personalKyc?.marital_status || "",
+        alternate_mobile: personalKyc?.alternate_mobile || "",
+        email_id: personalKyc?.email_id || "",
+        primary_document_type: personalKyc?.primary_document_type || "",
+        uid_number: values.aadhaarNumber.trim(),
+        pan_number: values.panNumber.trim(),
+        permanent_address: addressDetails?.permanent_address || "",
+        permanent_city: addressDetails?.permanent_city || "",
+        permanent_state: addressDetails?.permanent_state || "",
+        permanent_pin_code: addressDetails?.permanent_pin_code || "",
+        current_address: addressDetails?.current_address || "",
+        current_city: addressDetails?.current_city || "",
+        current_state: addressDetails?.current_state || "",
+        current_pin_code: addressDetails?.current_pin_code || "",
+        created_by: personalKyc?.created_by || updatedBy,
+        updated_by: updatedBy,
+      };
 
-      onNext?.();
+      try {
+        const response = await SaveApplicantDetails(request);
+
+        if (!response?.status) {
+          toast.error(response?.message || "Unable to save applicant details.");
+          return;
+        }
+
+        formik.resetForm({ values });
+        setIsEditing(false);
+        toast.success(response?.message || "Applicant details saved successfully.");
+        onNext?.();
+      } catch (error) {
+        console.error("Error saving applicant KYC details:", error);
+        toast.error(
+          error?.response?.data?.message ||
+            error?.response?.data?.title ||
+            error?.message ||
+            "Something went wrong while saving applicant details.",
+        );
+      }
     },
   });
 
@@ -511,6 +571,7 @@ const KycInformation = ({ onNext, permission, personalKyc, documents = [] }) => 
 
               <Button
                 type="submit"
+                disabled={formik.isSubmitting}
                 btnName={
                   <span className="flex items-center gap-1.5">
                     <RiCheckLine size={16} />

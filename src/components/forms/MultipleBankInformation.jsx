@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { toast } from "react-toastify";
 import {
   RiBankLine,
   RiEditLine,
@@ -18,20 +19,26 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 import { bankList } from "../../content/data";
+import { SaveBankDetails } from "../../api/application";
 
 const MultipleBankInformation = ({
   onNext,
   permission,
   step,
   bankDetails = [],
+  customerId,
+  applicationId,
 }) => {
   const [bankAccounts, setBankAccounts] = useState(() =>
     bankDetails.map((account) => {
       const readableValue = (value) =>
-        value === "System.Byte[]" ? "" : value || "";
+        value || "";
 
       return {
         id: account.id,
+        customerId: account.customer_id,
+        applicationId: account.application_id,
+        createdBy: account.created_by,
         bankName: readableValue(account.bank_name),
         ifscCode: readableValue(account.ifsc_code),
         accountNumber: readableValue(account.account_number),
@@ -102,22 +109,80 @@ const MultipleBankInformation = ({
         ),
     }),
 
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       if (editingIndex === null) return;
 
-      setBankAccounts((prev) =>
-        prev.map((account, index) =>
-          index === editingIndex
-            ? {
-                ...values,
-                id: account.id,
-              }
-            : account
-        )
-      );
+      if (values.bankDocument) {
+        toast.error(
+          "Bank document uploads are not supported by SaveBankDetails. Cancel the edit and save account details without selecting a file.",
+        );
+        return;
+      }
 
-      formik.resetForm();
-      setEditingIndex(null);
+      const account = bankAccounts[editingIndex];
+      const resolvedCustomerId =
+        customerId || account.customerId;
+      const resolvedApplicationId =
+        applicationId || account.applicationId;
+
+      if (!resolvedCustomerId || !resolvedApplicationId) {
+        toast.error(
+          "Customer and application IDs are required to save bank details.",
+        );
+        return;
+      }
+
+      const updatedBy =
+        localStorage.getItem("username") ||
+        localStorage.getItem("userName") ||
+        localStorage.getItem("email") ||
+        "admin";
+      const request = {
+        customer_id: resolvedCustomerId,
+        application_id: resolvedApplicationId,
+        id: account.id,
+        bank_name: values.bankName.trim(),
+        ifsc_code: values.ifscCode.trim().toUpperCase(),
+        account_number: values.accountNumber.trim(),
+        account_holder_name: values.accountHolderName.trim(),
+        created_by: account.createdBy || updatedBy,
+        updated_by: updatedBy,
+      };
+
+      try {
+        const response = await SaveBankDetails(request);
+
+        if (!response?.status) {
+          toast.error(response?.message || "Unable to save bank details.");
+          return;
+        }
+
+        setBankAccounts((prev) =>
+          prev.map((bankAccount, index) =>
+            index === editingIndex
+              ? {
+                  ...bankAccount,
+                  bankName: values.bankName.trim(),
+                  ifscCode: values.ifscCode.trim().toUpperCase(),
+                  accountNumber: values.accountNumber.trim(),
+                  accountHolderName: values.accountHolderName.trim(),
+                }
+              : bankAccount,
+          ),
+        );
+
+        formik.resetForm();
+        setEditingIndex(null);
+        toast.success(response?.message || "Bank details saved successfully.");
+      } catch (error) {
+        console.error("Error saving bank details:", error);
+        toast.error(
+          error?.response?.data?.message ||
+            error?.response?.data?.title ||
+            error?.message ||
+            "Something went wrong while saving bank details.",
+        );
+      }
     },
   });
 
@@ -178,11 +243,6 @@ const MultipleBankInformation = ({
       alert("No bank account information available");
       return;
     }
-
-    console.log(
-      "All Bank Accounts:",
-      bankAccounts
-    );
 
     setIsEditing(false);
     setEditingIndex(null);
@@ -993,6 +1053,7 @@ const MultipleBankInformation = ({
 
                     <Button
                       type="submit"
+                      disabled={formik.isSubmitting}
                       btnName={
                         <span className="flex items-center gap-1.5">
                           <RiCheckLine
@@ -1061,6 +1122,7 @@ const MultipleBankInformation = ({
               <Button
                 type="button"
                 onClick={handleContinue}
+                disabled={formik.isSubmitting}
                 btnName={
                   <span className="flex items-center gap-1.5">
                     Save & Continue
