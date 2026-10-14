@@ -65,44 +65,44 @@ function App() {
           <Route path='/emi-details/' element={<EMIDetails />} />
 
           {/* master pages */}
-          <Route path='/branches-master' element={<BranchList />} />
-          <Route path='/finance-years-master' element={<FinantialYears />} />
-          {/* <Route path='/branch-managers-master' element={<BranchManagers />} /> */}
-          <Route path='/relationships-master' element={<Relationships />} />
-          <Route path='/state-master' element={<StateList />} />
-          <Route path='/city-master' element={<CityList />} />
-          <Route path='/occupations-master' element={<Occupations />} /> 
-          <Route path='/product-master' element={<LoanProductMaster />} /> 
-          <Route path='/department-master' element={<DepartmentMaster />} /> 
-          <Route path='/designation-master' element={<DesignationMaster />} /> 
-          <Route path='/employement-type-master' element={<EmployementTypeMaster />} /> 
-          <Route path='/sector-master' element={<SectorMaster />} /> 
-          <Route path='/religion-master' element={<ReligionMaster />} /> 
-          <Route path='/gender-master' element={<GenderMaster />} /> 
-          <Route path='/residence-type-master' element={<ResidenceType />} /> 
-          <Route path='/quetionare-master' element={<PDQuestionsMaster />} /> 
-          <Route path='/vendor-master' element={<VendorMaster />} /> 
-          <Route path='/business-trade-master' element={<BusinessTradesMaster />} /> 
-          <Route path='/business-type-master' element={<BusinessTypeMaster />} /> 
-          <Route path='/bank-master' element={<BankMaster />} /> 
-          <Route path='/document-master' element={<DocumentMaster />} /> 
-          <Route path='/loan-purpose-master' element={<LoanPurposeMaster />} /> 
-          <Route path='/lead-source-master' element={<LeadSource />} /> 
-          {/* <Route path='/product-master' element={<CreateLoanProduct />} />  */}
+          <Route path='/master/branches' element={<BranchList />} />
+          <Route path='/master/finance-years' element={<FinantialYears />} />
+          {/* <Route path='/master/branch-managers' element={<BranchManagers />} /> */}
+          <Route path='/master/relationships' element={<Relationships />} />
+          <Route path='/master/state' element={<StateList />} />
+          <Route path='/master/city' element={<CityList />} />
+          <Route path='/master/occupations' element={<Occupations />} /> 
+          <Route path='/master/product' element={<LoanProductMaster />} /> 
+          <Route path='/master/department' element={<DepartmentMaster />} /> 
+          <Route path='/master/designation' element={<DesignationMaster />} /> 
+          <Route path='/master/employement-type' element={<EmployementTypeMaster />} /> 
+          <Route path='/master/sector' element={<SectorMaster />} /> 
+          <Route path='/master/religion' element={<ReligionMaster />} /> 
+          <Route path='/master/gender' element={<GenderMaster />} /> 
+          <Route path='/master/residence-type' element={<ResidenceType />} /> 
+          <Route path='/master/quetionare' element={<PDQuestionsMaster />} /> 
+          <Route path='/master/vendor' element={<VendorMaster />} /> 
+          <Route path='/master/business-trade' element={<BusinessTradesMaster />} /> 
+          <Route path='/master/business-type' element={<BusinessTypeMaster />} /> 
+          <Route path='/master/bank' element={<BankMaster />} /> 
+          <Route path='/master/document' element={<DocumentMaster />} /> 
+          <Route path='/master/loan-purpose' element={<LoanPurposeMaster />} /> 
+          <Route path='/master/lead-source' element={<LeadSource />} /> 
+          {/* <Route path='/master/product' element={<CreateLoanProduct />} />  */}
 
           {/* ADMIN */}
-          <Route path='/manage-user' element={<ManageUser />} /> 
-          <Route path='/manage-page' element={<PageManagement />} /> 
-          <Route path='/manage-group' element={<GroupManagement />} /> 
+          <Route path='/admin/manage-user' element={<ManageUser />} /> 
+          <Route path='/admin/manage-page' element={<PageManagement />} /> 
+          <Route path='/admin/manage-group' element={<GroupManagement />} /> 
 
           {/* Leads Section  */}
-          <Route path='/leads-draft' element={<DraftLeads />} />
-          <Route path='/leads-new' element={<NewLeads />} />
-          <Route path='/leads-assesment' element={<CreditLeads />} />
-          <Route path='/leads-disbursement' element={<DisbursementList />} />
-          <Route path='/leads-rejected' element={<RejectedLeads />} />
-          <Route path='/leads-kyc' element={<KycLeads />} />
-          <Route path='/leads-telecalling' element={<TelecallingLeads />} />
+          <Route path='/lead-management/leads-draft' element={<DraftLeads />} />
+          <Route path='/lead-management/leads-new' element={<NewLeads />} />
+          <Route path='/lead-management/leads-assesment' element={<CreditLeads />} />
+          <Route path='/lead-management/leads-disbursement' element={<DisbursementList />} />
+          <Route path='/lead-management/leads-rejected' element={<RejectedLeads />} />
+          <Route path='/lead-management/leads-kyc' element={<KycLeads />} />
+          <Route path='/lead-management/leads-telecalling' element={<TelecallingLeads />} />
 
           {/* Loan Section  */}
           <Route path='/loan-all' element={<AllLoans />} />
