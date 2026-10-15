@@ -45,7 +45,12 @@ const CreditWrapper = ({ customerDetails }) => {
         // return <LeadForm />;
         return <LeadFormDetails permisions={permisions} customerDetails={customerDetails} />;
       case "credit":
-        return <CreditSection />;
+        return (
+          <CreditSection
+            creditDetails={customerDetails?.cibilDetails}
+            customerDetails={customerDetails}
+          />
+        );
       case "videoKyc":
         return <VideoKYC />;
       case "loaninfo":

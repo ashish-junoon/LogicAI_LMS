@@ -1,23 +1,116 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Icon from "../utils/Icon";
 import SelectInput from "../fields/SelectInput";
 import Button from "../utils/Button";
+import { CreditReport } from "../../api/kycApi";
 
-const CreditSection = () => {
-  const [users, setUsers] = useState([
+const normalizeCustomerType = (customerType) =>
+  String(customerType || "").toUpperCase().replace(/[^A-Z]/g, "");
+
+const createUsers = (creditDetails, customerDetails) => {
+  const records = Array.isArray(creditDetails)
+    ? creditDetails
+    : creditDetails
+      ? [creditDetails]
+      : [];
+  const marketSurvey = customerDetails?.marketSurvey?.[0] || {};
+  const personalKyc = customerDetails?.personalKyc?.[0] || {};
+  const borrower = {
+    full_name:
+      personalKyc.full_name ||
+      marketSurvey.business_owner_name ||
+      customerDetails?.customer_name ||
+      "Borrower",
+    mobile_number:
+      marketSurvey.business_owner_mobile_no ||
+      personalKyc.mobile_number ||
+      personalKyc.alternate_mobile ||
+      "",
+    uid_number: personalKyc.uid_number || "",
+  };
+  const coBorrowerGuarantor =
+    customerDetails?.coBorrowerGuarantor?.[0] || {};
+  const participants = [
     {
-      id: 1,
-      name: "Raju Das",
-      email: "john@example.com",
+      role: "BORROWER",
+      label: "Borrower",
+      profile: borrower,
+      creditRecord: records.find(
+        (record) => normalizeCustomerType(record?.customer_type) === "BORROWER",
+      ),
+    },
+    {
+      role: "CO_BORROWER",
+      label: "Co-borrower",
+      profile: {
+        full_name: coBorrowerGuarantor.co_borrower_name || "Co-borrower",
+        mobile_number: coBorrowerGuarantor.co_borrower_mobile || "",
+        uid_number: coBorrowerGuarantor.co_borrower_aahaar_number || "",
+        relation: coBorrowerGuarantor.co_borrower_relation || "",
+        customer_id: coBorrowerGuarantor.customer_id,
+        application_id: coBorrowerGuarantor.application_id,
+      },
+      creditRecord: records.find((record) =>
+        ["COBORROWER", "COAPPLICANT"].includes(
+          normalizeCustomerType(record?.customer_type),
+        ),
+      ),
+    },
+    {
+      role: "GUARANTOR",
+      label: "Guarantor",
+      profile: {
+        full_name: coBorrowerGuarantor.guarantor_name || "Guarantor",
+        mobile_number: coBorrowerGuarantor.guarantor_mobile || "",
+        uid_number: coBorrowerGuarantor.guarantor_aahaar_number || "",
+        relation: coBorrowerGuarantor.guarantor_relation || "",
+        customer_id: coBorrowerGuarantor.customer_id,
+        application_id: coBorrowerGuarantor.application_id,
+      },
+      creditRecord: records.find(
+        (record) =>
+          normalizeCustomerType(record?.customer_type) === "GUARANTOR",
+      ),
+    },
+  ];
+
+  return participants.map(({ role, label, profile, creditRecord }, index) => {
+    const record = creditRecord || {};
+    const rawScore = record?.credit_score ?? record?.creditScore ?? record?.score;
+    const parsedScore = Number(rawScore);
+    const creditScore =
+      rawScore !== null &&
+      rawScore !== undefined &&
+      rawScore !== "" &&
+      Number.isFinite(parsedScore)
+        ? parsedScore
+        : null;
+    const fileUrl =
+      record?.credit_report_link ||
+      record?.file_url ||
+      record?.report_url ||
+      record?.pdf_url ||
+      null;
+
+    return {
+      id: `${role.toLowerCase()}-${record?.id || record?.request_id || index}`,
+      role,
+      label,
+      profile,
+      detail: record,
+      name: profile.full_name,
       softPull: {
-        creditScore: 12,
-        generatedDate: "2024-05-20 10:30 AM",
-        fileUrl: "/credit-reports/soft-pull-report.pdf",
-        fileName: "Soft_Pull_Report.pdf",
-        showFile: true,
+        creditScore,
+        generatedDate: record?.request_date || record?.generated_date || record?.generatedDate || null,
+        fileUrl,
+        fileName:
+          record?.file_name ||
+          record?.fileName ||
+          (fileUrl ? fileUrl.split("/").pop().split("?")[0] : null),
+        showFile: Boolean(fileUrl),
         isGenerating: false,
-        selectedMode: "Crif",
-        lastRefreshed: "2024-05-20 10:30 AM",
+        selectedMode: record?.bureau_name || "CRIF",
+        lastRefreshed: record?.request_date || record?.generated_date || null,
       },
       hardPull: {
         creditScore: null,
@@ -28,34 +121,64 @@ const CreditSection = () => {
         isGenerating: false,
         selectedMode: "",
       },
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane@example.com",
-      softPull: {
-        creditScore: null,
-        generatedDate: "2024-05-19 02:15 PM",
-        fileUrl: "/credit-reports/soft-pull-report-2.pdf",
-        fileName: "Soft_Pull_Report_2.pdf",
-        showFile: true,
-        isGenerating: false,
-        selectedMode: "Experian",
-        lastRefreshed: "2024-05-19 02:15 PM",
-      },
-      hardPull: {
-        creditScore: null,
-        generatedDate: null,
-        fileUrl: null,
-        fileName: null,
-        showFile: false,
-        isGenerating: false,
-        selectedMode: "",
-      },
-    },
-  ]);
+    };
+  });
+};
 
-  const handleGenerateCredit = (userId, pullType, isRefetch = false) => {
+const CreditSection = ({ creditDetails, customerDetails }) => {
+  const [users, setUsers] = useState(() =>
+    createUsers(creditDetails, customerDetails),
+  );
+  const [creditReportError, setCreditReportError] = useState("");
+
+  const handleGenerateCredit = async (userId, pullType) => {
+    if (pullType !== "softPull") return;
+
+    const user = users.find((currentUser) => currentUser.id === userId);
+    if (!user) return;
+
+    const marketSurvey = customerDetails?.marketSurvey?.[0] || {};
+    const personalKyc = customerDetails?.personalKyc?.[0] || {};
+    const loanDetails = customerDetails?.loanDetails?.[0] || {};
+    const fullName = user.profile.full_name || "";
+    const nameParts = fullName.trim().split(/\s+/);
+    const profileUid =
+      user.role === "CO-BORROWER"
+        ? customerDetails?.coBorrowerGuarantor?.[0]?.co_borrower_aahaar_number
+        : user.role === "GUARANTOR"
+          ? customerDetails?.coBorrowerGuarantor?.[0]?.guarantor_aahaar_number
+          : personalKyc.uid_number;
+    const profileMobile =
+      user.role === "CO-BORROWER"
+        ? customerDetails?.coBorrowerGuarantor?.[0]?.co_borrower_mobile
+        : user.role === "GUARANTOR"
+          ? customerDetails?.coBorrowerGuarantor?.[0]?.guarantor_mobile
+          : marketSurvey.business_owner_mobile_no ||
+            personalKyc.mobile_number ||
+            personalKyc.alternate_mobile;
+    const customerId =
+      user.detail?.customer_id ||
+      user.profile?.customer_id ||
+      customerDetails?.coBorrowerGuarantor?.[0]?.customer_id ||
+      customerDetails?.customer_id ||
+      marketSurvey.customer_id ||
+      personalKyc.customer_id;
+    const applicationId =
+      user.detail?.application_id ||
+      user.detail?.applicantion_id ||
+      user.profile?.application_id ||
+      customerDetails?.coBorrowerGuarantor?.[0]?.application_id ||
+      customerDetails?.application_id ||
+      loanDetails.application_id ||
+      marketSurvey.application_id ||
+      personalKyc.application_id;
+
+    if (!customerId || !applicationId) {
+      setCreditReportError("Customer ID and application ID are required to fetch a credit report.");
+      return;
+    }
+
+    setCreditReportError("");
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
         user.id === userId
@@ -70,36 +193,72 @@ const CreditSection = () => {
       ),
     );
 
-    // Simulate API call
-    setTimeout(() => {
-      // Generate new random score (slightly different from existing for realism)
-      const existingScore = users.find(u => u.id === userId)?.[pullType]?.creditScore || 0;
-      let newScore;
-      
-      if (isRefetch && existingScore > 0) {
-        // For refetch, vary by ±20 points
-        const variation = Math.floor(Math.random() * 41) - 20; // -20 to +20
-        newScore = Math.min(850, Math.max(300, existingScore + variation));
-      } else {
-        // For new fetch, random score
-        newScore = Math.ceil(Math.random() * 250 + 550);
+    try {
+      const response = await CreditReport({
+        customer_id: customerId,
+        application_id: applicationId,
+        first_name:
+          user.detail?.first_name || nameParts[0] || "",
+        last_name:
+          user.detail?.last_name ||
+          nameParts.slice(1).join(" "),
+        uid_number:
+          user.detail?.uid_number || profileUid || "",
+        mobile_number:
+          user.detail?.mobile_number ||
+          profileMobile ||
+          "",
+        bureau_name: user.softPull.selectedMode || "CRIF",
+        credit_type: user.detail?.credit_type || "SOFT PULL",
+        customer_type: user.role,
+        company_id:
+          user.detail?.company_id ||
+          marketSurvey.company_id ||
+          import.meta.env.VITE_COMPANY_ID ||
+          "",
+        product_name:
+          user.detail?.product_name ||
+          marketSurvey.product_name ||
+          loanDetails.product_name ||
+          import.meta.env.VITE_PRODUCT_NAME ||
+          "",
+        created_by:
+          user.detail?.created_by ||
+          marketSurvey.created_by ||
+          localStorage.getItem("username") ||
+          localStorage.getItem("userName") ||
+          localStorage.getItem("email") ||
+          "admin",
+      });
+      if (response?.status === false) {
+        throw new Error(response?.message || "Failed to fetch the credit report.");
       }
 
-      const now = new Date();
-      const generatedOn = now.toLocaleString('en-US', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-      });
-
-      const fileName = pullType === 'softPull' 
-        ? `Soft_Pull_Report_${Date.now()}.pdf`
-        : `Hard_Pull_Report_${Date.now()}.pdf`;
-      
-      const fileUrl = `/credit-reports/${fileName}`;
+      const report =
+        response?.data?.cibilDetails?.[0] ||
+        response?.data?.data ||
+        (Array.isArray(response?.data) ? response.data[0] : response?.data) ||
+        response;
+      const rawScore =
+        report?.credit_score ?? report?.creditScore ?? report?.score;
+      const parsedScore = Number(rawScore);
+      const hasScore =
+        rawScore !== null &&
+        rawScore !== undefined &&
+        rawScore !== "" &&
+        Number.isFinite(parsedScore);
+      const fileUrl =
+        report?.credit_report_link ||
+        report?.file_url ||
+        report?.report_url ||
+        report?.pdf_url ||
+        report?.url ||
+        null;
+      const generatedDate =
+        report?.request_date ||
+        report?.generated_date ||
+        report?.generatedDate ||
+        null;
 
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
@@ -108,19 +267,43 @@ const CreditSection = () => {
                 ...user,
                 [pullType]: {
                   ...user[pullType],
-                  creditScore: newScore,
-                  generatedDate: generatedOn,
-                  fileUrl: fileUrl,
-                  fileName: fileName,
+                  creditScore: hasScore ? parsedScore : null,
+                  generatedDate,
+                  fileUrl,
+                  fileName:
+                    report?.file_name ||
+                    report?.fileName ||
+                    (fileUrl ? fileUrl.split("/").pop().split("?")[0] : null),
                   isGenerating: false,
-                  showFile: true,
-                  lastRefreshed: isRefetch ? generatedOn : user[pullType]?.lastRefreshed || generatedOn,
+                  showFile: Boolean(fileUrl),
+                  lastRefreshed: generatedDate,
                 },
+                detail: report,
               }
             : user,
         ),
       );
-    }, 1500);
+    } catch (error) {
+      console.error("Error fetching credit report:", error);
+      setCreditReportError(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Something went wrong while fetching the credit report.",
+      );
+      setUsers((prevUsers) =>
+        prevUsers.map((currentUser) =>
+          currentUser.id === userId
+            ? {
+                ...currentUser,
+                [pullType]: {
+                  ...currentUser[pullType],
+                  isGenerating: false,
+                },
+              }
+            : currentUser,
+        ),
+      );
+    }
   };
 
   const handleDownload = (userId, pullType) => {
@@ -307,10 +490,10 @@ const CreditSection = () => {
                   value={pullData.selectedMode}
                   onChange={(e) => handleModeChange(user.id, pullType, e.target.value)}
                   options={[
-                    { label: "Crif", value: "Crif" },
-                    { label: "Experian", value: "Experian" },
+                        { label: "CRIF", value: "CRIF" },
+                        { label: "Experian", value: "EXPERIAN" },
                   ]}
-                  className="!text-[10px] !py-1 !px-2"
+                  className="text-[10px]! py-1! px-2!"
                 />
                 <Button
                   onClick={() => handleGenerateCredit(user.id, pullType, false)}
@@ -326,8 +509,8 @@ const CreditSection = () => {
                     </>
                   ) : (
                     <>
-                      <Icon name="RiFileTextLine" size={12} color="#FFFFFF" />
-                      <span>Fetch Score</span>
+                      <Icon name="RiRefreshLine" size={12} color="#FFFFFF" />
+                      <span>Refetch</span>
                     </>
                   )}
                 </Button>
@@ -341,6 +524,11 @@ const CreditSection = () => {
 
   return (
     <div className="py-0 space-y-3">
+      {creditReportError && (
+        <div role="alert" className="rounded border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+          {creditReportError}
+        </div>
+      )}
       {users.map((user) => (
         <div
           key={user.id}
@@ -355,6 +543,17 @@ const CreditSection = () => {
               <div>
                 <p className="text-sm font-semibold text-slate-600 leading-tight">
                   {user.name}
+                </p>
+                <p className="text-[10px] font-medium text-slate-400">
+                  {user.label}
+                  {user.profile.relation && ` · ${user.profile.relation}`}
+                </p>
+                <p className="text-[10px] text-slate-500">
+                  {user.profile.mobile_number
+                    ? `Mobile: ${user.profile.mobile_number}`
+                    : "Mobile: —"}
+                  {user.profile.uid_number &&
+                    ` · Aadhaar: ****${user.profile.uid_number.slice(-4)}`}
                 </p>
               </div>
             </div>
