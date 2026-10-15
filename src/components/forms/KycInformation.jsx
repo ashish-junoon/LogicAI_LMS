@@ -24,6 +24,7 @@ const KycInformation = ({
   personalKyc,
   addressDetails,
   documents = [],
+  onSaved,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -125,6 +126,7 @@ const KycInformation = ({
         formik.resetForm({ values });
         setIsEditing(false);
         toast.success(response?.message || "Applicant details saved successfully.");
+        await onSaved?.();
         onNext?.();
       } catch (error) {
         console.error("Error saving applicant KYC details:", error);

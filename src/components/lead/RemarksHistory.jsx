@@ -58,7 +58,7 @@ const RemarksHistory = ({
           toast.success(response?.message || "Remark saved successfully");
           resetForm();
           setOpen(false);
-          fetchData && fetchData()
+          await fetchData?.()
         }
       } catch (error) {
         console.log(error)

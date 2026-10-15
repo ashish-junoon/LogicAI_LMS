@@ -23,6 +23,7 @@ const GuarantorInformation = ({
   details,
   customerId,
   applicationId,
+  onSaved,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -97,6 +98,7 @@ const GuarantorInformation = ({
         toast.success(
           response?.message || "Co-borrower and guarantor details saved successfully.",
         );
+        await onSaved?.();
         onNext?.();
       } catch (error) {
         console.error("Error saving co-borrower and guarantor details:", error);

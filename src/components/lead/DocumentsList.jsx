@@ -1,7 +1,21 @@
+import { useState } from "react";
 import Icon from "../utils/Icon";
 import UploadDocuments from "./UploadDocuments";
 
-const DocumentsList = ({ permission, documents = [] }) => {
+const DocumentsList = ({ permission, documents = [], customerDetails, onRefresh }) => {
+  const [uploadedDocuments, setUploadedDocuments] = useState([]);
+  const visibleDocuments = [
+    ...documents,
+    ...uploadedDocuments.filter(
+      (uploadedDocument) =>
+        !documents.some(
+          (document) =>
+            (uploadedDocument.id && document.id === uploadedDocument.id) ||
+            document.document_path === uploadedDocument.document_path,
+        ),
+    ),
+  ];
+
   const getFileIcon = (type) => {
     if (type === "PDF")
       return <Icon name="RiFilePdfLine" color="#5050b8" size={20} />;
@@ -25,17 +39,29 @@ const DocumentsList = ({ permission, documents = [] }) => {
           //   Upload
           // </button>
 
-          <UploadDocuments />
+          <UploadDocuments
+            customerDetails={customerDetails}
+            onRefresh={onRefresh}
+            onUploaded={(document) =>
+              setUploadedDocuments((currentDocuments) => [
+                ...currentDocuments,
+                document,
+              ])
+            }
+          />
         )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        {documents.length === 0 ? (
+        {visibleDocuments.length === 0 ? (
           <p className="col-span-full py-6 text-center text-xs text-gray-500">
             No documents uploaded
           </p>
-        ) : documents.map((doc) => {
-          const type = doc.document_path?.split(".").pop()?.split("?")[0]?.toUpperCase() || "FILE";
+        ) : visibleDocuments.map((doc) => {
+          const type =
+            doc.file_extension?.toUpperCase() ||
+            doc.document_path?.split(".").pop()?.split("?")[0]?.toUpperCase() ||
+            "FILE";
 
           return (
           <div

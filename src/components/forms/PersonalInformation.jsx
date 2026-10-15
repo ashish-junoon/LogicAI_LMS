@@ -17,7 +17,7 @@ import ErrorMsg from "../utils/ErrorMsg";
 import { gender, meritalStatus, religion } from "../../content/data";
 import { SaveMarketSurvey } from "../../api/application";
 
-const PersonalInformation = ({ permission, marketSurvey, personalKyc }) => {
+const PersonalInformation = ({ permission, marketSurvey, personalKyc, onSaved }) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const formik = useFormik({
@@ -107,6 +107,7 @@ const PersonalInformation = ({ permission, marketSurvey, personalKyc }) => {
         formik.resetForm({ values });
         setIsEditing(false);
         toast.success(response?.message || "Customer details saved successfully.");
+        await onSaved?.();
       } catch (error) {
         console.error("Error saving market survey details:", error);
         toast.error(

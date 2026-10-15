@@ -5,6 +5,7 @@ import Breadcrumbs from '../../components/utils/Breadcrumbs'
 import Loader from '../../components/utils/Loader'
 import { CustomerDetails } from '../../api/application'
 import { useLocation, useSearchParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 const LeadDetails = () => {
   const location = useLocation()
@@ -15,6 +16,32 @@ const LeadDetails = () => {
   const [customerDetails, setCustomerDetails] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')  
+
+  const refreshCustomerDetails = async () => {
+    try {
+      const response = await CustomerDetails({
+        customer_id: customerId,
+        application_id: applicationId,
+        role: 'admin',
+        created_by: 'admin',
+      })
+
+      if (!response?.status || !response?.data) {
+        throw new Error(response?.message || 'Failed to refresh customer details.')
+      }
+
+      setCustomerDetails(response.data)
+      return true
+    } catch (refreshError) {
+      console.error('Error refreshing customer details:', refreshError)
+      toast.error(
+        refreshError?.response?.data?.message ||
+        refreshError?.message ||
+        'Unable to refresh the updated customer details.'
+      )
+      return false
+    }
+  }
 
   useEffect(() => {
     let isCurrent = true
@@ -110,7 +137,11 @@ const LeadDetails = () => {
             {error}
           </div>
         ) : (
-          <InfoWrapper key={`${customerId}-${applicationId}`} customerDetails={scopedDetails} />
+          <InfoWrapper
+            key={`${customerId}-${applicationId}`}
+            customerDetails={scopedDetails}
+            onRefresh={refreshCustomerDetails}
+          />
         )}
     </div>
   )

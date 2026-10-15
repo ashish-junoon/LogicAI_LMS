@@ -37,7 +37,13 @@ const DisbursementWrapper = ({ customerDetails }) => {
       case "remarks":
         return <RemarksHistory permission={true} remarks={customerDetails?.history || []} />;
       case "documents":
-        return <DocumentsList permission={true} documents={customerDetails?.documents || []} />;
+        return (
+          <DocumentsList
+            permission={true}
+            documents={customerDetails?.documents || []}
+            customerDetails={customerDetails}
+          />
+        );
       case "userinfo":
         return <LeadFormDetails permisions={permisions} customerDetails={customerDetails} />;
       default:

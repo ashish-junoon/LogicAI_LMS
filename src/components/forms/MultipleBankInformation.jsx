@@ -28,6 +28,7 @@ const MultipleBankInformation = ({
   bankDetails = [],
   customerId,
   applicationId,
+  onSaved,
 }) => {
   const [bankAccounts, setBankAccounts] = useState(() =>
     bankDetails.map((account) => {
@@ -174,6 +175,7 @@ const MultipleBankInformation = ({
         formik.resetForm();
         setEditingIndex(null);
         toast.success(response?.message || "Bank details saved successfully.");
+        await onSaved?.();
       } catch (error) {
         console.error("Error saving bank details:", error);
         toast.error(

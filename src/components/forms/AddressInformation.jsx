@@ -25,6 +25,7 @@ const AddressInformation = ({
   permission,
   personalKyc,
   addressDetails,
+  onSaved,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isSameAsPermanent, setIsSameAsPermanent] = useState(false);
@@ -119,6 +120,7 @@ const AddressInformation = ({
         setIsSameAsPermanent(false);
         setIsEditing(false);
         toast.success(response?.message || "Applicant details saved successfully.");
+        await onSaved?.();
         onNext?.();
       } catch (error) {
         console.error("Error saving applicant address details:", error);

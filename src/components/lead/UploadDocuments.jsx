@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import * as Yup from "yup";
 import Icon from "../utils/Icon";
 import SelectInput from "../fields/SelectInput";
@@ -7,8 +7,25 @@ import ErrorMsg from "../utils/ErrorMsg";
 import { documentType } from "../../content/data";
 import Button from "../utils/Button";
 import Modal from "../utils/Modal";
+import { SaveOtherDocuments } from "../../api/application";
+import { toast } from "react-toastify";
 
-const UploadDocuments = () => {
+const fileToBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result;
+      if (typeof dataUrl !== "string") {
+        reject(new Error("Unable to read the selected document."));
+        return;
+      }
+      resolve(dataUrl.slice(dataUrl.indexOf(",") + 1));
+    };
+    reader.onerror = () => reject(reader.error || new Error("Unable to read the selected document."));
+    reader.readAsDataURL(file);
+  });
+
+const UploadDocuments = ({ customerDetails, onUploaded, onRefresh }) => {
   const [open, setOpen] = useState(false);
   const fileInputRef = useRef();
 
@@ -30,17 +47,93 @@ const UploadDocuments = () => {
     }),
 
     onSubmit: async (values, { resetForm }) => {
-      console.log("UPLOAD VALUES:", values);
+      const marketSurvey = customerDetails?.marketSurvey?.[0] || {};
+      const personalKyc = customerDetails?.personalKyc?.[0] || {};
+      const loanDetails = customerDetails?.loanDetails?.[0] || {};
+      const customerId =
+        customerDetails?.customer_id ||
+        marketSurvey.customer_id ||
+        personalKyc.customer_id ||
+        customerDetails?.coBorrowerGuarantor?.[0]?.customer_id;
+      const applicationId =
+        customerDetails?.application_id ||
+        loanDetails.application_id ||
+        marketSurvey.application_id ||
+        personalKyc.application_id ||
+        customerDetails?.coBorrowerGuarantor?.[0]?.application_id;
 
-      toast.success("Uploaded successfully");
-
-      resetForm();
-
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+      if (!customerId || !applicationId) {
+        toast.error("Customer ID and application ID are required to upload a document.");
+        return;
       }
 
-      setOpen(false);
+      try {
+        const file = values.document;
+        const response = await SaveOtherDocuments({
+          id: 0,
+          customer_id: customerId,
+          application_id: applicationId,
+          document_type: values.documentType,
+          document_base64: await fileToBase64(file),
+          file_extension: file.name.split(".").pop()?.toLowerCase() || "",
+          is_active: true,
+          creadted_by:
+            localStorage.getItem("username") ||
+            localStorage.getItem("userName") ||
+            localStorage.getItem("email") ||
+            "admin",
+          company_id:
+            marketSurvey.company_id ||
+            personalKyc.company_id ||
+            import.meta.env.VITE_COMPANY_ID ||
+            "",
+          product_name:
+            marketSurvey.product_name ||
+            loanDetails.product_name ||
+            import.meta.env.VITE_PRODUCT_NAME ||
+            "",
+        });
+
+        if (!response?.status) {
+          throw new Error(response?.message || "Unable to upload the document.");
+        }
+
+        toast.success(response?.message || "Document uploaded successfully.");
+        const savedDocument =
+          response?.data?.document ||
+          response?.data?.data ||
+          response?.data ||
+          {};
+        const documentPath =
+          savedDocument.document_path ||
+          savedDocument.file_url ||
+          savedDocument.fileUrl ||
+          savedDocument.url ||
+          URL.createObjectURL(file);
+        const uploadedDocument = {
+          ...savedDocument,
+          id: savedDocument.id || `local-${Date.now()}`,
+          document_type: savedDocument.document_type || values.documentType,
+          document_path: documentPath,
+          file_extension:
+            savedDocument.file_extension ||
+            file.name.split(".").pop()?.toLowerCase() ||
+            "",
+          created_date: savedDocument.created_date || new Date().toLocaleString(),
+        };
+        const refreshed = await onRefresh?.();
+        if (!refreshed) onUploaded?.(uploadedDocument);
+        resetForm();
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        setOpen(false);
+      } catch (error) {
+        console.error("Error uploading document:", error);
+        toast.error(
+          error?.response?.data?.message ||
+            error?.message ||
+            "Something went wrong while uploading the document.",
+        );
+      }
     },
   });
 
@@ -51,7 +144,7 @@ const UploadDocuments = () => {
 
     // 5 MB validation
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("File size should not exceed 5 MB");
+      toast.error("File size must be less than 5 MB");
       e.target.value = "";
       return;
     }
@@ -352,7 +445,9 @@ const UploadDocuments = () => {
               btnIcon="MdUpload"
               type="submit"
               disabled={
-                uploadDocs.values.document || uploadDocs.values.documentType
+                !uploadDocs.values.document ||
+                !uploadDocs.values.documentType ||
+                uploadDocs.isSubmitting
               }
               style={`min-w-[95px] text-xs font-medium py-1.5 px-4 rounded-md transition-all ${
                 uploadDocs.values.document && uploadDocs.values.documentType

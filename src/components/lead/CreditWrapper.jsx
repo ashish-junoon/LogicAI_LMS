@@ -80,7 +80,13 @@ const CreditWrapper = ({ customerDetails }) => {
       case "bsa":
         return <BankStatementAnalyser />;
       case "documents":
-        return <DocumentsList permission={true} documents={customerDetails?.documents || []} />;
+        return (
+          <DocumentsList
+            permission={true}
+            documents={customerDetails?.documents || []}
+            customerDetails={customerDetails}
+          />
+        );
       default:
         return null;
     }

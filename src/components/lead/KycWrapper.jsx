@@ -41,7 +41,13 @@ const KycWrapper = ({ customerDetails }) => {
       case "esign":
         return <DocumentSignature />;
       case "document":
-        return <DocumentsList permission={true} documents={customerDetails?.documents || []} />;
+        return (
+          <DocumentsList
+            permission={true}
+            documents={customerDetails?.documents || []}
+            customerDetails={customerDetails}
+          />
+        );
       default:
         return null;
     }

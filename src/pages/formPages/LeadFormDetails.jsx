@@ -94,7 +94,7 @@ import MultipleBankInformation from "../../components/forms/MultipleBankInformat
 import GuarantorInformation from "../../components/forms/GuarantorInformation";
 import EmploymentInformation from "../../components/forms/EmploymentInformation";
 
-const LeadFormDetails = ({ permisions, customerDetails }) => {
+const LeadFormDetails = ({ permisions, customerDetails, onRefresh }) => {
   const [selected, setSelected] = useState("Personal Information");
   console.log("customerDetails", customerDetails)
 
@@ -130,13 +130,13 @@ const LeadFormDetails = ({ permisions, customerDetails }) => {
   const renderTabs = (tab) => {
     switch (tab) {
       case "Personal Information":
-        return <PersonalInformation permission={permisions?.personalInfo} marketSurvey={customerDetails?.marketSurvey?.[0]} personalKyc={customerDetails?.personalKyc?.[0]} />;
+        return <PersonalInformation permission={permisions?.personalInfo} marketSurvey={customerDetails?.marketSurvey?.[0]} personalKyc={customerDetails?.personalKyc?.[0]} onSaved={onRefresh} />;
 
       case "KYC Details":
-        return <KycInformation permission={permisions?.kycInfo} personalKyc={customerDetails?.personalKyc?.[0]} addressDetails={customerDetails?.addressDetails?.[0]} documents={customerDetails?.documents || []} />;
+        return <KycInformation permission={permisions?.kycInfo} personalKyc={customerDetails?.personalKyc?.[0]} addressDetails={customerDetails?.addressDetails?.[0]} documents={customerDetails?.documents || []} onSaved={onRefresh} />;
 
       case "Address Information":
-        return <AddressInformation permission={permisions?.addressInfo} personalKyc={customerDetails?.personalKyc?.[0]} addressDetails={customerDetails?.addressDetails?.[0]} />;
+        return <AddressInformation permission={permisions?.addressInfo} personalKyc={customerDetails?.personalKyc?.[0]} addressDetails={customerDetails?.addressDetails?.[0]} onSaved={onRefresh} />;
 
       case "Bank Details":
         return (
@@ -153,6 +153,7 @@ const LeadFormDetails = ({ permisions, customerDetails }) => {
               customerDetails?.personalKyc?.[0]?.application_id ||
               customerDetails?.marketSurvey?.[0]?.application_id
             }
+            onSaved={onRefresh}
           />
         );
 
@@ -171,6 +172,7 @@ const LeadFormDetails = ({ permisions, customerDetails }) => {
               customerDetails?.personalKyc?.[0]?.application_id ||
               customerDetails?.marketSurvey?.[0]?.application_id
             }
+            onSaved={onRefresh}
           />
         );
 
