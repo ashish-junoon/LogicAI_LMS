@@ -14,10 +14,10 @@ import DocumentSignature from "../common/DocumentSignature";
 const SignatureWrapper = ({}) => {
   const [activeSection, setActiveSection] = useState("document");
   const sections = [
-    { id: "document", label: "Documents", icon: "PiBookOpenTextDuotone" },
     { id: "esign", label: "e-Signature", icon: "FaSignature" },
     { id: "user", label: "User Details", icon: "PiBookOpenTextDuotone" },
     { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
+    { id: "document", label: "Documents", icon: "PiBookOpenTextDuotone" },
   ];
 
   const renderSection = () => {

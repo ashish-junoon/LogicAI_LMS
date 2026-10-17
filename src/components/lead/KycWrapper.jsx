@@ -20,11 +20,11 @@ const KycWrapper = ({ customerDetails }) => {
   };
 
   const sections = [
-    { id: "document", label: "Documents", icon: "PiBookOpenTextDuotone" },
     // { id: "videokyc", label: "Video KYC", icon: "RiShieldCheckLine" },
     { id: "esign", label: "e-Signature", icon: "FaSignature" },
     { id: "user", label: "User Details", icon: "PiBookOpenTextDuotone" },
     { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
+    { id: "document", label: "Documents", icon: "PiBookOpenTextDuotone" },
   ];
 
   const renderSection = () => {

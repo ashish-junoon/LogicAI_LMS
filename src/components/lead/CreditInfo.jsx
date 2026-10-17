@@ -1,5 +1,35 @@
 import { RiBankCardLine } from "react-icons/ri";
 
+const sampleEmiDetails = [
+  {
+    loanType: "Home Loan",
+    lender: "HDFC Bank",
+    loanAmount: 2500000,
+    monthlyEmi: 22500,
+    outstanding: 1840000,
+    nextDueDate: "05 Nov 2026",
+  },
+  {
+    loanType: "Vehicle Loan",
+    lender: "ICICI Bank",
+    loanAmount: 800000,
+    monthlyEmi: 16800,
+    outstanding: 336000,
+    nextDueDate: "10 Nov 2026",
+  },
+  {
+    loanType: "Personal Loan",
+    lender: "Axis Bank",
+    loanAmount: 250000,
+    monthlyEmi: 8250,
+    outstanding: 99000,
+    nextDueDate: "15 Nov 2026",
+  },
+];
+
+const formatCurrency = (amount) =>
+  `₹${amount.toLocaleString("en-IN")}`;
+
 const CreditInfo = ({ creditData }) => {
   if (!creditData) {
     return (
@@ -74,6 +104,75 @@ const CreditInfo = ({ creditData }) => {
           <p className="text-sm font-semibold text-gray-800">{creditData?.request_date || "—"}</p>
         </div>
       </div>
+
+      {/* Sample EMI breakdown */}
+      <section className="overflow-hidden rounded-lg border border-gray-200">
+        <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-3 py-2">
+          <div>
+            <h3 className="text-xs font-semibold text-gray-800">EMI Breakdown</h3>
+            <p className="text-[10px] text-gray-500">
+              Sample data for UI preview
+            </p>
+          </div>
+          <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[9px] font-medium text-amber-700">
+            Dummy data
+          </span>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[680px] text-left">
+            <thead className="bg-white text-[9px] uppercase tracking-wide text-gray-500">
+              <tr>
+                <th className="px-3 py-2 font-semibold">Loan / Lender</th>
+                <th className="px-3 py-2 font-semibold">Loan Amount</th>
+                <th className="px-3 py-2 font-semibold">Monthly EMI</th>
+                <th className="px-3 py-2 font-semibold">Outstanding</th>
+                <th className="px-3 py-2 font-semibold">Next Due</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 text-[11px] text-gray-700">
+              {sampleEmiDetails.map((emi) => (
+                <tr key={emi.loanType}>
+                  <td className="px-3 py-2">
+                    <p className="font-medium text-gray-800">{emi.loanType}</p>
+                    <p className="text-[10px] text-gray-500">{emi.lender}</p>
+                  </td>
+                  <td className="px-3 py-2">{formatCurrency(emi.loanAmount)}</td>
+                  <td className="px-3 py-2 font-medium">
+                    {formatCurrency(emi.monthlyEmi)}
+                  </td>
+                  <td className="px-3 py-2">
+                    {formatCurrency(emi.outstanding)}
+                  </td>
+                  <td className="px-3 py-2">{emi.nextDueDate}</td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot className="border-t border-gray-200 bg-gray-50 text-[10px] font-semibold text-gray-800">
+              <tr>
+                <td className="px-3 py-2">Total</td>
+                <td className="px-3 py-2">
+                  {formatCurrency(
+                    sampleEmiDetails.reduce((total, emi) => total + emi.loanAmount, 0),
+                  )}
+                </td>
+                <td className="px-3 py-2">
+                  {formatCurrency(
+                    sampleEmiDetails.reduce((total, emi) => total + emi.monthlyEmi, 0),
+                  )}
+                </td>
+                <td className="px-3 py-2">
+                  {formatCurrency(
+                    sampleEmiDetails.reduce((total, emi) => total + emi.outstanding, 0),
+                  )}
+                </td>
+                <td className="px-3 py-2">—</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
       {creditData?.credit_report_link && (
         <a className="text-xs text-primary hover:underline" href={creditData.credit_report_link} target="_blank" rel="noreferrer">
           View credit report

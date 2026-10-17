@@ -35,8 +35,8 @@ const CreditWrapper = ({ customerDetails }) => {
     { id: "loaninfo", label: "Loan Info", icon: "GiPayMoney" },
     { id: "credit", label: "Credit Analysis", icon: "RiShieldCheckLine" },
     { id: "bsa", label: "Bank Statement Ananlysis", icon: "RiBankCardLine" },
-    { id: "documents", label: "Documents", icon: "RiFileList3Line" },
     { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
+    { id: "documents", label: "Documents", icon: "RiFileList3Line" },
   ];
 
   const renderSection = () => {

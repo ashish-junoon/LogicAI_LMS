@@ -27,10 +27,10 @@ const InfoWrapper = ({ customerDetails, onRefresh }) => {
   const sections = [
     { id: "user", label: "User Details", icon: "RiShieldCheckLine" },
     { id: "credit", label: "Credit Health", icon: "RiBankCardLine" },
-    { id: "documents", label: "Documents", icon: "RiFileList3Line" },
     { id: "loanInfo", label: "Loan Info", icon: "RiInformationLine" },
     { id: "bankInfo", label: "Bank Info", icon: "RiBankLine" },
     { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
+    { id: "documents", label: "Documents", icon: "RiFileList3Line" },
   ];
 
   const renderSection = () => {

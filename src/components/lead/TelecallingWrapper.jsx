@@ -21,9 +21,9 @@ const TelecallinWrapper = ({ customerDetails }) => {
   const sections = [
       { id: "user", label: "User Details", icon: "PiBookOpenTextDuotone" },
       { id: "videokyc", label: "Video KYC", icon: "RiShieldCheckLine" },
-    { id: "document", label: "Documents", icon: "PiBookOpenTextDuotone" },
-    // { id: "esign", label: "e-Signature", icon: "FaSignature" },
-    { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
+      // { id: "esign", label: "e-Signature", icon: "FaSignature" },
+      { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
+      { id: "document", label: "Documents", icon: "PiBookOpenTextDuotone" },
   ];
 
   const renderSection = () => {
