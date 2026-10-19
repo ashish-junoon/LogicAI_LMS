@@ -55,6 +55,8 @@ import LoanTypeMaster from './pages/master/LoanTypeMaster'
 import QuestionCategoryMaster from './pages/master/QuestionCategory'
 import TelecallerQuetionsMaster from './pages/master/TelecallerQuetionsMaster'
 import ManageRole from './pages/admin/ManageRole'
+import CasteMaster from './pages/master/CasteMaster'
+import LoanSubPurposeMaster from './pages/master/LoanSubPurposeMaster'
 
 function App() {
 
@@ -83,6 +85,7 @@ function App() {
           <Route path='/employement-type-master' element={<EmployementTypeMaster />} /> 
           <Route path='/sector-master' element={<SectorMaster />} /> 
           <Route path='/religion-master' element={<ReligionMaster />} /> 
+          <Route path='/caste-master' element={<CasteMaster />} /> 
           <Route path='/gender-master' element={<GenderMaster />} /> 
           <Route path='/residence-type-master' element={<ResidenceType />} /> 
           <Route path='/quetionare-master' element={<PDQuestionsMaster />} /> 
@@ -93,6 +96,7 @@ function App() {
           <Route path='/bank-master' element={<BankMaster />} /> 
           <Route path='/document-master' element={<DocumentMaster />} /> 
           <Route path='/loan-purpose-master' element={<LoanPurposeMaster />} /> 
+          <Route path='/loan-subpurpose-master' element={<LoanSubPurposeMaster />} /> 
           <Route path='/lead-source-master' element={<LeadSource />} /> 
           <Route path='/tellecaller-quetions-master' element={<TelecallerQuetionsMaster />} /> 
           {/* <Route path='/product-master' element={<CreateLoanProduct />} />  */}
