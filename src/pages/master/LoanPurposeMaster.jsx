@@ -16,6 +16,7 @@ import {
   GetAllLoanPurposes,
   UpdateLoanPurpose,
 } from "../../api/mastersApi";
+import { useNavigate } from "react-router-dom";
 
 // =========================================================
 // LOGGED-IN USER (used for `created_by` field of the API)
@@ -34,6 +35,8 @@ const LoanPurposeMaster = () => {
 
   const [isEdit, setIsEdit] = useState(false);
   const [editingPurposeId, setEditingPurposeId] = useState(null);
+
+  const navigate = useNavigate();
 
   // =========================================================
   // FETCH ALL LOAN PURPOSES
@@ -66,9 +69,9 @@ const LoanPurposeMaster = () => {
 
       toast.error(
         error?.response?.data?.title ||
-          error?.response?.data?.errors?.request?.[0] ||
-          error?.message ||
-          "Something went wrong!"
+        error?.response?.data?.errors?.request?.[0] ||
+        error?.message ||
+        "Something went wrong!"
       );
     } finally {
       setIsLoading(false);
@@ -113,7 +116,7 @@ const LoanPurposeMaster = () => {
 
             toast.success(
               response?.msg ||
-                "Loan Purpose updated successfully!"
+              "Loan Purpose updated successfully!"
             );
 
             handleCloseModal();
@@ -158,9 +161,9 @@ const LoanPurposeMaster = () => {
 
         toast.error(
           error?.response?.data?.title ||
-            error?.response?.data?.errors?.request?.[0] ||
-            error?.message ||
-            "Something went wrong!"
+          error?.response?.data?.errors?.request?.[0] ||
+          error?.message ||
+          "Something went wrong!"
         );
       }
     },
@@ -213,9 +216,9 @@ const LoanPurposeMaster = () => {
         purpose.id !== row.id
           ? purpose
           : {
-              ...purpose,
-              is_active: nextStatus,
-            }
+            ...purpose,
+            is_active: nextStatus,
+          }
       )
     );
 
@@ -238,9 +241,9 @@ const LoanPurposeMaster = () => {
             purpose.id !== row.id
               ? purpose
               : {
-                  ...purpose,
-                  is_active: row.is_active,
-                }
+                ...purpose,
+                is_active: row.is_active,
+              }
           )
         );
 
@@ -255,9 +258,9 @@ const LoanPurposeMaster = () => {
           purpose.id !== row.id
             ? purpose
             : {
-                ...purpose,
-                is_active: row.is_active,
-              }
+              ...purpose,
+              is_active: row.is_active,
+            }
         )
       );
 
@@ -268,9 +271,9 @@ const LoanPurposeMaster = () => {
 
       toast.error(
         error?.response?.data?.title ||
-          error?.response?.data?.errors?.request?.[0] ||
-          error?.message ||
-          "Something went wrong!"
+        error?.response?.data?.errors?.request?.[0] ||
+        error?.message ||
+        "Something went wrong!"
       );
     }
   };
@@ -361,13 +364,22 @@ const LoanPurposeMaster = () => {
             All Loan Purposes
           </div>
 
-          <button
-            type="button"
-            onClick={handleAddPurpose}
-            className="flex cursor-pointer items-center justify-between gap-3 rounded-sm bg-primary px-3 py-1.5 text-sm text-white hover:bg-primary/90"
-          >
-            New Purpose
-          </button>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => navigate('/loan-subpurpose-master')}
+              className="flex cursor-pointer items-center justify-between gap-3 rounded-sm bg-primary px-3 py-1.5 text-sm text-white hover:bg-primary/90"
+            >
+              Add Sub-Purpose
+            </button>
+            <button
+              type="button"
+              onClick={handleAddPurpose}
+              className="flex cursor-pointer items-center justify-between gap-3 rounded-sm bg-primary px-3 py-1.5 text-sm text-white hover:bg-primary/90"
+            >
+              New Purpose
+            </button>
+          </div>
         </div>
 
         {/* Table */}

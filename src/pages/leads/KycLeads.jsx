@@ -27,7 +27,7 @@ const KycLeads = () => {
       .filter((step) => row[step.key] === false)
       .map((step) => step.label);
 
-    return pendingSteps.length ? pendingSteps.join(", ") : "Completed";
+    return pendingSteps.length ? pendingSteps.at(-1) : "Completed";
   };
 
   const fetchLeads = async () => {
@@ -44,11 +44,11 @@ const KycLeads = () => {
 
       if (response?.status && Array.isArray(response.data)) {
         const formatted = response.data.map((item) => ({
-          leadId: item.application_id,
+          applicationId: item.application_id,
           customerId: item.customer_id,
           name: item.business_owner_name,
           phone: item.business_owner_mobile_no,
-          branch: item.branch ?? "-",                  // not in API response
+          branch: item.branch_name ?? "-",                  // not in API response
           loanType: item.loan_type ?? "-",             // not in API response
           sanctionAmount: item.sanction_amount ?? 0,   // not in API response
           pendingStep: getPendingStep(item),
@@ -77,8 +77,24 @@ const KycLeads = () => {
 
   const columns = [
     {
-      name: "LeadId",
-      selector: (row) => row.leadId,
+      name: "Actions",
+      selector: (row) => row.status,
+      sortable: true,
+      center: true,
+      cell: (row) => (
+        <Link
+          to={`/kyc-detail?customer_id=${encodeURIComponent(row.customerId ?? "")}&application_id=${encodeURIComponent(row.applicationId ?? "")}`}
+          state={{ lead: row.raw }}   // pass full record to detail page
+          className="p-1.5 px-2 rounded-sm text-xs font-medium bg-primary flex gap-1 text-white items-center"
+        >
+          <Icon name="FaRegEye" size={15} color={"white"} />
+          View
+        </Link>
+      ),
+    },
+    {
+      name: "ApplicationID",
+      selector: (row) => row.applicationId,
       sortable: true,
     },
     {
@@ -90,29 +106,26 @@ const KycLeads = () => {
       name: "Phone",
       selector: (row) => row.phone,
       sortable: true,
-      right: true,
     },
     {
       name: "Branch",
       selector: (row) => row.branch,
+      width: '200px',
       sortable: true,
-      right: true,
     },
-    {
-      name: "Loan Type",
-      selector: (row) => row.loanType,
-      sortable: true,
-      right: true,
-    },
-    {
-      name: "Sanction Amount",
-      selector: (row) =>
-        typeof row.sanctionAmount === "number"
-          ? `₹${row.sanctionAmount.toLocaleString()}`
-          : row.sanctionAmount,
-      sortable: true,
-      right: true,
-    },
+    // {
+    //   name: "Loan Type",
+    //   selector: (row) => row.loanType,
+    //   sortable: true,
+    // },
+    // {
+    //   name: "Sanction Amount",
+    //   selector: (row) =>
+    //     typeof row.sanctionAmount === "number"
+    //       ? `₹${row.sanctionAmount.toLocaleString()}`
+    //       : row.sanctionAmount,
+    //   sortable: true,
+    // },
     {
       name: "Pending Step",
       selector: (row) => row.pendingStep,
@@ -128,22 +141,7 @@ const KycLeads = () => {
       selector: (row) => row.createdBy,
       sortable: true,
     },
-    {
-      name: "Actions",
-      selector: (row) => row.status,
-      sortable: true,
-      center: true,
-      cell: (row) => (
-        <Link
-          to={`/kyc-detail?customer_id=${encodeURIComponent(row.customerId ?? "")}&application_id=${encodeURIComponent(row.leadId ?? "")}`}
-          state={{ lead: row.raw }}   // pass full record to detail page
-          className="p-1.5 px-2 rounded-sm text-xs font-medium bg-primary flex gap-1 text-white items-center"
-        >
-          <Icon name="FaRegEye" size={15} color={"white"} />
-          View
-        </Link>
-      ),
-    },
+    
   ];
 
   return (

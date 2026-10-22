@@ -23,6 +23,13 @@ const CALCULATION_METHOD_OPTIONS = [
   { label: "Flat", value: "Flat" },
 ];
 
+const REPAYMENT_FREQUENCY_OPTIONS = [
+  { label: "Days", value: "Days" },
+  { label: "Weekly", value: "Weekly" },
+  { label: "Biweekly", value: "Biweekly" },
+  { label: "Monthly", value: "Monthly" },
+];
+
 const YES_NO_OPTIONS = [
   { label: "Yes", value: "Yes" },
   { label: "No", value: "No" },
@@ -52,9 +59,9 @@ const LoanProductMaster = () => {
       console.error("Error fetching loan types:", error);
       toast.error(
         error?.response?.data?.title ||
-          error?.response?.data?.errors?.request?.[0] ||
-          error?.message ||
-          "Failed to load loan types!"
+        error?.response?.data?.errors?.request?.[0] ||
+        error?.message ||
+        "Failed to load loan types!"
       );
     }
   };
@@ -192,9 +199,9 @@ const LoanProductMaster = () => {
 
       toast.error(
         error?.response?.data?.title ||
-          error?.response?.data?.errors?.request?.[0] ||
-          error?.message ||
-          "Something went wrong!"
+        error?.response?.data?.errors?.request?.[0] ||
+        error?.message ||
+        "Something went wrong!"
       );
     }
   };
@@ -355,9 +362,9 @@ const LoanProductMaster = () => {
           fetchAllProducts();
           toast.success(
             response.msg ||
-              (isEdit
-                ? "Loan product updated successfully!"
-                : "Loan product created successfully!")
+            (isEdit
+              ? "Loan product updated successfully!"
+              : "Loan product created successfully!")
           );
           setIsModalOpen(false);
           resetForm();
@@ -366,9 +373,9 @@ const LoanProductMaster = () => {
         } else {
           toast.info(
             response?.msg ||
-              (isEdit
-                ? "Unable to update loan product!"
-                : "Unable to add loan product!")
+            (isEdit
+              ? "Unable to update loan product!"
+              : "Unable to add loan product!")
           );
         }
       } catch (error) {
@@ -381,9 +388,9 @@ const LoanProductMaster = () => {
 
         toast.error(
           error?.response?.data?.title ||
-            error?.response?.data?.errors?.request?.[0] ||
-            error?.message ||
-            "Something went wrong!"
+          error?.response?.data?.errors?.request?.[0] ||
+          error?.message ||
+          "Something went wrong!"
         );
       }
     },
@@ -596,6 +603,22 @@ const LoanProductMaster = () => {
 
             <div>
               <SelectInput
+                label="Product Type"
+                name="product_type"
+                placeholder="Select product type"
+                value={productFormik.values.product_type}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+                options={[
+                  {label: 'Secured', value: 'Secured'},
+                  {label: 'Unsecured', value: 'Unsecured'}
+                ]}
+              />
+              <ErrorText name="product_type" />
+            </div>
+
+            <div>
+              <SelectInput
                 label="Loan Type"
                 name="loan_type"
                 placeholder="Select loan type"
@@ -633,17 +656,16 @@ const LoanProductMaster = () => {
             </div>
 
             <div>
-              <TextInput
-                label="LPF (%)"
-                name="lpf"
-                type="number"
-                step="0.01"
-                placeholder="Enter LPF"
-                value={productFormik.values.lpf}
+              <SelectInput
+                label="Repayment Frequency"
+                name="repayment_frequency"
+                placeholder="Select calculation method"
+                value={productFormik.values.repayment_frequency}
                 onChange={productFormik.handleChange}
                 onBlur={productFormik.handleBlur}
+                options={REPAYMENT_FREQUENCY_OPTIONS}
               />
-              <ErrorText name="lpf" />
+              <ErrorText name="repayment_frequency" />
             </div>
 
             <div>
@@ -658,6 +680,20 @@ const LoanProductMaster = () => {
                 onBlur={productFormik.handleBlur}
               />
               <ErrorText name="interest_rate" />
+            </div>
+
+            <div>
+              <TextInput
+                label="Insurance (%)"
+                name="insurance_rate"
+                type="number"
+                step="0.01"
+                placeholder="Enter insurance rate"
+                value={productFormik.values.insurance_rate}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+              />
+              <ErrorText name="insurance_rate" />
             </div>
 
             <div>
@@ -716,6 +752,20 @@ const LoanProductMaster = () => {
             </div>
 
             <div>
+              <TextInput
+                label="LPF (%)"
+                name="lpf"
+                type="number"
+                step="0.01"
+                placeholder="Enter LPF"
+                value={productFormik.values.lpf}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+              />
+              <ErrorText name="lpf" />
+            </div>
+
+            <div>
               <SelectInput
                 label="Calculation Method"
                 name="calculation_method"
@@ -754,6 +804,20 @@ const LoanProductMaster = () => {
                 onBlur={productFormik.handleBlur}
               />
               <ErrorText name="membership_fee" />
+            </div>
+
+            <div>
+              <TextInput
+                label="Login Fee (₹)"
+                name="login_fee"
+                type="number"
+                step="0.01"
+                placeholder="Enter login fee"
+                value={productFormik.values.login_fee}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+              />
+              <ErrorText name="login_fee" />
             </div>
 
             <div>

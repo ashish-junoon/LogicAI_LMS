@@ -76,6 +76,20 @@ const DisbursementList = () => {
   }, []);
 
   const columns = [
+     {
+      name: "Action",
+      center: true,
+      cell: (row) => (
+        <Link
+          to={`/disbursement-detail?customer_id=${encodeURIComponent(row.customerId ?? "")}&application_id=${encodeURIComponent(row.loanId === "-" ? "" : row.loanId)}`}
+          state={{ lead: row.raw }}
+          className={`p-1.5 px-2 rounded-sm text-xs font-medium bg-primary flex gap-1 text-white items-center`}
+        >
+          <Icon name="FaRegEye" size={15} color={"white"} />
+          View
+        </Link>
+      ),
+    },
     {
       name: "Lead ID",
       selector: (row) => row.loanId,
@@ -112,31 +126,6 @@ const DisbursementList = () => {
       selector: (row) => row.bankName,
       sortable: true,
       right: true,
-    },
-    {
-      name: "Account Number",
-      selector: (row) => row.accountNumber,
-      sortable: true,
-      right: true,
-    },
-    {
-      name: "IFSC Code",
-      selector: (row) => row.ifscCode,
-      sortable: true,
-      right: true,
-    },
-    {
-      name: "Action",
-      cell: (row) => (
-        <Link
-          to={`/disbursement-detail?customer_id=${encodeURIComponent(row.customerId ?? "")}&application_id=${encodeURIComponent(row.loanId === "-" ? "" : row.loanId)}`}
-          state={{ lead: row.raw }}
-          className={`p-1.5 px-2 rounded-sm text-xs font-medium bg-primary flex gap-1 text-white items-center`}
-        >
-          <Icon name="FaRegEye" size={15} color={"white"} />
-          View
-        </Link>
-      ),
     },
   ];
 

@@ -79,7 +79,7 @@ const LeadCenter = () => {
     // },
     // {
     //   name: "Lead Id",
-    //   selector: (row) => row?.leadId || "-",
+    //   selector: (row) => row?.applicationId || "-",
     //   sortable: true,
     // },
     {

@@ -342,7 +342,7 @@ export const PendingLeadsData = [
   {
     index: 1,
     name: "Vikram Rao",
-    leadId: "L005",
+    applicationId: "L005",
     phone: "8432109876",
     branch: "Chennai Central",
     sanctionAmount: 450000,
@@ -353,7 +353,7 @@ export const PendingLeadsData = [
   {
     index: 2,
     name: "Anjali Gupta",
-    leadId: "L006",
+    applicationId: "L006",
     phone: "9821098765",
     branch: "Hyderabad North",
     sanctionAmount: 600000,
@@ -364,7 +364,7 @@ export const PendingLeadsData = [
   {
     index: 3,
     name: "Deepak Verma",
-    leadId: "L007",
+    applicationId: "L007",
     phone: "9910987654",
     branch: "Kolkata East",
     sanctionAmount: 850000,
@@ -377,7 +377,7 @@ export const PendingLeadsData = [
 export const NewLeadsData = [
   {
     name: "Sunita Mehta",
-    leadId: "L004",
+    applicationId: "L004",
     phone: "65432 10987",
     branch: "Pune West",
     loanType: "Bussines Loan",
@@ -388,7 +388,7 @@ export const NewLeadsData = [
   },
   {
     name: "Vikram Rao",
-    leadId: "L005",
+    applicationId: "L005",
     phone: "54321 09876",
     branch: "Chennai Central",
     loanType: "Personal Loan",
@@ -399,7 +399,7 @@ export const NewLeadsData = [
   },
   {
     name: "Anjali Gupta",
-    leadId: "L006",
+    applicationId: "L006",
     phone: "43210 98765",
     branch: "Hyderabad North",
     loanType: "Bussines Loan",
@@ -410,7 +410,7 @@ export const NewLeadsData = [
   },
   {
     name: "Deepak Verma",
-    leadId: "L007",
+    applicationId: "L007",
     phone: "32109 87654",
     branch: "Kolkata East",
     loanType: "Personal Loan",
@@ -495,7 +495,7 @@ export const allProductData = [
   {
     index: "1",
     name: "Sunita Mehta",
-    leadId: "L004",
+    applicationId: "L004",
     userId: "UI004",
     loanId: "UI004-UI004",
     phone: "65432 10987",
@@ -509,7 +509,7 @@ export const allProductData = [
   {
     index: "2",
     name: "Vikram Rao",
-    leadId: "L005",
+    applicationId: "L005",
     userId: "UI005",
     loanId: "UI005-L005",
     phone: "54321 09876",

@@ -26,7 +26,7 @@ const DraftLeads = () => {
       .filter((step) => row[step.key] === false)
       .map((step) => step.label);
 
-    return pendingSteps.length ? pendingSteps.join(", ") : "Completed";
+    return pendingSteps.length ? pendingSteps.at(-1) : "Completed";
   };
 
   const fetchLeads = async () => {
@@ -45,10 +45,10 @@ const DraftLeads = () => {
         const formatted = response.data.map((item, idx) => ({
           index: idx + 1,
           customerId: item.customer_id,
-          leadId: item.application_id,
+          applicationId: item.application_id,
           name: item.business_owner_name,
           phone: item.business_owner_mobile_no,
-          branch: item.branch ?? "-",           // not present in API response
+          branch: item.branch_name ?? "-",           // not present in API response
           pendingStep: getPendingStep(item),
           createdDate: item.created_date,
           createdBy: item.created_by ?? "-",    // not present in API response
@@ -77,16 +77,18 @@ const DraftLeads = () => {
       name: "S. No",
       selector: (row) => row.index,
       sortable: true,
+      width:'60px'
     },
     {
-      name: "UserId",
+      name: "User ID",
       selector: (row) => row.customerId,
       sortable: true,
     },
     {
-      name: "LeadId",
-      selector: (row) => row.leadId,
+      name: "ApplicationID",
+      selector: (row) => row.applicationId,
       sortable: true,
+      width: '150px',
     },
     {
       name: "Name",
@@ -102,6 +104,7 @@ const DraftLeads = () => {
       name: "Branch",
       selector: (row) => row.branch,
       sortable: true,
+      width: '200px',
     },
     {
       name: "Pending Step",

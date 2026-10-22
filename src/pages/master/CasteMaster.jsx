@@ -6,13 +6,22 @@ import TextInput from "../../components/fields/TextInput";
 import TogleInput from "../../components/fields/TogleInput";
 import Button from "../../components/utils/Button";
 import {
-//   GetAllCastes,
-//   CreateCaste,
-//   UpdateCaste,
+  GetAllCastes,
+  CreateCaste,
+  UpdateCaste,
 } from "../../api/mastersApi";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+
+// =========================================================
+// LOGGED-IN USER (used for `created_by` field of the API)
+// =========================================================
+const getCreatedBy = () =>
+  localStorage.getItem("username") ||
+  localStorage.getItem("userName") ||
+  localStorage.getItem("email") ||
+  "admin";
 
 const CasteMaster = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,15 +38,25 @@ const CasteMaster = () => {
     try {
       setIsLoading(true);
 
-    //   const response = await GetAllCastes();
+      const response = await GetAllCastes();
 
-      const transformedData =
-        response?.data?.map((item, index) => ({
-          ...item,
-          sn: index + 1,
-        })) || [];
+      if (response?.status) {
+        const transformedData =
+          response?.data?.map((item, index) => ({
+            ...item,
+            sn: index + 1,
+          })) || [];
 
-      setCastes(transformedData);
+        setCastes(transformedData);
+      } else {
+        setCastes([]);
+
+        toast.info(
+          response?.msg ||
+            response?.message ||
+            "Unable to fetch caste list!"
+        );
+      }
     } catch (error) {
       console.error("Error fetching castes:", error);
 
@@ -57,14 +76,14 @@ const CasteMaster = () => {
   // =========================================================
   const casteFormik = useFormik({
     initialValues: {
-      caste: "",
+      caste_name: "",
       is_active: true,
     },
 
     enableReinitialize: true,
 
     validationSchema: Yup.object({
-      caste: Yup.string()
+      caste_name: Yup.string()
         .trim()
         .required("Caste is required")
         .min(2, "Caste must be at least 2 characters")
@@ -73,27 +92,26 @@ const CasteMaster = () => {
 
     onSubmit: async (values, { resetForm }) => {
       try {
+        setIsLoading(true);
+
+        // ---- Exact API payload ----
         const req = {
-          caste: values.caste.trim(),
+          id: isEdit ? editingCasteId : 0,
+          caste_name: values.caste_name.trim(),
           is_active: values.is_active,
+          created_by: getCreatedBy(),
         };
 
-        let response;
-
-        if (isEdit) {
-        //   response = await UpdateCaste({
-        //     id: editingCasteId,
-        //     ...req,
-        //   });
-        } else {
-        //   response = await CreateCaste(req);
-        }
+        const response = isEdit
+          ? await UpdateCaste(req)
+          : await CreateCaste(req);
 
         if (response?.status) {
           await fetchAllCastes();
 
           toast.success(
-            response?.message ||
+            response?.msg ||
+              response?.message ||
               (isEdit
                 ? "Caste updated successfully!"
                 : "Caste created successfully!")
@@ -103,7 +121,8 @@ const CasteMaster = () => {
           resetForm();
         } else {
           toast.info(
-            response?.message ||
+            response?.msg ||
+              response?.message ||
               (isEdit
                 ? "Unable to update caste!"
                 : "Unable to create caste!")
@@ -121,6 +140,8 @@ const CasteMaster = () => {
             error?.message ||
             "Something went wrong!"
         );
+      } finally {
+        setIsLoading(false);
       }
     },
   });
@@ -134,7 +155,7 @@ const CasteMaster = () => {
 
     casteFormik.resetForm({
       values: {
-        caste: "",
+        caste_name: "",
         is_active: true,
       },
     });
@@ -150,7 +171,7 @@ const CasteMaster = () => {
     setEditingCasteId(row?.id);
 
     casteFormik.setValues({
-      caste: row?.caste || "",
+      caste_name: row?.caste_name || "",
       is_active:
         typeof row?.is_active === "boolean" ? row.is_active : true,
     });
@@ -179,15 +200,18 @@ const CasteMaster = () => {
     try {
       const req = {
         id: row?.id,
-        caste: row?.caste,
+        caste_name: row?.caste_name,
         is_active: nextStatus,
+        created_by: getCreatedBy(),
       };
 
-    //   const response = await UpdateCaste(req);
+      const response = await UpdateCaste(req);
 
       if (response?.status) {
         toast.success(
-          response?.message || "Caste status updated successfully!"
+          response?.msg ||
+            response?.message ||
+            "Caste status updated successfully!"
         );
       } else {
         // Revert
@@ -203,7 +227,9 @@ const CasteMaster = () => {
         );
 
         toast.info(
-          response?.message || "Unable to update caste status!"
+          response?.msg ||
+            response?.message ||
+            "Unable to update caste status!"
         );
       }
     } catch (error) {
@@ -241,7 +267,7 @@ const CasteMaster = () => {
 
     casteFormik.resetForm({
       values: {
-        caste: "",
+        caste_name: "",
         is_active: true,
       },
     });
@@ -261,7 +287,7 @@ const CasteMaster = () => {
 
     {
       name: "Caste",
-      selector: (row) => row?.caste || "-",
+      selector: (row) => row?.caste_name || "-",
       sortable: true,
       grow: 1,
     },
@@ -364,17 +390,17 @@ const CasteMaster = () => {
         <form onSubmit={casteFormik.handleSubmit} className="pt-2">
           <TextInput
             label="Caste"
-            name="caste"
+            name="caste_name"
             placeholder="Enter caste"
-            value={casteFormik.values.caste}
+            value={casteFormik.values.caste_name}
             onChange={casteFormik.handleChange}
             onBlur={casteFormik.handleBlur}
           />
 
-          {casteFormik.touched.caste &&
-            casteFormik.errors.caste && (
+          {casteFormik.touched.caste_name &&
+            casteFormik.errors.caste_name && (
               <p className="mt-1 text-xs text-red-500">
-                {casteFormik.errors.caste}
+                {casteFormik.errors.caste_name}
               </p>
             )}
 

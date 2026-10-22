@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Icon from "../../components/utils/Icon";
 import Table from "../../components/Table";
 import Modal from "../../components/utils/Modal";
@@ -10,41 +10,31 @@ import Loader from "../../components/utils/Loader";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { CreateLoanSubPurpose, GetAllLoanPurposes, GetAllLoanSubPurposes, UpdateLoanSubPurpose } from "../../api/mastersApi";
+import { useNavigate } from "react-router-dom";
 
 // =========================================================
-// DUMMY DATA — typical loan sub purposes sourced from
-// a Loan Origination System (LOS) / Finacle / Baanknet
+// LOGGED-IN USER (used for `created_by` field of the API)
 // =========================================================
-const DUMMY_SUB_PURPOSES = [
-  // Home Loan
-  { id: 1,  loan_sub_purpose: "Home Loan - Purchase",              is_active: true  },
-  { id: 2,  loan_sub_purpose: "Home Loan - Construction",          is_active: true  },
-  { id: 3,  loan_sub_purpose: "Home Loan - Renovation",            is_active: true  },
-  { id: 4,  loan_sub_purpose: "Home Loan - Plot Purchase",         is_active: false },
 
-  // Personal Loan
-  { id: 5,  loan_sub_purpose: "Personal Loan - Medical",           is_active: true  },
-  { id: 6,  loan_sub_purpose: "Personal Loan - Travel",            is_active: true  },
-  { id: 7,  loan_sub_purpose: "Personal Loan - Wedding",           is_active: true  },
-  { id: 8,  loan_sub_purpose: "Personal Loan - Consumer Durable",  is_active: false },
+const getCreatedBy = () =>
+  localStorage.getItem("username") ||
+  localStorage.getItem("userName") ||
+  localStorage.getItem("email") ||
+  "admin";
 
-  // Vehicle Loan
-  { id: 9,  loan_sub_purpose: "Vehicle Loan - New Car",            is_active: true  },
-  { id: 10, loan_sub_purpose: "Vehicle Loan - Used Car",           is_active: true  },
-  { id: 11, loan_sub_purpose: "Vehicle Loan - Two Wheeler",        is_active: true  },
-  { id: 12, loan_sub_purpose: "Vehicle Loan - Commercial Vehicle", is_active: true  },
-
-  // Education Loan
-  { id: 13, loan_sub_purpose: "Education Loan - Domestic",         is_active: true  },
-  { id: 14, loan_sub_purpose: "Education Loan - Overseas",         is_active: false },
-
-  // Gold Loan
-  { id: 15, loan_sub_purpose: "Gold Loan - Agriculture",           is_active: true  },
-  { id: 16, loan_sub_purpose: "Gold Loan - Personal",              is_active: true  },
-
-  // Business Loan
-  { id: 17, loan_sub_purpose: "Business Loan - Working Capital",   is_active: true  },
-  { id: 18, loan_sub_purpose: "Business Loan - Term Loan",         is_active: false },
+// =========================================================
+// FALLBACK PARENT LOAN PURPOSES
+// Only used if /Master/GetAllLoanPurpose fails — keeps
+// the modal's dropdown usable in that edge case.
+// =========================================================
+const FALLBACK_LOAN_PURPOSES = [
+  { id: 1, loan_purpose: "Home Loan" },
+  { id: 2, loan_purpose: "Personal Loan" },
+  { id: 3, loan_purpose: "Vehicle Loan" },
+  { id: 4, loan_purpose: "Education Loan" },
+  { id: 5, loan_purpose: "Gold Loan" },
+  { id: 6, loan_purpose: "Business Loan" },
 ];
 
 // Helper to keep the serial number column in sync
@@ -53,18 +43,77 @@ const withSn = (list) =>
 
 const LoanSubPurposeMaster = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [subPurposeList, setSubPurposeList] = useState(
-    withSn(DUMMY_SUB_PURPOSES)
+  const [subPurposeList, setSubPurposeList] = useState([]);
+  const [loanPurposeList, setLoanPurposeList] = useState(
+    FALLBACK_LOAN_PURPOSES
   );
   const [isLoading, setIsLoading] = useState(false);
 
   const [isEdit, setIsEdit] = useState(false);
   const [editingSubPurposeId, setEditingSubPurposeId] = useState(null);
 
-  // Tracks the next id for newly added entries
-  const nextIdRef = useRef(
-    Math.max(...DUMMY_SUB_PURPOSES.map((p) => p.id), 0) + 1
-  );
+  const navigate = useNavigate();
+
+  // =========================================================
+  // FETCH PARENT LOAN PURPOSES (for the dropdown)
+  // =========================================================
+
+  const fetchAllLoanPurposes = useCallback(async () => {
+    try {
+      const response = await GetAllLoanPurposes();
+
+      if (response?.status && Array.isArray(response?.data)) {
+        setLoanPurposeList(response.data);
+      }
+      // Silently fall back to FALLBACK_LOAN_PURPOSES on failure
+    } catch (error) {
+      console.error("Error fetching loan purposes:", error);
+    }
+  }, []);
+
+  // =========================================================
+  // FETCH ALL LOAN SUB PURPOSES
+  // =========================================================
+
+  const fetchAllSubPurposes = useCallback(async () => {
+    try {
+      setIsLoading(true);
+
+      const response = await GetAllLoanSubPurposes();
+
+      if (response?.status) {
+        setSubPurposeList(withSn(response?.data || []));
+      } else {
+        setSubPurposeList([]);
+
+        toast.info(
+          response?.msg ||
+            response?.message ||
+            "Unable to fetch loan sub purpose list!"
+        );
+      }
+    } catch (error) {
+      console.error("Error fetching loan sub purposes:", error);
+
+      toast.error(
+        error?.response?.data?.title ||
+          error?.response?.data?.errors?.request?.[0] ||
+          error?.message ||
+          "Something went wrong!"
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // =========================================================
+  // INITIAL FETCH
+  // =========================================================
+
+  useEffect(() => {
+    fetchAllLoanPurposes();
+    fetchAllSubPurposes();
+  }, [fetchAllLoanPurposes, fetchAllSubPurposes]);
 
   // =========================================================
   // FORMIK
@@ -72,11 +121,14 @@ const LoanSubPurposeMaster = () => {
 
   const subPurposeFormik = useFormik({
     initialValues: {
+      loan_purpose_id: "",
       loan_sub_purpose: "",
       is_active: true,
     },
 
     validationSchema: Yup.object({
+      loan_purpose_id: Yup.mixed().required("Loan Purpose is required"),
+
       loan_sub_purpose: Yup.string()
         .trim()
         .required("Loan Sub Purpose is required")
@@ -90,40 +142,39 @@ const LoanSubPurposeMaster = () => {
       try {
         setIsLoading(true);
 
-        // Simulate a short delay like an API call would
-        await new Promise((r) => setTimeout(r, 300));
+        // ---- Exact API payload ----
+        const req = {
+          id: isEdit ? editingSubPurposeId : 0,
+          loan_purpose_id: Number(values.loan_purpose_id),
+          loan_sub_purpose: values.loan_sub_purpose.trim(),
+          is_active: values.is_active,
+          created_by: getCreatedBy(),
+        };
 
-        // UPDATE
-        if (isEdit) {
-          setSubPurposeList((prev) =>
-            withSn(
-              prev.map((item) =>
-                item.id === editingSubPurposeId
-                  ? {
-                      ...item,
-                      loan_sub_purpose: values.loan_sub_purpose.trim(),
-                      is_active: values.is_active,
-                    }
-                  : item
-              )
-            )
+        const response = isEdit
+          ? await UpdateLoanSubPurpose(req)
+          : await CreateLoanSubPurpose(req);
+
+        if (response?.status) {
+          await fetchAllSubPurposes();
+
+          toast.success(
+            response?.msg ||
+              response?.message ||
+              (isEdit
+                ? "Loan Sub Purpose updated successfully!"
+                : "Loan Sub Purpose added successfully!")
           );
 
-          toast.success("Loan Sub Purpose updated successfully!");
           handleCloseModal();
-        }
-        // CREATE
-        else {
-          const newEntry = {
-            id: nextIdRef.current++,
-            loan_sub_purpose: values.loan_sub_purpose.trim(),
-            is_active: values.is_active,
-          };
-
-          setSubPurposeList((prev) => withSn([...prev, newEntry]));
-
-          toast.success("Loan Sub Purpose added successfully!");
-          handleCloseModal();
+        } else {
+          toast.info(
+            response?.msg ||
+              response?.message ||
+              (isEdit
+                ? "Unable to update loan sub purpose!"
+                : "Unable to add loan sub purpose!")
+          );
         }
       } catch (error) {
         console.error(
@@ -133,7 +184,12 @@ const LoanSubPurposeMaster = () => {
           error
         );
 
-        toast.error("Something went wrong!");
+        toast.error(
+          error?.response?.data?.title ||
+            error?.response?.data?.errors?.request?.[0] ||
+            error?.message ||
+            "Something went wrong!"
+        );
       } finally {
         setIsLoading(false);
       }
@@ -150,6 +206,7 @@ const LoanSubPurposeMaster = () => {
 
     subPurposeFormik.resetForm({
       values: {
+        loan_purpose_id: "",
         loan_sub_purpose: "",
         is_active: true,
       },
@@ -167,6 +224,7 @@ const LoanSubPurposeMaster = () => {
     setEditingSubPurposeId(row.id);
 
     subPurposeFormik.setValues({
+      loan_purpose_id: row.loan_purpose_id ?? "",
       loan_sub_purpose: row.loan_sub_purpose || "",
       is_active: row.is_active ?? true,
     });
@@ -186,28 +244,50 @@ const LoanSubPurposeMaster = () => {
       prev.map((item) =>
         item.id !== row.id
           ? item
-          : {
-              ...item,
-              is_active: nextStatus,
-            }
+          : { ...item, is_active: nextStatus }
       )
     );
 
     try {
-      // Simulate a short delay like an API call would
-      await new Promise((r) => setTimeout(r, 200));
+      const req = {
+        id: row.id,
+        loan_purpose_id: row.loan_purpose_id,
+        loan_sub_purpose: row.loan_sub_purpose,
+        is_active: nextStatus,
+        created_by: getCreatedBy(),
+      };
 
-      toast.success("Status updated successfully!");
+      const response = await UpdateLoanSubPurpose(req);
+
+      if (response?.status) {
+        toast.success(
+          response?.msg ||
+            response?.message ||
+            "Status updated successfully!"
+        );
+      } else {
+        // Revert on failure
+        setSubPurposeList((prev) =>
+          prev.map((item) =>
+            item.id !== row.id
+              ? item
+              : { ...item, is_active: row.is_active }
+          )
+        );
+
+        toast.info(
+          response?.msg ||
+            response?.message ||
+            "Unable to update status!"
+        );
+      }
     } catch (error) {
       // Revert on error
       setSubPurposeList((prev) =>
         prev.map((item) =>
           item.id !== row.id
             ? item
-            : {
-                ...item,
-                is_active: row.is_active,
-              }
+            : { ...item, is_active: row.is_active }
         )
       );
 
@@ -216,9 +296,22 @@ const LoanSubPurposeMaster = () => {
         error
       );
 
-      toast.error("Something went wrong!");
+      toast.error(
+        error?.response?.data?.title ||
+          error?.response?.data?.errors?.request?.[0] ||
+          error?.message ||
+          "Something went wrong!"
+      );
     }
   };
+
+  // =========================================================
+  // RESOLVE PARENT PURPOSE NAME
+  // =========================================================
+
+  const getPurposeName = (id) =>
+    loanPurposeList.find((p) => p.id === Number(id))
+      ?.loan_purpose || "-";
 
   // =========================================================
   // TABLE COLUMNS
@@ -230,6 +323,13 @@ const LoanSubPurposeMaster = () => {
       selector: (row) => row.sn,
       sortable: true,
       width: "80px",
+    },
+
+    {
+      name: "Loan Purpose",
+      selector: (row) => getPurposeName(row.loan_purpose_id),
+      sortable: true,
+      width: "180px",
     },
 
     {
@@ -305,6 +405,16 @@ const LoanSubPurposeMaster = () => {
             </p>
           </div>
 
+           <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={()=> navigate(-1)}
+              className="flex items-center
+              gap-2 py-1.5 px-3 rounded-sm border border-primary cursor-pointer text-sm font-medium text-primary hover:bg-primary/20"
+          >
+              Go Back
+            </button>
+
           <button
             type="button"
             onClick={handleAddSubPurpose}
@@ -312,6 +422,7 @@ const LoanSubPurposeMaster = () => {
           >
             New Sub Purpose
           </button>
+           </div>
         </div>
 
         {/* Table */}
@@ -332,7 +443,38 @@ const LoanSubPurposeMaster = () => {
         onClose={handleCloseModal}
       >
         <form onSubmit={subPurposeFormik.handleSubmit}>
+          {/* Parent Loan Purpose dropdown */}
           <div className="mt-6">
+            <label className="block text-sm font-medium text-slate-700">
+              Loan Purpose
+            </label>
+
+            <select
+              name="loan_purpose_id"
+              value={subPurposeFormik.values.loan_purpose_id}
+              onChange={subPurposeFormik.handleChange}
+              onBlur={subPurposeFormik.handleBlur}
+              className="mt-1 w-full rounded-sm border border-gray-200 bg-white px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+            >
+              <option value="">Select Loan Purpose</option>
+
+              {loanPurposeList.map((purpose) => (
+                <option key={purpose.id} value={purpose.id}>
+                  {purpose.loan_purpose}
+                </option>
+              ))}
+            </select>
+
+            {subPurposeFormik.touched.loan_purpose_id &&
+              subPurposeFormik.errors.loan_purpose_id && (
+                <p className="mt-1 text-xs text-red-500">
+                  {subPurposeFormik.errors.loan_purpose_id}
+                </p>
+              )}
+          </div>
+
+          {/* Sub purpose text input */}
+          <div className="mt-4">
             <TextInput
               label="Loan Sub Purpose"
               name="loan_sub_purpose"
@@ -350,21 +492,6 @@ const LoanSubPurposeMaster = () => {
               )}
           </div>
 
-          {/* Status toggle inside the modal */}
-          {/* <div className="mt-4 flex items-center gap-3">
-            <span className="text-sm">Active</span>
-
-            <TogleInput
-              checked={subPurposeFormik.values.is_active}
-              onChange={() =>
-                subPurposeFormik.setFieldValue(
-                  "is_active",
-                  !subPurposeFormik.values.is_active
-                )
-              }
-            />
-          </div> */}
-
           {/* Buttons */}
           <div className="mt-5 flex justify-end gap-2">
             <Button
@@ -377,7 +504,8 @@ const LoanSubPurposeMaster = () => {
             <Button
               btnName={isEdit ? "Update" : "Submit"}
               type="submit"
-              style="bg-primary text-sm text-white hover:bg-primary/90"
+              disabled={!subPurposeFormik.isValid}
+              style="bg-primary text-sm text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
         </form>

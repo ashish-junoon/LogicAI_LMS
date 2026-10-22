@@ -25,10 +25,10 @@ const RejectedLeads = () => {
         //     // .includes('reject'),
         // )
         .map((item) => ({
-          leadId: item.application_id || '-',
+          applicationId: item.application_id || '-',
           name: item.business_owner_name || '-',
           phone: item.business_owner_mobile_no || '-',
-          branch: item.branch || '-',
+          branch: item.branch_name || '-',
           remarks:
             item.rejection_remarks ||
             item.reject_remarks ||
@@ -62,8 +62,8 @@ const RejectedLeads = () => {
 
   const columns = [
   {
-    name: "LeadId",
-    selector: (row) => row.leadId,
+    name: "ApplicationID",
+    selector: (row) => row.applicationId,
     sortable: true,
   },
   {

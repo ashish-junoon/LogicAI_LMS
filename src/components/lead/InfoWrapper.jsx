@@ -7,6 +7,7 @@ import CreditInfo from "./CreditInfo";
 import DocumentsList from "./DocumentsList";
 import Icon from "../utils/Icon";
 import RemarksHistory from "./RemarksHistory";
+import Variations from "./Variations";
 import LeadForm from "../../pages/formPages/LeadForm";
 import LoanAnalysis from "./LoanAnalysis";
 import LeadFormDetails from "../../pages/formPages/LeadFormDetails";
@@ -31,6 +32,7 @@ const InfoWrapper = ({ customerDetails, onRefresh }) => {
     { id: "bankInfo", label: "Bank Info", icon: "RiBankLine" },
     { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
     { id: "documents", label: "Documents", icon: "RiFileList3Line" },
+    { id: "variations", label: "Variations", icon: "PiGraph" },
   ];
 
   const renderSection = () => {
@@ -57,6 +59,8 @@ const InfoWrapper = ({ customerDetails, onRefresh }) => {
         return <BankInfoSection bankData={customerDetails?.bankDetails?.[0]} isVerified={customerDetails?.workflowNodes?.[0]?.bank_is_completed} />;
       case "remarks":
         return <RemarksHistory permission={true} remarks={customerDetails?.history || []} fetchData={onRefresh} />;
+      case "variations":
+        return <Variations variations={customerDetails?.variations || []} />;
       default:
         return null;
     }

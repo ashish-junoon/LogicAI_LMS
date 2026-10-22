@@ -75,6 +75,41 @@ export const UpdateBusinessTrade = async (req) => {
     }
 }
 
+
+// ?===========================
+// * LEAD SOURCE MASTER API'S
+// ?===========================
+
+export const GetAllLeadSources = async (req) => {
+    try {
+        const response = await api.get("/Master/GetAllLeadSources", req);
+        return response.data;
+    } catch (error) {
+        console.error("GetAllLeadSources:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const CreateLeadSource = async (req) => {
+    try {
+        const response = await api.post("/Master/CreateLeadSource", req);
+        return response.data;
+    } catch (error) {
+        console.error("CreateLeadSource:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const UpdateLeadSource = async (req) => {
+    try {
+        const response = await api.put("/Master/UpdateLeadSource", req);
+        return response.data;
+    } catch (error) {
+        console.error("UpdateLeadSource:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
 // ?===========================
 // * BANK MASTER API'S
 // ?===========================
@@ -363,7 +398,6 @@ export const UpdateSector = async (req) => {
 // ?===========================
 // * RELIGION MASTER API'S
 // ?===========================
-
 export const GetAllReligions = async (req) => {
     try {
         const response = await api.get("/Master/GetAllReligions", req);
@@ -390,6 +424,41 @@ export const UpdateReligion = async (req) => {
         return response.data;
     } catch (error) {
         console.error("UpdateReligion:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+
+
+// ?===========================
+// * CASTE MASTER API'S
+// ?===========================
+export const GetAllCastes = async (req) => {
+    try {
+        const response = await api.get("/Master/GetAllCastes", req);
+        return response.data;
+    } catch (error) {
+        console.error("GetAllCastes:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const CreateCaste = async (req) => {
+    try {
+        const response = await api.post("/Master/CreateCaste", req);
+        return response.data;
+    } catch (error) {
+        console.error("CreateCaste:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const UpdateCaste = async (req) => {
+    try {
+        const response = await api.put("/Master/UpdateCaste", req);
+        return response.data;
+    } catch (error) {
+        console.error("UpdateCaste:", error.response?.data || error.message);
         throw error;
     }
 }
@@ -474,7 +543,7 @@ export const GetAllLoanPurposes = async (req) => {
         const response = await api.get("/Master/GetAllLoanPurposes", req);
         return response.data;
     } catch (error) {
-        console.error("GetAllResidenceTypes:", error.response?.data || error.message);
+        console.error("GetAllLoanPurposes:", error.response?.data || error.message);
         throw error;
     }
 }
@@ -484,7 +553,7 @@ export const CreateLoanPurpose = async (req) => {
         const response = await api.post("/Master/CreateLoanPurpose", req);
         return response.data;
     } catch (error) {
-        console.error("CreateResidenceType:", error.response?.data || error.message);
+        console.error("CreateLoanPurpose:", error.response?.data || error.message);
         throw error;
     }
 }
@@ -494,7 +563,42 @@ export const UpdateLoanPurpose = async (req) => {
         const response = await api.put("/Master/UpdateLoanPurpose", req);
         return response.data;
     } catch (error) {
-        console.error("UpdateResidenceType:", error.response?.data || error.message);
+        console.error("UpdateLoanPurpose:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+
+// ?===========================
+// * Loan Sub Purpose MASTER API'S
+// ?===========================
+
+export const GetAllLoanSubPurposes = async (req) => {
+    try {
+        const response = await api.get("/Master/GetAllLoanSubPurpose", req);
+        return response.data;
+    } catch (error) {
+        console.error("GetAllLoanSubPurposes:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const CreateLoanSubPurpose = async (req) => {
+    try {
+        const response = await api.post("/Master/CreateLoanSubPurpose", req);
+        return response.data;
+    } catch (error) {
+        console.error("CreateLoanSubPurpose:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const UpdateLoanSubPurpose = async (req) => {
+    try {
+        const response = await api.put("/Master/UpdateLoanSubPurpose", req);
+        return response.data;
+    } catch (error) {
+        console.error("UpdateLoanSubPurpose:", error.response?.data || error.message);
         throw error;
     }
 }

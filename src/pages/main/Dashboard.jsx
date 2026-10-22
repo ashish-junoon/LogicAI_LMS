@@ -354,7 +354,7 @@ const Dashboard = () => {
             <table className="w-full">
               <thead>
                 <tr className="text-left text-slate-500 text-xs border-b border-slate-200">
-                  <th className="pb-3 font-medium">Application ID</th>
+                  <th className="pb-3 font-medium">ApplicationID</th>
                   <th className="pb-3 font-medium">Customer</th>
                   <th className="pb-3 font-medium">Product</th>
                   <th className="pb-3 font-medium">Amount</th>
