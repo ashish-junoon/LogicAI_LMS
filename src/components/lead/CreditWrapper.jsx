@@ -12,6 +12,7 @@ import Button from "../utils/Button";
 import Modal from "../utils/Modal";
 import SelectInput from "../fields/SelectInput";
 import LeadFormDetails from "../../pages/formPages/LeadFormDetails";
+import Variations from "./Variations";
 
 const CreditWrapper = ({ customerDetails }) => {
   const [activeSection, setActiveSection] = useState("user");
@@ -37,6 +38,7 @@ const CreditWrapper = ({ customerDetails }) => {
     { id: "bsa", label: "Bank Statement Ananlysis", icon: "RiBankCardLine" },
     { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
     { id: "documents", label: "Documents", icon: "RiFileList3Line" },
+    { id: "variations", label: "Variations", icon: "PiGraph" },
   ];
 
   const renderSection = () => {
@@ -79,6 +81,8 @@ const CreditWrapper = ({ customerDetails }) => {
         return <RemarksHistory permission={true} remarks={customerDetails?.history || []} />;
       case "bsa":
         return <BankStatementAnalyser />;
+      case "variations":
+        return <Variations />;
       case "documents":
         return (
           <DocumentsList

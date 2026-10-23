@@ -6,6 +6,7 @@ import RemarksHistory from "./RemarksHistory";
 import Disbursement from "./Disbursement";
 import DocumentsList from "./DocumentsList";
 import LeadFormDetails from "../../pages/formPages/LeadFormDetails";
+import Variations from "./Variations";
 
 const DisbursementWrapper = ({ customerDetails }) => {
   const [activeSection, setActiveSection] = useState("disbursement");
@@ -17,8 +18,9 @@ const DisbursementWrapper = ({ customerDetails }) => {
       icon: "RiShieldCheckLine",
     },
     { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
-    { id: "documents", label: "Documents", icon: "RiFileList3Line" },
     { id: "userinfo", label: "User Details", icon: "RiFileList3Line" },
+    { id: "documents", label: "Documents", icon: "RiFileList3Line" },
+    { id: "variations", label: "Variations", icon: "PiGraph" },
   ];
 
   const permisions = {
@@ -36,6 +38,8 @@ const DisbursementWrapper = ({ customerDetails }) => {
         return <Disbursement />;
       case "remarks":
         return <RemarksHistory permission={true} remarks={customerDetails?.history || []} />;
+      case "variations":
+        return <Variations permission={true} remarks={customerDetails?.history || []} />;
       case "documents":
         return (
           <DocumentsList

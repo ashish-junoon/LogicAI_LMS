@@ -6,6 +6,7 @@ import RemarksHistory from "./RemarksHistory";
 import LoanDetails from "./LoanDetails";
 import DocumentsList from "./DocumentsList";
 import LeadForm from "../../pages/formPages/LeadForm";
+import Variations from "./Variations";
 
 const LoanWrapper = ({ loanData, userData, onAction }) => {
   const [activeSection, setActiveSection] = useState("loan");
@@ -50,6 +51,7 @@ const LoanWrapper = ({ loanData, userData, onAction }) => {
     { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
     { id: "user", label: "User Details", icon: "PiBookOpenTextDuotone" },
     { id: "documents", label: "Documents", icon: "RiFileList3Line" },
+    { id: "variations", label: "Variations", icon: "PiGraph" },
   ];
 
   const renderSection = () => {
@@ -62,6 +64,8 @@ const LoanWrapper = ({ loanData, userData, onAction }) => {
         return <LeadForm />;
       case "documents":
         return <DocumentsList permission={true} />;
+        case "variations":
+        return <Variations permission={true} />;
       default:
         return null;
     }

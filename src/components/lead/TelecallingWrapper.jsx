@@ -4,6 +4,7 @@ import { useState } from "react";
 import Icon from "../utils/Icon";
 import RemarksHistory from "./RemarksHistory";
 import DocumentsList from "./DocumentsList";
+import Variations from "./Variations";
 import LeadFormDetails from "../../pages/formPages/LeadFormDetails";
 import LiveKYC from "../common/LiveKYC";
 import DocumentSignature from "../common/DocumentSignature";
@@ -24,6 +25,7 @@ const TelecallinWrapper = ({ customerDetails }) => {
       // { id: "esign", label: "e-Signature", icon: "FaSignature" },
       { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
       { id: "document", label: "Documents", icon: "PiBookOpenTextDuotone" },
+      { id: "variations", label: "Variations", icon: "PiGraph" },
   ];
 
   const renderSection = () => {
@@ -39,6 +41,8 @@ const TelecallinWrapper = ({ customerDetails }) => {
         return <RemarksHistory permission={true} remarks={customerDetails?.history || []} />;
       case "esign":
         return <DocumentSignature />;
+      case "variations":
+        return <Variations />;
       case "document":
         return (
           <DocumentsList

@@ -2,13 +2,6 @@ import React, { useState, useEffect } from "react";
 import Icon from "../../components/utils/Icon";
 import { IoPerson } from "react-icons/io5";
 import DataTable from "react-data-table-component";
-import {
-  branchData,
-  allLoansData,
-  PendingLeadsData,
-  NewLeadsData,
-  // GetAllCustomerDetails,
-} from "../../content/masterData";
 import Table from "../../components/Table";
 import Modal from "../../components/utils/Modal";
 import TextInput from "../../components/fields/TextInput";
