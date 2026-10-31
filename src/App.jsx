@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import Dashboard from './pages/main/Dashboard'
 import Layout from './layout/Layout'
@@ -57,13 +56,25 @@ import TelecallerQuetionsMaster from './pages/master/TelecallerQuetionsMaster'
 import ManageRole from './pages/admin/ManageRole'
 import CasteMaster from './pages/master/CasteMaster'
 import LoanSubPurposeMaster from './pages/master/LoanSubPurposeMaster'
+import { AuthDataProvider, useAuthData } from './context/authContext'
+
+function ProtectedRoute({ children }) {
+  const { isLoggedIn } = useAuthData();
+  return isLoggedIn ? children : <Navigate to="/login" replace />;
+}
+
+function GuestRoute({ children }) {
+  const { isLoggedIn } = useAuthData();
+  return isLoggedIn ? <Navigate to="/" replace /> : children;
+}
 
 function App() {
 
   return (
     <Router>
-      <Routes>
-        <Route element={<Layout />}>
+      <AuthDataProvider>
+        <Routes>
+        <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
           {/* <Route path='/' element={<Dashboard />} /> */}
           <Route path='/' element={<Dashboard2 />} />
           {/* emi */}
@@ -135,10 +146,11 @@ function App() {
 
           <Route path='*' element={<Navigate to="/"/>} />
         </Route>
-          <Route path='/login' element={<Login />} />
+          <Route path='/login' element={<GuestRoute><Login /></GuestRoute>} />
           {/* Client Pages */}
           <Route path='/client-kyc-page' element={<ClientLiveKYC />} />
-      </Routes>
+        </Routes>
+      </AuthDataProvider>
     </Router>
   )
 }

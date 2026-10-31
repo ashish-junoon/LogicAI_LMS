@@ -1,37 +1,33 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Icon from "../../components/utils/Icon";
 import TextInput from "../../components/fields/TextInput";
+import { Userlogin } from "../../api/authApi";
+import { useAuthData } from "../../context/authContext";
+import { toast } from "react-toastify";
+
+const slides = [
+  {
+    icon: "FaCreditCard",
+    title: "Loan Management",
+    description: "End-to-end digital loan processing from application to repayment.",
+  },
+  {
+    icon: "FaUsers",
+    title: "Customer Management",
+    description: "Manage customer profiles, KYC, and loan history in one place.",
+  },
+  {
+    icon: "FaChartLine",
+    title: "Smart Analytics",
+    description: "Monitor loan performance and business insights with real-time dashboards.",
+  },
+];
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    rememberMe: false,
-  });
-  
+  const [formData, setFormData] = useState({ email: "", password: "", rememberMe: false });
   const [isLoading, setIsLoading] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
-
-  const slides = [
-    {
-      icon: "FaCreditCard",
-      title: "Loan Management",
-      description:
-        "End-to-end digital loan processing from application to repayment.",
-    },
-    {
-      icon: "FaUsers",
-      title: "Customer Management",
-      description:
-        "Manage customer profiles, KYC, and loan history in one place.",
-    },
-    {
-      icon: "FaChartLine",
-      title: "Smart Analytics",
-      description:
-        "Monitor loan performance and business insights with real-time dashboards.",
-    },
-  ];
+  const { login } = useAuthData();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -46,12 +42,17 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      // Simulate API call
-      console.log("Login attempt", formData);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      // Handle successful login
+      const response = await Userlogin({
+        email_id: formData.email.trim(),
+        password: formData.password,
+      });
+
+      if (!login(response)) {
+        toast.error("Login response mein valid token ya expiry time nahi mila.");
+      }
     } catch (error) {
-      console.error("Login failed", error);
+      const message = error.response?.data?.message || error.response?.data?.title || error.message;
+      toast.error(message || "Login failed. Please check your credentials and try again.");
     } finally {
       setIsLoading(false);
     }
@@ -160,9 +161,30 @@ const Login = () => {
             {/* Form */}
             <form onSubmit={handleSubmit}>
               <div className="space-y-4 mb-6">
-                <TextInput label="Email" placeholder={"Enter your email address"} style={"py-2.5"} />
+                <TextInput
+                  label="Email"
+                  name="email"
+                  type="email"
+                  id="email"
+                  placeholder="Enter your email address"
+                  value={formData.email}
+                  onChange={(event) => setFormData((current) => ({ ...current, email: event.target.value }))}
+                  required
+                  style="py-2.5"
+                />
                 <div className="space-y-2">
-                  <TextInput label={"Password"} type="password" placeholder="Enter your password" hideEye={false} style={"py-2.5"} />
+                  <TextInput
+                    label="Password"
+                    name="password"
+                    id="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={(event) => setFormData((current) => ({ ...current, password: event.target.value }))}
+                    required
+                    hideEye={false}
+                    style="py-2.5"
+                  />
                   {/* <div className="text-end text-primary text-sm font-semibold">Forgot Password?</div> */}
                 </div>
               </div>
@@ -170,7 +192,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3 bg-linear-to-r from-primary to-primary/70 hover:from-primary hover:to-primary text-white font-medium rounded-lg transition-all duration-300 shadow-lg shadow-[#0b1f33]/20 hover:shadow-[#0b1f33]/30 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98] text-sm"
+                className="w-full py-3 bg-linear-to-r from-primary to-primary/70 hover:from-primary hover:to-primary text-white font-medium rounded-lg transition-all duration-300 shadow-lg shadow-[#0b1f33]/20 hover:shadow-[#0b1f33]/30 disabled:opacity-70 cursor-pointer disabled:cursor-not-allowed active:scale-[0.98] text-sm"
               >
                 {isLoading ? (
                   <span className="flex items-center justify-center gap-2">

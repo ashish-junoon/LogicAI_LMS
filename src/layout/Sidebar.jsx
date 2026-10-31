@@ -1263,6 +1263,7 @@ import {
 import { sidebarData } from "../content/data";
 import officepulselogo2 from "../assets/img/officepulselogo2.png";
 import officepulsefav2 from "../assets/img/officepulsefav2.png";
+import { useAuthData } from "../context/authContext";
 
 export default function Sidebar({
   collapsed,
@@ -1271,6 +1272,7 @@ export default function Sidebar({
   onToggleSidebar,
 }) {
   const location = useLocation();
+  const { logout } = useAuthData();
 
   // ---------------------------------------------------------
   // Automatically open the group containing the active route
@@ -1703,8 +1705,9 @@ export default function Sidebar({
         >
           <button
             type="button"
+            onClick={logout}
             className={[
-              "group flex min-h-[46px]",
+              "group flex min-h-[46px] cursor-pointer",
               "w-full items-center rounded-xl",
               "text-[13px] font-bold",
               "transition-all duration-200",
