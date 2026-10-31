@@ -33,6 +33,7 @@ const initialValues = {
   role: "",
   report_view: true,
   is_active: false,
+  user_type: ""
 };
 
 const ManageUser = () => {
@@ -234,6 +235,7 @@ const ManageUser = () => {
       designation: Yup.string().required("Please select designation"),
 
       role: Yup.string().required("Please select role"),
+      user_type: Yup.string().required("Please select user type"),
 
       report_view: Yup.string()
         .oneOf(["true", "false"])
@@ -253,6 +255,7 @@ const ManageUser = () => {
           department: String(values.department),
           designation: String(values.designation),
           role: values.role,
+          user_type: values.user_type,
           report_view:
             values.report_view === true || values.report_view === "true",
           created_by: "Admin",
@@ -726,6 +729,23 @@ const ManageUser = () => {
                 onBlur={userFormik.handleBlur}
               />
               <ErrorText name="report_view" />
+            </div>
+            
+            <div>
+              <SelectInput
+                label="User Type"
+                name="user_type"
+                placeholder="Select User Type"
+                options={[
+                  {label:"LOS", value:"LOS"},
+                  {label:"LMS", value:"LMS"},
+                  {label:"BOTH", value:"BOTH"},
+                ]}
+                value={userFormik.values.user_type}
+                onChange={userFormik.handleChange}
+                onBlur={userFormik.handleBlur}
+              />
+              <ErrorText name="user_type" />
             </div>
           </div>
 
