@@ -58,13 +58,20 @@ const DOT_STYLES = {
   primary: "bg-primary",
 };
 
-export function StatusBadge({ label, variant = "neutral", dot = true }) {
+const BADGE_STATUS = {
+  4: "New Leads",
+  5: "Credit Analysis",
+  6: "KYC",
+  7: "Telecalling",
+}
+
+export function StatusBadge({ label, variant = "neutral", dot = true, app_status=0 }) {
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${STYLES[variant] || STYLES.neutral}`}
+      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium bg-white text-blue-700 || STYLES.neutral}`}
     >
       {dot && <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${DOT_STYLES[variant] || DOT_STYLES.neutral}`} />}
-      {label}
+      {BADGE_STATUS?.[app_status]}
     </span>
   );
 }

@@ -60,10 +60,10 @@ const Login = () => {
 
   return (
     <div className="h-screen bg-linear-to-br from-[#f0f4fa] to-[#e8edf5] flex font-['Inter',system-ui,sans-serif]">
-      <div className="flex flex-col md:flex-row w-full bg-white overflow-hidden transition-all duration-300 hover:shadow-[#0b1a2e]/20">
+      <div className="flex flex-col lg:flex-row w-full min-h-screen bg-white overflow-hidden transition-all duration-300 hover:shadow-[#0b1a2e]/20">
 
         {/* Left Panel - Branding/Info */}
-        <div className="w-full md:w-[45%] bg-linear-to-br from-blue-900 to-primary text-white p-8 md:p-12 flex flex-col justify-between relative">
+        <div className="w-full lg:w-[45%] bg-linear-to-br from-blue-900 to-primary text-white p-8 lg:p-12 flex flex-col justify-between relative max-lg:hidden">
           {/* Decorative elements */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3" />
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/3" />
@@ -146,8 +146,8 @@ const Login = () => {
         </div>
 
         {/* Right Panel - Login Form */}
-        <div className="w-full md:w-[55%] p-8 md:p-12 flex items-center">
-          <div className="w-full max-w-sm mx-auto">
+        <div className="w-full lg:w-[55%] min-h-screen sm:p-8 lg:p-12 flex items-center">
+          <div className="w-full max-w-sm mx-auto max-lg:border max-lg:border-gray-200 max-lg:shadow-2xl rounded-2xl p-2 py-8">
             {/* Header */}
             <div className="mb-6">
               <h1 className="text-2xl font-bold text-gray-900 tracking-tight">

@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import Table from "../../components/Table";
 import { GetAllApplications } from "../../api/application";
+import { useAuthData } from "../../context/authContext";
 // import { GetAllCustomerDetails } from "../../content/masterData"; // adjust import path as needed
 
 const DraftLeads = () => {
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { authData } = useAuthData()
 
   // Ordered list of steps used to derive the "Pending Step"
   const STEP_CHECKS = [
@@ -35,8 +37,9 @@ const DraftLeads = () => {
       setError(null);
 
       const requestBody = {
-        role: "admin",
-        created_by: "admin",
+        role: authData?.role,
+        created_by: authData?.user_id,
+        step_status: "1"
       };
 
       const response = await GetAllApplications(requestBody);

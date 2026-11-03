@@ -8,7 +8,7 @@ import DocumentsList from "./DocumentsList";
 import Icon from "../utils/Icon";
 import RemarksHistory from "./RemarksHistory";
 import Variations from "./Variations";
-import LeadForm from "../../pages/formPages/LeadForm";
+// import LeadForm from "../../pages/formPages/LeadForm";
 import LoanAnalysis from "./LoanAnalysis";
 import LeadFormDetails from "../../pages/formPages/LeadFormDetails";
 
@@ -41,7 +41,7 @@ const InfoWrapper = ({ customerDetails, onRefresh }) => {
         return <LeadFormDetails permisions={permisions} customerDetails={customerDetails} onRefresh={onRefresh} />;
         // return <LeadForm />;
       case "loanInfo":
-        return <LoanAnalysis loanData={customerDetails?.loanDetails?.[0]} applicationId={customerDetails?.loanDetails?.[0]?.application_id} />;
+        return <LoanAnalysis loanData={customerDetails?.loanDetails?.[0]} data={customerDetails} applicationId={customerDetails?.loanDetails?.[0]?.application_id} />;
       case "documents":
         return (
           <DocumentsList

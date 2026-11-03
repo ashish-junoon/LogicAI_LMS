@@ -51,6 +51,7 @@ const CreditLeads = () => {
       const requestBody = {
         role: "admin",
         created_by: "admin",
+        step_status: "5"
       };
 
       const response = await GetAllApplications(requestBody);

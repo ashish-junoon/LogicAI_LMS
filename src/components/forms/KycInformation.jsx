@@ -76,12 +76,15 @@ const KycInformation = ({
     // }),
 
     onSubmit: async (values) => {
-      const customerId = personalKyc?.customer_id || addressDetails?.customer_id;
+      const customerId =
+        personalKyc?.customer_id || addressDetails?.customer_id;
       const applicationId =
         personalKyc?.application_id || addressDetails?.application_id;
 
       if (!customerId || !applicationId) {
-        toast.error("Customer and application IDs are required to save applicant details.");
+        toast.error(
+          "Customer and application IDs are required to save applicant details.",
+        );
         return;
       }
 
@@ -113,6 +116,9 @@ const KycInformation = ({
         current_pin_code: addressDetails?.current_pin_code || "",
         created_by: personalKyc?.created_by || updatedBy,
         updated_by: updatedBy,
+        is_applicant_verified: true,
+        persoanl_kyc_is_completed: true,
+        address_is_completed: true,
       };
 
       try {
@@ -125,7 +131,9 @@ const KycInformation = ({
 
         formik.resetForm({ values });
         setIsEditing(false);
-        toast.success(response?.message || "Applicant details saved successfully.");
+        toast.success(
+          response?.message || "Applicant details saved successfully.",
+        );
         await onSaved?.();
         onNext?.();
       } catch (error) {
@@ -260,30 +268,29 @@ const KycInformation = ({
                 AADHAAR NUMBER
             ================================================== */}
 
-              <div>
-                <div className="relative">
-                  <TextInput
-                    label="Aadhaar Number"
-                    name="aadhaarNumber"
-                    maxLength={12}
-                    value={formik.values.aadhaarNumber}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    disabled={!isEditing}
-                  />
+            <div>
+              <div className="relative">
+                <TextInput
+                  label="Aadhaar Number"
+                  name="aadhaarNumber"
+                  maxLength={12}
+                  value={formik.values.aadhaarNumber}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  disabled={!isEditing}
+                />
 
-
-                  {/* Verification button */}
-                  {isEditing && (
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setVerified((prev) => ({
-                          ...prev,
-                          aadhaar: true,
-                        }))
-                      }
-                      className="
+                {/* Verification button */}
+                {isEditing && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setVerified((prev) => ({
+                        ...prev,
+                        aadhaar: true,
+                      }))
+                    }
+                    className="
                       absolute
                       right-1
                       top-[25px]
@@ -301,25 +308,25 @@ const KycInformation = ({
                       hover:bg-green-100
                       cursor-pointer
                     "
-                    >
-                      {verified.aadhaar ? (
-                        <>
-                          <RiCheckboxCircleFill size={14} />
-                          Verified
-                        </>
-                      ) : (
-                        <>
-                          <RiErrorWarningLine size={14} />
-                          Verify
-                        </>
-                      )}
-                    </button>
-                  )}
+                  >
+                    {verified.aadhaar ? (
+                      <>
+                        <RiCheckboxCircleFill size={14} />
+                        Verified
+                      </>
+                    ) : (
+                      <>
+                        <RiErrorWarningLine size={14} />
+                        Verify
+                      </>
+                    )}
+                  </button>
+                )}
 
-                  {/* Read-only verified badge */}
-                  {!isEditing && formik.values.aadhaarNumber && (
-                    <div
-                      className="
+                {/* Read-only verified badge */}
+                {!isEditing && formik.values.aadhaarNumber && (
+                  <div
+                    className="
                       absolute
                       right-2
                       top-[30px]
@@ -334,19 +341,19 @@ const KycInformation = ({
                       font-medium
                       text-green-700
                     "
-                    >
-                      <RiCheckboxCircleFill size={14} />
-                      Provided
-                    </div>
-                  )}
-                </div>
-
-                <ErrorMsg
-                  error={
-                    formik.touched.aadhaarNumber && formik.errors.aadhaarNumber
-                  }
-                />
+                  >
+                    <RiCheckboxCircleFill size={14} />
+                    Provided
+                  </div>
+                )}
               </div>
+
+              <ErrorMsg
+                error={
+                  formik.touched.aadhaarNumber && formik.errors.aadhaarNumber
+                }
+              />
+            </div>
 
             {/* =================================================
                 AADHAAR FRONT
@@ -374,9 +381,14 @@ const KycInformation = ({
             ) : (
               <div>
                 {aadhaarFrontUrl ? (
-                  <DownloadDoc fileUrl={aadhaarFrontUrl} label="Aadhaar Front" />
+                  <DownloadDoc
+                    fileUrl={aadhaarFrontUrl}
+                    label="Aadhaar Front"
+                  />
                 ) : (
-                  <p className="text-xs text-gray-500">No Aadhaar front document uploaded</p>
+                  <p className="text-xs text-gray-500">
+                    No Aadhaar front document uploaded
+                  </p>
                 )}
               </div>
             )}
@@ -409,7 +421,9 @@ const KycInformation = ({
                 {aadhaarBackUrl ? (
                   <DownloadDoc fileUrl={aadhaarBackUrl} label="Aadhaar Back" />
                 ) : (
-                  <p className="text-xs text-gray-500">No Aadhaar back document uploaded</p>
+                  <p className="text-xs text-gray-500">
+                    No Aadhaar back document uploaded
+                  </p>
                 )}
               </div>
             )}
@@ -525,7 +539,9 @@ const KycInformation = ({
                 {panDocumentUrl ? (
                   <DownloadDoc fileUrl={panDocumentUrl} label="PAN Card" />
                 ) : (
-                  <p className="text-xs text-gray-500">No PAN document uploaded</p>
+                  <p className="text-xs text-gray-500">
+                    No PAN document uploaded
+                  </p>
                 )}
               </div>
             )}

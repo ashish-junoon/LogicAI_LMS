@@ -10,13 +10,22 @@ import api from "./api.js";
 export const GetAllApplications = async (req) => {
     try {
         const response = await api.post("/CommonLoan/GetAllCustomerDetails", req);
-
         return response.data;
     } catch (error) {
         console.error("GetAllApplications:", error.response?.data || error.message);
         throw error;
     }
 };
+
+export const SettingApplicationStep = async (req) => {
+    try {
+        const response = await api.post("/CommonLoan/SettingApplicationStep", req);
+        return response.data;
+    } catch (error) {
+        console.error("SettingApplicationStep:", error.response?.data || error.message);
+        throw error;
+    }
+}
 
 export const CustomerDetails = async (req) => {
     try {

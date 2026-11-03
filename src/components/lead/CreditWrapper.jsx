@@ -73,6 +73,7 @@ const CreditWrapper = ({ customerDetails }) => {
             <LoanAnalysis
               permission={true}
               loanData={customerDetails?.loanDetails?.[0]}
+              data={customerDetails}
               applicationId={customerDetails?.loanDetails?.[0]?.application_id}
             />
           </>

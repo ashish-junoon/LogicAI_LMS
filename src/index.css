@@ -16,12 +16,18 @@
 
   /* Primary */
   --color-primary: #3368A0;
-  /* --color-primary: #2A835F; */
-  /* --color-primary: #3A86FF; */
-  /* --color-primary: #5050b8; */
 
   /* Primary Shades */
-  --color-primary-900: #2b2b68;
+  --color-primary-50: #f3f7fb;
+  --color-primary-100: #e5eef7;
+  --color-primary-200: #c9dced;
+  --color-primary-300: #a9c7e1;
+  --color-primary-400: #7eaad0;
+  --color-primary-500: #5b8fbd;
+  --color-primary-600: #3368a0;
+  --color-primary-700: #295886;
+  --color-primary-800: #21476d;
+  --color-primary-900: #183654;
 
   /* Surface */
   --color-surface: #f6f7fb;
@@ -32,16 +38,16 @@
 
   /* Shadow */
   --shadow-card: 0 2px 2px 0px rgba(16, 24, 40, 0.09);
-}
-
-/* body {
-  font-family: "Inter", sans-serif;
-} */
-
-@theme {
-  --color-surface: #f6f7fb;
+  --color-ink-50: #f8fafc;
+  --color-ink-100: #f1f5f9;
+  --color-ink-200: #e2e8f0;
+  --color-ink-300: #cbd5e1;
+  --color-ink-400: #94a3b8;
+  --color-ink-500: #64748b;
+  --color-ink-600: #475569;
+  --color-ink-700: #334155;
+  --color-ink-800: #1e293b;
   --color-ink-900: #101828;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Hide scrollbar but allow scroll */

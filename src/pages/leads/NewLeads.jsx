@@ -7,6 +7,7 @@ import Modal from "../../components/utils/Modal";
 import TextInput from "../../components/fields/TextInput";
 import { Link, useNavigate } from "react-router-dom";
 import { GetAllApplications } from "../../api/application";
+import { useAuthData } from "../../context/authContext";
 
 const NewLeads = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,6 +15,7 @@ const NewLeads = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const {authData} = useAuthData()
 
   // Ordered list of steps used to derive the "Pending Step"
   const STEP_CHECKS = [
@@ -42,8 +44,9 @@ const NewLeads = () => {
       setError(null);
 
       const requestBody = {
-        role: "admin",
-        created_by: "admin",
+        role: authData?.role,
+        created_by: authData?.user_id,
+        step_status: "4"
       };
 
       const response = await GetAllApplications(requestBody);
@@ -156,19 +159,14 @@ const NewLeads = () => {
         {/* header */}
         <div className="flex justify-between py-0 px-4">
           <div className="text-md font-medium self-center">New Leads</div>
-          <button
+          {/* <button
             onClick={fetchLeads}
             disabled={loading}
             className="text-sm px-3 py-1 rounded border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
           >
             {loading ? "Refreshing..." : "Refresh"}
-          </button>
+          </button> */}
         </div>
-
-        {/* error state */}
-        {error && !loading && (
-          <div className="px-4 py-2 mt-3 text-sm text-red-600">{error}</div>
-        )}
 
         {/* table data */}
         <Table data={leads} columns={columns} progressPending={loading} />

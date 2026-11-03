@@ -94,6 +94,7 @@ const CreditDetails = () => {
     loan_amount: loanDetails?.loan_amount,
     loan_status: routeLead?.status || "Credit Analysis",
     stage: "credit-analysis",
+    app_form_status : scopedDetails?.workflowNodes?.[0]?.app_form_status,
   };
 
   return (
