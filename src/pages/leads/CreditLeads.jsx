@@ -60,7 +60,7 @@ const CreditLeads = () => {
         const formatted = response.data.map((item) => ({
           applicationId: item.application_id,
           customerId: item.customer_id,
-          name: item.business_owner_name,
+          name: item.full_name,
           phone: item.business_owner_mobile_no,
           branch: item.branch_name ?? "-",                  // not in API response
           loanType: item.loan_type ?? "-",             // not in API response

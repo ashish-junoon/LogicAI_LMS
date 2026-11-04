@@ -15,7 +15,7 @@ const LeadDetails = () => {
   const customerId = searchParams.get('customer_id') || routeLead?.customer_id
   const applicationId = searchParams.get('application_id') || routeLead?.application_id
   const [customerDetails, setCustomerDetails] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')  
 
   const {authData}= useAuthData()
@@ -25,8 +25,8 @@ const LeadDetails = () => {
       const response = await CustomerDetails({
         customer_id: customerId,
         application_id: applicationId,
-        role: 'admin',
-        created_by: 'admin',
+        role: authData?.role,
+        created_by: authData?.user_id,
       })
 
       if (!response?.status || !response?.data) {
@@ -76,7 +76,9 @@ const LeadDetails = () => {
         console.error('Error fetching customer details:', fetchError)
         if (isCurrent) {
           setError(
-            fetchError?.response?.data?.message ||
+            fetchError?.code === 'ECONNABORTED' || fetchError?.code === 'ETIMEDOUT'
+              ? 'Loading customer details timed out. Please check your connection and try again.'
+              : fetchError?.response?.data?.message ||
             fetchError?.message ||
             'Something went wrong while loading customer details.'
           )
@@ -91,7 +93,7 @@ const LeadDetails = () => {
     return () => {
       isCurrent = false
     }
-  }, [customerId, applicationId])
+  }, [customerId, applicationId, authData?.role, authData?.user_id])
 
   const matchesLead = (record) => {
     const recordCustomerId = record?.customer_id
@@ -146,6 +148,7 @@ const LeadDetails = () => {
             key={`${customerId}-${applicationId}`}
             customerDetails={scopedDetails}
             onRefresh={refreshCustomerDetails}
+            setCustomerDetails={setCustomerDetails}
           />
         )}
     </div>

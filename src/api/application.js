@@ -31,7 +31,8 @@ export const CustomerDetails = async (req) => {
     try {
         const response = await api.post(
             "/CommonLoan/CustomerDetails",
-            req
+            req,
+            { timeout: 30000 },
         );
 
         return response.data;

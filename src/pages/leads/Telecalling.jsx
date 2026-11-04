@@ -5,6 +5,7 @@ import TelecallinWrapper from "../../components/lead/TelecallingWrapper";
 import Loader from "../../components/utils/Loader";
 import { CustomerDetails } from "../../api/application";
 import { useLocation, useSearchParams } from "react-router-dom";
+import { useAuthData } from "../../context/authContext";
 
 const Telecalling = () => {
   const location = useLocation();
@@ -15,6 +16,27 @@ const Telecalling = () => {
   const [customerDetails, setCustomerDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const {authData} = useAuthData()
+
+  const refreshCustomerDetails = async () => {
+    try {
+      const response = await CustomerDetails({
+        customer_id: customerId,
+        application_id: applicationId,
+        role: authData?.role,
+        created_by: authData?.user_id,
+      });
+      if (!response?.status || !response?.data) {
+        throw new Error(response?.message || "Failed to refresh customer details.");
+      }
+      setCustomerDetails(response.data);
+      return true;
+    } catch (refreshError) {
+      console.error("Error refreshing telecalling details:", refreshError);
+      return false;
+    }
+  };
 
   useEffect(() => {
     let isCurrent = true;
@@ -86,14 +108,16 @@ const Telecalling = () => {
   const lead = {
     ...routeLead,
     customer_name:
+    personalKyc?.full_name ||
       marketSurvey?.business_owner_name ||
-      personalKyc?.full_name ||
       routeLead?.business_owner_name,
     loan_id: applicationId,
     product_code: loanDetails?.product_code || loanDetails?.loan_type,
     loan_amount: loanDetails?.loan_amount,
     loan_status: routeLead?.status || "Telecalling",
     stage: "tele",
+    app_form_status : scopedDetails?.workflowNodes?.[0]?.app_form_status,
+
   };
 
   return (
@@ -115,6 +139,7 @@ const Telecalling = () => {
         <TelecallinWrapper
           key={`${customerId}-${applicationId}`}
           customerDetails={scopedDetails}
+          onRefresh={refreshCustomerDetails}
         />
       )}
     </div>

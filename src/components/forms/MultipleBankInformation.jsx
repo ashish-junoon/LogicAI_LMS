@@ -20,6 +20,22 @@ import * as Yup from "yup";
 
 import { bankList } from "../../content/data";
 import { SaveBankDetails } from "../../api/application";
+import { useAuthData } from "../../context/authContext";
+
+const fileToBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result !== "string") {
+        reject(new Error("Unable to read the selected bank document."));
+        return;
+      }
+      resolve(result.slice(result.indexOf(",") + 1));
+    };
+    reader.onerror = () => reject(reader.error || new Error("Unable to read the selected bank document."));
+    reader.readAsDataURL(file);
+  });
 
 const MultipleBankInformation = ({
   onNext,
@@ -39,18 +55,26 @@ const MultipleBankInformation = ({
         id: account.id,
         customerId: account.customer_id,
         applicationId: account.application_id,
-        createdBy: account.created_by,
+        createdBy: account.created_by || account.creadted_by,
         bankName: readableValue(account.bank_name),
         ifscCode: readableValue(account.ifsc_code),
         accountNumber: readableValue(account.account_number),
         accountHolderName: readableValue(account.account_holder_name),
+        branchAddress: readableValue(account.branch_address),
+        companyId: readableValue(account.company_id),
+        productName: readableValue(account.product_name),
         bankDocument: null,
+        documentType: readableValue(account.document_type),
+        documentBase64: readableValue(account.document_base64),
+        fileExtension: readableValue(account.file_extension),
+        isBankVerified: account.is_bank_verified ?? false,
       };
     }),
   );
 
   const [isEditing, setIsEditing] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
+  const { authData } = useAuthData();
 
   const formik = useFormik({
     initialValues: {
@@ -113,13 +137,6 @@ const MultipleBankInformation = ({
     onSubmit: async (values) => {
       if (editingIndex === null) return;
 
-      if (values.bankDocument) {
-        toast.error(
-          "Bank document uploads are not supported by SaveBankDetails. Cancel the edit and save account details without selecting a file.",
-        );
-        return;
-      }
-
       const account = bankAccounts[editingIndex];
       const resolvedCustomerId =
         customerId || account.customerId;
@@ -133,24 +150,35 @@ const MultipleBankInformation = ({
         return;
       }
 
-      const updatedBy =
-        localStorage.getItem("username") ||
-        localStorage.getItem("userName") ||
-        localStorage.getItem("email") ||
-        "admin";
-      const request = {
-        customer_id: resolvedCustomerId,
-        application_id: resolvedApplicationId,
-        id: account.id,
-        bank_name: values.bankName.trim(),
-        ifsc_code: values.ifscCode.trim().toUpperCase(),
-        account_number: values.accountNumber.trim(),
-        account_holder_name: values.accountHolderName.trim(),
-        created_by: account.createdBy || updatedBy,
-        updated_by: updatedBy,
-      };
+      const updatedBy = authData?.full_name || account.createdBy || "admin";
 
       try {
+        const selectedFile = values.bankDocument;
+        const request = {
+          application_id: resolvedApplicationId,
+          customer_id: resolvedCustomerId,
+          ifsc_code: values.ifscCode.trim().toUpperCase(),
+          account_number: values.accountNumber.trim(),
+          bank_name: values.bankName.trim(),
+          account_holder_name: values.accountHolderName.trim(),
+          branch_address: account.branchAddress || "",
+          document_type: selectedFile
+            ? "Bank Statement / Passbook"
+            : account.documentType || "",
+          document_base64: selectedFile
+            ? await fileToBase64(selectedFile)
+            : account.documentBase64 || "",
+          file_extension: selectedFile
+            ? selectedFile.name.split(".").pop()?.toLowerCase() || ""
+            : account.fileExtension || "",
+          created_by: authData?.user_id,
+          updated_by: authData?.user_id,
+          company_id:
+            account.companyId || import.meta.env.VITE_COMPANY_ID || "",
+          product_name:
+            account.productName || import.meta.env.VITE_PRODUCT_NAME || "",
+          is_bank_verified: account.isBankVerified ?? true,
+        };
         const response = await SaveBankDetails(request);
 
         if (!response?.status) {
@@ -167,6 +195,17 @@ const MultipleBankInformation = ({
                   ifscCode: values.ifscCode.trim().toUpperCase(),
                   accountNumber: values.accountNumber.trim(),
                   accountHolderName: values.accountHolderName.trim(),
+                  bankDocument: selectedFile || bankAccount.bankDocument,
+                  documentType: selectedFile
+                    ? "Bank Statement / Passbook"
+                    : bankAccount.documentType,
+                  documentBase64: selectedFile
+                    ? request.document_base64
+                    : bankAccount.documentBase64,
+                  fileExtension: selectedFile
+                    ? request.file_extension
+                    : bankAccount.fileExtension,
+                  isBankVerified: request.is_bank_verified,
                 }
               : bankAccount,
           ),

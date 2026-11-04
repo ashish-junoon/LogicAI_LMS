@@ -445,7 +445,7 @@ export const sidebarData = [
       { title: "Draft Leads", path: "/lead-management/leads-draft" },
       { title: "New Leads", path: "/lead-management/leads-new" },
       { title: "Credit Analysis", path: "/lead-management/leads-assesment" },
-      { title: "Loan Verification", path: "/lead-management/leads-kyc" },
+      // { title: "Loan Verification", path: "/lead-management/leads-kyc" },
       { title: "Telecalling", path: "/lead-management/leads-telecalling" },
       { title: "Disbursement", path: "/lead-management/leads-disbursement" },
       { title: "Rejected Lead", path: "/lead-management/leads-rejected" },

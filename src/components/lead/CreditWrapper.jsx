@@ -13,10 +13,19 @@ import Modal from "../utils/Modal";
 import SelectInput from "../fields/SelectInput";
 import LeadFormDetails from "../../pages/formPages/LeadFormDetails";
 import Variations from "./Variations";
+import { useAuthData } from "../../context/authContext";
+import { useSearchParams } from "react-router-dom";
+import DocumentVault from "../utils/DocumentVault";
+import BSAReportUrl from "./BSAReportUrl";
 
-const CreditWrapper = ({ customerDetails }) => {
+const CreditWrapper = ({ customerDetails, onRefresh }) => {
   const [activeSection, setActiveSection] = useState("user");
   const [switchLoanProvier, setswitchLoanProvier] = useState(false);
+
+  const [searchParams] = useSearchParams();
+  const customerId = searchParams.get("customer_id");
+  const applicationId = searchParams.get("application_id");
+  const { authData } = useAuthData();
 
   const handleSwitchProvider = () => {
     setswitchLoanProvier(true);
@@ -45,7 +54,12 @@ const CreditWrapper = ({ customerDetails }) => {
     switch (activeSection) {
       case "user":
         // return <LeadForm />;
-        return <LeadFormDetails permisions={permisions} customerDetails={customerDetails} />;
+        return (
+          <LeadFormDetails
+            permisions={permisions}
+            customerDetails={customerDetails}
+          />
+        );
       case "credit":
         return (
           <CreditSection
@@ -79,17 +93,47 @@ const CreditWrapper = ({ customerDetails }) => {
           </>
         );
       case "remarks":
-        return <RemarksHistory permission={true} remarks={customerDetails?.history || []} />;
+        return (
+          <RemarksHistory
+            permission={true}
+            remarks={customerDetails?.history || []}
+          />
+        );
       case "bsa":
-        return <BankStatementAnalyser />;
+        // return <BankStatementAnalyser />;
+        return (
+          <div className="px-4 md:px-4">
+            <BSAReportUrl
+              userData={{
+                name: customerDetails?.personalKyc?.[0]?.full_name,
+                mobile:
+                  customerDetails?.marketSurvey?.[0]?.business_owner_mobile_no,
+                pan: customerDetails?.personalKyc?.[0]?.pan_number,
+                email: customerDetails?.personalKyc?.[0]?.email_id,
+                dob: customerDetails?.personalKyc?.[0]?.dob,
+                customerId: customerId,
+                applicationId: applicationId,
+              }}
+              data={customerDetails}
+              getAccountAggregatorReport={{}}
+              // getAccountAggregatorReport={getAccountAggregatorReport}
+              fetchData={onRefresh}
+            />
+          </div>
+        );
       case "variations":
         return <Variations />;
       case "documents":
         return (
-          <DocumentsList
-            permission={true}
-            documents={customerDetails?.documents || []}
+          <DocumentVault
+            documents={customerDetails?.documents ?? EMPTY_DOCUMENTS}
             customerDetails={customerDetails}
+            customerId={customerId}
+            applicationId={applicationId}
+            userId={authData?.user_id}
+            onDocumentsUploaded={onRefresh}
+            onSubmitForm={() => {}}
+            submittingForm={true}
           />
         );
       default:

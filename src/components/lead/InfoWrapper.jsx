@@ -11,10 +11,22 @@ import Variations from "./Variations";
 // import LeadForm from "../../pages/formPages/LeadForm";
 import LoanAnalysis from "./LoanAnalysis";
 import LeadFormDetails from "../../pages/formPages/LeadFormDetails";
+import DocumentVault from "../utils/DocumentVault";
+import { useSearchParams } from "react-router-dom";
+import { useAuthData } from "../../context/authContext";
+import { showValidationError } from "../utils/common";
 
-const InfoWrapper = ({ customerDetails, onRefresh }) => {
+const InfoWrapper = ({ customerDetails, onRefresh, setCustomerDetails }) => {
   const [activeSection, setActiveSection] = useState("user");
+  const [isFinalSubmitting, setIsFinalSubmitting] = useState(false);
+  const [loading, setIsLoading] = useState(false)
+
   console.log("customerDetails...", customerDetails)
+
+    const [searchParams] = useSearchParams();
+  const customerId = searchParams.get("customer_id");
+  const applicationId = searchParams.get("application_id");
+  const {authData} = useAuthData()
   
   const permisions = {
     personalInfo : true,
@@ -35,6 +47,39 @@ const InfoWrapper = ({ customerDetails, onRefresh }) => {
     { id: "variations", label: "Variations", icon: "PiGraph" },
   ];
 
+  //   const fetchCustomerDetails = async () => {
+  //   try {
+  //     setIsLoading(true);
+  //     const request = {
+  //       customer_id: customerId,
+  //       application_id: applicationId,
+  //       role: authData?.role,
+  //       created_by: authData?.user_id,
+  //     };
+  //     const response = await CustomerDetails(request);
+  //     if (response.status) {
+  //       setCustomerDetails(response.data);
+  //       const verificationComplete = areAllVerificationFlagsComplete(
+  //         response.data?.workflowNodes?.[0],
+  //       );
+  //       const workflow = response.data?.workflowNodes?.[0] ?? {};
+  //       // setIsVerificationComplete(verificationComplete);
+  //       setIsAggregatorFetched(
+  //         isWorkflowFlagTrue(workflow.is_aggregator_fetched),
+  //       );
+  //       setIsBsaFetched(isWorkflowFlagTrue(workflow.is_bsa_fetched));
+  //       setIsDocumentVerified(
+  //         isWorkflowFlagTrue(workflow.is_document_verified),
+  //       );
+  //       setTab(getNextWorkflowTab(workflow));
+  //     }
+  //   } catch (error) {
+  //     showValidationError(error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const renderSection = () => {
     switch (activeSection) {
       case "user":
@@ -44,11 +89,21 @@ const InfoWrapper = ({ customerDetails, onRefresh }) => {
         return <LoanAnalysis loanData={customerDetails?.loanDetails?.[0]} data={customerDetails} applicationId={customerDetails?.loanDetails?.[0]?.application_id} />;
       case "documents":
         return (
-          <DocumentsList
-            permission={true}
-            documents={customerDetails?.documents || []}
+          // <DocumentsList
+          //   permission={true}
+          //   documents={customerDetails?.documents || []}
+          //   customerDetails={customerDetails}
+          //   onRefresh={onRefresh}
+          // />
+          <DocumentVault
+            documents={customerDetails?.documents ?? EMPTY_DOCUMENTS}
             customerDetails={customerDetails}
-            onRefresh={onRefresh}
+            customerId={customerId}
+            applicationId={applicationId}
+            userId={authData?.user_id}
+            onDocumentsUploaded={onRefresh}
+            onSubmitForm={()=> {}}
+            submittingForm={isFinalSubmitting}
           />
         );
       case "credit":

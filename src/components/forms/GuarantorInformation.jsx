@@ -16,6 +16,7 @@ import Button from "../utils/Button";
 
 import { relationList } from "../../content/data";
 import { SaveCoBorrower } from "../../api/application";
+import { useAuthData } from "../../context/authContext";
 
 const GuarantorInformation = ({
   onNext,
@@ -26,6 +27,7 @@ const GuarantorInformation = ({
   onSaved,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const { authData } = useAuthData();
 
   const formik = useFormik({
     initialValues: {
@@ -58,15 +60,12 @@ const GuarantorInformation = ({
         return;
       }
 
-      const updatedBy =
-        localStorage.getItem("username") ||
-        localStorage.getItem("userName") ||
-        localStorage.getItem("email") ||
-        "admin";
+      const createdBy =
+        details?.creadted_by || authData?.full_name || "admin";
       const request = {
+        id: details?.id ?? 0,
         customer_id: resolvedCustomerId,
         application_id: resolvedApplicationId,
-        id: details?.id,
         co_borrower_name: values.coborrowerName.trim(),
         co_borrower_mobile: values.coborrowerMobile.trim(),
         co_borrower_relation: values.coborrowerRelation,
@@ -79,8 +78,13 @@ const GuarantorInformation = ({
         guarantor_pan: values.guarantor1Pan.trim(),
         guarantor_aahaar_number: values.guarantor1Aadhaar.trim(),
         guarantor_address: values.guarantor1Add.trim(),
-        created_by: details?.created_by || updatedBy,
-        updated_by: updatedBy,
+        company_id: import.meta.env.VITE_COMPANY_ID,
+        product_name: import.meta.env.VITE_PRODUCT_NAME,
+        creadted_by: authData?.user_id,
+        is_coborrower_verified: details?.is_coborrower_verified ?? true,
+        documentItem: Array.isArray(details?.documentItem)
+          ? details.documentItem
+          : [],
       };
 
       try {

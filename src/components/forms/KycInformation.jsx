@@ -17,6 +17,28 @@ import Button from "../utils/Button";
 import { useFormik } from "formik";
 import DownloadDoc from "../fields/DownloadDoc";
 import { SaveApplicantDetails } from "../../api/application";
+import { useAuthData } from "../../context/authContext";
+
+const fileToBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result !== "string") {
+        reject(new Error("Unable to read the selected document."));
+        return;
+      }
+      resolve(result.slice(result.indexOf(",") + 1));
+    };
+    reader.onerror = () =>
+      reject(
+        reader.error || new Error("Unable to read the selected document."),
+      );
+    reader.readAsDataURL(file);
+  });
+
+const getFileExtension = (file) =>
+  file?.name?.split(".").pop()?.toLowerCase() || "";
 
 const KycInformation = ({
   onNext,
@@ -25,8 +47,10 @@ const KycInformation = ({
   addressDetails,
   documents = [],
   onSaved,
+  data
 }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const { authData } = useAuthData();
 
   const [verified, setVerified] = useState({
     pan: false,
@@ -37,8 +61,13 @@ const KycInformation = ({
       ?.document_path || "";
   const aadhaarFrontUrl = getDocumentUrl(/aadhaar.*front|front.*aadhaar/i);
   const aadhaarBackUrl = getDocumentUrl(/aadhaar.*back|back.*aadhaar/i);
-  const panDocumentUrl = getDocumentUrl(/\bpan\b/i);
+  const panDocumentUrl = getDocumentUrl(/pan.*front|front.*pan/i);
+  // const panDocumentUrl = getDocumentUrl(/\bpan\b/i);
 
+  const is_pan_verified = data?.workflowNodes?.[0]?.is_aadhaar_verified
+  const is_aadhaar_verified = data?.workflowNodes?.[0]?.is_pan_verified
+
+  // PAN_FRONT_GUARANTOR
   const formik = useFormik({
     initialValues: {
       panNumber: personalKyc?.pan_number || "",
@@ -89,36 +118,89 @@ const KycInformation = ({
       }
 
       const updatedBy =
-        localStorage.getItem("username") ||
-        localStorage.getItem("userName") ||
-        localStorage.getItem("email") ||
-        "admin";
+        authData?.full_name || personalKyc?.updated_by || "admin";
+      const documentsToSave = await Promise.all(
+        [
+          { file: values.aadhaarFront, documentType: "AADHAAR_FRONT" },
+          { file: values.aadhaarBack, documentType: "AADHAAR_BACK" },
+          { file: values.panFile, documentType: "PAN" },
+        ]
+          .filter(({ file }) => file)
+          .map(async ({ file, documentType }) => ({
+            document_type: documentType,
+            document_base64: await fileToBase64(file),
+            file_extension: getFileExtension(file),
+          })),
+      );
+
       const request = {
-        customer_id: customerId,
         application_id: applicationId,
-        full_name: personalKyc?.full_name || "",
-        father_name: personalKyc?.father_name || "",
-        dob: personalKyc?.dob || "",
-        gender: personalKyc?.gender || "",
-        marital_status: personalKyc?.marital_status || "",
-        alternate_mobile: personalKyc?.alternate_mobile || "",
-        email_id: personalKyc?.email_id || "",
-        primary_document_type: personalKyc?.primary_document_type || "",
-        uid_number: values.aadhaarNumber.trim(),
-        pan_number: values.panNumber.trim(),
-        permanent_address: addressDetails?.permanent_address || "",
-        permanent_city: addressDetails?.permanent_city || "",
-        permanent_state: addressDetails?.permanent_state || "",
-        permanent_pin_code: addressDetails?.permanent_pin_code || "",
-        current_address: addressDetails?.current_address || "",
-        current_city: addressDetails?.current_city || "",
-        current_state: addressDetails?.current_state || "",
-        current_pin_code: addressDetails?.current_pin_code || "",
-        created_by: personalKyc?.created_by || updatedBy,
+        customer_id: customerId,
+        personal_kyc: [
+          {
+            full_name: personalKyc?.full_name || "",
+            father_name: personalKyc?.father_name || "",
+            dob: personalKyc?.dob || "",
+            gender: personalKyc?.gender || "",
+            marital_status: personalKyc?.marital_status || "",
+            alternate_mobile: personalKyc?.alternate_mobile || "",
+            email_id: personalKyc?.email_id || "",
+            primary_document_type: personalKyc?.primary_document_type || "",
+            uid_number: values.aadhaarNumber.trim(),
+            pan_number: values.panNumber.trim(),
+            father_dob: personalKyc?.father_dob || "",
+            father_age: Number(personalKyc?.father_age || 0),
+            spouse_name: personalKyc?.spouse_name || "",
+            spouse_dob: personalKyc?.spouse_dob || "",
+            spouse_age: Number(personalKyc?.spouse_age || 0),
+            mother_name: personalKyc?.mother_name || "",
+            mother_dob: personalKyc?.mother_dob || "",
+            mother_age: Number(personalKyc?.mother_age || 0),
+            religion: Number(personalKyc?.religion || 0),
+            caste_category: Number(personalKyc?.caste_category || 0),
+            whatsapp_no: personalKyc?.whatsapp_no || "",
+            number_of_children: Number(personalKyc?.number_of_children || 0),
+            number_of_years_since_marriage: Number(
+              personalKyc?.number_of_years_since_marriage || 0,
+            ),
+            whether_children_attend_school:
+              personalKyc?.whether_children_attend_school || "",
+            number_of_dependents: Number(
+              personalKyc?.number_of_dependents || 0,
+            ),
+          },
+        ],
+        address: [
+          {
+            permanent_address: addressDetails?.permanent_address || "",
+            permanent_city: addressDetails?.permanent_city || "",
+            permanent_state: addressDetails?.permanent_state || "",
+            permanent_pin_code: addressDetails?.permanent_pin_code || "",
+            current_address: addressDetails?.current_address || "",
+            current_city: addressDetails?.current_city || "",
+            current_state: addressDetails?.current_state || "",
+            current_pin_code: addressDetails?.current_pin_code || "",
+            years_at_residence: addressDetails?.years_at_residence || "",
+            years_at_city: addressDetails?.years_at_city || "",
+            years_at_state: addressDetails?.years_at_state || "",
+            ownership: addressDetails?.ownership || "",
+            room_count: Number(addressDetails?.room_count || 0),
+            type_of_house: addressDetails?.type_of_house || "",
+            residence_area_quality:
+              addressDetails?.residence_area_quality || "",
+          },
+        ],
+        documents: documentsToSave,
+        created_by:
+          personalKyc?.creadted_by || personalKyc?.created_by || updatedBy,
         updated_by: updatedBy,
-        is_applicant_verified: true,
+        company_id:
+          personalKyc?.company_id || import.meta.env.VITE_COMPANY_ID || "",
+        product_name:
+          personalKyc?.product_name || import.meta.env.VITE_PRODUCT_NAME || "",
         persoanl_kyc_is_completed: true,
         address_is_completed: true,
+        is_applicant_verified: true,
       };
 
       try {
@@ -324,12 +406,12 @@ const KycInformation = ({
                 )}
 
                 {/* Read-only verified badge */}
-                {!isEditing && formik.values.aadhaarNumber && (
+                {!isEditing && is_aadhaar_verified && (
                   <div
                     className="
                       absolute
                       right-2
-                      top-[30px]
+                      top-[25px]
                       flex
                       items-center
                       gap-1
@@ -343,7 +425,7 @@ const KycInformation = ({
                     "
                   >
                     <RiCheckboxCircleFill size={14} />
-                    Provided
+                    Verified
                   </div>
                 )}
               </div>
@@ -438,13 +520,19 @@ const KycInformation = ({
                   name="panNumber"
                   maxLength={10}
                   value={formik.values.panNumber}
-                  onChange={formik.handleChange}
+                  onChange={(e) =>
+                    formik.setFieldValue(
+                      "panNumber",
+                      e.target.value?.toUpperCase(),
+                    )
+                  }
+                  // onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   disabled={!isEditing}
                 />
 
                 {/* Verification button */}
-                {isEditing && (
+                {!isEditing && (
                   <button
                     type="button"
                     onClick={() =>
@@ -472,15 +560,10 @@ const KycInformation = ({
                       cursor-pointer
                     "
                   >
-                    {verified.pan ? (
+                    {is_pan_verified && (
                       <>
                         <RiCheckboxCircleFill size={14} />
                         Verified
-                      </>
-                    ) : (
-                      <>
-                        <RiErrorWarningLine size={14} />
-                        Verify
                       </>
                     )}
                   </button>

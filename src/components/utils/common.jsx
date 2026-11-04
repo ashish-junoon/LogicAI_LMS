@@ -61,8 +61,69 @@ const DOT_STYLES = {
 const BADGE_STATUS = {
   4: "New Leads",
   5: "Credit Analysis",
-  6: "KYC",
-  7: "Telecalling",
+  6: "Telecalling / Bookings",
+  7: "Disbursement",
+}
+
+export const convertFileToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+};
+
+export const downloadBase64File = (
+  base64,
+  fileName = "download.zip",
+  mimeType = "application/zip"
+) => {
+  try {
+    if (!base64) {
+      throw new Error("Base64 data is empty");
+    }
+
+    const cleanBase64 = base64.replace(
+      /^data:[^;]+;base64,/,
+      ""
+    );
+
+    const byteCharacters = atob(cleanBase64);
+    const byteNumbers = new Uint8Array(byteCharacters.length);
+
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+
+    const blob = new Blob([byteNumbers], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch (error) {
+    console.error("File download failed:", error);
+  }
+};
+
+export const showValidationError = (error, formik = null, field = null) => {
+  const errors = error.response?.data?.errors;
+  if (errors) {
+    Object.values(errors).flat().forEach((message) => {
+      formik ? formik.setFieldError(field, message) : toast.error(message);
+    });
+  } else {
+    const err = error.message || "Something went wrong while verifying account number";
+    formik ? formik.setFieldError(field, err) : toast.error(err);
+  }
 }
 
 export function StatusBadge({ label, variant = "neutral", dot = true, app_status=0 }) {

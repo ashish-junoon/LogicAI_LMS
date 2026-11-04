@@ -12,12 +12,14 @@ import {
 import Table from "../../components/Table";
 import { Link, useNavigate } from "react-router-dom";
 import { GetAllApplications } from "../../api/application";
+import { useAuthData } from "../../context/authContext";
 
 const TelecallingLeads = () => {
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const {authData} = useAuthData()
 
   // Ordered list of steps used to derive the "Pending Step"
   const STEP_CHECKS = [
@@ -46,8 +48,9 @@ const TelecallingLeads = () => {
       setError(null);
 
       const requestBody = {
-        role: "admin",
-        created_by: "admin",
+        role: authData?.role,
+        created_by: authData?.user_id,
+        step_status: "6"
       };
 
       const response = await GetAllApplications(requestBody);
@@ -56,7 +59,7 @@ const TelecallingLeads = () => {
         const formatted = response.data.map((item) => ({
           applicationId: item.application_id,
           customerId: item.customer_id,
-          name: item.business_owner_name,
+          name: item.full_name,
           phone: item.business_owner_mobile_no,
           branch: item.branch_name ?? "-",                  // not in API response
           loanType: item.loan_type ?? "-",             // not in API response

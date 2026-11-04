@@ -96,6 +96,7 @@ import EmploymentInformation from "../../components/forms/EmploymentInformation"
 
 const LeadFormDetails = ({ permisions, customerDetails, onRefresh }) => {
   const [selected, setSelected] = useState("Personal Information");
+  
   console.log("customerDetails", customerDetails)
 
   const tabs = [
@@ -130,18 +131,18 @@ const LeadFormDetails = ({ permisions, customerDetails, onRefresh }) => {
   const renderTabs = (tab) => {
     switch (tab) {
       case "Personal Information":
-        return <PersonalInformation permission={permisions?.personalInfo} marketSurvey={customerDetails?.marketSurvey?.[0]} personalKyc={customerDetails?.personalKyc?.[0]} onSaved={onRefresh} />;
+        return <PersonalInformation permission={false} marketSurvey={customerDetails?.marketSurvey?.[0]} personalKyc={customerDetails?.personalKyc?.[0]} addressDetails={customerDetails?.addressDetails?.[0]} documents={customerDetails?.documents || []} onSaved={onRefresh} />;
 
       case "KYC Details":
-        return <KycInformation permission={permisions?.kycInfo} personalKyc={customerDetails?.personalKyc?.[0]} addressDetails={customerDetails?.addressDetails?.[0]} documents={customerDetails?.documents || []} onSaved={onRefresh} />;
+        return <KycInformation permission={false} data={customerDetails} personalKyc={customerDetails?.personalKyc?.[0]} addressDetails={customerDetails?.addressDetails?.[0]} documents={customerDetails?.documents || []} onSaved={onRefresh} />;
 
       case "Address Information":
-        return <AddressInformation permission={permisions?.addressInfo} personalKyc={customerDetails?.personalKyc?.[0]} addressDetails={customerDetails?.addressDetails?.[0]} onSaved={onRefresh} />;
+        return <AddressInformation permission={false} personalKyc={customerDetails?.personalKyc?.[0]} addressDetails={customerDetails?.addressDetails?.[0]} documents={customerDetails?.documents || []} onSaved={onRefresh} />;
 
       case "Bank Details":
         return (
           <MultipleBankInformation
-            permission={permisions?.bankInfo}
+            permission={false}
             bankDetails={customerDetails?.bankDetails || []}
             customerId={
               customerDetails?.bankDetails?.[0]?.customer_id ||
@@ -160,7 +161,7 @@ const LeadFormDetails = ({ permisions, customerDetails, onRefresh }) => {
       case "Co Borrower/Guarantor's Details":
         return (
           <GuarantorInformation
-            permission={permisions?.guarantorInfo}
+            permission={false}
             details={customerDetails?.coBorrowerGuarantor?.[0]}
             customerId={
               customerDetails?.coBorrowerGuarantor?.[0]?.customer_id ||

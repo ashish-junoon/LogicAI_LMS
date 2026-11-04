@@ -17,18 +17,21 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 
-import { districtList, houseType, statesList } from "../../content/data";
+import { statesList } from "../../content/data";
 import { SaveApplicantDetails } from "../../api/application";
+import { useAuthData } from "../../context/authContext";
 
 const AddressInformation = ({
   onNext,
   permission,
   personalKyc,
   addressDetails,
+  documents = [],
   onSaved,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isSameAsPermanent, setIsSameAsPermanent] = useState(false);
+  const { authData } = useAuthData();
 
   const formik = useFormik({
     initialValues: {
@@ -79,33 +82,76 @@ const AddressInformation = ({
       }
 
       const updatedBy =
-        localStorage.getItem("username") ||
-        localStorage.getItem("userName") ||
-        localStorage.getItem("email") ||
-        "admin";
+        authData?.full_name || addressDetails?.updated_by || "admin";
       const request = {
-        customer_id: customerId,
         application_id: applicationId,
-        full_name: personalKyc?.full_name || "",
-        father_name: personalKyc?.father_name || "",
-        dob: personalKyc?.dob || "",
-        gender: personalKyc?.gender || "",
-        marital_status: personalKyc?.marital_status || "",
-        alternate_mobile: personalKyc?.alternate_mobile || "",
-        email_id: personalKyc?.email_id || "",
-        primary_document_type: personalKyc?.primary_document_type || "",
-        uid_number: personalKyc?.uid_number || "",
-        pan_number: personalKyc?.pan_number || "",
-        permanent_address: values.permanentAddress.trim(),
-        permanent_city: values.permanentCity.trim(),
-        permanent_state: values.permanentState,
-        permanent_pin_code: values.permanentPincode.trim(),
-        current_address: values.address.trim(),
-        current_city: values.city.trim(),
-        current_state: values.state,
-        current_pin_code: values.pincode.trim(),
-        created_by: addressDetails?.created_by || updatedBy,
-        updated_by: updatedBy,
+        customer_id: customerId,
+        personal_kyc: [
+          {
+            full_name: personalKyc?.full_name || "",
+            father_name: personalKyc?.father_name || "",
+            dob: personalKyc?.dob || "",
+            gender: personalKyc?.gender || "",
+            marital_status: personalKyc?.marital_status || "",
+            alternate_mobile: personalKyc?.alternate_mobile || "",
+            email_id: personalKyc?.email_id || "",
+            primary_document_type: personalKyc?.primary_document_type || "",
+            uid_number: personalKyc?.uid_number || "",
+            pan_number: personalKyc?.pan_number || "",
+            father_dob: personalKyc?.father_dob || "",
+            father_age: Number(personalKyc?.father_age || 0),
+            spouse_name: personalKyc?.spouse_name || "",
+            spouse_dob: personalKyc?.spouse_dob || "",
+            spouse_age: Number(personalKyc?.spouse_age || 0),
+            mother_name: personalKyc?.mother_name || "",
+            mother_dob: personalKyc?.mother_dob || "",
+            mother_age: Number(personalKyc?.mother_age || 0),
+            religion: Number(personalKyc?.religion || 0),
+            caste_category: Number(personalKyc?.caste_category || 0),
+            whatsapp_no: personalKyc?.whatsapp_no || "",
+            number_of_children: Number(personalKyc?.number_of_children || 0),
+            number_of_years_since_marriage: Number(
+              personalKyc?.number_of_years_since_marriage || 0,
+            ),
+            whether_children_attend_school:
+              personalKyc?.whether_children_attend_school || "",
+            number_of_dependents: Number(personalKyc?.number_of_dependents || 0),
+          },
+        ],
+        address: [
+          {
+            permanent_address: values.permanentAddress.trim(),
+            permanent_city: values.permanentCity.trim(),
+            permanent_state: values.permanentState,
+            permanent_pin_code: values.permanentPincode.trim(),
+            current_address: values.address.trim(),
+            current_city: values.city.trim(),
+            current_state: values.state,
+            current_pin_code: values.pincode.trim(),
+            years_at_residence: addressDetails?.years_at_residence || "",
+            years_at_city: addressDetails?.years_at_city || "",
+            years_at_state: addressDetails?.years_at_state || "",
+            ownership: addressDetails?.ownership || "",
+            room_count: Number(addressDetails?.room_count || 0),
+            type_of_house: addressDetails?.type_of_house || "",
+            residence_area_quality:
+              addressDetails?.residence_area_quality || "",
+          },
+        ],
+        documents: documents
+          .filter((document) => document?.document_base64)
+          .map((document) => ({
+            document_type: document.document_type || "",
+            document_base64: document.document_base64,
+            file_extension: document.file_extension || "",
+          })),
+        created_by: authData?.user_id,
+        updated_by: authData?.user_id,
+        company_id: import.meta.env.VITE_COMPANY_ID,
+        product_name: import.meta.env.VITE_PRODUCT_NAME,
+        persoanl_kyc_is_completed: true,
+        address_is_completed: true,
+        is_applicant_verified: true,
       };
 
       try {

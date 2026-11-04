@@ -106,7 +106,7 @@ const CreditInfo = ({ creditData }) => {
       </div>
 
       {/* Sample EMI breakdown */}
-      <section className="overflow-hidden rounded-lg border border-gray-200">
+      {/* <section className="overflow-hidden rounded-lg border border-gray-200">
         <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-3 py-2">
           <div>
             <h3 className="text-xs font-semibold text-gray-800">EMI Breakdown</h3>
@@ -171,10 +171,10 @@ const CreditInfo = ({ creditData }) => {
             </tfoot>
           </table>
         </div>
-      </section>
+      </section> */}
 
       {creditData?.credit_report_link && (
-        <a className="text-xs text-primary hover:underline" href={creditData.credit_report_link} target="_blank" rel="noreferrer">
+        <a className="text-xs text-white hover:underline bg-primary px-5 py-2 rounded-lg" href={creditData.credit_report_link} target="_blank" rel="noreferrer">
           View credit report
         </a>
       )}

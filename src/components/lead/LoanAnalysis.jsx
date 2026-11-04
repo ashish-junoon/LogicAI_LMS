@@ -422,7 +422,7 @@ import { useAuthData } from "../../context/authContext";
 
 // Resolve a raw ID to its label from a master list.
 const makeResolver =
-  (list, idKey, labelKey, fallback = "N/A") =>
+  (list, idKey, labelKey, fallback = "0") =>
     (value) => {
       if (value === null || value === undefined || value === "") return fallback;
       const found = list.find((x) => String(x[idKey]) === String(value));
@@ -431,12 +431,14 @@ const makeResolver =
 
 // Products can be referenced by either product_id (string) or id (number).
 const makeProductResolver = (products) => (value) => {
-  if (value === null || value === undefined || value === "") return "N/A";
+  if (value === null || value === undefined || value === "") return "0";
   const found = products.find(
     (p) =>
-      String(p.product_id) === String(value) || String(p.id) === String(value),
+      String(p.product_id) === String(value) ||
+      String(p.id) === String(value) ||
+      String(p.product_name) === String(value),
   );
-  return found ? found.product_id : "N/A";
+  return found ? found.product_name || found.product_id : "0";
 };
 
 // "₹1,00,000 | 12% | 24 Months"
@@ -448,30 +450,80 @@ const formatProductLabel = ({
   `₹${Number(principle_amount || 0).toLocaleString("en-IN")} | ${interest_rate ?? "-"
   }% | ${tenure_months ?? "-"} Months`;
 
+const firstAvailable = (...values) =>
+  values.find((value) => value !== null && value !== undefined && value !== "") ?? 0;
+
+const toLoanProduct = (loanData = {}, products = []) => {
+  const productCode = loanData.product_code ?? loanData.product_id;
+  const masterProduct = products.find(
+    (product) =>
+      [product.product_id, product.id, product.product_name].some(
+        (value) => value != null && String(value) === String(productCode),
+      ),
+  );
+  const insuranceFee = firstAvailable(
+    loanData.insurance_fee,
+    masterProduct?.insurance_fee,
+  );
+  const hasInsurance =
+    loanData.is_insurance != null
+      ? loanData.is_insurance
+      : Number(insuranceFee) > 0;
+
+  return {
+    productType: firstAvailable(
+      loanData.loan_type_id,
+      loanData.loan_type,
+      masterProduct?.loan_type,
+    ),
+    productName:
+      productCode || masterProduct?.product_id || masterProduct?.id || "0",
+    loanAmount: firstAvailable(
+      loanData.loan_amount,
+      masterProduct?.principle_amount,
+    ),
+    interestRate: firstAvailable(
+      loanData.interest_rate,
+      masterProduct?.interest_rate,
+    ),
+    tenure: firstAvailable(loanData.tenure, masterProduct?.tenure_months),
+    repaymentFrequency: firstAvailable(
+      loanData.repayment_frequency,
+      masterProduct?.repayment_frequency,
+    ),
+    emiAmount: firstAvailable(loanData.emi_amount),
+    loginFee: firstAvailable(loanData.login_fee),
+    gstLoginFee: firstAvailable(loanData.gst_login_fee),
+    hasInsurance: hasInsurance ? "true" : "false",
+    insuranceFee,
+    processingFee: firstAvailable(
+      loanData.processing_fee,
+      masterProduct?.lpf,
+    ),
+    purpose: firstAvailable(
+      loanData.loan_purpose_id,
+      loanData.purpose_of_loan,
+    ),
+    subPurpose: firstAvailable(
+      loanData.loan_sub_purpose_id,
+      loanData.sub_purpose_loan,
+    ),
+  };
+};
+
 const LoanAnalysis = ({ data }) => {
-  /* ---------- Loan Product Details ---------- */
-  const [loanProduct, setLoanProduct] = useState({
-    productType: data?.loanDetails?.[0]?.loan_type_id,
-    productName: data?.loanDetails?.[0]?.product_code ?? "N/A",
-    loanAmount: data?.loanDetails?.[0]?.loan_amount,
-    interestRate: data?.loanDetails?.[0]?.interest_rate,
-    tenure: data?.loanDetails?.[0]?.tenure,
-    repaymentFrequency: data?.loanDetails?.[0]?.repayment_frequency,
-    emiAmount: data?.loanDetails?.[0]?.emi_amount,
-    loginFee: data?.loanDetails?.[0]?.login_fee,
-    gstLoginFee: data?.loanDetails?.[0]?.gst_login_fee,
-    hasInsurance: data?.loanDetails?.[0]?.is_insurance ? "true" : "false",
-    insuranceFee: data?.loanDetails?.[0]?.insurance_fee,
-    processingFee: data?.loanDetails?.[0]?.processing_fee,
-    purpose: data?.loanDetails?.[0]?.loan_purpose_id,
-    subPurpose: data?.loanDetails?.[0]?.loan_sub_purpose_id,
-  });
+  const loanRecord = data?.loanDetails?.[0];
+  const [savedLoanProduct, setSavedLoanProduct] = useState(null);
 
   /* ---------- Master lists ---------- */
   const [loanTypes, setLoanTypes] = useState([]);
   const [loanPurposes, setLoanPurposes] = useState([]);
   const [loanSubPurposes, setLoanSubPurposes] = useState([]);
   const [loanProducts, setLoanProducts] = useState([]);
+  const loanProduct =
+    savedLoanProduct?.source === loanRecord
+      ? savedLoanProduct.value
+      : toLoanProduct(loanRecord, loanProducts);
 
   const { authData } = useAuthData();
 
@@ -582,7 +634,7 @@ const LoanAnalysis = ({ data }) => {
     try {
       const response = await SaveLoanInfo(payload);
       if (response?.status) {
-        setLoanProduct({ ...editForm });
+        setSavedLoanProduct({ source: loanRecord, value: { ...editForm } });
         setIsEditing(false);
         toast.success(response.message || "Loan details saved successfully!");
       } else {

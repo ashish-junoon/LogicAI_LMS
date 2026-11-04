@@ -76,9 +76,9 @@ import { FiCheck } from "react-icons/fi";
 const JOURNEY_STEPS = [
   { visible_key: 1, key: 4, label: "New" },
   { visible_key: 2, key: 5, label: "Credit Analysis" },
-  { visible_key: 3, key: 6, label: "KYC" },
-  { visible_key: 4, key: 7, label: "Telecalling" },
-  { visible_key: 5, key: 8, label: "Disbursement" },
+  { visible_key: 3, key: 6, label: "Telecalling / Bookings" },
+  { visible_key: 4, key: 7, label: "Disbursement" },
+  // { visible_key: 5, key: 8, label: "Disbursement" },
 ];
 
 export default function JourneyStepper({
