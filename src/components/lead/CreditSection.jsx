@@ -7,6 +7,7 @@ import { CreditReport, CrifAuthQuestionnaireReport } from "../../api/kycApi";
 import { SaveOtherDocuments } from "../../api/application";
 import { convertFileToBase64 } from "../utils/common";
 import { toast } from "react-toastify";
+import { useAuthData } from "../../context/authContext";
 
 const normalizeCustomerType = (customerType) =>
   String(customerType || "").toUpperCase().replace(/[^A-Z]/g, "");
@@ -173,6 +174,8 @@ const CreditSection = ({ creditDetails, customerDetails }) => {
   const [selectedQuestionOption, setSelectedQuestionOption] = useState("");
   const [isSubmittingQuestionnaire, setIsSubmittingQuestionnaire] = useState(false);
 
+  const {authData} = useAuthData()
+
   const applySoftPullReport = (userId, response) => {
     const report =
       response?.data?.cibilDetails?.[0] ||
@@ -319,13 +322,7 @@ const CreditSection = ({ creditDetails, customerDetails }) => {
           loanDetails.product_name ||
           import.meta.env.VITE_PRODUCT_NAME ||
           "",
-        created_by:
-          user.detail?.created_by ||
-          marketSurvey.created_by ||
-          localStorage.getItem("username") ||
-          localStorage.getItem("userName") ||
-          localStorage.getItem("email") ||
-          "admin",
+        created_by: authData?.user_id
       };
       const response = await CreditReport(request);
       const crifData =
@@ -570,21 +567,9 @@ const CreditSection = ({ creditDetails, customerDetails }) => {
         document_base64: documentBase64,
         file_extension: extension,
         is_active: true,
-        created_by:
-          user.detail?.created_by ||
-          personalKyc?.creadted_by ||
-          "admin",
-        company_id:
-          user.detail?.company_id ||
-          marketSurvey.company_id ||
-          import.meta.env.VITE_COMPANY_ID ||
-          "",
-        product_name:
-          user.detail?.product_name ||
-          marketSurvey.product_name ||
-          loanDetails.product_name ||
-          import.meta.env.VITE_PRODUCT_NAME ||
-          "",
+        created_by: authData.user_id,
+        company_id: import.meta.env.VITE_COMPANY_ID,
+        product_name: import.meta.env.VITE_PRODUCT_NAME,
       });
 
       if (!response?.status) {

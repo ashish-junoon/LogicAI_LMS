@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import Loader from "../../components/utils/Loader";
 import { useFormik } from "formik";
 import * as Yup from 'yup'
+import { useAuthData } from "../../context/authContext";
 
 const BranchList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,6 +24,8 @@ const BranchList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [editingBranchId, setEditingBranchId] = useState(null);
+
+  const {authData} = useAuthData()
 
   //? FETCHING ALL BRANCH LIST
   const fetchAllBranches = async () => {
@@ -94,7 +97,7 @@ const BranchList = () => {
         branch_pin_code: row?.branch_pin_code,
         branch_lat_log: row?.branch_lat_log,
         is_active: nextStatus,
-        created_by: "ADMIN",
+        created_by: authData?.user_id,
       };
 
       const response = await UpdateBranch(req);
@@ -226,7 +229,7 @@ const BranchList = () => {
           branch_pin_code: values.branch_pin_code,
           branch_lat_log: `${values.branch_lat},${values.branch_log}`,
           is_active: isEdit ? branchFormik.values.is_active : false,
-          created_by: "ADMIN",
+          created_by: authData?.user_id,
         };
 
         let response;

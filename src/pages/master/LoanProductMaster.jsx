@@ -15,6 +15,7 @@ import {
   UpdateLoanProduct,
   GetAllLoanTypes,
 } from "../../api/mastersApi";
+import { useAuthData } from "../../context/authContext";
 
 const CALCULATION_METHOD_OPTIONS = [
   { label: "Simple", value: "Simple" },
@@ -42,6 +43,8 @@ const LoanProductMaster = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [editingProductId, setEditingProductId] = useState(null);
   const [loanTypeOptions, setLoanTypeOptions] = useState([]); // <-- dynamic loan types
+
+  const {authData} = useAuthData()
 
   // =========================================================
   // FETCH ALL LOAN TYPES (for dropdown)
@@ -132,7 +135,7 @@ const LoanProductMaster = () => {
       pre_closure_rate: row.pre_closure_rate ?? "",
       flexi_emi: row.flexi_emi ? "Yes" : "No",
       is_active: !!row.is_active,
-      created_by: "Admin",
+      created_by: authData?.user_id,
     });
 
     setIsModalOpen(true);
@@ -171,7 +174,7 @@ const LoanProductMaster = () => {
         pre_closure_rate: Number(row?.pre_closure_rate),
         flexi_emi: !!row?.flexi_emi,
         is_active: nextStatus,
-        created_by: "Admin",
+        created_by: authData?.user_id,
       };
 
       const response = await UpdateLoanProduct(req);
@@ -347,7 +350,7 @@ const LoanProductMaster = () => {
           pre_closure_rate: Number(values.pre_closure_rate),
           flexi_emi: values.flexi_emi === "Yes",
           is_active: isEdit ? !!values.is_active : false,
-          created_by: "Admin",
+          created_by: authData?.user_id,
         };
 
         let response;

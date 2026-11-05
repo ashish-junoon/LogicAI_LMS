@@ -5,6 +5,7 @@ import UserHeader from "../../components/utils/UserHeader";
 import Loader from "../../components/utils/Loader";
 import { CustomerDetails } from "../../api/application";
 import { useLocation, useSearchParams } from "react-router-dom";
+import { useAuthData } from "../../context/authContext";
 
 const Kyc = () => {
   const location = useLocation();
@@ -15,6 +16,8 @@ const Kyc = () => {
   const [customerDetails, setCustomerDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const {authData} = useAuthData()
 
   useEffect(() => {
     let isCurrent = true;
@@ -34,7 +37,7 @@ const Kyc = () => {
           customer_id: customerId,
           application_id: applicationId,
           role: "admin",
-          created_by: "admin",
+          created_by: authData?.user_id,
         });
 
         if (!response?.status || !response?.data) {

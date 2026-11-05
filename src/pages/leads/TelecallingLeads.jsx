@@ -54,9 +54,10 @@ const TelecallingLeads = () => {
       };
 
       const response = await GetAllApplications(requestBody);
-
-      if (response?.status && Array.isArray(response.data)) {
-        const formatted = response.data.map((item) => ({
+      const transformedResponse = response.data?.filter((lead)=> !lead.telecalling_is_completed)
+      
+      if (response?.status && Array.isArray(transformedResponse)) {
+        const formatted = transformedResponse?.map((item) => ({
           applicationId: item.application_id,
           customerId: item.customer_id,
           name: item.full_name,
@@ -66,7 +67,7 @@ const TelecallingLeads = () => {
           sanctionAmount: item.sanction_amount ?? 0,   // not in API response
           pendingStep: getPendingStep(item),
           createdDate: item.created_date,
-          createdBy: item.created_by ?? "-",           // not in API response
+          createdBy: item.create_by ?? "-",           // not in API response
           status: item.status ?? "Pending",
           raw: item,
         }));
@@ -139,11 +140,11 @@ const TelecallingLeads = () => {
     //       : row.sanctionAmount,
     //   sortable: true,
     // },
-    {
-      name: "Pending Step",
-      selector: (row) => row.pendingStep,
-      sortable: true,
-    },
+    // {
+    //   name: "Pending Step",
+    //   selector: (row) => row.pendingStep,
+    //   sortable: true,
+    // },
     {
       name: "Created Date",
       selector: (row) => row.createdDate,
@@ -163,19 +164,19 @@ const TelecallingLeads = () => {
         {/* header */}
         <div className="flex justify-between py-0 px-4">
           <div className="text-md font-medium self-center">Telecalling Leads</div>
-          <button
+          {/* <button
             onClick={fetchLeads}
             disabled={loading}
             className="text-sm px-3 py-1 rounded border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
           >
             {loading ? "Refreshing..." : "Refresh"}
-          </button>
+          </button> */}
         </div>
 
         {/* error state */}
-        {error && !loading && (
+        {/* {error && !loading && (
           <div className="px-4 py-2 mt-3 text-sm text-red-600">{error}</div>
-        )}
+        )} */}
 
         {/* table data */}
         <Table data={leads} columns={columns} progressPending={loading} />

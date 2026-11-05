@@ -33,45 +33,73 @@ const DocumentVault = ({
   const { authData } = useAuthData();
 
   const fileInputRef = useRef(null);
+//   const previewUrlsRef = useRef(new Set());
+
+//   useEffect(() => {
+//     const handleKeyDown = (e) => {
+//       if (e.key === "Enter" && selectedFile && !uploading) {
+//         // File input ya kisi input field par Enter hone par ignore karna ho toh
+//         if (["INPUT", "TEXTAREA", "SELECT"].includes(e.target.tagName)) {
+//           return;
+//         }
+
+//         e.preventDefault();
+//         handleUpload();
+//       }
+//     };
+
+//     window.addEventListener("keydown", handleKeyDown);
+
+//     return () => {
+//       window.removeEventListener("keydown", handleKeyDown);
+//     };
+//   }, [selectedFile, uploading]);
+
   const previewUrlsRef = useRef(new Set());
 
-  const MAX_FILE_SIZE = 5 * 1024 * 1024;
-const ALLOWED_FILE_TYPES = [
-  "application/pdf",
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-];
-const ALLOWED_FILE_EXTENSIONS = ["pdf", "jpg", "jpeg", "png", "webp"];
+  useEffect(() => {
+    if(selectedFile){
+        handleUpload();
+    }
+  }, [selectedFile]);
+
+  const MAX_FILE_SIZE = 10 * 1024 * 1024;
+  const ALLOWED_FILE_TYPES = [
+    "application/pdf",
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+  ];
+  const ALLOWED_FILE_EXTENSIONS = ["pdf", "jpg", "jpeg", "png", "webp"];
 
   useEffect(() => {
     setExistingDocuments(Array.isArray(documents) ? documents : []);
   }, [documents]);
 
   const getDocumentLabel = (document) =>
-  document?.document_type || document?.document_name || "Document";
+    document?.document_type || document?.document_name || "Document";
 
   const getDocumentUrl = (document) =>
-  document?.previewUrl ||
-  document?.document_url ||
-  document?.file_url ||
-  document?.document_path ||
-  document?.url ||
-  "";
-
-const getDocumentExtension = (document) => {
-  const fileName =
-    document?.file_name ||
-    document?.document_path ||
+    document?.previewUrl ||
+    document?.document_url ||
     document?.file_url ||
+    document?.document_path ||
     document?.url ||
     "";
 
-  return (
-    document?.file_extension?.toLowerCase().replace(".", "") ||
-    fileName.split("?")[0].split("#")[0].split(".").pop().toLowerCase()
-  );
-};
+  const getDocumentExtension = (document) => {
+    const fileName =
+      document?.file_name ||
+      document?.document_path ||
+      document?.file_url ||
+      document?.url ||
+      "";
+
+    return (
+      document?.file_extension?.toLowerCase().replace(".", "") ||
+      fileName.split("?")[0].split("#")[0].split(".").pop().toLowerCase()
+    );
+  };
 
   useEffect(
     () => () => {
@@ -134,16 +162,16 @@ const getDocumentExtension = (document) => {
       .pop()
       .toLowerCase();
 
-    if (
-      !ALLOWED_FILE_TYPES.includes(selectedFile.type) &&
-      !ALLOWED_FILE_EXTENSIONS.includes(extension)
-    ) {
-      setUploadError("Only PDF, JPG, PNG or WEBP files are allowed.");
-      return;
-    }
+    // if (
+    //   !ALLOWED_FILE_TYPES.includes(selectedFile.type) &&
+    //   !ALLOWED_FILE_EXTENSIONS.includes(extension)
+    // ) {
+    //   setUploadError("Only PDF, JPG, PNG or WEBP files are allowed.");
+    //   return;
+    // }
 
     if (selectedFile.size > MAX_FILE_SIZE) {
-      setUploadError("File size must be under 5 MB.");
+      setUploadError("File size must be under 10 MB.");
       return;
     }
 
@@ -191,7 +219,10 @@ const getDocumentExtension = (document) => {
       Promise.resolve()
         .then(() => onDocumentsUploaded?.())
         .catch((refreshError) => {
-          console.error("Error refreshing documents after upload:", refreshError);
+          console.error(
+            "Error refreshing documents after upload:",
+            refreshError,
+          );
         });
     } catch (error) {
       setUploadError(
@@ -210,7 +241,9 @@ const getDocumentExtension = (document) => {
     return (
       <div className="flex items-center justify-between gap-3 border-t border-ink-100 p-3">
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-ink-800">{label?.replaceAll("_", " ")}</p>
+          <p className="truncate text-sm font-semibold text-ink-800">
+            {label?.replaceAll("_", " ")}
+          </p>
           <p className="mt-1 truncate text-xs text-ink-500" title={fileName}>
             {fileName}
           </p>
@@ -418,6 +451,9 @@ const getDocumentExtension = (document) => {
                 onChange={(event) => {
                   setUploadError("");
                   setSelectedFile(event.currentTarget.files?.[0] || null);
+
+                  // Remove focus after file selection
+                  event.currentTarget.blur();
                 }}
                 className="w-full cursor-pointer rounded-lg border border-ink-200 bg-white px-2 py-1.5 text-sm text-ink-700 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-primary-700 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-white hover:file:bg-primary-800 disabled:opacity-60"
               />
@@ -494,8 +530,8 @@ const getDocumentExtension = (document) => {
       >
         <div className="space-y-4 p-5">
           <p className="text-sm text-ink-600">
-            Are you sure you want to submit this application and continue to
-            PD Applications?
+            Are you sure you want to submit this application and continue to PD
+            Applications?
           </p>
           <div>
             <label
@@ -520,7 +556,9 @@ const getDocumentExtension = (document) => {
                 }
               }}
               aria-invalid={Boolean(remarkError)}
-              aria-describedby={remarkError ? "application-submit-remark-error" : undefined}
+              aria-describedby={
+                remarkError ? "application-submit-remark-error" : undefined
+              }
               placeholder="Enter a remark (minimum 10 characters)"
               disabled={submittingForm}
               className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-ink-900 outline-none focus:ring-2 ${

@@ -17,6 +17,7 @@ import { useAuthData } from "../../context/authContext";
 import { useSearchParams } from "react-router-dom";
 import DocumentVault from "../utils/DocumentVault";
 import BSAReportUrl from "./BSAReportUrl";
+import AccountAggregator from "./AccountAggregator";
 
 const CreditWrapper = ({ customerDetails, onRefresh }) => {
   const [activeSection, setActiveSection] = useState("user");
@@ -44,10 +45,11 @@ const CreditWrapper = ({ customerDetails, onRefresh }) => {
     { id: "user", label: "User Details", icon: "RiShieldCheckLine" },
     { id: "loaninfo", label: "Loan Info", icon: "GiPayMoney" },
     { id: "credit", label: "Credit Analysis", icon: "RiShieldCheckLine" },
+    { id: "aa", label: "Account Aggregator", icon: "RiBankCardLine" },
     { id: "bsa", label: "Bank Statement Ananlysis", icon: "RiBankCardLine" },
-    { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
     { id: "documents", label: "Documents", icon: "RiFileList3Line" },
     { id: "variations", label: "Variations", icon: "PiGraph" },
+    { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
   ];
 
   const renderSection = () => {
@@ -97,6 +99,23 @@ const CreditWrapper = ({ customerDetails, onRefresh }) => {
           <RemarksHistory
             permission={true}
             remarks={customerDetails?.history || []}
+          />
+        );
+      case "aa":
+        return (
+          <AccountAggregator
+            customerDetailsData={customerDetails}
+            userData={{
+              name: customerDetails?.personalKyc?.[0]?.full_name,
+              mobile:
+                customerDetails?.marketSurvey?.[0]?.business_owner_mobile_no,
+              pan: customerDetails?.personalKyc?.[0]?.pan_number,
+              email: customerDetails?.personalKyc?.[0]?.email_id,
+              dob: customerDetails?.personalKyc?.[0]?.dob,
+              customerId: customerId,
+              applicationId: applicationId,
+            }}
+            fetchData={onRefresh}
           />
         );
       case "bsa":

@@ -42,9 +42,9 @@ const InfoWrapper = ({ customerDetails, onRefresh, setCustomerDetails }) => {
     { id: "credit", label: "Credit Health", icon: "RiBankCardLine" },
     { id: "loanInfo", label: "Loan Info", icon: "RiInformationLine" },
     { id: "bankInfo", label: "Bank Info", icon: "RiBankLine" },
-    { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
     { id: "documents", label: "Documents", icon: "RiFileList3Line" },
     { id: "variations", label: "Variations", icon: "PiGraph" },
+    { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
   ];
 
   //   const fetchCustomerDetails = async () => {

@@ -11,52 +11,57 @@ const DisbursementDetails = () => {
   const [searchParams] = useSearchParams();
   const routeLead = location.state?.lead;
   const customerId = searchParams.get("customer_id") || routeLead?.customer_id;
-  const applicationId = searchParams.get("application_id") || routeLead?.application_id;
+  const applicationId =
+    searchParams.get("application_id") || routeLead?.application_id;
   const [customerDetails, setCustomerDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const fetchCustomerDetails = async (isCurrent = true) => {
+    if (!customerId || !applicationId) {
+      setError(
+        "Customer ID and application ID are required to load this lead.",
+      );
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await CustomerDetails({
+        customer_id: customerId,
+        application_id: applicationId,
+        role: "admin",
+        created_by: "admin",
+      });
+
+      if (!response?.status || !response?.data) {
+        throw new Error(
+          response?.message || "Failed to load customer details.",
+        );
+      }
+
+      if (isCurrent) setCustomerDetails(response.data);
+    } catch (fetchError) {
+      console.error("Error fetching disbursement lead details:", fetchError);
+      if (isCurrent) {
+        setError(
+          fetchError?.response?.data?.message ||
+            fetchError?.message ||
+            "Something went wrong while loading customer details.",
+        );
+      }
+    } finally {
+      if (isCurrent) setLoading(false);
+    }
+  };
+
   useEffect(() => {
     let isCurrent = true;
 
-    const fetchCustomerDetails = async () => {
-      if (!customerId || !applicationId) {
-        setError("Customer ID and application ID are required to load this lead.");
-        setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-      setError("");
-
-      try {
-        const response = await CustomerDetails({
-          customer_id: customerId,
-          application_id: applicationId,
-          role: "admin",
-          created_by: "admin",
-        });
-
-        if (!response?.status || !response?.data) {
-          throw new Error(response?.message || "Failed to load customer details.");
-        }
-
-        if (isCurrent) setCustomerDetails(response.data);
-      } catch (fetchError) {
-        console.error("Error fetching disbursement lead details:", fetchError);
-        if (isCurrent) {
-          setError(
-            fetchError?.response?.data?.message ||
-            fetchError?.message ||
-            "Something went wrong while loading customer details.",
-          );
-        }
-      } finally {
-        if (isCurrent) setLoading(false);
-      }
-    };
-
-    fetchCustomerDetails();
+    fetchCustomerDetails(isCurrent);
 
     return () => {
       isCurrent = false;
@@ -65,7 +70,8 @@ const DisbursementDetails = () => {
 
   const matchesLead = (record) => {
     const recordCustomerId = record?.customer_id;
-    const recordApplicationId = record?.application_id || record?.applicantion_id;
+    const recordApplicationId =
+      record?.application_id || record?.applicantion_id;
 
     return (
       (!recordCustomerId || recordCustomerId === customerId) &&
@@ -86,14 +92,15 @@ const DisbursementDetails = () => {
   const lead = {
     ...routeLead,
     customer_name:
-      marketSurvey?.business_owner_name ||
       personalKyc?.full_name ||
+      marketSurvey?.business_owner_name ||
       routeLead?.business_owner_name,
     loan_id: applicationId,
     product_code: loanDetails?.product_code || loanDetails?.loan_type,
     loan_amount: loanDetails?.loan_amount,
     loan_status: routeLead?.status || "Disbursement",
     stage: "disbursement",
+    app_form_status: scopedDetails?.workflowNodes?.[0]?.app_form_status,
   };
 
   return (
@@ -108,13 +115,17 @@ const DisbursementDetails = () => {
       {loading ? (
         <Loader text="Loading customer details..." />
       ) : error ? (
-        <div role="alert" className="m-4 rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div
+          role="alert"
+          className="m-4 rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+        >
           {error}
         </div>
       ) : (
         <DisbursementWrapper
           key={`${customerId}-${applicationId}`}
           customerDetails={scopedDetails}
+          onRefresh={fetchCustomerDetails}
         />
       )}
     </div>

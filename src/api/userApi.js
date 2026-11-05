@@ -141,3 +141,34 @@ export const CreatePageName = async (req) => {
         throw error;
     }
 }
+
+
+export const SettingStatus = async (req) => {
+    try {
+        const response = await api.post("/CommonLoan/SettingStatus", req);
+        return response.data;
+    } catch (error) {
+        console.error("SettingStatus:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const GetPagePermission = async (req) => {
+    try {
+        const response = await api.post("/Admin/GetPagePermissions", req);
+        return response.data;
+    } catch (error) {
+        console.error("GetPagePermission:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const SetPagePermission = async (req) => {
+    try {
+        const response = await api.post("/Admin/SetPagePermission", req);
+        return response.data;
+    } catch (error) {
+        console.error("SetPagePermission:", error.response?.data || error.message);
+        throw error;
+    }
+}

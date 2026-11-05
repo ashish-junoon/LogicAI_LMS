@@ -8,7 +8,6 @@ import {
   RiFileChartLine,
   RiRefreshLine,
 } from "react-icons/ri";
-// import { SettingStatus } from "../../api/customerDetailsApi";
 
 import {
   BSA_FlowGet,
@@ -55,6 +54,7 @@ const BSAReportUrl = ({
   const [BSA_Report, setBSAReport] = useState(null);
   const [loading, setLoading] = useState(false);
   const [verifying, setVerifying] = useState(false);
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const { authData } = useAuthData();
 
@@ -89,7 +89,7 @@ const BSAReportUrl = ({
       const payload = {
         customer_id: customerId,
         application_id: applicationId,
-        mobile_no: mobileNo || "",
+        mobile_no: applicationId || "",
       };
       const response = await BSA_FlowGet(payload);
       // console.log("BSA_FlowGet Response:", response);
@@ -121,6 +121,12 @@ const BSAReportUrl = ({
     }
   };
 
+  const hasBsaResultData = (response) => {
+    const accounts = response?.data?.data?.data?.depositAccounts?.accounts;
+
+    return Array.isArray(accounts) && accounts.length > 0;
+  };
+
   useEffect(() => {
     if (!customerId || !applicationId) {
       setBSAReport(null);
@@ -137,84 +143,69 @@ const BSAReportUrl = ({
     };
   }, [customerId, applicationId, mobileNo]);
 
-  const handleUpdateStatus = async (data) => {
+  const handleUpdateStatus = async (runId) => {
     try {
-      const id = data?.runId;
-      const req = {
+      const response = await BSA_FlowStatus({
         customer_id: customerId,
         application_id: applicationId,
+        run_id: runId,
+        unique_id: runId,
         company_id: import.meta.env.VITE_COMPANY_ID,
         product_name: import.meta.env.VITE_PRODUCT_NAME,
         created_by: authData?.user_id,
-        unique_id: id,
-        run_id: id,
-      };
-      const response = await BSA_FlowStatus(req);
+      });
+
+      const statusData = response?.data?.data?.[0];
+
       if (
-        response.status &&
-        response.data.data.bsa_status == "SUCCESS"
+        response?.status &&
+        response?.data?.status &&
+        statusData?.bsa_status?.toUpperCase() === "SUCCESS"
       ) {
-        await handleFetchBsaResult(id);
-        return;
-      } else if (
-        response.status &&
-        response.data.data.bsa_status !== "SUCCESS"
-      ) {
-        toast.info("BSA Report is pending yet!");
-        return;
-      } else if (
-        response.status &&
-        response.data.data?.[0]?.bsa_result_state == "WAITING"
-      ) {
-        toast.info("BSA Result under process." || response.message);
-        return;
-      } else if (response?.data?.data?.bsa_status == "FAILED") {
-        toast.info(response.message || "BSA fetched failed.");
-        return;
-      } else {
-        toast.info(response.message);
-      }
-
-      fetchBSAReport(true);
-    } catch (error) {
-      showValidationError(error);
-      console.log(error);
-    }
-  };
-
-  const handleFetchBsaResult = async (id) => {
-    try {
-      const req = {
-        customer_id: customerId,
-        application_id: applicationId,
-        company_id: import.meta.env.VITE_COMPANY_ID,
-        product_name: import.meta.env.VITE_PRODUCT_NAME,
-        created_by: authData?.user_id,
-        runId: id,
-      };
-
-      const response = await BSA_FlowResult(req);
-      if (!response.status) {
-        toast.info(response?.message || "Unable to fetch BSA Result.");
-        return;
-      } else if (response.status && response.data.state == "SUCCESS") {
-        toast.success(response.message || "BSA Result fetched.");
-        fetchBSAReport?.(true);
-        return;
-      } else if (response.status && response.data.state == "WAITING") {
-        toast.success(response.message || "BSA Result under process.");
-        return;
-      } else if (response.data.state == "FAILED") {
-        toast.info(response.message || "BSA fetched failed.");
-        return;
-      } else {
-        toast.info("Unable to fetch BSA Result.");
-        return;
+        // SUCCESS hone par result API call karo,
+        // chahe result_state WAITING hi kyon na ho.
+        await handleFetchBsaResult(statusData.run_id || runId);
       }
     } catch (error) {
+      console.error("BSA Status Error:", error);
       showValidationError(error);
     }
   };
+
+const handleFetchBsaResult = async (runId) => {
+  if (!runId) {
+    toast.info("BSA Run ID is missing.");
+    return;
+  }
+
+  try {
+    const response = await BSA_FlowResult({
+      customer_id: customerId,
+      application_id: applicationId,
+      runId: runId, // Changed from run_id to runId
+      company_id: import.meta.env.VITE_COMPANY_ID,
+      product_name: import.meta.env.VITE_PRODUCT_NAME,
+      created_by: authData?.user_id,
+    });
+
+    if (!response?.status) {
+      toast.info(response?.message || "BSA result not available.");
+      return;
+    }
+
+    if (!hasBsaResultData(response)) {
+      toast.info("BSA result is still processing.");
+      return;
+    }
+
+    const resultData = response?.data?.data?.data;
+
+    setBSAReport(resultData);
+  } catch (error) {
+    console.error("BSA Result Error:", error);
+    showValidationError(error);
+  }
+};
 
   const handleFetch = async () => {
     if (!selectedDocument) {
@@ -225,10 +216,9 @@ const BSAReportUrl = ({
     const payload = {
       customer_id: data?.personalKyc[0]?.customer_id || "",
       application_id: data?.personalKyc[0]?.application_id || "",
-      // fileurl: selectedDocument?.document_path,
-      // fileurl: "https://lmsapi.junooncapital.com/document/PU08928/PU089287969_BankStatement.pdf",
-      fileurl:
-        "https://lmsapi.earlywages.in/document/EW15338/EW153383932_BankStatement.pdf",
+      fileurl: selectedDocument?.document_path,
+      // fileurl:
+      //   "https://lmsapi.junooncapital.com/document/PU19340/PU193403572_BankStatement.pdf",
       fileName: selectedDocument?.document_type,
       filepassword: selectedDocument?.filepassword || "N",
       mobileno: data?.marketSurvey[0]?.business_owner_mobile_no || "",
@@ -304,8 +294,13 @@ const BSAReportUrl = ({
         : [];
 
     return reports
-      .filter((item) =>
-        ["SUCCESS", "WAITING", "PENDING", "FAILED"].includes(String(item?.bsaStatus || "").trim().toUpperCase()) || !item?.bsaStatus,
+      .filter(
+        (item) =>
+          ["SUCCESS", "WAITING", "PENDING", "FAILED"].includes(
+            String(item?.bsaStatus || "")
+              .trim()
+              .toUpperCase(),
+          ) || !item?.bsaStatus,
       )
       .sort(
         (a, b) =>
@@ -322,32 +317,32 @@ const BSAReportUrl = ({
     (item) => item?.bsaStatus?.toUpperCase() !== "SUCCESS",
   );
 
-//   const handleBSAVerified = async () => {
-//     try {
-//       setVerifying(true);
-//       const req = {
-//         customer_id: customerId,
-//         application_id: applicationId,
-//         type: "BSA",
-//         status: true,
-//         created_by: authData?.user_id,
-//         company_id: import.meta.VITE_COMPANY_ID,
-//         product_name: import.meta.VITE_PRODUCT_NAME,
-//       };
+  const handleBSAVerified = async () => {
+    try {
+      setVerifying(true);
+      const req = {
+        customer_id: customerId,
+        application_id: applicationId,
+        type: "BSA",
+        status: true,
+        created_by: authData?.user_id,
+        company_id: import.meta.VITE_COMPANY_ID,
+        product_name: import.meta.VITE_PRODUCT_NAME,
+      };
 
-//       const response = await SettingStatus(req);
-//       if (response.status) {
-//         toast.success(response.message || "Application Procceds.");
-//         fetchData?.();
-//       } else {
-//         toast.info(response.message || "Unable to Proceed!");
-//       }
-//     } catch (error) {
-//       showValidationError(error);
-//     } finally {
-//       setVerifying(false);
-//     }
-//   };
+      const response = await SettingStatus(req);
+      if (response.status) {
+        toast.success(response.message || "Application Procceds.");
+        fetchData?.();
+      } else {
+        toast.info(response.message || "Unable to Proceed!");
+      }
+    } catch (error) {
+      showValidationError(error);
+    } finally {
+      setVerifying(false);
+    }
+  };
 
   return (
     <>
@@ -604,7 +599,9 @@ const BSAReportUrl = ({
 
                 <tbody className="divide-y divide-slate-100">
                   {pendingReports.map((item) => {
-                    const status = String(item.bsaStatus || "NO STATUS FOUND").toUpperCase();
+                    const status = String(
+                      item.bsaStatus || "NO STATUS FOUND",
+                    ).toUpperCase();
 
                     return (
                       <tr
@@ -645,7 +642,7 @@ const BSAReportUrl = ({
                           <button
                             type="button"
                             onClick={() => {
-                              handleUpdateStatus(item);
+                              handleUpdateStatus(item.runId);
                             }}
                             className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-100 bg-primary hover:bg-primary/90 disabled:opacity-40"
                           >
@@ -870,7 +867,7 @@ const BSAReportUrl = ({
         )}
       </div>
 
-      {/* <div className="flex justify-end mt-2">
+      <div className="flex justify-end mt-2">
         <button
           type="button"
           onClick={handleBSAVerified}
@@ -889,11 +886,10 @@ const BSAReportUrl = ({
             </>
           )}
         </button>
-      </div> */}
+      </div>
     </>
   );
 };
-
 const Info = ({ label, value }) => (
   <div className="rounded-lg bg-slate-50 p-3">
     <p className="text-xs text-slate-500">{label}</p>

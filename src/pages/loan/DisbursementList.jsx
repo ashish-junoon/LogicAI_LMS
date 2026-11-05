@@ -5,6 +5,7 @@ import Table from "../../components/Table";
 import Modal from "../../components/utils/Modal";
 import Icon from "../../components/utils/Icon";
 import { GetAllApplications } from "../../api/application";
+import { useAuthData } from "../../context/authContext";
 
 const DisbursementList = () => {
   const [isDisburseModalOpen, setIsDisburseModalOpen] = useState(false);
@@ -13,11 +14,14 @@ const DisbursementList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const {authData} = useAuthData()
+
   const fetchDisbursementLeads = async () => {
     try {
       const response = await GetAllApplications({
-        role: "admin",
-        created_by: "admin",
+        role: authData?.role,
+        created_by: authData?.user_id,
+        step_status: "7"
       });
 
       if (!response?.status || !Array.isArray(response?.data)) {
@@ -29,13 +33,13 @@ const DisbursementList = () => {
           id: item.application_id,
           loanId: item.application_id || "-",
           customerId: item.customer_id,
-          customerName: item.business_owner_name || "-",
+          customerName: item.full_name || item.business_owner_name || "-",
           loanAmount: Number(item.loan_amount) || 0,
           interestAmount: Number(item.interest_amount) || 0,
           totalPayable: Number(item.total_payable) || 0,
           status: item.status || "Pending",
           createdDate: item.created_date || "-",
-          createdBy: item.created_by || "-",
+          createdBy: item.create_by || "-",
           bankName: item.bank_name || "-",
           accountNumber: item.account_number || "-",
           ifscCode: item.ifsc_code || "-",
@@ -100,33 +104,43 @@ const DisbursementList = () => {
       selector: (row) => row.customerName,
       sortable: true,
     },
-    {
-      name: "Gender",
-      selector: (row) => row.gender || "N/A",
-      sortable: true,
-    },
+    // {
+    //   name: "Gender",
+    //   selector: (row) => row.gender || "N/A",
+    //   sortable: true,
+    // },
     {
       name: "Mobile",
       selector: (row) => row.mobile,
       sortable: true,
     },
     {
-      name: "Salary",
-      selector: (row) => row.salary ? `₹${Number(row.salary).toLocaleString()}` : "-",
+      name: "Creted By",
+      selector: (row) => row.createdBy || "N/A",
       sortable: true,
     },
     {
-      name: "Loan Amount",
-      selector: (row) => row.loanAmount ? `₹${row.loanAmount.toLocaleString()}` : "-",
+      name: "Creted Date",
+      selector: (row) => row.createdDate || "N/A",
       sortable: true,
-      right: true,
     },
-    {
-      name: "Bank Name",
-      selector: (row) => row.bankName,
-      sortable: true,
-      right: true,
-    },
+    // {
+    //   name: "Salary",
+    //   selector: (row) => row.salary ? `₹${Number(row.salary).toLocaleString()}` : "-",
+    //   sortable: true,
+    // },
+    // {
+    //   name: "Loan Amount",
+    //   selector: (row) => row.loanAmount ? `₹${row.loanAmount.toLocaleString()}` : "-",
+    //   sortable: true,
+    //   right: true,
+    // },
+    // {
+    //   name: "Bank Name",
+    //   selector: (row) => row.bankName,
+    //   sortable: true,
+    //   right: true,
+    // },
   ];
 
   // className={`p-1.5 rounded-sm text-xs font-medium bg-primary`}
@@ -163,7 +177,7 @@ const DisbursementList = () => {
           <div className="text-md font-medium self-center">
             Disbursement List
           </div>
-          <button
+          {/* <button
             type="button"
             onClick={() => {
               setLoading(true);
@@ -174,14 +188,14 @@ const DisbursementList = () => {
             className="text-sm px-3 py-1 rounded border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
           >
             {loading ? "Refreshing..." : "Refresh"}
-          </button>
+          </button> */}
         </div>
 
-        {error && !loading && (
+        {/* {error && !loading && (
           <div role="alert" className="px-4 py-2 mt-3 text-sm text-red-600">
             {error}
           </div>
-        )}
+        )} */}
 
         {/* Table data */}
         <div className="">

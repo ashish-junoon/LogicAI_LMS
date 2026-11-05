@@ -62,7 +62,7 @@ const NewLeads = () => {
           sanctionAmount: item.sanction_amount ?? 0,   // not in API response
           pendingStep: getPendingStep(item),
           createdDate: item.created_date,
-          createdBy: item.created_by ?? "-",           // not in API response
+          createdBy: item.create_by ?? "-",           // not in API response
           status: item.status ?? "Pending",
           raw: item,
         }));
@@ -135,11 +135,11 @@ const NewLeads = () => {
     //       : row.sanctionAmount,
     //   sortable: true,
     // },
-    {
-      name: "Pending Step",
-      selector: (row) => row.pendingStep,
-      sortable: true,
-    },
+    // {
+    //   name: "Pending Step",
+    //   selector: (row) => row.pendingStep,
+    //   sortable: true,
+    // },
     {
       name: "Created Date",
       selector: (row) => row.createdDate,

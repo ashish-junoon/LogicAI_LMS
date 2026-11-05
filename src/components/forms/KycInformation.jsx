@@ -191,13 +191,10 @@ const KycInformation = ({
           },
         ],
         documents: documentsToSave,
-        created_by:
-          personalKyc?.creadted_by || personalKyc?.created_by || updatedBy,
-        updated_by: updatedBy,
-        company_id:
-          personalKyc?.company_id || import.meta.env.VITE_COMPANY_ID || "",
-        product_name:
-          personalKyc?.product_name || import.meta.env.VITE_PRODUCT_NAME || "",
+        created_by: authData?.user_id,
+        updated_by: authData?.user_id,
+        company_id: import.meta.env.VITE_COMPANY_ID || "",
+        product_name: import.meta.env.VITE_PRODUCT_NAME || "",
         persoanl_kyc_is_completed: true,
         address_is_completed: true,
         is_applicant_verified: true,

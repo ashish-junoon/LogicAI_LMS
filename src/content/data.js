@@ -507,6 +507,7 @@ export const sidebarData = [
     children: [
       { title: "Manage Users", path: "/admin/manage-user" },
       { title: "Manage Page", path: "/admin/manage-page" },
+      { title: "Page Permision", path: "/admin/manage-permission" },
     ],
   },
 ];

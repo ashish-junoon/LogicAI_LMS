@@ -7,9 +7,18 @@ import Disbursement from "./Disbursement";
 import DocumentsList from "./DocumentsList";
 import LeadFormDetails from "../../pages/formPages/LeadFormDetails";
 import Variations from "./Variations";
+import UploadDisbursment from "./UploadDisbursment";
+import { useSearchParams } from "react-router-dom";
+import { useAuthData } from "../../context/authContext";
+import DocumentVault from "../utils/DocumentVault";
 
-const DisbursementWrapper = ({ customerDetails }) => {
+const DisbursementWrapper = ({ customerDetails, onRefresh }) => {
   const [activeSection, setActiveSection] = useState("disbursement");
+      const [searchParams] = useSearchParams();
+  const customerId = searchParams.get("customer_id");
+  const applicationId = searchParams.get("application_id");
+
+  const {authData} = useAuthData ()
 
   const sections = [
     {
@@ -35,17 +44,28 @@ const DisbursementWrapper = ({ customerDetails }) => {
   const renderSection = () => {
     switch (activeSection) {
       case "disbursement":
-        return <Disbursement />;
+        // return <Disbursement />;
+        return <UploadDisbursment customerDetails={customerDetails} />;
       case "remarks":
         return <RemarksHistory permission={true} remarks={customerDetails?.history || []} />;
       case "variations":
         return <Variations permission={true} remarks={customerDetails?.history || []} />;
       case "documents":
         return (
-          <DocumentsList
-            permission={true}
-            documents={customerDetails?.documents || []}
+          // <DocumentsList
+          //   permission={true}
+          //   documents={customerDetails?.documents || []}
+          //   customerDetails={customerDetails}
+          // />
+          <DocumentVault
+            documents={customerDetails?.documents ?? EMPTY_DOCUMENTS}
             customerDetails={customerDetails}
+            customerId={customerId}
+            applicationId={applicationId}
+            userId={authData?.user_id}
+            onDocumentsUploaded={onRefresh}
+            onSubmitForm={() => {}}
+            submittingForm={true}
           />
         );
       case "userinfo":

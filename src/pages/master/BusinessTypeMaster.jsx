@@ -14,6 +14,7 @@ import {
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useAuthData } from "../../context/authContext";
 
 const BusinessTypeMaster = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,6 +22,8 @@ const BusinessTypeMaster = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [editingBusinessId, setEditingBusinessId] = useState(null);
+
+  const {authData} = useAuthData()
 
   // Fetch all business types
   const fetchAllBusinessTypes = async () => {
@@ -90,7 +93,7 @@ const BusinessTypeMaster = () => {
         id: row.id,
         business_type: row.business_type,
         is_active: nextStatus,
-        created_by: "ADMIN",
+        created_by: authData?.user_id,
       });
 
       if (!response?.status) {
@@ -150,7 +153,7 @@ const BusinessTypeMaster = () => {
         const req = {
           business_type: values.business_type.trim(),
           is_active: values.is_active === true || values.is_active === "true",
-          created_by: "ADMIN",
+          created_by: authData?.user_id,
         };
 
         let response;

@@ -15,6 +15,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAuthData } from "../../context/authContext";
 
 const RemarksHistory = ({
   remarks = [],
@@ -28,6 +29,8 @@ const RemarksHistory = ({
   const [open, setOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const appplicationId = searchParams?.get("application_id");
+
+  const {authData} = useAuthData()
 
   const formik = useFormik({
     initialValues: {
@@ -44,10 +47,10 @@ const RemarksHistory = ({
       const payload = {
         application_id: appplicationId,
         is_prove: true,
-        step_status: 0,
+        step_status: "0",
         reason: values.reason,
         remarks: values.remarks.trim(),
-        updated_by: "USR0001",
+        updated_by: authData.user_id,
         company_id: import.meta.env.VITE_COMPANY_ID,
         product_name: import.meta.env.VITE_PRODUCT_NAME,
       };
@@ -261,7 +264,7 @@ const RemarksHistory = ({
         title="Add Remarks"
       >
         <form onSubmit={formik.handleSubmit}>
-          <div className="grid grid-cols-2 gap-2 my-3">
+          <div className="grid grid-cols-1 gap-2 my-3">
             <div>
               <SelectInput
                 label="Remark"

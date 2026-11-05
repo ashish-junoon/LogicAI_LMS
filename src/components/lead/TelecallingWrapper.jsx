@@ -76,28 +76,20 @@ const TelecallinWrapper = ({ customerDetails, onRefresh }) => {
     setVideoUploading(true);
     try {
       const base64Result = await convertFileToBase64(videoFile);
-      const base64 = String(base64Result).includes(",")
-        ? String(base64Result).slice(String(base64Result).indexOf(",") + 1)
-        : base64Result;
+      // const base64 = String(base64Result).includes(",")
+      //   ? String(base64Result).slice(String(base64Result).indexOf(",") + 1)
+      //   : base64Result;
       const response = await SaveOtherDocuments({
         id: 0,
         customer_id: customerId,
         application_id: applicationId,
         document_type: "VIDEO_KYC",
-        document_base64: base64,
+        document_base64: base64Result,
         file_extension: videoFile.name.split(".").pop()?.toLowerCase() || "",
         is_active: true,
-        created_by: authData?.user_id || "admin",
-        company_id:
-          customerDetails?.company_id ||
-          marketSurvey.company_id ||
-          import.meta.env.VITE_COMPANY_ID ||
-          "",
-        product_name:
-          customerDetails?.product_name ||
-          loanDetails.product_name ||
-          import.meta.env.VITE_PRODUCT_NAME ||
-          "",
+        created_by: authData?.user_id,
+        company_id: import.meta.env.VITE_COMPANY_ID,
+        product_name: import.meta.env.VITE_PRODUCT_NAME,
       });
 
       if (!response?.status) {

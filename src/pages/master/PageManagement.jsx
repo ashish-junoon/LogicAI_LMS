@@ -19,6 +19,7 @@ import {
   GetAllPageGroups,
 } from "../../api/userApi.js";
 import SelectInput from "../../components/fields/SelectInput.jsx";
+import { useAuthData } from "../../context/authContext.jsx";
 
 const initialValues = {
   group_id: "",
@@ -39,6 +40,8 @@ const PageManagement = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [editingPageId, setEditingPageId] = useState(null);
+
+  const {authData} = useAuthData()
 
   // =========================================================
   // FETCH ALL GROUPS
@@ -153,7 +156,7 @@ const PageManagement = () => {
           page_small_discription:
             values.page_small_discription.trim(),
           is_active: values.is_active,
-          created_by: "USE0001"
+          created_by: authData?.user_id
         };
 
         const response = isEdit
@@ -265,7 +268,7 @@ const PageManagement = () => {
         page_display_index: row?.page_display_index,
         page_small_discription: row?.page_small_discription,
         is_active: nextStatus,
-        created_by: "USR0001"
+        created_by: authData?.user_id
       };
 
       const response = await UpdatePageName(req);

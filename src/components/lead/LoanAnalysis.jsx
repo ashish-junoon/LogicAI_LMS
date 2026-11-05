@@ -624,7 +624,7 @@ const LoanAnalysis = ({ data }) => {
       insurance_fee: Number(editForm.insuranceFee ?? 0),
       is_insurance:
         editForm.hasInsurance === "true" || editForm.hasInsurance === true,
-      created_by: authData?.user_id || "USR_0001",
+      created_by: authData?.user_id,
       company_id: import.meta.env.VITE_COMPANY_ID,
       product_name: found?.product_name ?? import.meta.env.VITE_PRODUCT_NAME,
       is_loaninfo_verified: true,

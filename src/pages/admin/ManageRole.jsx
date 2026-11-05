@@ -18,6 +18,7 @@ import {
   UpdateRole,
 } from "../../api/userApi.js";
 import { useNavigate } from "react-router-dom";
+import { useAuthData } from "../../context/authContext.jsx";
 
 const initialValues = {
   role_name: "",
@@ -32,6 +33,7 @@ const ManageRole = () => {
   const [editingRoleId, setEditingRoleId] = useState(null);
   const navgate = useNavigate()
 
+  const {authData} = useAuthData()
   // GET ALL ROLES
   const fetchAllRoles = useCallback(async () => {
     try {
@@ -84,7 +86,7 @@ const ManageRole = () => {
         const payload = {
           role_name: values.role_name.trim(),
           is_active: Boolean(values.is_active),
-          created_by: "USR0001"
+          created_by: authData?.user_id
         };
 
         let response;
@@ -177,7 +179,7 @@ const ManageRole = () => {
         role_id: row?.role_id,
         role_name: row?.role_name,
         is_active: nextStatus,
-        created_by: "USER0001"
+        created_by: authData?.user_id
       });
 
       if (response?.status) {

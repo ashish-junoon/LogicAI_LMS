@@ -19,6 +19,7 @@ import {
   GetAllDesignations,
 } from "../../api/mastersApi.js";
 import { Link } from "react-router-dom";
+import { useAuthData } from "../../context/authContext.jsx";
 
 const initialValues = {
   full_name: "",
@@ -33,7 +34,7 @@ const initialValues = {
   role: "",
   report_view: true,
   is_active: false,
-  user_type: ""
+  user_type: "",
 };
 
 const ManageUser = () => {
@@ -45,6 +46,8 @@ const ManageUser = () => {
   const [designationOptions, setdesignationOptions] = useState([]);
   const [departmentOptions, setdepartmentOptions] = useState([]);
   const [branchOptions, setbranchOptions] = useState([]);
+
+  const { authData } = useAuthData();
 
   // Replace these sample options with your master API data.
   const genderOptions = [
@@ -258,7 +261,7 @@ const ManageUser = () => {
           user_type: values.user_type,
           report_view:
             values.report_view === true || values.report_view === "true",
-          created_by: "Admin",
+          created_by: authData?.user_id,
           is_active: values.is_active,
         };
 
@@ -367,7 +370,7 @@ const ManageUser = () => {
         designation: String(row?.designation_id ?? ""),
         role: row?.role,
         report_view: Boolean(row?.report_view),
-        created_by: "Admin",
+        created_by: authData?.user_id,
         is_active: nextStatus,
       };
 
@@ -428,6 +431,11 @@ const ManageUser = () => {
       selector: (row) => row?.user_id || "-",
       sortable: true,
       wrap: true,
+    },
+    {
+      name: "Permission",
+      selector: (row) => row.user_id,
+      cell: (row) => <Link to={`/admin/manage-permission?id=${row.user_id}`}>{row.user_id}</Link>,
     },
     {
       name: "Full Name",
@@ -730,16 +738,16 @@ const ManageUser = () => {
               />
               <ErrorText name="report_view" />
             </div>
-            
+
             <div>
               <SelectInput
                 label="User Type"
                 name="user_type"
                 placeholder="Select User Type"
                 options={[
-                  {label:"LOS", value:"LOS"},
-                  {label:"LMS", value:"LMS"},
-                  {label:"BOTH", value:"BOTH"},
+                  { label: "LOS", value: "LOS" },
+                  { label: "LMS", value: "LMS" },
+                  { label: "BOTH", value: "BOTH" },
                 ]}
                 value={userFormik.values.user_type}
                 onChange={userFormik.handleChange}

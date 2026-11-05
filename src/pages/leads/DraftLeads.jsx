@@ -39,7 +39,7 @@ const DraftLeads = () => {
       const requestBody = {
         role: authData?.role,
         created_by: authData?.user_id,
-        step_status: "1"
+        step_status: "1,2,3"
       };
 
       const response = await GetAllApplications(requestBody);
@@ -54,7 +54,7 @@ const DraftLeads = () => {
           branch: item.branch_name ?? "-",           // not present in API response
           pendingStep: getPendingStep(item),
           createdDate: item.created_date,
-          createdBy: item.created_by ?? "-",    // not present in API response
+          create_by: item.create_by ?? "-",    // not present in API response
           raw: item,
         }));
         setLeads(formatted);
@@ -121,7 +121,7 @@ const DraftLeads = () => {
     },
     {
       name: "Created By",
-      selector: (row) => row.createdBy,
+      selector: (row) => row.create_by,
       sortable: true,
     },
   ];

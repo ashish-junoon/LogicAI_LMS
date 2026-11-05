@@ -57,6 +57,8 @@ import ManageRole from './pages/admin/ManageRole'
 import CasteMaster from './pages/master/CasteMaster'
 import LoanSubPurposeMaster from './pages/master/LoanSubPurposeMaster'
 import { AuthDataProvider, useAuthData } from './context/authContext'
+import RedirectPage from './pages/RedirectPage'
+import PagePermission from './pages/admin/PagePermission'
 
 function ProtectedRoute({ children }) {
   const { isLoggedIn } = useAuthData();
@@ -109,7 +111,8 @@ function App() {
           <Route path='/loan-purpose-master' element={<LoanPurposeMaster />} /> 
           <Route path='/loan-subpurpose-master' element={<LoanSubPurposeMaster />} /> 
           <Route path='/lead-source-master' element={<LeadSource />} /> 
-          <Route path='/tellecaller-quetions-master' element={<TelecallerQuetionsMaster />} /> 
+          <Route path='/tellecaller-quetions-master' element={<TelecallerQuetionsMaster />} />
+          <Route path="/status" element={<RedirectPage />} /> 
           {/* <Route path='/product-master' element={<CreateLoanProduct />} />  */}
 
           {/* ADMIN */}
@@ -117,6 +120,7 @@ function App() {
           <Route path='/admin/manage-role' element={<ManageRole />} /> 
           <Route path='/admin/manage-page' element={<PageManagement />} /> 
           <Route path='/admin/manage-group' element={<GroupManagement />} /> 
+          <Route path='/admin/manage-permission' element={<PagePermission />} /> 
 
           {/* Leads Section  */}
           <Route path='/lead-management/leads-draft' element={<DraftLeads />} />

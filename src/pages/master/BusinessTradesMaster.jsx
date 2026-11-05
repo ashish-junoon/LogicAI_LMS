@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import Loader from "../../components/utils/Loader";
 import { useFormik } from "formik";
 import * as Yup from 'yup';
+import { useAuthData } from "../../context/authContext";
 
 const BusinessTradesMaster = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,6 +24,8 @@ const BusinessTradesMaster = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [editingBusinessId, setEditingBusinessId] = useState(null);
+
+  const {authData} = useAuthData()
 
   //? FETCHING ALL BRANCH LIST
   const fetchAllBranches = async () => {
@@ -76,7 +79,7 @@ const BusinessTradesMaster = () => {
         id: row.id,
         business_trade: row.business_trade,
         is_active: nextStatus,
-        created_by: "ADMIN",
+        created_by: authData?.user_id,
       };
 
       const response = await UpdateBusinessTrade(req);
@@ -130,7 +133,7 @@ const BusinessTradesMaster = () => {
         const req = {
           business_trade: values.business_trade,
           is_active: values.is_active == "true" ? true : false,
-          created_by: "ADMIN",
+          created_by: authData?.user_id,
         };
 
         let response;

@@ -14,6 +14,7 @@ import Modal from "../../components/utils/Modal";
 import TextInput from "../../components/fields/TextInput";
 import { Link, useNavigate } from "react-router-dom";
 import { GetAllApplications } from "../../api/application";
+import { useAuthData } from "../../context/authContext";
 
 const CreditLeads = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,6 +22,8 @@ const CreditLeads = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  const {authData} = useAuthData()
 
   // Ordered list of steps used to derive the "Pending Step"
   const STEP_CHECKS = [
@@ -50,7 +53,7 @@ const CreditLeads = () => {
 
       const requestBody = {
         role: "admin",
-        created_by: "admin",
+        created_by: authData?.user_id,
         step_status: "5"
       };
 
@@ -67,7 +70,7 @@ const CreditLeads = () => {
           sanctionAmount: item.sanction_amount ?? 0,   // not in API response
           pendingStep: getPendingStep(item),
           createdDate: item.created_date,
-          createdBy: item.created_by ?? "-",           // not in API response
+          createdBy: item.create_by ?? "-",           // not in API response
           status: item.status ?? "Pending",
           raw: item,
         }));
@@ -141,11 +144,11 @@ const CreditLeads = () => {
     //       : row.sanctionAmount,
     //   sortable: true,
     // },
-    {
-      name: "Pending Step",
-      selector: (row) => row.pendingStep,
-      sortable: true,
-    },
+    // {
+    //   name: "Pending Step",
+    //   selector: (row) => row.pendingStep,
+    //   sortable: true,
+    // },
     {
       name: "Created Date",
       selector: (row) => row.createdDate,

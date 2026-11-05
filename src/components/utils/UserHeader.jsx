@@ -11,7 +11,7 @@ import { useAuthData } from "../../context/authContext";
 import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import Modal from "./Modal.jsx";
 
-const UserHeader = ({ lead, permisssion }) => {
+const UserHeader = ({ lead, permisssion, manualBtn }) => {
   const [loading, setLoading] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [remark, setRemark] = useState("");
@@ -178,6 +178,8 @@ const UserHeader = ({ lead, permisssion }) => {
                 </p>
               </div>
             </div>
+
+            {manualBtn ? manualBtn?.() : ""}
 
             {permisssion && (
               <div className="flex gap-2">

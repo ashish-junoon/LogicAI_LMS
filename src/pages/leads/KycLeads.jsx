@@ -3,11 +3,14 @@ import Icon from "../../components/utils/Icon";
 import Table from "../../components/Table";
 import { Link } from "react-router-dom";
 import { GetAllApplications } from "../../api/application";
+import { useAuthData } from "../../context/authContext";
 
 const KycLeads = () => {
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const {authData} = useAuthData()
 
   // Ordered list of steps used to derive the "Pending Step"
   const STEP_CHECKS = [
@@ -36,8 +39,8 @@ const KycLeads = () => {
       setError(null);
 
       const requestBody = {
-        role: "admin",
-        created_by: "admin",
+        role: authData?.role,
+        created_by: authData?.user_id,
       };
 
       const response = await GetAllApplications(requestBody);
