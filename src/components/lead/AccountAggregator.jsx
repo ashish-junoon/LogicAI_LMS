@@ -594,7 +594,7 @@ const AccountAggregator = ({
 
                 {/* Actions */}
                 <div className="flex justify-end gap-2 border-t border-gray-100 px-4 py-2.5">
-                  {isPostPDStep && (
+                  {/* {isPostPDStep && ( */}
                     <div className="flex gap-1">
                       <button
                         type="button"
@@ -616,7 +616,7 @@ const AccountAggregator = ({
                         Recuring
                       </button>
                     </div>
-                  )}
+                  {/* )} */}
 
                   <button
                     type="button"

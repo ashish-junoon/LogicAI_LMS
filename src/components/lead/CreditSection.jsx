@@ -365,6 +365,11 @@ const CreditSection = ({ creditDetails, customerDetails }) => {
         return;
       }
 
+      if(!response?.data?.creditReportLink){
+        toast.info("Report not found!")
+        return;
+      }
+
       if (response?.data?.creditReportLink) {
         applySoftPullReport(userId, response);
       } else {
@@ -567,7 +572,7 @@ const CreditSection = ({ creditDetails, customerDetails }) => {
         document_base64: documentBase64,
         file_extension: extension,
         is_active: true,
-        created_by: authData.user_id,
+        creadted_by: authData.user_id,
         company_id: import.meta.env.VITE_COMPANY_ID,
         product_name: import.meta.env.VITE_PRODUCT_NAME,
       });

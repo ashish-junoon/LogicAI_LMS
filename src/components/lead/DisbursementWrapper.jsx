@@ -33,12 +33,12 @@ const DisbursementWrapper = ({ customerDetails, onRefresh }) => {
   ];
 
   const permisions = {
-    personalInfo: false,
-    kycInfo: false,
-    addressInfo: false,
+    personalInfo: true,
+    kycInfo: true,
+    addressInfo: true,
     bankInfo: true,
-    guarantorInfo: false,
-    employementInfo: false,
+    guarantorInfo: true,
+    employementInfo: true,
   };
 
   const renderSection = () => {

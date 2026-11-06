@@ -12,6 +12,7 @@ const RejectedLeads = () => {
       const response = await GetAllApplications({
         role: 'admin',
         created_by: 'admin',
+        step_status: "0"
       })
 
       if (!response?.status || !Array.isArray(response?.data)) {
@@ -145,11 +146,11 @@ const RejectedLeads = () => {
           </button>
         </div>
 
-        {error && !loading && (
+        {/* {error && !loading && (
           <div role="alert" className="px-4 py-2 mt-3 text-sm text-red-600">
             {error}
           </div>
-        )}
+        )} */}
 
         {/* table data */}
         <Table data={leads} columns={columns} progressPending={loading} />

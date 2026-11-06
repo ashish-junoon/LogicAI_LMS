@@ -51,7 +51,7 @@ const Dashboard2 = () => {
     { id: "portfolio", label: "Portfolio Health", icon: "MdAccountBalance" },
     { id: "sectors", label: "Sectors & Geography", icon: "MdPublic" },
     { id: "customers", label: "Customer Profile", icon: "users" },
-    { id: "collection", label: "Collection", icon: "book" },
+    // { id: "collection", label: "Collection", icon: "book" },
   ];
 
   // =========================================================

@@ -1,32 +1,34 @@
 import { useState } from "react";
 import { RiSearchLine, RiTimeLine, RiUser3Line } from "react-icons/ri";
 
-const sampleVariations = [
-  {
-    id: "sample-1",
-    field: "Requested Loan Amount",
-    currentValue: "₹2,50,000",
-    previousValue: "₹2,00,000",
-    updatedBy: "Amit Sharma",
-    updatedAt: "22 Oct 2026, 10:30 AM",
-  },
-  {
-    id: "sample-2",
-    field: "Employment Type",
-    currentValue: "Self-employed",
-    previousValue: "Salaried",
-    updatedBy: "Neha Verma",
-    updatedAt: "21 Oct 2026, 3:15 PM",
-  },
-  {
-    id: "sample-3",
-    field: "Residential Address",
-    currentValue: "Andheri East, Mumbai",
-    previousValue: "Borivali West, Mumbai",
-    updatedBy: "Amit Sharma",
-    updatedAt: "20 Oct 2026, 11:05 AM",
-  },
-];
+// const sampleVariations = [
+//   {
+//     id: "sample-1",
+//     field: "Requested Loan Amount",
+//     currentValue: "₹2,50,000",
+//     previousValue: "₹2,00,000",
+//     updatedBy: "Amit Sharma",
+//     updatedAt: "22 Oct 2026, 10:30 AM",
+//   },
+//   {
+//     id: "sample-2",
+//     field: "Employment Type",
+//     currentValue: "Self-employed",
+//     previousValue: "Salaried",
+//     updatedBy: "Neha Verma",
+//     updatedAt: "21 Oct 2026, 3:15 PM",
+//   },
+//   {
+//     id: "sample-3",
+//     field: "Residential Address",
+//     currentValue: "Andheri East, Mumbai",
+//     previousValue: "Borivali West, Mumbai",
+//     updatedBy: "Amit Sharma",
+//     updatedAt: "20 Oct 2026, 11:05 AM",
+//   },
+// ];
+
+const sampleVariations = []
 
 const Variations = ({
   variations = [],

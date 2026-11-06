@@ -5,8 +5,8 @@ import JourneyStepper from "./JourneyStepper";
 import LoanStatusSummary from "./LoanStatusSummary";
 
 const LoanHeader = ({ lead, permisssion }) => {
-  const {singleLoanDetails, loanDetails } = useLoanDetails();
-  console.log(lead);
+  const { singleLoanDetails, loanDetails } = useLoanDetails();
+  console.log(lead?.product_code);
   console.log(loanDetails);
   console.log(singleLoanDetails?.loan_amount);
 
@@ -22,11 +22,26 @@ const LoanHeader = ({ lead, permisssion }) => {
                 <h1 className="text-lg font-semibold text-white">
                   {singleLoanDetails?.customer_name}
                 </h1>
-                <StatusBadge
-                  label={lead?.product_code === "IP" ? "InstaPaise" : lead?.product_code === "RFT" ? "Refyne Term Loan": lead?.product_code === "EW" ? "EarlyWages": lead?.product_code === "PU" ? "PaisaUdhar": lead?.product_code === "RFR" && "Refyne Retail OD"}
+                {/* <StatusBadge
+                  label={lead?.product_code === "IP" ? "InstaPaise" : lead?.product_code === "RFT" ? "Refyne Term Loan": lead?.product_code === "EW" ? "EarlyWages": lead?.product_code === "PU" ? "PaisaUdhar": lead?.product_code === "RFR" ? "Refyne Retail OD" : lead?.product_code}
                   variant={"primary"}
-                />
-                <StatusBadge
+                /> */}
+                <span
+                  className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium bg-white text-blue-700 || STYLES.neutral}`}
+                >
+                  {lead?.product_code === "IP"
+                    ? "InstaPaise"
+                    : lead?.product_code === "RFT"
+                      ? "Refyne Term Loan"
+                      : lead?.product_code === "EW"
+                        ? "EarlyWages"
+                        : lead?.product_code === "PU"
+                          ? "PaisaUdhar"
+                          : lead?.product_code === "RFR"
+                            ? "Refyne Retail OD"
+                            : lead?.product_code}
+                </span>
+                {/* <StatusBadge
                   label={singleLoanDetails?.loan_status}
                   variant={
                     singleLoanDetails?.loan_status === "rejected"
@@ -35,12 +50,13 @@ const LoanHeader = ({ lead, permisssion }) => {
                         ? "neutral"
                         : "primary"
                   }
-                />
+                /> */}
               </div>
               <p className="text-sm text-white/75">
                 {lead?.loan_id}
                 &middot; {lead?.product_code}
-                &middot; ₹{singleLoanDetails?.loan_amount?.toLocaleString("en-IN")}
+                &middot; ₹
+                {singleLoanDetails?.loan_amount?.toLocaleString("en-IN")}
               </p>
             </div>
           </div>
@@ -51,14 +67,14 @@ const LoanHeader = ({ lead, permisssion }) => {
                   <Button
                     btnIcon="IoCloseCircleOutline"
                     style="!border-white/40 !text-white hover:!bg-white/10 border !border-white rounded-md text-sm font-medium"
-                    onClick={() => { }}
+                    onClick={() => {}}
                   >
                     Reject
                   </Button>
                   <Button
                     variant="secondary"
                     style="!border-white/0 !bg-white !text-primary hover:!bg-white/90 rounded-md text-sm font-medium"
-                    onClick={() => { }}
+                    onClick={() => {}}
                   >
                     Move to Next Stage
                   </Button>
@@ -77,9 +93,9 @@ const LoanHeader = ({ lead, permisssion }) => {
         <div className="rounded-xl bg-white">
           {/* {lead?.stage == "active" || lead?.stage == "closed" ? ( */}
           {/* {["active", "closed", "npa", "due", "overdue"]?.includes(lead?.loan_status?.toLowerCase()) && ( */}
-            <div>
-              <LoanStatusSummary lead={singleLoanDetails} />
-            </div>
+          <div>
+            <LoanStatusSummary lead={singleLoanDetails} />
+          </div>
           {/* )} */}
         </div>
       </div>

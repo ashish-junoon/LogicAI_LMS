@@ -87,7 +87,7 @@ const TelecallinWrapper = ({ customerDetails, onRefresh }) => {
         document_base64: base64Result,
         file_extension: videoFile.name.split(".").pop()?.toLowerCase() || "",
         is_active: true,
-        created_by: authData?.user_id,
+        creadted_by: authData?.user_id,
         company_id: import.meta.env.VITE_COMPANY_ID,
         product_name: import.meta.env.VITE_PRODUCT_NAME,
       });
