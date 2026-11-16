@@ -122,3 +122,14 @@ export const SaveAdditionalRemark = async (req) => {
         throw error;
     }
 };
+
+
+export const CAMREPORT = async (req) => {
+    try {
+        const response = await api.post("/CAM/CAMREPORT", req);
+        return response.data;
+    } catch (error) {
+        console.error("CAMREPORT:", error.response?.data || error.message);
+        throw error;
+    }
+}

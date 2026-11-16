@@ -212,27 +212,27 @@ const AccountAggregator = ({
     fetchAccountAggregatorResult();
   }, []);
 
-  // const handleDownloadReport = (account) => {
-  //   if (!account?.pdf_link) {
-  //     toast.info("Report download is not available for this account yet.");
-  //     return;
-  //   }
-
-  //   window.open(account.pdf_link, "_blank", "noopener,noreferrer");
-  // };
-
-  const handleDownloadReport = async (file) => {
-    try {
-      await downloadZipFromUrl(file?.pdf_link, {
-        downloadAll: false,
-        onSuccess: (files) => {
-          console.log("Files extracted:", files);
-        },
-      });
-    } catch (error) {
-      console.log(error.message);
+  const handleDownloadReport = (account) => {
+    if (!account?.pdf_link) {
+      toast.info("Report download is not available for this account yet.");
+      return;
     }
+
+    window.open(account.pdf_link, "_blank", "noopener,noreferrer");
   };
+
+  // const handleDownloadReport = async (file) => {
+  //   try {
+  //     await downloadZipFromUrl(file?.pdf_link, {
+  //       downloadAll: false,
+  //       onSuccess: (files) => {
+  //         console.log("Files extracted:", files);
+  //       },
+  //     });
+  //   } catch (error) {
+  //     console.log(error.message);
+  //   }
+  // };
 
   const handleGetReport = async () => {
     try {

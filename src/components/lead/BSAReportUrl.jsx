@@ -217,8 +217,6 @@ const handleFetchBsaResult = async (runId) => {
       customer_id: data?.personalKyc[0]?.customer_id || "",
       application_id: data?.personalKyc[0]?.application_id || "",
       fileurl: selectedDocument?.document_path,
-      // fileurl:
-      //   "https://lmsapi.junooncapital.com/document/PU19340/PU193403572_BankStatement.pdf",
       fileName: selectedDocument?.document_type,
       filepassword: selectedDocument?.filepassword || "N",
       mobileno: data?.marketSurvey[0]?.business_owner_mobile_no || "",

@@ -18,6 +18,7 @@ import { useSearchParams } from "react-router-dom";
 import DocumentVault from "../utils/DocumentVault";
 import BSAReportUrl from "./BSAReportUrl";
 import AccountAggregator from "./AccountAggregator";
+import BusinessLoanCAM from "./BusinessLoanCAM";
 
 const CreditWrapper = ({ customerDetails, onRefresh }) => {
   const [activeSection, setActiveSection] = useState("user");
@@ -44,6 +45,7 @@ const CreditWrapper = ({ customerDetails, onRefresh }) => {
   const sections = [
     { id: "user", label: "User Details", icon: "RiShieldCheckLine" },
     { id: "loaninfo", label: "Loan Info", icon: "GiPayMoney" },
+    { id: "cam", label: "CAM Report", icon: "PiGraph" },
     { id: "credit", label: "Credit Analysis", icon: "RiShieldCheckLine" },
     { id: "aa", label: "Account Aggregator", icon: "RiBankCardLine" },
     { id: "bsa", label: "Bank Statement Ananlysis", icon: "RiBankCardLine" },
@@ -71,6 +73,8 @@ const CreditWrapper = ({ customerDetails, onRefresh }) => {
         );
       case "videoKyc":
         return <VideoKYC />;
+      case "cam":
+        return <BusinessLoanCAM />;
       case "loaninfo":
         return (
           <>
