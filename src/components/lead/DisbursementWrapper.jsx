@@ -44,8 +44,8 @@ const DisbursementWrapper = ({ customerDetails, onRefresh }) => {
   const renderSection = () => {
     switch (activeSection) {
       case "disbursement":
-        // return <Disbursement />;
-        return <UploadDisbursment customerDetails={customerDetails} />;
+        return <Disbursement />;
+        // return <UploadDisbursment customerDetails={customerDetails} />;
       case "remarks":
         return <RemarksHistory permission={true} remarks={customerDetails?.history || []} />;
       case "variations":

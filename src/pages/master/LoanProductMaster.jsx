@@ -162,6 +162,7 @@ const LoanProductMaster = () => {
         product_name: row?.product_name,
         category: row?.category,
         principle_amount: Number(row?.principle_amount),
+        repayment_frequency: row?.repayment_frequency,
         lpf: Number(row?.lpf),
         interest_rate: Number(row?.interest_rate),
         tenure_months: Number(row?.tenure_months),
@@ -313,6 +314,7 @@ const LoanProductMaster = () => {
       loan_type: "",
       category: "",
       principle_amount: "",
+      repayment_frequency: "",
       lpf: "",
       interest_rate: "",
       tenure_months: "",
@@ -338,6 +340,7 @@ const LoanProductMaster = () => {
           product_name: values.product_name.trim(),
           category: values.category,
           principle_amount: Number(values.principle_amount),
+          repayment_frequency: values?.repayment_frequency,
           lpf: Number(values.lpf),
           interest_rate: Number(values.interest_rate),
           tenure_months: Number(values.tenure_months),
@@ -423,7 +426,29 @@ const LoanProductMaster = () => {
       sortable: true,
       width: "70px",
     },
+    
+     {
+      name: "Status",
+      center: true,
+      selector: (row) => (
+        <TogleInput
+          checked={row?.is_active}
+          onChange={() => handleToggleStatus(row)}
+        />
+      ),
+    },
     {
+      name: "Action",
+      center: true,
+      selector: (row) => (
+        <div className="flex gap-5 cursor-pointer">
+          <button onClick={() => handleEditProduct(row)}>
+            <Icon name="FaEdit" size={18} color="black" />
+          </button>
+        </div>
+      ),
+    },
+   {
       name: "Product ID",
       selector: (row) => row?.product_id || "-",
       sortable: true,
@@ -514,27 +539,7 @@ const LoanProductMaster = () => {
       sortable: true,
       center: true,
     },
-    {
-      name: "Action",
-      center: true,
-      selector: (row) => (
-        <div className="flex gap-5 cursor-pointer">
-          <button onClick={() => handleEditProduct(row)}>
-            <Icon name="FaEdit" size={18} color="black" />
-          </button>
-        </div>
-      ),
-    },
-    {
-      name: "Status",
-      center: true,
-      selector: (row) => (
-        <TogleInput
-          checked={row?.is_active}
-          onChange={() => handleToggleStatus(row)}
-        />
-      ),
-    },
+    
   ];
 
   useEffect(() => {
@@ -662,7 +667,7 @@ const LoanProductMaster = () => {
               <SelectInput
                 label="Repayment Frequency"
                 name="repayment_frequency"
-                placeholder="Select calculation method"
+                placeholder="Select repayment frequency"
                 value={productFormik.values.repayment_frequency}
                 onChange={productFormik.handleChange}
                 onBlur={productFormik.handleBlur}
