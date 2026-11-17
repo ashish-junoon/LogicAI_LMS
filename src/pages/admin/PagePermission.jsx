@@ -10,18 +10,20 @@ import { useAuthData } from "../../context/authContext";
 
 const PagePermission = () => {
   const [tableData, setTableData] = useState([]);
-  const [permissions, setPermissions] = useState([])
+  const [permissions, setPermissions] = useState([]);
 
+  console.log(tableData.length)
+
+  const navigate = useNavigate();
   const { authData } = useAuthData();
-  const logged_id = authData?.user_id
-  
+  const logged_id = authData?.user_id;
+  const location = useLocation();
+  const USER_ID = location.state.id;
+
   // const pageAccess = LoginPageFinder("page_display_name", "manage users");
   // const permission = pageAccess?.[0]?.r_w_permission;
 
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const USER_ID = searchParams.get("id");
-  
+
   useEffect(() => {
     const allGroups = authData?.loginGroupNames || [];
 
@@ -43,13 +45,12 @@ const PagePermission = () => {
       const req = {
         user_id: USER_ID,
         login_user: logged_id,
-        page_name_type : ""
+        page_name_type: "",
       };
 
       try {
         const response = await GetPagePermission(req);
-        const filteredData = response?.data?.filter((item)=> item.is_active)
-        
+        const filteredData = response?.data?.filter((item) => item.is_active);
 
         if (response.status) {
           setTableData(filteredData);
@@ -99,34 +100,34 @@ const PagePermission = () => {
     });
   };
 
-const handleSave = async () => {
-  const req = {
-    permissions: permissions.map((item) => ({
-      id: item.id || 0,
-      user_id: item.user_id,
-      page_id: item.page_id,
-      group_id: item.group_id,
-      set_permission_access: Boolean(item.set_permission_access),
-      r_w_permission: Boolean(item.r_w_permission),
-      is_active: Boolean(item.is_active),
-      created_by: item.created_by,
-    })),
-  };
+  const handleSave = async () => {
+    const req = {
+      permissions: permissions.map((item) => ({
+        id: item.id || 0,
+        user_id: item.user_id,
+        page_id: item.page_id,
+        group_id: item.group_id,
+        set_permission_access: Boolean(item.set_permission_access),
+        r_w_permission: Boolean(item.r_w_permission),
+        is_active: Boolean(item.is_active),
+        created_by: item.created_by,
+      })),
+    };
 
-  try {
-    const response = await SetPagePermission(req);
+    try {
+      const response = await SetPagePermission(req);
 
-    if (response?.status) {
-      toast.success(response.message);
-      navigate(-1);
-    } else {
-      toast.error(response?.message || "Failed to save permissions.");
+      if (response?.status) {
+        toast.success(response.message);
+        navigate(-1);
+      } else {
+        toast.error(response?.message || "Failed to save permissions.");
+      }
+    } catch (error) {
+      console.error("Error saving permissions:", error);
+      toast.error("An error occurred while saving permissions.");
     }
-  } catch (error) {
-    console.error("Error saving permissions:", error);
-    toast.error("An error occurred while saving permissions.");
-  }
-};
+  };
 
   // PERMISSION CHECKBOX
   const PermissionCheckbox = ({ checked, disabled, onChange, label, id }) => (

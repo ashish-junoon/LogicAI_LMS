@@ -440,7 +440,9 @@ const ManageUser = () => {
       name: "Permission",
       selector: (row) => row.user_id,
       
-      cell: (row) => <Link className="text-xl" to={`/admin/manage-permission?id=${row.user_id}`}><MdViewInAr /></Link>,
+      cell: (row) => <Link className="text-xl" 
+      state={{ id: row.user_id}}
+      to={`/admin/manage-permission`}><MdViewInAr /></Link>,
     },
     {
       name: "Full Name",

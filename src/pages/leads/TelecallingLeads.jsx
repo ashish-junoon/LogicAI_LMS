@@ -97,8 +97,14 @@ const TelecallingLeads = () => {
       center: true,
       cell: (row) => (
         <Link
-          to={`/telecalling-detail?customer_id=${encodeURIComponent(row.customerId ?? "")}&application_id=${encodeURIComponent(row.applicationId ?? "")}`}
-          state={{ lead: row.raw }}   // pass full record to detail page
+          to={`/telecalling-detail`}
+          state={{
+            lead: row.raw,
+            pera: {
+              customerId: row.customerId,
+              applicationId: row.applicationId,
+            },
+          }}   // pass full record to detail page
           className="p-1.5 px-2 rounded-sm text-xs font-medium bg-primary flex gap-1 text-white items-center"
         >
           <Icon name="FaRegEye" size={15} color={"white"} />

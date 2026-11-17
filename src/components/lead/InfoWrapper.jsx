@@ -12,30 +12,26 @@ import Variations from "./Variations";
 import LoanAnalysis from "./LoanAnalysis";
 import LeadFormDetails from "../../pages/formPages/LeadFormDetails";
 import DocumentVault from "../utils/DocumentVault";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { useAuthData } from "../../context/authContext";
 import { showValidationError } from "../utils/common";
 
 const InfoWrapper = ({ customerDetails, onRefresh, setCustomerDetails }) => {
   const [activeSection, setActiveSection] = useState("user");
   const [isFinalSubmitting, setIsFinalSubmitting] = useState(false);
-  const [loading, setIsLoading] = useState(false)
 
-  console.log("customerDetails...", customerDetails)
+  const location = useLocation();
+  const { customerId, applicationId } = location.state?.pera || {};
+  const { authData } = useAuthData();
 
-    const [searchParams] = useSearchParams();
-  const customerId = searchParams.get("customer_id");
-  const applicationId = searchParams.get("application_id");
-  const {authData} = useAuthData()
-  
   const permisions = {
-    personalInfo : true,
-    kycInfo : true,
-    addressInfo : true,
-    bankInfo : true,
-    guarantorInfo : true,
-    employementInfo : true,
-  }
+    personalInfo: true,
+    kycInfo: true,
+    addressInfo: true,
+    bankInfo: true,
+    guarantorInfo: true,
+    employementInfo: true,
+  };
 
   const sections = [
     { id: "user", label: "User Details", icon: "RiShieldCheckLine" },
@@ -83,10 +79,22 @@ const InfoWrapper = ({ customerDetails, onRefresh, setCustomerDetails }) => {
   const renderSection = () => {
     switch (activeSection) {
       case "user":
-        return <LeadFormDetails permisions={permisions} customerDetails={customerDetails} onRefresh={onRefresh} />;
-        // return <LeadForm />;
+        return (
+          <LeadFormDetails
+            permisions={permisions}
+            customerDetails={customerDetails}
+            onRefresh={onRefresh}
+          />
+        );
+      // return <LeadForm />;
       case "loanInfo":
-        return <LoanAnalysis loanData={customerDetails?.loanDetails?.[0]} data={customerDetails} applicationId={customerDetails?.loanDetails?.[0]?.application_id} />;
+        return (
+          <LoanAnalysis
+            loanData={customerDetails?.loanDetails?.[0]}
+            data={customerDetails}
+            applicationId={customerDetails?.loanDetails?.[0]?.application_id}
+          />
+        );
       case "documents":
         return (
           // <DocumentsList
@@ -102,7 +110,7 @@ const InfoWrapper = ({ customerDetails, onRefresh, setCustomerDetails }) => {
             applicationId={applicationId}
             userId={authData?.user_id}
             onDocumentsUploaded={onRefresh}
-            onSubmitForm={()=> {}}
+            onSubmitForm={() => {}}
             submittingForm={isFinalSubmitting}
           />
         );
@@ -111,9 +119,20 @@ const InfoWrapper = ({ customerDetails, onRefresh, setCustomerDetails }) => {
       case "videoKyc":
         return <VideoKYC />;
       case "bankInfo":
-        return <BankInfoSection bankData={customerDetails?.bankDetails?.[0]} isVerified={customerDetails?.workflowNodes?.[0]?.bank_is_completed} />;
+        return (
+          <BankInfoSection
+            bankData={customerDetails?.bankDetails?.[0]}
+            isVerified={customerDetails?.workflowNodes?.[0]?.bank_is_completed}
+          />
+        );
       case "remarks":
-        return <RemarksHistory permission={true} remarks={customerDetails?.history || []} fetchData={onRefresh} />;
+        return (
+          <RemarksHistory
+            permission={true}
+            remarks={customerDetails?.history || []}
+            fetchData={onRefresh}
+          />
+        );
       case "variations":
         return <Variations variations={customerDetails?.variations || []} />;
       default:
@@ -170,7 +189,6 @@ const InfoWrapper = ({ customerDetails, onRefresh, setCustomerDetails }) => {
 
     <div className="py-4">
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-
         <div className="border-b border-gray-200 px-4">
           <nav className="flex items-center gap-1 overflow-x-auto no-scrollbar">
             {sections.map((section) => {
@@ -198,10 +216,8 @@ const InfoWrapper = ({ customerDetails, onRefresh, setCustomerDetails }) => {
             })}
           </nav>
         </div>
-        
-        <div className="p-5">
-          {renderSection()}
-        </div>
+
+        <div className="p-5">{renderSection()}</div>
       </div>
     </div>
   );

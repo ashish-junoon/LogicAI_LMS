@@ -116,8 +116,6 @@ const { customerId, applicationId } = location.state?.pera || {};
       )
     : null
     
-    console.log(scopedDetails)
-
   const marketSurvey = scopedDetails?.marketSurvey?.[0]
   const personalKyc = scopedDetails?.personalKyc?.[0]
   const loanDetails = scopedDetails?.loanDetails?.[0]

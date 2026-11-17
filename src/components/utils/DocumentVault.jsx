@@ -30,7 +30,7 @@ const DocumentVault = ({
   const [remark, setRemark] = useState("");
   const [remarkError, setRemarkError] = useState("");
 
-  const { authData } = useAuthData();
+  const { authData } = useAuthData();  
 
   const fileInputRef = useRef(null);
 //   const previewUrlsRef = useRef(new Set());

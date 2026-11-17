@@ -97,8 +97,6 @@ import EmploymentInformation from "../../components/forms/EmploymentInformation"
 const LeadFormDetails = ({ permisions, customerDetails, onRefresh }) => {
   const [selected, setSelected] = useState("Personal Information");
   
-  console.log("customerDetails", customerDetails)
-
   const tabs = [
     {
       name: "Personal Information",

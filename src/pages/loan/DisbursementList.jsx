@@ -85,8 +85,14 @@ const DisbursementList = () => {
       center: true,
       cell: (row) => (
         <Link
-          to={`/disbursement-detail?customer_id=${encodeURIComponent(row.customerId ?? "")}&application_id=${encodeURIComponent(row.loanId === "-" ? "" : row.loanId)}`}
-          state={{ lead: row.raw }}
+          to={`/disbursement-detail`}
+          state={{
+            lead: row.raw,
+            pera: {
+              customerId: row.customerId,
+              applicationId: row.applicationId,
+            },
+          }}
           className={`p-1.5 px-2 rounded-sm text-xs font-medium bg-primary flex gap-1 text-white items-center`}
         >
           <Icon name="FaRegEye" size={15} color={"white"} />
