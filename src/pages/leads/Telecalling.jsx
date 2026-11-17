@@ -13,12 +13,21 @@ import Modal from "../../components/utils/Modal";
 import { showValidationError } from "../../components/utils/common";
 
 const Telecalling = () => {
+  
+  // const [searchParams] = useSearchParams();
+  // const customerId = searchParams.get("customer_id") || routeLead?.customer_id;
+  // const applicationId = searchParams.get("application_id") || routeLead?.application_id;
+  
   const location = useLocation();
-  const [searchParams] = useSearchParams();
+  const navigate = useNavigate()
   const routeLead = location.state?.lead;
-  const customerId = searchParams.get("customer_id") || routeLead?.customer_id;
-  const applicationId =
-    searchParams.get("application_id") || routeLead?.application_id;
+  const { customerId, applicationId } = location.state?.pera || {};
+
+  if(!customerId && !applicationId){
+    navigate("/")
+  }
+
+
   const [customerDetails, setCustomerDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -26,7 +35,6 @@ const Telecalling = () => {
   const [remark, setRemark] = useState("");
 
   const { authData } = useAuthData();
-  const navigate = useNavigate()
   const refreshCustomerDetails = async () => {
     try {
       const response = await CustomerDetails({

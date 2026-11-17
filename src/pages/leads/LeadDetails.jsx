@@ -1,27 +1,32 @@
-import { useEffect, useState } from 'react'
-import InfoWrapper from '../../components/lead/InfoWrapper'
-import UserHeader from '../../components/utils/UserHeader'
-import Breadcrumbs from '../../components/utils/Breadcrumbs'
-import Loader from '../../components/utils/Loader'
-import { CustomerDetails } from '../../api/application'
-import { useLocation, useSearchParams } from 'react-router-dom'
-import { toast } from 'react-toastify'
-import { useAuthData } from '../../context/authContext'
+import { useEffect, useState } from "react";
+import InfoWrapper from "../../components/lead/InfoWrapper";
+import UserHeader from "../../components/utils/UserHeader";
+import Breadcrumbs from "../../components/utils/Breadcrumbs";
+import Loader from "../../components/utils/Loader";
+import { CustomerDetails } from "../../api/application";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useAuthData } from "../../context/authContext";
 
 const LeadDetails = () => {
-  const location = useLocation()
+  const location = useLocation();
+  const navigate = useNavigate();
   // const [searchParams] = useSearchParams()
-  const routeLead = location.state?.lead
+  const routeLead = location.state?.lead;
   // const customerId = searchParams.get('customer_id') || routeLead?.customer_id
   // const applicationId = searchParams.get('application_id') || routeLead?.application_id
 
-const { customerId, applicationId } = location.state?.pera || {};
+  const { customerId, applicationId } = location.state?.pera || {};
 
-  const [customerDetails, setCustomerDetails] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')  
+  if (!customerId && !applicationId) {
+    navigate("/");
+  }
 
-  const {authData}= useAuthData()
+  const [customerDetails, setCustomerDetails] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const { authData } = useAuthData();
 
   const refreshCustomerDetails = async () => {
     try {
@@ -30,37 +35,41 @@ const { customerId, applicationId } = location.state?.pera || {};
         application_id: applicationId,
         role: authData?.role,
         created_by: authData?.user_id,
-      })
+      });
 
       if (!response?.status || !response?.data) {
-        throw new Error(response?.message || 'Failed to refresh customer details.')
+        throw new Error(
+          response?.message || "Failed to refresh customer details.",
+        );
       }
 
-      setCustomerDetails(response.data)
-      return true
+      setCustomerDetails(response.data);
+      return true;
     } catch (refreshError) {
-      console.error('Error refreshing customer details:', refreshError)
+      console.error("Error refreshing customer details:", refreshError);
       toast.error(
         refreshError?.response?.data?.message ||
-        refreshError?.message ||
-        'Unable to refresh the updated customer details.'
-      )
-      return false
+          refreshError?.message ||
+          "Unable to refresh the updated customer details.",
+      );
+      return false;
     }
-  }
+  };
 
   useEffect(() => {
-    let isCurrent = true
+    let isCurrent = true;
 
     const fetchCustomerDetails = async () => {
       if (!customerId || !applicationId) {
-        setError('Customer ID and application ID are required to load this lead.')
-        setLoading(false)
-        return
+        setError(
+          "Customer ID and application ID are required to load this lead.",
+        );
+        setLoading(false);
+        return;
       }
 
-      setLoading(true)
-      setError('')
+      setLoading(true);
+      setError("");
 
       try {
         const response = await CustomerDetails({
@@ -68,45 +77,49 @@ const { customerId, applicationId } = location.state?.pera || {};
           application_id: applicationId,
           role: authData?.role,
           created_by: authData?.user_id,
-        })
+        });
 
         if (!response?.status || !response?.data) {
-          throw new Error(response?.message || 'Failed to load customer details.')
+          throw new Error(
+            response?.message || "Failed to load customer details.",
+          );
         }
 
-        if (isCurrent) setCustomerDetails(response.data)
+        if (isCurrent) setCustomerDetails(response.data);
       } catch (fetchError) {
-        console.error('Error fetching customer details:', fetchError)
+        console.error("Error fetching customer details:", fetchError);
         if (isCurrent) {
           setError(
-            fetchError?.code === 'ECONNABORTED' || fetchError?.code === 'ETIMEDOUT'
-              ? 'Loading customer details timed out. Please check your connection and try again.'
+            fetchError?.code === "ECONNABORTED" ||
+              fetchError?.code === "ETIMEDOUT"
+              ? "Loading customer details timed out. Please check your connection and try again."
               : fetchError?.response?.data?.message ||
-            fetchError?.message ||
-            'Something went wrong while loading customer details.'
-          )
+                  fetchError?.message ||
+                  "Something went wrong while loading customer details.",
+          );
         }
       } finally {
-        if (isCurrent) setLoading(false)
+        if (isCurrent) setLoading(false);
       }
-    }
+    };
 
-    fetchCustomerDetails()
+    fetchCustomerDetails();
 
     return () => {
-      isCurrent = false
-    }
-  }, [customerId, applicationId, authData?.role, authData?.user_id])
+      isCurrent = false;
+    };
+  }, [customerId, applicationId, authData?.role, authData?.user_id]);
 
   const matchesLead = (record) => {
-    const recordCustomerId = record?.customer_id
-    const recordApplicationId = record?.application_id || record?.applicantion_id
+    const recordCustomerId = record?.customer_id;
+    const recordApplicationId =
+      record?.application_id || record?.applicantion_id;
 
     return (
       (!recordCustomerId || recordCustomerId === customerId) &&
       (!recordApplicationId || recordApplicationId === applicationId)
-    )
-  }
+    );
+  };
   const scopedDetails = customerDetails
     ? Object.fromEntries(
         Object.entries(customerDetails).map(([key, value]) => [
@@ -114,11 +127,11 @@ const { customerId, applicationId } = location.state?.pera || {};
           Array.isArray(value) ? value.filter(matchesLead) : value,
         ]),
       )
-    : null
-    
-  const marketSurvey = scopedDetails?.marketSurvey?.[0]
-  const personalKyc = scopedDetails?.personalKyc?.[0]
-  const loanDetails = scopedDetails?.loanDetails?.[0]
+    : null;
+
+  const marketSurvey = scopedDetails?.marketSurvey?.[0];
+  const personalKyc = scopedDetails?.personalKyc?.[0];
+  const loanDetails = scopedDetails?.loanDetails?.[0];
   const lead = {
     ...routeLead,
     customer_name:
@@ -128,32 +141,39 @@ const { customerId, applicationId } = location.state?.pera || {};
     loan_id: applicationId,
     product_code: loanDetails?.product_code || loanDetails?.loan_type,
     loan_amount: loanDetails?.loan_amount,
-    loan_status: routeLead?.status || 'draft',
-    stage: 'draft',
-    app_form_status : scopedDetails?.workflowNodes?.[0]?.app_form_status,
-  }
-  
+    loan_status: routeLead?.status || "draft",
+    stage: "draft",
+    app_form_status: scopedDetails?.workflowNodes?.[0]?.app_form_status,
+  };
 
   return (
     <div>
-        <Breadcrumbs items={[{ label: "New Leads", path: "/leads-new" }, { label: applicationId || "Lead Details" }]} />
-        <UserHeader permisssion lead={lead} />
-        {loading ? (
-          <Loader text="Loading customer details..." />
-        ) : error ? (
-          <div role="alert" className="m-4 rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {error}
-          </div>
-        ) : (
-          <InfoWrapper
-            key={`${customerId}-${applicationId}`}
-            customerDetails={scopedDetails}
-            onRefresh={refreshCustomerDetails}
-            setCustomerDetails={setCustomerDetails}
-          />
-        )}
+      <Breadcrumbs
+        items={[
+          { label: "New Leads", path: "/leads-new" },
+          { label: applicationId || "Lead Details" },
+        ]}
+      />
+      <UserHeader permisssion lead={lead} />
+      {loading ? (
+        <Loader text="Loading customer details..." />
+      ) : error ? (
+        <div
+          role="alert"
+          className="m-4 rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+        >
+          {error}
+        </div>
+      ) : (
+        <InfoWrapper
+          key={`${customerId}-${applicationId}`}
+          customerDetails={scopedDetails}
+          onRefresh={refreshCustomerDetails}
+          setCustomerDetails={setCustomerDetails}
+        />
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default LeadDetails
+export default LeadDetails;

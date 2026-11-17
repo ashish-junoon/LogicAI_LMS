@@ -81,7 +81,8 @@ const CreditLeads = () => {
       }
     } catch (err) {
       console.error("Error fetching leads:", err);
-      setError(err?.message || "Something went wrong while fetching leads.");
+      setError(err?.response?.data?.message ||
+            err?.message || "Something went wrong while fetching leads.");
       setLeads([]);
     } finally {
       setLoading(false);

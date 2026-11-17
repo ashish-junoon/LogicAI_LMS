@@ -4,20 +4,29 @@ import UserHeader from "../../components/utils/UserHeader";
 import Breadcrumbs from "../../components/utils/Breadcrumbs";
 import Loader from "../../components/utils/Loader";
 import { CustomerDetails } from "../../api/application";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuthData } from "../../context/authContext";
 
 const CreditDetails = () => {
   const location = useLocation();
-  const [searchParams] = useSearchParams();
+  // const [searchParams] = useSearchParams();
   const routeLead = location.state?.lead;
-  const customerId = searchParams.get("customer_id") || routeLead?.customer_id;
-  const applicationId =
-    searchParams.get("application_id") || routeLead?.application_id;
+  // const customerId = searchParams.get("customer_id") || routeLead?.customer_id;
+  // const applicationId = searchParams.get("application_id") || routeLead?.application_id;
+
+  const { customerId, applicationId } = location.state?.pera || {};
+
   const [customerDetails, setCustomerDetails] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const {authData} = useAuthData()
+  const navigate = useNavigate()
+
+
+  if(!customerId && !applicationId){
+    navigate("/")
+  }
+  
   const fetchCustomerDetails = async (isCurrent = true) => {
     if (!customerId || !applicationId) {
       setError(

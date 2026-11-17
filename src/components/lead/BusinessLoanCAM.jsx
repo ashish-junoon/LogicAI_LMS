@@ -3,7 +3,7 @@ import "./BusinessLoanCAM.css";
 import { CAMREPORT, SettingApplicationStep } from "../../api/application.js";
 import { useAuthData } from "../../context/authContext.jsx";
 import { toast } from "react-toastify";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { showValidationError } from "../utils/common.jsx";
 import Modal from "../utils/Modal.jsx";
 
@@ -397,9 +397,9 @@ export default function BusinessLoanCAM({ initialData, onSave, onSubmit, persist
   const navigate = useNavigate()
   const isDecline = result.decision === "DECLINE";
   
-    const [searchParams] = useSearchParams();
-  const customerId = searchParams.get("customer_id");
-  const applicationId = searchParams.get("application_id");
+  const location = useLocation();
+    const { customerId, applicationId } = location.state?.pera || {};
+  
 
   const handleSubmit = async () => {
     const trimmedRemark = submitRemark.trim();
@@ -462,7 +462,6 @@ export default function BusinessLoanCAM({ initialData, onSave, onSubmit, persist
         const res = await CAMREPORT(requestPayload);
 
         if (res?.status || res?.data?.success) {
-          console.log("CAM Report fetched successfully:", res);
           const profile = res?.data?.profile;
           const bureau = res?.data?.profile?.bureau;
           const collateral = res?.data?.profile?.collateral?.[0];

@@ -17,7 +17,7 @@ import {
   RecurringRun,
   RecurringStatus,
 } from "../../api/kycApi";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { IoMdRefresh } from "react-icons/io";
 import Loader from "../utils/Loader";
 import { showValidationError } from "../utils/common";
@@ -36,9 +36,8 @@ const AccountAggregator = ({
   const [error, setError] = useState("");
   const { authData } = useAuthData();
 
-  const [searchParams] = useSearchParams();
-  const customerId = searchParams.get("customer_id");
-  const applicationId = searchParams.get("application_id");
+  const location = useLocation();
+  const { customerId, applicationId } = location.state?.pera || {};
 
   const requestedAccountRef = useRef([]);
 
@@ -95,13 +94,13 @@ const AccountAggregator = ({
         await delay(10000);
         const response = await RecurringStatus(req);
         if (response.status && response.data.state.state == "SUCCESS") {
-          toast.success("Recuring Success")
+          toast.success("Recuring Success");
           return response;
-        }else if(response.data.state.state == "FAILED"){
-          toast.info("Recuring failed!")
+        } else if (response.data.state.state == "FAILED") {
+          toast.info("Recuring failed!");
         }
       }
-      return false
+      return false;
     } catch (error) {
       showValidationError(error);
     }
@@ -110,10 +109,10 @@ const AccountAggregator = ({
   const fetchRecurringResult = async (req) => {
     const reqId = req?.data?.requestId;
 
-    const StatusResponse = await fetchRecurringStatus(reqId)
-    if(!StatusResponse){
-      toast.info("Reccuring under process!")
-      setFetching(false)
+    const StatusResponse = await fetchRecurringStatus(reqId);
+    if (!StatusResponse) {
+      toast.info("Reccuring under process!");
+      setFetching(false);
       return;
     }
 
@@ -144,15 +143,15 @@ const AccountAggregator = ({
     console.log(CT035_ID);
 
     try {
-      setFetching(true)
+      setFetching(true);
       const req = {
         customer_id: userData?.customerId,
         application_id: userData?.applicationId,
         mobile_number: userData?.mobile,
         pan_no: userData?.pan,
         consent_type: "",
-        company_id: "LOS",
-        product_name: "LOS",
+        company_id: import.meta.env.VITE_COMPANY_ID,
+        product_name: import.meta.env.VITE_PRODUCT_NAME,
         created_by: authData?.user_id,
         consentHandle: CT035_ID?.consent_handle_id,
       };
@@ -167,8 +166,8 @@ const AccountAggregator = ({
       }
     } catch (error) {
       showValidationError(error);
-    }finally{
-      setFetching(false)
+    } finally {
+      setFetching(false);
     }
   };
 
@@ -180,15 +179,15 @@ const AccountAggregator = ({
     console.log(CT003_ID);
 
     try {
-      setFetching(true)
+      setFetching(true);
       const req = {
         customer_id: userData?.customerId,
         application_id: userData?.applicationId,
         mobile_number: userData?.mobile,
         pan_no: userData?.pan,
         consent_type: "",
-        company_id: "LOS",
-        product_name: "LOS",
+        company_id: import.meta.env.VITE_COMPANY_ID,
+        product_name: import.meta.env.VITE_PRODUCT_NAME,
         created_by: authData?.user_id,
         consentHandle: CT003_ID?.consent_handle_id,
       };
@@ -203,8 +202,8 @@ const AccountAggregator = ({
       }
     } catch (error) {
       showValidationError(error);
-    }finally{
-      setFetching(false)
+    } finally {
+      setFetching(false);
     }
   };
 
@@ -382,8 +381,8 @@ const AccountAggregator = ({
         application_id: applicationId,
         current_requestId: requestId,
         step_status: "0",
-        company_id: "LOS",
-        product_name: "LOS",
+        company_id: import.meta.env.VITE_COMPANY_ID,
+        product_name: import.meta.env.VITE_PRODUCT_NAME,
         created_by: authData?.user_id,
       };
 
@@ -424,8 +423,8 @@ const AccountAggregator = ({
     return `₹${Number(amount).toLocaleString("en-IN")}`;
   };
 
-  if(fetching){
-    return <Loader />
+  if (fetching) {
+    return <Loader />;
   }
 
   return (
@@ -595,27 +594,27 @@ const AccountAggregator = ({
                 {/* Actions */}
                 <div className="flex justify-end gap-2 border-t border-gray-100 px-4 py-2.5">
                   {/* {isPostPDStep && ( */}
-                    <div className="flex gap-1">
-                      <button
-                        type="button"
-                        onClick={() => handleUpdateBalance(account)}
-                        disabled={loading}
-                        className="inline-flex items-center gap-1.5 rounded-md bg-primary border border-dashed border-primary px-3 py-2 text-xs font-medium text-white hover:bg-primary-800 hover:text-white disabled:opacity-60"
-                      >
-                        <IoMdRefresh size={14} />
-                        Update Balance
-                      </button>
+                  <div className="flex gap-1">
+                    <button
+                      type="button"
+                      onClick={() => handleUpdateBalance(account)}
+                      disabled={loading}
+                      className="inline-flex items-center gap-1.5 rounded-md bg-primary border border-dashed border-primary px-3 py-2 text-xs font-medium text-white hover:bg-primary-800 hover:text-white disabled:opacity-60"
+                    >
+                      <IoMdRefresh size={14} />
+                      Update Balance
+                    </button>
 
-                      <button
-                        type="button"
-                        onClick={() => handleReccuringReport(account)}
-                        disabled={loading}
-                        className="inline-flex items-center gap-1.5 rounded-md bg-gray-900 border border-dashed border-primary px-3 py-2 text-xs font-medium text-white hover:bg-gray-600 hover:text-white disabled:opacity-60"
-                      >
-                        <IoMdRefresh size={14} />
-                        Recuring
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleReccuringReport(account)}
+                      disabled={loading}
+                      className="inline-flex items-center gap-1.5 rounded-md bg-gray-900 border border-dashed border-primary px-3 py-2 text-xs font-medium text-white hover:bg-gray-600 hover:text-white disabled:opacity-60"
+                    >
+                      <IoMdRefresh size={14} />
+                      Recuring
+                    </button>
+                  </div>
                   {/* )} */}
 
                   <button

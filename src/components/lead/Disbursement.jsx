@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -77,7 +77,8 @@ const openDocumentInNewTab = (doc) => {
 
     const byteChars = atob(base64);
     const bytes = new Uint8Array(byteChars.length);
-    for (let i = 0; i < byteChars.length; i++) bytes[i] = byteChars.charCodeAt(i);
+    for (let i = 0; i < byteChars.length; i++)
+      bytes[i] = byteChars.charCodeAt(i);
 
     const blob = new Blob([bytes], { type: mime });
     const blobUrl = URL.createObjectURL(blob);
@@ -122,7 +123,9 @@ const DocumentRow = ({
 
     const ext = file.name.split(".").pop().toLowerCase();
     if (!allowed.includes(ext)) {
-      toast.error(`Only ${allowed.join(", ").toUpperCase()} files are allowed.`);
+      toast.error(
+        `Only ${allowed.join(", ").toUpperCase()} files are allowed.`,
+      );
       return;
     }
     if (file.size > maxFileSize) {
@@ -181,8 +184,9 @@ const DocumentRow = ({
             {label}
           </p>
           <p
-            className={`text-[9px] ${isUploaded ? "text-emerald-600" : "text-slate-400"
-              }`}
+            className={`text-[9px] ${
+              isUploaded ? "text-emerald-600" : "text-slate-400"
+            }`}
           >
             {isUploaded ? "Uploaded" : "Not uploaded"}
           </p>
@@ -246,9 +250,13 @@ const Disbursement = () => {
   const utrFileInputRef = useRef(null);
 
   const { authData } = useAuthData();
-  const [searchParams] = useSearchParams();
-  const customerId = searchParams.get("customer_id");
-  const applicationId = searchParams.get("application_id");
+  // const [searchParams] = useSearchParams();
+  // const customerId = searchParams.get("customer_id");
+  // const applicationId = searchParams.get("application_id");
+
+  const location = useLocation();
+  const routeLead = location.state?.lead;
+  const { customerId, applicationId } = location.state?.pera || {};
 
   const disbursementData = {
     loanAmount: "₹5,00,000",
@@ -301,12 +309,12 @@ const Disbursement = () => {
           return allowedUtrExts.includes(ext);
         })
         .test("fileSize", "File must be ≤ 10 MB", (value) =>
-          value ? value.size <= maxUtrSize : true
+          value ? value.size <= maxUtrSize : true,
         ),
       remarks: Yup.string().max(500, "Remarks cannot exceed 500 characters"),
       confirmed: Yup.boolean().oneOf(
         [true],
-        "Please confirm before proceeding"
+        "Please confirm before proceeding",
       ),
     }),
     onSubmit: async (values, { setSubmitting, resetForm }) => {
@@ -410,10 +418,11 @@ const Disbursement = () => {
         <div className="p-4">
           {disbursementStatus ? (
             <div
-              className={`rounded-md px-3 py-2 flex items-center gap-2 ${disbursementStatus.success
+              className={`rounded-md px-3 py-2 flex items-center gap-2 ${
+                disbursementStatus.success
                   ? "bg-emerald-50 border border-primary/10"
                   : "bg-red-50 border border-red-200"
-                }`}
+              }`}
             >
               <Icon
                 name={
@@ -426,10 +435,11 @@ const Disbursement = () => {
               />
               <div className="flex-1">
                 <p
-                  className={`text-xs font-semibold ${disbursementStatus.success
+                  className={`text-xs font-semibold ${
+                    disbursementStatus.success
                       ? "text-emerald-700"
                       : "text-red-700"
-                    }`}
+                  }`}
                 >
                   {disbursementStatus.message}
                 </p>
@@ -731,10 +741,11 @@ const Disbursement = () => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   placeholder="e.g. HDFC1234567890123"
-                  className={`w-full rounded-md border bg-white px-3 py-1.5 text-xs text-slate-700 focus:outline-none focus:ring-2 transition-all ${formik.touched.utr_number && formik.errors.utr_number
+                  className={`w-full rounded-md border bg-white px-3 py-1.5 text-xs text-slate-700 focus:outline-none focus:ring-2 transition-all ${
+                    formik.touched.utr_number && formik.errors.utr_number
                       ? "border-red-400 focus:border-red-500 focus:ring-red-500/20"
                       : "border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20"
-                    }`}
+                  }`}
                 />
                 <FieldError
                   touched={formik.touched.utr_number}
@@ -759,10 +770,12 @@ const Disbursement = () => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   placeholder="e.g. Cash"
-                  className={`w-full rounded-md border bg-white px-3 py-1.5 text-xs text-slate-700 focus:outline-none focus:ring-2 transition-all ${formik.touched.transaction_type && formik.errors.transaction_type
+                  className={`w-full rounded-md border bg-white px-3 py-1.5 text-xs text-slate-700 focus:outline-none focus:ring-2 transition-all ${
+                    formik.touched.transaction_type &&
+                    formik.errors.transaction_type
                       ? "border-red-400 focus:border-red-500 focus:ring-red-500/20"
                       : "border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20"
-                    }`}
+                  }`}
                 />
                 <FieldError
                   touched={formik.touched.transaction_type}
@@ -786,11 +799,12 @@ const Disbursement = () => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   max={new Date().toISOString().split("T")[0]}
-                  className={`w-full rounded-md border bg-white px-3 py-1.5 text-xs text-slate-700 focus:outline-none focus:ring-2 transition-all ${formik.touched.disbursement_date &&
-                      formik.errors.disbursement_date
+                  className={`w-full rounded-md border bg-white px-3 py-1.5 text-xs text-slate-700 focus:outline-none focus:ring-2 transition-all ${
+                    formik.touched.disbursement_date &&
+                    formik.errors.disbursement_date
                       ? "border-red-400 focus:border-red-500 focus:ring-red-500/20"
                       : "border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20"
-                    }`}
+                  }`}
                 />
                 <FieldError
                   touched={formik.touched.disbursement_date}
@@ -844,7 +858,10 @@ const Disbursement = () => {
                   accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                   className="hidden"
                   onChange={(e) =>
-                    formik.setFieldValue("utr_file", e.target.files?.[0] || null)
+                    formik.setFieldValue(
+                      "utr_file",
+                      e.target.files?.[0] || null,
+                    )
                   }
                 />
                 <FieldError

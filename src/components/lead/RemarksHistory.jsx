@@ -13,7 +13,7 @@ import SelectInput from "../fields/SelectInput";
 import { SaveAdditionalRemark } from "../../api/application";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuthData } from "../../context/authContext";
 
@@ -27,8 +27,12 @@ const RemarksHistory = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [open, setOpen] = useState(false);
-  const [searchParams] = useSearchParams();
-  const appplicationId = searchParams?.get("application_id");
+  // const [searchParams] = useSearchParams();
+  // const applicationId = searchParams?.get("application_id");
+    const location = useLocation();
+    const { customerId, applicationId } = location.state?.pera || {};
+
+
 
   const {authData} = useAuthData()
 
@@ -45,7 +49,7 @@ const RemarksHistory = ({
 
     onSubmit: async (values, { resetForm }) => {
       const payload = {
-        application_id: appplicationId,
+        application_id: applicationId,
         is_prove: true,
         step_status: "0",
         reason: values.reason,

@@ -25,10 +25,9 @@ const TelecallinWrapper = ({ customerDetails, onRefresh }) => {
   const marketSurvey = customerDetails?.marketSurvey?.[0] || {};
   const personalKyc = customerDetails?.personalKyc?.[0] || {};
   const loanDetails = customerDetails?.loanDetails?.[0] || {};
-  const customerId =
-    customerDetails?.customer_id || personalKyc.customer_id || marketSurvey.customer_id || loanDetails.customer_id;
-  const applicationId =
-    customerDetails?.application_id || personalKyc.application_id || marketSurvey.application_id || loanDetails.application_id;
+
+  const customerId = customerDetails?.customer_id || personalKyc.customer_id || marketSurvey.customer_id || loanDetails.customer_id;
+  const applicationId =customerDetails?.application_id || personalKyc.application_id || marketSurvey.application_id || loanDetails.application_id;
 
   const permisions = {
     personalInfo: true,
@@ -57,18 +56,10 @@ const TelecallinWrapper = ({ customerDetails, onRefresh }) => {
     const marketSurvey = customerDetails?.marketSurvey?.[0] || {};
     const personalKyc = customerDetails?.personalKyc?.[0] || {};
     const loanDetails = customerDetails?.loanDetails?.[0] || {};
-    const customerId =
-      customerDetails?.customer_id ||
-      personalKyc.customer_id ||
-      marketSurvey.customer_id ||
-      loanDetails.customer_id;
-    const applicationId =
-      customerDetails?.application_id ||
-      personalKyc.application_id ||
-      marketSurvey.application_id ||
-      loanDetails.application_id;
+    const customerId = customerDetails?.customer_id || personalKyc.customer_id || marketSurvey.customer_id || loanDetails.customer_id;
+    const applicationId = customerDetails?.application_id || personalKyc.application_id || marketSurvey.application_id || loanDetails.application_id;
 
-    if (!customerId || !applicationId) {
+      if (!customerId || !applicationId) {
       setVideoUploadError("Customer ID and application ID are required to upload video KYC.");
       return;
     }

@@ -33,6 +33,7 @@ const DisbursementList = () => {
           id: item.application_id,
           loanId: item.application_id || "-",
           customerId: item.customer_id,
+          applicationId: item.application_id,
           customerName: item.full_name || item.business_owner_name || "-",
           loanAmount: Number(item.loan_amount) || 0,
           interestAmount: Number(item.interest_amount) || 0,
@@ -101,7 +102,7 @@ const DisbursementList = () => {
       ),
     },
     {
-      name: "Lead ID",
+      name: "Application ID",
       selector: (row) => row.loanId,
       sortable: true,
     },

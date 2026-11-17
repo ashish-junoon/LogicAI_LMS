@@ -6,12 +6,11 @@ import { GetAllDocumentTypes } from "../../api/mastersApi";
 import { SaveOtherDocuments } from "../../api/application";
 import { convertFileToBase64 } from "./common";
 import { toast } from "react-toastify";
+import { useLocation } from "react-router-dom";
 
 const DocumentVault = ({
   documents = [],
   customerDetails = {},
-  customerId,
-  applicationId,
   userId,
   onDocumentsUploaded,
   onSubmitForm,
@@ -32,29 +31,10 @@ const DocumentVault = ({
 
   const { authData } = useAuthData();  
 
+    const location = useLocation()
+    const { customerId, applicationId } = location.state?.pera || {};
+
   const fileInputRef = useRef(null);
-//   const previewUrlsRef = useRef(new Set());
-
-//   useEffect(() => {
-//     const handleKeyDown = (e) => {
-//       if (e.key === "Enter" && selectedFile && !uploading) {
-//         // File input ya kisi input field par Enter hone par ignore karna ho toh
-//         if (["INPUT", "TEXTAREA", "SELECT"].includes(e.target.tagName)) {
-//           return;
-//         }
-
-//         e.preventDefault();
-//         handleUpload();
-//       }
-//     };
-
-//     window.addEventListener("keydown", handleKeyDown);
-
-//     return () => {
-//       window.removeEventListener("keydown", handleKeyDown);
-//     };
-//   }, [selectedFile, uploading]);
-
   const previewUrlsRef = useRef(new Set());
 
   useEffect(() => {
@@ -179,8 +159,8 @@ const DocumentVault = ({
     try {
       const response = await SaveOtherDocuments({
         id: 0,
-        customer_id: customerDetails?.customer_id || customerId || "",
-        application_id: applicationId || customerDetails?.application_id || "",
+        customer_id: customerId,
+        application_id: applicationId,
         document_type: selectedDocumentType,
         document_base64: await convertFileToBase64(selectedFile),
         file_extension: extension,

@@ -8,17 +8,21 @@ import DocumentsList from "./DocumentsList";
 import LeadFormDetails from "../../pages/formPages/LeadFormDetails";
 import Variations from "./Variations";
 import UploadDisbursment from "./UploadDisbursment";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { useAuthData } from "../../context/authContext";
 import DocumentVault from "../utils/DocumentVault";
 
 const DisbursementWrapper = ({ customerDetails, onRefresh }) => {
   const [activeSection, setActiveSection] = useState("disbursement");
-      const [searchParams] = useSearchParams();
-  const customerId = searchParams.get("customer_id");
-  const applicationId = searchParams.get("application_id");
+  //     const [searchParams] = useSearchParams();
+  // const customerId = searchParams.get("customer_id");
+  // const applicationId = searchParams.get("application_id");
 
-  const {authData} = useAuthData ()
+  const location = useLocation();
+  const routeLead = location.state?.lead;
+  const { customerId, applicationId } = location.state?.pera || {};
+
+  const { authData } = useAuthData();
 
   const sections = [
     {
@@ -45,11 +49,21 @@ const DisbursementWrapper = ({ customerDetails, onRefresh }) => {
     switch (activeSection) {
       case "disbursement":
         return <Disbursement />;
-        // return <UploadDisbursment customerDetails={customerDetails} />;
+      // return <UploadDisbursment customerDetails={customerDetails} />;
       case "remarks":
-        return <RemarksHistory permission={true} remarks={customerDetails?.history || []} />;
+        return (
+          <RemarksHistory
+            permission={true}
+            remarks={customerDetails?.history || []}
+          />
+        );
       case "variations":
-        return <Variations permission={true} remarks={customerDetails?.history || []} />;
+        return (
+          <Variations
+            permission={true}
+            remarks={customerDetails?.history || []}
+          />
+        );
       case "documents":
         return (
           // <DocumentsList
@@ -69,7 +83,12 @@ const DisbursementWrapper = ({ customerDetails, onRefresh }) => {
           />
         );
       case "userinfo":
-        return <LeadFormDetails permisions={permisions} customerDetails={customerDetails} />;
+        return (
+          <LeadFormDetails
+            permisions={permisions}
+            customerDetails={customerDetails}
+          />
+        );
       default:
         return null;
     }
@@ -130,7 +149,6 @@ const DisbursementWrapper = ({ customerDetails, onRefresh }) => {
 
     <div className="py-4">
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-
         <div className="border-b border-gray-200 px-4">
           <nav className="flex items-center gap-1 overflow-x-auto no-scrollbar">
             {sections.map((section) => {
@@ -158,10 +176,8 @@ const DisbursementWrapper = ({ customerDetails, onRefresh }) => {
             })}
           </nav>
         </div>
-        
-        <div className="p-5">
-          {renderSection()}
-        </div>
+
+        <div className="p-5">{renderSection()}</div>
       </div>
     </div>
   );

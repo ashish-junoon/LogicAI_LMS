@@ -27,8 +27,8 @@ const RedirectPage = () => {
       try {
         const req = {
           unique_request_number: id,
-          company_id: "LOS",
-          product_name: "LOS",
+          company_id: import.meta.env.VITE_COMPANY_ID,
+          product_name: import.meta.env.VITE_PRODUCT_NAME,
           kyc_type: "AADHAAR_DETAIL",
           created_by: authData?.user_id || "USER",
         };

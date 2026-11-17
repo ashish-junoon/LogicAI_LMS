@@ -4,15 +4,22 @@ import Breadcrumbs from "../../components/utils/Breadcrumbs";
 import UserHeader from "../../components/utils/UserHeader";
 import Loader from "../../components/utils/Loader";
 import { CustomerDetails } from "../../api/application";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 const DisbursementDetails = () => {
   const location = useLocation();
-  const [searchParams] = useSearchParams();
+  const navigate = useNavigate()
+  // const [searchParams] = useSearchParams();
   const routeLead = location.state?.lead;
-  const customerId = searchParams.get("customer_id") || routeLead?.customer_id;
-  const applicationId =
-    searchParams.get("application_id") || routeLead?.application_id;
+
+  // const customerId = searchParams.get("customer_id") || routeLead?.customer_id;
+  // const applicationId = searchParams.get("application_id") || routeLead?.application_id;
+  const { customerId, applicationId } = location.state?.pera || {};  
+
+  if(!customerId && !applicationId){
+    navigate("/")
+  }
+
   const [customerDetails, setCustomerDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
