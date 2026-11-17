@@ -255,13 +255,11 @@ function AccessDenied() {
 
 function ProtectedRoute({ children }) {
   const { isLoggedIn } = useAuthData();
-
   return isLoggedIn ? children : <Navigate to="/login" replace />;
 }
 
 function GuestRoute({ children }) {
   const { isLoggedIn } = useAuthData();
-
   return isLoggedIn ? <Navigate to="/" replace /> : children;
 }
 

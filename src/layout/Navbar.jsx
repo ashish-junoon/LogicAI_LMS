@@ -41,14 +41,14 @@ export default function Navbar({ onToggleSidebar, onToggleMobile }) {
       </div>
 
       <div className="ml-auto flex items-center gap-2">
-        <button
+        {/* <button
           type="button"
           className="relative flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 hover:bg-surface"
           aria-label="Notifications"
         >
           <FiBell size={18} />
           <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-red-600" />
-        </button>
+        </button> */}
 
         <div className="relative">
           <button
