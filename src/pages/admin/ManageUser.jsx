@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
-import { FaUser } from "react-icons/fa";
+import { FaEye, FaUser } from "react-icons/fa";
 
 import Icon from "../../components/utils/Icon";
 import Table from "../../components/Table";
@@ -439,10 +439,10 @@ const ManageUser = () => {
     {
       name: "Permission",
       selector: (row) => row.user_id,
-      
+      center: true,
       cell: (row) => <Link className="text-xl" 
       state={{ id: row.user_id}}
-      to={`/admin/manage-permission`}><MdViewInAr /></Link>,
+      to={`/admin/manage-permission`}><FaEye className="animate-pulse" /></Link>,
     },
     {
       name: "Full Name",

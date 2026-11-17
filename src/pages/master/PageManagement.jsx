@@ -20,6 +20,7 @@ import {
 } from "../../api/userApi.js";
 import SelectInput from "../../components/fields/SelectInput.jsx";
 import { useAuthData } from "../../context/authContext.jsx";
+import { MdDelete } from "react-icons/md";
 
 const initialValues = {
   group_id: "",
@@ -251,6 +252,14 @@ const PageManagement = () => {
     setIsPageModalOpen(true);
   };
 
+  const handleDeletePage = () => {
+    try {
+      
+    } catch (error) {
+      
+    }
+  }
+
   // =========================================================
   // TOGGLE PAGE STATUS
   // =========================================================
@@ -386,20 +395,20 @@ const PageManagement = () => {
       grow: 1,
       wrap: true,
     },
-    {
-      name: "URL",
-      selector: (row) => row?.page_url || "-",
-      sortable: true,
-      grow: 1,
-      wrap: true,
-    },
-    {
-      name: "Display Index",
-      selector: (row) => row?.page_display_index ?? "-",
-      sortable: true,
-      width: "120px",
-      center: true,
-    },
+    // {
+    //   name: "URL",
+    //   selector: (row) => row?.page_url || "-",
+    //   sortable: true,
+    //   grow: 1,
+    //   wrap: true,
+    // },
+    // {
+    //   name: "Display Index",
+    //   selector: (row) => row?.page_display_index ?? "-",
+    //   sortable: true,
+    //   width: "120px",
+    //   center: true,
+    // },
     {
       name: "Status",
       center: true,
@@ -429,6 +438,24 @@ const PageManagement = () => {
         </button>
       ),
     },
+    // {
+    //   name: "Delete",
+    //   center: true,
+    //   width: "90px",
+    //   cell: (row) => (
+    //     <button
+    //       type="button"
+    //       onClick={() => handleDeletePage(row)}
+    //       title="Edit Page"
+    //       className="
+    //         w-7 h-7 flex items-center justify-center
+    //         rounded-md hover:bg-primary/10 transition
+    //       "
+    //     >
+    //       <MdDelete name="FaEdit" size={20} color="red" />
+    //     </button>
+    //   ),
+    // },
   ];
 
   // =========================================================
