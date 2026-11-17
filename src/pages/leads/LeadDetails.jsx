@@ -10,10 +10,13 @@ import { useAuthData } from '../../context/authContext'
 
 const LeadDetails = () => {
   const location = useLocation()
-  const [searchParams] = useSearchParams()
+  // const [searchParams] = useSearchParams()
   const routeLead = location.state?.lead
-  const customerId = searchParams.get('customer_id') || routeLead?.customer_id
-  const applicationId = searchParams.get('application_id') || routeLead?.application_id
+  // const customerId = searchParams.get('customer_id') || routeLead?.customer_id
+  // const applicationId = searchParams.get('application_id') || routeLead?.application_id
+
+const { customerId, applicationId } = location.state?.pera || {};
+
   const [customerDetails, setCustomerDetails] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')  

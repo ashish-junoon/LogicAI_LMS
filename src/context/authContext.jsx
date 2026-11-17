@@ -1,15 +1,26 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useNavigate } from "react-router-dom";
+import { GetPagePermission } from "../api/userApi";
 
 const AuthDataContext = createContext(null);
 
 const isValidAuthData = (data) => {
   const expiresAt = new Date(data?.expires_at).getTime();
-  return Boolean(data?.access_token && Number.isFinite(expiresAt) && expiresAt > Date.now());
+  return Boolean(
+    data?.access_token && Number.isFinite(expiresAt) && expiresAt > Date.now(),
+  );
 };
 
 export const AuthDataProvider = ({ children }) => {
   const navigate = useNavigate();
+  const [permissions, setPermissions] = useState([]);
+  const [permissionsLoading, setPermissionsLoading] = useState([]);
   const [authData, setAuthData] = useState(() => {
     try {
       const storedData = localStorage.getItem("authData");
@@ -72,6 +83,47 @@ export const AuthDataProvider = ({ children }) => {
     return () => window.clearTimeout(timeoutId);
   }, [authData, logout]);
 
+  const fetchPermissions = async () => {
+    setPermissionsLoading(true)
+    try {
+      const response = await GetPagePermission({
+        user_id: "",
+        login_user: authData?.user_id,
+        page_name_type: "LMS",
+      });
+
+      // Support both direct API response and Axios response
+      const responseData =
+        response?.data?.data ??
+        response?.data ??
+        response?.getPermissions ??
+        [];
+
+      // Only pages with set_permission_access === true
+      const allowedPages = Array.isArray(responseData)
+        ? responseData.sort(
+            (a, b) =>
+              (a.group_display_index || 0) - (b.group_display_index || 0) ||
+              (a.page_display_index || 0) - (b.page_display_index || 0),
+          )
+        : [];
+
+      setPermissions(allowedPages);
+    } catch (error) {
+      console.error("Page Permission Error:", error);
+      setPermissions([]);
+    }finally{
+      setPermissionsLoading(false)
+    }
+  };
+
+
+  useEffect(() => {
+    if (authData?.user_id) {
+      fetchPermissions();
+    }
+  }, [authData?.user_id]);
+
   useEffect(() => {
     const handleStorageChange = (event) => {
       if (event.key !== "authData") return;
@@ -97,6 +149,8 @@ export const AuthDataProvider = ({ children }) => {
     isLoggedIn: isValidAuthData(authData),
     login,
     logout,
+    permissions,
+    permissionsLoading
   };
 
   return (

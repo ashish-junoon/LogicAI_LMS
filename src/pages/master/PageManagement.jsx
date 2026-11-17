@@ -29,6 +29,7 @@ const initialValues = {
   page_url: "",
   page_display_index: "",
   page_small_discription: "",
+  page_name_type: "",
   is_active: true,
 };
 
@@ -109,13 +110,15 @@ const PageManagement = () => {
     enableReinitialize: true,
 
     validationSchema: Yup.object({
-      group_id: Yup.string().required("Please select group"),
+      // group_id: Yup.string().required("Please select group"),
 
       page_name: Yup.string()
         .trim()
         .required("Page name is required")
         .min(2, "Page name must be at least 2 characters")
         .max(100, "Page name cannot exceed 100 characters"),
+
+      page_name_type: Yup.string().trim().required(),
 
       page_icon: Yup.string()
         .trim()
@@ -149,6 +152,7 @@ const PageManagement = () => {
         const req = {
           group_id: Number(values.group_id),
           page_name: values.page_name.trim(),
+          page_name_type: values.page_name_type.trim(),
           page_icon: values.page_icon.trim(),
           page_display_name: values.page_display_name.trim(),
           page_url: values.page_url.trim(),
@@ -158,6 +162,9 @@ const PageManagement = () => {
           is_active: values.is_active,
           created_by: authData?.user_id
         };
+
+        console.log(req);
+        
 
         const response = isEdit
           ? await UpdatePageName({
@@ -228,6 +235,7 @@ const PageManagement = () => {
     pageFormik.setValues({
       group_id: String(row?.group_id ?? ""),
       page_name: row?.page_name || "",
+      page_name_type: row?.page_name_type || "",
       page_icon: row?.page_icon || "",
       page_display_name: row?.page_display_name || "",
       page_url: row?.page_url || "",
@@ -262,6 +270,7 @@ const PageManagement = () => {
         page_id: row?.page_id,
         group_id: row?.group_id,
         page_name: row?.page_name,
+        page_name_type: row?.page_name_type || "LMS",
         page_icon: row?.page_icon,
         page_display_name: row?.page_display_name,
         page_url: row?.page_url,
@@ -347,6 +356,13 @@ const PageManagement = () => {
     {
       name: "Page Name",
       selector: (row) => row?.page_name || "-",
+      sortable: true,
+      grow: 1,
+      wrap: true,
+    },
+    {
+      name: "Page Type",
+      selector: (row) => row?.page_name_type || "-",
       sortable: true,
       grow: 1,
       wrap: true,
@@ -571,6 +587,22 @@ const PageManagement = () => {
                 onBlur={pageFormik.handleBlur}
               />
               <ErrorText name="page_display_index" />
+            </div>
+            
+            <div>
+              <SelectInput 
+                label={"Select Page Type"}
+                placeholder={"Select Page Type"}
+                name={"page_name_type"}
+                value={pageFormik.values.page_name_type}
+                onChange={pageFormik.handleChange}
+                onBlur={pageFormik.handleBlur}
+                options={[
+                  {label: "LMS", value: "LMS"},
+                  {label: "LOS", value: "LOS"},
+                ]}
+              />
+              <ErrorText name="page_name_type" />
             </div>
 
             {/* DESCRIPTION */}

@@ -10,22 +10,18 @@ import { useAuthData } from "../../context/authContext";
 
 const PagePermission = () => {
   const [tableData, setTableData] = useState([]);
-  const [permissions, setPermissions] = useState([]);
-
-  // const { state } = useLocation();
-  // const { user_id, emp_role } = state;
+  const [permissions, setPermissions] = useState([])
 
   const { authData } = useAuthData();
-  const user_id = authData?.user_id
-
+  const logged_id = authData?.user_id
+  
   // const pageAccess = LoginPageFinder("page_display_name", "manage users");
   // const permission = pageAccess?.[0]?.r_w_permission;
 
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams()
-
-  const USER = searchParams.get("id")
-
+  const [searchParams] = useSearchParams();
+  const USER_ID = searchParams.get("id");
+  
   useEffect(() => {
     const allGroups = authData?.loginGroupNames || [];
 
@@ -45,22 +41,28 @@ const PagePermission = () => {
   useEffect(() => {
     const fetchData = async () => {
       const req = {
-        user_id: "",
-        login_user: user_id,
+        user_id: USER_ID,
+        login_user: logged_id,
+        page_name_type : ""
       };
 
       try {
         const response = await GetPagePermission(req);
+        const filteredData = response?.data?.filter((item)=> item.is_active)
+        
 
         if (response.status) {
-          setTableData(response.data);
+          setTableData(filteredData);
 
-          const initialPermissions = response.data.map((item) => ({
+          const initialPermissions = filteredData?.map((item) => ({
+            id: item.id || 0,
+            user_id: USER_ID,
             page_id: item.page_id,
             group_id: item.group_id,
             set_permission_access: item.set_permission_access || false,
             r_w_permission: item.r_w_permission || false,
-            page_url: item.page_url || "",
+            is_active: item.is_active,
+            created_by: logged_id,
           }));
 
           setPermissions(initialPermissions);
@@ -74,7 +76,7 @@ const PagePermission = () => {
     };
 
     fetchData();
-  }, [user_id, authData.user_id]);
+  }, [USER_ID, logged_id]);
 
   const handlePermissionChange = (index, field, value, row) => {
     setPermissions((prevPermissions) => {
@@ -97,38 +99,37 @@ const PagePermission = () => {
     });
   };
 
-  const handleSave = async () => {
-    const req = {
-      user_id: user_id,
-      emp_role: emp_role,
-      updated_emp_role: authData.role,
-      updated_by: authData.user_id,
-      permission: permissions,
-    };
-
-    try {
-      const response = await SetPagePermission(req);
-
-      if (response?.status) {
-        navigate(-1);
-        toast.success(response.message);
-      } else {
-        toast.error(response?.message || "Failed to save permissions.");
-      }
-    } catch (error) {
-      console.error("Error saving permissions:", error);
-      toast.error("An error occurred while saving permissions.");
-    }
+const handleSave = async () => {
+  const req = {
+    permissions: permissions.map((item) => ({
+      id: item.id || 0,
+      user_id: item.user_id,
+      page_id: item.page_id,
+      group_id: item.group_id,
+      set_permission_access: Boolean(item.set_permission_access),
+      r_w_permission: Boolean(item.r_w_permission),
+      is_active: Boolean(item.is_active),
+      created_by: item.created_by,
+    })),
   };
 
+  try {
+    const response = await SetPagePermission(req);
+
+    if (response?.status) {
+      toast.success(response.message);
+      navigate(-1);
+    } else {
+      toast.error(response?.message || "Failed to save permissions.");
+    }
+  } catch (error) {
+    console.error("Error saving permissions:", error);
+    toast.error("An error occurred while saving permissions.");
+  }
+};
+
   // PERMISSION CHECKBOX
-  const PermissionCheckbox = ({
-    checked,
-    disabled,
-    onChange,
-    label,
-    id,
-  }) => (
+  const PermissionCheckbox = ({ checked, disabled, onChange, label, id }) => (
     <label
       htmlFor={id}
       className={`flex items-center gap-2 text-sm ${
@@ -159,14 +160,20 @@ const PagePermission = () => {
     },
     {
       name: "Group Name",
-      selector: (row) => row.group_name,
+      selector: (row) => row.group_display_name,
       sortable: true,
       width: "180px",
       wrap: true,
     },
     {
       name: "Page Name",
-      selector: (row) => row.page_name,
+      selector: (row) => row.page_display_name,
+      sortable: true,
+      wrap: true,
+    },
+    {
+      name: "Page Type",
+      selector: (row) => row.page_name_type,
       sortable: true,
       wrap: true,
     },
@@ -207,9 +214,7 @@ const PagePermission = () => {
             <PermissionCheckbox
               id={`write-${index}`}
               label="Write"
-              checked={
-                perm.set_permission_access && perm.r_w_permission
-              }
+              checked={perm.set_permission_access && perm.r_w_permission}
               // disabled={!perm.set_permission_access || !permission}
               onChange={(e) =>
                 handlePermissionChange(
@@ -276,24 +281,26 @@ const PagePermission = () => {
         )}
 
         {/* SAVE BUTTON */}
-        {Array.isArray(tableData) && tableData.length > 0 && true && ( //permission
-          <div className="flex justify-end items-center gap-2 px-4 py-5">
-            <Button
-              btnName="Cancel"
-              type="button"
-              onClick={() => navigate(-1)}
-              style="border border-gray-200 hover:bg-gray-100 text-gray-700"
-            />
+        {Array.isArray(tableData) &&
+          tableData.length > 0 &&
+          true && ( //permission
+            <div className="flex justify-end items-center gap-2 px-4 py-5">
+              <Button
+                btnName="Cancel"
+                type="button"
+                onClick={() => navigate(-1)}
+                style="border border-gray-200 hover:bg-gray-100 text-gray-700"
+              />
 
-            <Button
-              btnName="Save Permission"
-              btnIcon="RiUserSettingsLine"
-              type="button"
-              onClick={handleSave}
-              style="bg-primary hover:bg-primary/90 text-white font-medium"
-            />
-          </div>
-        )}
+              <Button
+                btnName="Save Permission"
+                btnIcon="RiUserSettingsLine"
+                type="button"
+                onClick={handleSave}
+                style="bg-primary hover:bg-primary/90 text-white font-medium"
+              />
+            </div>
+          )}
       </div>
     </>
   );

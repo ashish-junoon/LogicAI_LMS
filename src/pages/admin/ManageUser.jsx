@@ -20,6 +20,7 @@ import {
 } from "../../api/mastersApi.js";
 import { Link } from "react-router-dom";
 import { useAuthData } from "../../context/authContext.jsx";
+import { MdViewInAr } from "react-icons/md";
 
 const initialValues = {
   full_name: "",
@@ -59,6 +60,7 @@ const ManageUser = () => {
   const roleOptions = [
     { label: "Manager", value: "Manager" },
     { label: "Executive", value: "Executive" },
+    { label: "Other", value: "Other" },
     { label: "Officer", value: "Officer" },
     { label: "Admin", value: "Admin" },
   ];
@@ -336,6 +338,7 @@ const ManageUser = () => {
       department: String(user.department_id ?? ""),
       designation: String(user.designation_id ?? ""),
       role: user.role || "",
+      user_type: user.user_type || "",
       report_view: Boolean(user.report_view),
       is_active: user.is_active,
     });
@@ -369,6 +372,7 @@ const ManageUser = () => {
         department: String(row?.department_id ?? ""),
         designation: String(row?.designation_id ?? ""),
         role: row?.role,
+        user_type: row?.user_type,
         report_view: Boolean(row?.report_view),
         created_by: authData?.user_id,
         is_active: nextStatus,
@@ -435,7 +439,8 @@ const ManageUser = () => {
     {
       name: "Permission",
       selector: (row) => row.user_id,
-      cell: (row) => <Link to={`/admin/manage-permission?id=${row.user_id}`}>{row.user_id}</Link>,
+      
+      cell: (row) => <Link className="text-xl" to={`/admin/manage-permission?id=${row.user_id}`}><MdViewInAr /></Link>,
     },
     {
       name: "Full Name",
@@ -497,6 +502,12 @@ const ManageUser = () => {
       center: true,
     },
     {
+      name: "Role Access",
+      selector: (row) => row?.user_type || "-",
+      sortable: true,
+      center: true,
+    },
+    {
       name: "View Permission",
       selector: (row) => (row?.report_view ? "Yes" : "No"),
       sortable: true,
@@ -542,7 +553,7 @@ const ManageUser = () => {
               "
             >
               <Icon name="RiGroupLine" size={15} color="white" />
-              Add Group
+              Add Role
             </Link>
 
             <button

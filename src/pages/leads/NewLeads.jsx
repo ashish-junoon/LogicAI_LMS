@@ -15,7 +15,7 @@ const NewLeads = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const {authData} = useAuthData()
+  const { authData } = useAuthData();
 
   // Ordered list of steps used to derive the "Pending Step"
   const STEP_CHECKS = [
@@ -31,9 +31,9 @@ const NewLeads = () => {
   ];
 
   const getPendingStep = (row) => {
-    const pendingSteps = STEP_CHECKS
-      .filter((step) => row[step.key] === false)
-      .map((step) => step.label);
+    const pendingSteps = STEP_CHECKS.filter(
+      (step) => row[step.key] === false,
+    ).map((step) => step.label);
 
     return pendingSteps.length ? pendingSteps.at(-1) : "Completed";
   };
@@ -46,7 +46,7 @@ const NewLeads = () => {
       const requestBody = {
         role: authData?.role,
         created_by: authData?.user_id,
-        step_status: "4"
+        step_status: "4",
       };
 
       const response = await GetAllApplications(requestBody);
@@ -57,12 +57,12 @@ const NewLeads = () => {
           customerId: item.customer_id,
           name: item.full_name,
           phone: item.business_owner_mobile_no,
-          branch: item.branch_name ?? "-",                  // not in API response
-          loanType: item.loan_type ?? "-",             // not in API response
-          sanctionAmount: item.sanction_amount ?? 0,   // not in API response
+          branch: item.branch_name ?? "-", // not in API response
+          loanType: item.loan_type ?? "-", // not in API response
+          sanctionAmount: item.sanction_amount ?? 0, // not in API response
           pendingStep: getPendingStep(item),
           createdDate: item.created_date,
-          createdBy: item.create_by ?? "-",           // not in API response
+          createdBy: item.create_by ?? "-", // not in API response
           status: item.status ?? "Pending",
           raw: item,
         }));
@@ -85,18 +85,33 @@ const NewLeads = () => {
   }, []);
 
   const columns = [
-     {
+    {
       name: "Actions",
       selector: (row) => row.status,
       sortable: true,
       center: true,
       cell: (row) => (
+        // <Link
+        //   to={`/leads-detail?customer_id=${encodeURIComponent(row.customerId ?? "")}&application_id=${encodeURIComponent(row.applicationId ?? "")}`}
+        //   state={{ lead: row.raw }}   // pass full record to detail page
+        //   className="p-1.5 px-2 rounded-sm text-xs font-medium bg-primary flex gap-1 text-white items-center"
+        // >
+        //   <Icon name="FaRegEye" size={15} color={"white"} />
+        //   View
+        // </Link>
+
         <Link
-          to={`/leads-detail?customer_id=${encodeURIComponent(row.customerId ?? "")}&application_id=${encodeURIComponent(row.applicationId ?? "")}`}
-          state={{ lead: row.raw }}   // pass full record to detail page
+          to="/leads-detail"
+          state={{
+            lead: row.raw,
+            pera: {
+              customerId: row.customerId,
+              applicationId: row.applicationId,
+            },
+          }}
           className="p-1.5 px-2 rounded-sm text-xs font-medium bg-primary flex gap-1 text-white items-center"
         >
-          <Icon name="FaRegEye" size={15} color={"white"} />
+          <Icon name="FaRegEye" size={15} color="white" />
           View
         </Link>
       ),
@@ -120,7 +135,7 @@ const NewLeads = () => {
       name: "Branch",
       selector: (row) => row.branch,
       sortable: true,
-      width: '200px'
+      width: "200px",
     },
     // {
     //   name: "Loan Type",
@@ -150,7 +165,6 @@ const NewLeads = () => {
       selector: (row) => row.createdBy,
       sortable: true,
     },
-   
   ];
 
   return (
