@@ -4,6 +4,7 @@ import Table from "../../components/Table";
 import Modal from "../../components/utils/Modal";
 import TextInput from "../../components/fields/TextInput";
 import SelectInput from "../../components/fields/SelectInput";
+import DateInput from "../../components/fields/DateInput";
 import TogleInput from "../../components/fields/TogleInput";
 import Button from "../../components/utils/Button";
 import { toast } from "react-toastify";
@@ -44,7 +45,7 @@ const LoanProductMaster = () => {
   const [editingProductId, setEditingProductId] = useState(null);
   const [loanTypeOptions, setLoanTypeOptions] = useState([]); // <-- dynamic loan types
 
-  const {authData} = useAuthData()
+  const { authData } = useAuthData()
 
   // =========================================================
   // FETCH ALL LOAN TYPES (for dropdown)
@@ -120,11 +121,15 @@ const LoanProductMaster = () => {
     productFormik.setValues({
       product_id: row.product_id || "",
       product_name: row.product_name || "",
+      product_type: row.product_type || "",                       // ← added
       loan_type: String(row.loan_type ?? ""),
       category: row.category || "",
       principle_amount: row.principle_amount ?? "",
+      repayment_frequency: row.repayment_frequency || "",         // ← added
       lpf: row.lpf ?? "",
       interest_rate: row.interest_rate ?? "",
+      insurance_rate: row.insurance_rate ?? row.insurance_fee ?? "", // ← fixed
+      collection_date: row.collection_date ?? "",
       tenure_months: row.tenure_months ?? "",
       apr_rate: row.apr_rate ?? "",
       eir_rate: row.eir_rate ?? "",
@@ -132,6 +137,7 @@ const LoanProductMaster = () => {
       calculation_method: row.calculation_method || "",
       disbursement_charges_rate: row.disbursement_charges_rate ?? "",
       membership_fee: row.membership_fee ?? "",
+      login_fee: row.login_fee ?? "",
       pre_closure_rate: row.pre_closure_rate ?? "",
       flexi_emi: row.flexi_emi ? "Yes" : "No",
       is_active: !!row.is_active,
@@ -163,6 +169,7 @@ const LoanProductMaster = () => {
         category: row?.category,
         principle_amount: Number(row?.principle_amount),
         repayment_frequency: row?.repayment_frequency,
+        collection_date: row?.collection_date,
         lpf: Number(row?.lpf),
         interest_rate: Number(row?.interest_rate),
         tenure_months: Number(row?.tenure_months),
@@ -244,6 +251,9 @@ const LoanProductMaster = () => {
           .positive("Principle amount must be positive")
           .required("Principle amount is required"),
 
+        repayment_frequency: Yup.string()
+          .required("Repayment frequency is required"),
+
         lpf: Yup.number()
           .typeError("LPF must be a number")
           .min(0, "LPF must be at least 0")
@@ -251,8 +261,17 @@ const LoanProductMaster = () => {
 
         interest_rate: Yup.number()
           .typeError("Interest rate must be a number")
-          .min(0, "Interest rate must be at least 0")
+          .min(22, "Interest rate must be at least 22")
           .required("Interest rate is required"),
+
+        collection_date: Yup.date()
+          .notRequired()
+          .nullable()
+          .typeError("Collection date must be a valid date")
+          .min(
+            new Date(new Date().setHours(0, 0, 0, 0)),
+            "Collection date cannot be in the past",
+          ),
 
         tenure_months: Yup.number()
           .typeError("Tenure must be a number")
@@ -311,12 +330,15 @@ const LoanProductMaster = () => {
     initialValues: {
       product_id: "",
       product_name: "",
+      product_type: "",          // ← added
       loan_type: "",
       category: "",
       principle_amount: "",
       repayment_frequency: "",
+      collection_date: "",
       lpf: "",
       interest_rate: "",
+      insurance_rate: "",
       tenure_months: "",
       apr_rate: "",
       eir_rate: "",
@@ -324,6 +346,7 @@ const LoanProductMaster = () => {
       calculation_method: "",
       disbursement_charges_rate: "",
       membership_fee: "",
+      login_fee: "",
       pre_closure_rate: "",
       flexi_emi: "No",
       is_active: false,
@@ -341,8 +364,10 @@ const LoanProductMaster = () => {
           category: values.category,
           principle_amount: Number(values.principle_amount),
           repayment_frequency: values?.repayment_frequency,
+          collection_date: values.collection_date,
           lpf: Number(values.lpf),
           interest_rate: Number(values.interest_rate),
+          insurance_rate: Number(values.insurance_rate),
           tenure_months: Number(values.tenure_months),
           apr_rate: Number(values.apr_rate),
           eir_rate: Number(values.eir_rate),
@@ -426,8 +451,8 @@ const LoanProductMaster = () => {
       sortable: true,
       width: "70px",
     },
-    
-     {
+
+    {
       name: "Status",
       center: true,
       selector: (row) => (
@@ -448,7 +473,7 @@ const LoanProductMaster = () => {
         </div>
       ),
     },
-   {
+    {
       name: "Product ID",
       selector: (row) => row?.product_id || "-",
       sortable: true,
@@ -483,6 +508,12 @@ const LoanProductMaster = () => {
     {
       name: "Interest Rate",
       selector: (row) => formatPercentage(row?.interest_rate),
+      sortable: true,
+      center: true,
+    },
+    {
+      name: "Collection Date",
+      selector: (row) => formatPercentage(row?.collection_date),
       sortable: true,
       center: true,
     },
@@ -539,7 +570,7 @@ const LoanProductMaster = () => {
       sortable: true,
       center: true,
     },
-    
+
   ];
 
   useEffect(() => {
@@ -618,8 +649,8 @@ const LoanProductMaster = () => {
                 onChange={productFormik.handleChange}
                 onBlur={productFormik.handleBlur}
                 options={[
-                  {label: 'Secured', value: 'Secured'},
-                  {label: 'Unsecured', value: 'Unsecured'}
+                  { label: 'Secured', value: 'Secured' },
+                  { label: 'Unsecured', value: 'Unsecured' }
                 ]}
               />
               <ErrorText name="product_type" />
@@ -674,6 +705,18 @@ const LoanProductMaster = () => {
                 options={REPAYMENT_FREQUENCY_OPTIONS}
               />
               <ErrorText name="repayment_frequency" />
+            </div>
+
+            <div>
+              <DateInput
+                label="Collection Date"
+                name="collection_date"
+                value={productFormik.values.collection_date}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+              // disabled={!isEditing}
+              />
+              <ErrorText name="collection_date" />
             </div>
 
             <div>

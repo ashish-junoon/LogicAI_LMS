@@ -21,6 +21,7 @@ function TextInput({ label, icon, type="text", name, id, placeholder, onChange, 
                 <input
                     readOnly={readOnly}
                     type={showPassword ? "text" : type}
+                    min={type === 'number' && 0}
                     name={name}
                     id={id}
                     placeholder={placeholder}
