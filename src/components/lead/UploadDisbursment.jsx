@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useAuthData } from "../../context/authContext";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { SaveOtherDocuments } from "../../api/application";
 import { convertFileToBase64 } from "../utils/common";
 import UpdateUtrModal from "../UpdateUtrModal";
@@ -143,7 +143,7 @@ const DocumentActionRow = ({
 
     if (!allowedExtensions.includes(ext)) {
       toast.error(
-        `Only ${allowedExtensions.join(", ").toUpperCase()} files are allowed.`
+        `Only ${allowedExtensions.join(", ").toUpperCase()} files are allowed.`,
       );
       return;
     }
@@ -242,9 +242,13 @@ const UploadDisbursment = ({ customerDetails, onDocumentUploaded }) => {
   const [utrModalOpen, setUtrModalOpen] = useState(false);
 
   const { authData } = useAuthData();
-  const [searchParams] = useSearchParams();
-  const customerId = searchParams.get("customer_id");
-  const applicationId = searchParams.get("application_id");
+  // const [searchParams] = useSearchParams();
+  // const customerId = searchParams.get("customer_id");
+  // const applicationId = searchParams.get("application_id");
+
+  const location = useLocation();
+  const routeLead = location.state?.lead;
+  const { customerId, applicationId } = location.state?.pera || {};
 
   const allowedExtensions = ["xlsx", "xls", "csv"];
   const maxFileSize = 10 * 1024 * 1024;
@@ -252,13 +256,13 @@ const UploadDisbursment = ({ customerDetails, onDocumentUploaded }) => {
   const documents = customerDetails?.documents ?? [];
 
   const disbursementFiles = documents.filter(
-    (f) => f.document_type === "DISBURSEMENT_FILE"
+    (f) => f.document_type === "DISBURSEMENT_FILE",
   );
   const sanctionLetter = documents.find(
-    (f) => f.document_type === "SANCTION_LETTER"
+    (f) => f.document_type === "SANCTION_LETTER",
   );
   const agreementLetter = documents.find(
-    (f) => f.document_type === "AGREEMENT_LETTER"
+    (f) => f.document_type === "AGREEMENT_LETTER",
   );
 
   console.log({ disbursementFiles, sanctionLetter, agreementLetter });
@@ -314,7 +318,7 @@ const UploadDisbursment = ({ customerDetails, onDocumentUploaded }) => {
 
       if (response?.status) {
         toast.success(
-          response?.message || "Disbursement file uploaded successfully."
+          response?.message || "Disbursement file uploaded successfully.",
         );
         setSelectedFile(null);
         if (fileInputRef.current) fileInputRef.current.value = "";

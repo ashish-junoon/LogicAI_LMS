@@ -555,7 +555,7 @@ const ManageUser = () => {
               "
             >
               <Icon name="RiGroupLine" size={15} color="white" />
-              Add Role
+              Manage Role
             </Link>
 
             <button

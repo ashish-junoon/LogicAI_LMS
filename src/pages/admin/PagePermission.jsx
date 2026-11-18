@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Table from "../../components/Table";
 import { toast } from "react-toastify";
 import { GetPagePermission, SetPagePermission } from "../../api/userApi";
 import Button from "../../components/utils/Button";
 import Icon from "../../components/utils/Icon";
 import { useAuthData } from "../../context/authContext";
-// import LoginPageFinder from "../../components/utils/LoginPageFinder";
 
 const PagePermission = () => {
   const [tableData, setTableData] = useState([]);

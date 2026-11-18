@@ -209,7 +209,7 @@ const PageManagement = () => {
     },
   });
 
-  console.log(groupOptions?.find(gp=> gp.page_group_id == pageFormik.values.group_id));
+  // console.log(groupOptions?.find(gp=> gp.page_group_id == pageFormik.values.group_id));
   
 
   // =========================================================

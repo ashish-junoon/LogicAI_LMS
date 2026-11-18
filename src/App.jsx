@@ -65,6 +65,7 @@ import { useEffect, useState } from "react";
 import RateLimitPage from "./pages/auth/RateLimitPage";
 import AccessDenied from "./pages/auth/AccessDenied";
 import Loader from "./components/utils/Loader";
+import CollectionDetails from "./pages/emi/CollectionDetails";
 
 // Normalize API URL and route URL
 const normalizePath = (path = "") => {
@@ -90,6 +91,7 @@ function GuestRoute({ children }) {
 const routeComponents = {
   "/advance-emi": AdvanceEMI,
   "/emi-details": EMIDetails,
+  "/collection-details": CollectionDetails,
 
   // Master pages
   "/master/branches-master": BranchList,
@@ -162,6 +164,9 @@ const noPermissionRequired = [
   "/telecalling-detail",
   "/disbursement-detail",
   "/product-leads-detail",
+  "/collection-details",
+
+  "/emi-details"
 ];
 
 function AppRoutes() {

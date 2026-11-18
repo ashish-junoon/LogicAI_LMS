@@ -17,7 +17,7 @@ import { FaEdit } from "react-icons/fa";
 import { FaDeleteLeft } from "react-icons/fa6";
 import Chip from "../../components/utils/Chip";
 import Button from "../../components/utils/Button";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const AdvanceEMI = () => {
   const navigate = useNavigate();
@@ -81,12 +81,44 @@ const AdvanceEMI = () => {
     },
     {
       name: "Action",
-      cell: () => (
-        <Button
-          onClick={() => navigate("/emi-details")}
-          btnName={"View"}
-          style="bg-primary py-1.5 text-white  hover:bg-blue-700"
-        />
+      width: "200px",
+      cell: (row) => (
+        // <Button
+        //   onClick={() => navigate("/emi-details")}
+        //   btnName={"View"}
+        //   style="bg-primary py-1.5 text-white  hover:bg-blue-700"
+        // />
+        <div className="flex gap-2">
+          <Link
+            to="/emi-details"
+            state={{
+              lead: row.raw,
+              pera: {
+                customerId: row.customerId,
+                applicationId: row.applicationId,
+              },
+            }}
+            className="p-1.5 px-2 rounded-sm text-xs font-medium bg-primary flex gap-1 text-white items-center"
+          >
+            <Icon name="FaRegEye" size={15} color="white" />
+            View
+          </Link>
+
+          <Link
+            to="/collection-details"
+            state={{
+              lead: row.raw,
+              pera: {
+                customerId: row.customerId,
+                applicationId: row.applicationId,
+              },
+            }}
+            className="p-1.5 px-2 rounded-sm text-xs font-medium bg-black flex gap-1 text-white items-center"
+          >
+            <Icon name="FaRegEye" size={15} color="white" />
+            View
+          </Link>
+        </div>
       ),
       center: true,
       width: 150,

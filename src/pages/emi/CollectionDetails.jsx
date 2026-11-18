@@ -146,13 +146,13 @@ const initialHistory = [
 ];
 
 const CollectionDetails = () => {
-  const location = useLocation();
   const [searchParams] = useSearchParams();
   const { authData } = useAuthData();
   const navigate = useNavigate()
 
-  const customerId = searchParams.get("customer_id");
-  const applicationId = searchParams.get("application_id");
+  const location = useLocation();
+  const routeLead = location.state?.lead;
+  const { customerId, applicationId } = location.state?.pera || {};
 
   const [history, setHistory] = useState(initialHistory);
   const [paymentAmount, setPaymentAmount] = useState("");
