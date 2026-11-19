@@ -91,6 +91,7 @@ const LoanProductMaster = () => {
           sn: i + 1,
         }));
         setProductList(transformedData);
+        // console.log("transformedData", transformedData)
       } else {
         toast.info(response?.msg || "Unable to fetch loan products");
       }
@@ -121,15 +122,15 @@ const LoanProductMaster = () => {
     productFormik.setValues({
       product_id: row.product_id || "",
       product_name: row.product_name || "",
-      product_type: row.product_type || "",                       // ← added
+      product_type: row.product_type || "",
       loan_type: String(row.loan_type ?? ""),
       category: row.category || "",
       principle_amount: row.principle_amount ?? "",
-      repayment_frequency: row.repayment_frequency || "",         // ← added
+      repayment_frequency: row.repayment_frequency || "", 
       lpf: row.lpf ?? "",
       interest_rate: row.interest_rate ?? "",
-      insurance_rate: row.insurance_rate ?? row.insurance_fee ?? "", // ← fixed
-      collection_date: row.collection_date ?? "",
+      insurance_rate: row.insurance_rate ?? row.insurance_fee ?? "",
+      collection_date: row.collection_date ? String(row.collection_date).slice(0, 10) : "",
       tenure_months: row.tenure_months ?? "",
       apr_rate: row.apr_rate ?? "",
       eir_rate: row.eir_rate ?? "",
@@ -166,6 +167,7 @@ const LoanProductMaster = () => {
         product_id: row?.product_id,
         loan_type: Number(row?.loan_type),
         product_name: row?.product_name,
+        product_type: row?.product_type,
         category: row?.category,
         principle_amount: Number(row?.principle_amount),
         repayment_frequency: row?.repayment_frequency,
@@ -233,6 +235,10 @@ const LoanProductMaster = () => {
           .required("Product name is required")
           .min(2, "Product name must be at least 2 characters")
           .max(100, "Product name cannot exceed 100 characters"),
+
+        product_type: Yup.string()
+          .trim()
+          .required("Product type is required"),
 
         loan_type: Yup.string()
           .required("Loan type is required")
@@ -330,7 +336,7 @@ const LoanProductMaster = () => {
     initialValues: {
       product_id: "",
       product_name: "",
-      product_type: "",          // ← added
+      product_type: "",
       loan_type: "",
       category: "",
       principle_amount: "",
@@ -361,6 +367,7 @@ const LoanProductMaster = () => {
           product_id: values.product_id.trim(),
           loan_type: Number(values.loan_type),
           product_name: values.product_name.trim(),
+          product_type: values.product_type.trim(),
           category: values.category,
           principle_amount: Number(values.principle_amount),
           repayment_frequency: values?.repayment_frequency,
@@ -484,6 +491,11 @@ const LoanProductMaster = () => {
       sortable: true,
     },
     {
+      name: "Product Type",
+      selector: (row) => row?.product_type || "-",
+      sortable: true,
+    },
+    {
       name: "Loan Type",
       selector: (row) => loanTypeLabel(row?.loan_type),
       sortable: true,
@@ -575,7 +587,7 @@ const LoanProductMaster = () => {
 
   useEffect(() => {
     fetchAllProducts();
-    fetchLoanTypes(); // <-- fetch loan types on mount
+    fetchLoanTypes();
   }, []);
 
   const ErrorText = ({ name }) =>
@@ -649,8 +661,8 @@ const LoanProductMaster = () => {
                 onChange={productFormik.handleChange}
                 onBlur={productFormik.handleBlur}
                 options={[
-                  { label: 'Secured', value: 'Secured' },
-                  { label: 'Unsecured', value: 'Unsecured' }
+                  { label: 'Secure', value: 'Secure' },
+                  { label: 'Unsecure', value: 'Unsecure' }
                 ]}
               />
               <ErrorText name="product_type" />
@@ -916,7 +928,7 @@ const LoanProductMaster = () => {
             <Button
               btnName={isEdit ? "Update" : "Submit"}
               type="submit"
-              disabled={!productFormik.isValid || productFormik.isSubmitting}
+              disabled={productFormik.isSubmitting}
               style="bg-primary text-sm text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
