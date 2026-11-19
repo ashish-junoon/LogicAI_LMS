@@ -28,7 +28,7 @@ const initialValues = {
   page_icon: "",
   page_display_name: "",
   page_url: "",
-  page_display_index: "",
+  page_display_index: "0",
   page_small_discription: "",
   page_name_type: "",
   is_active: true,
@@ -136,11 +136,11 @@ const PageManagement = () => {
         .required("Page URL is required")
         .max(250, "Page URL cannot exceed 250 characters"),
 
-      page_display_index: Yup.number()
-        .typeError("Display index must be a number")
-        .integer("Display index must be a whole number")
-        .min(0, "Display index cannot be negative")
-        .required("Display index is required"),
+      // page_display_index: Yup.number()
+      //   .typeError("Display index must be a number")
+      //   .integer("Display index must be a whole number")
+      //   .min(0, "Display index cannot be negative")
+      //   .required("Display index is required"),
 
       page_small_discription: Yup.string()
         .trim()
@@ -240,7 +240,7 @@ const PageManagement = () => {
       page_icon: row?.page_icon || "",
       page_display_name: row?.page_display_name || "",
       page_url: row?.page_url || "",
-      page_display_index: row?.page_display_index ?? "",
+      page_display_index: row?.page_display_index ?? "0",
       page_small_discription:
         row?.page_small_discription || "",
       is_active:
@@ -603,7 +603,7 @@ const PageManagement = () => {
             </div>
 
             {/* DISPLAY INDEX */}
-            <div>
+            {/* <div>
               <TextInput
                 label="Page Display Index"
                 name="page_display_index"
@@ -614,7 +614,7 @@ const PageManagement = () => {
                 onBlur={pageFormik.handleBlur}
               />
               <ErrorText name="page_display_index" />
-            </div>
+            </div> */}
             
             <div>
               <SelectInput 

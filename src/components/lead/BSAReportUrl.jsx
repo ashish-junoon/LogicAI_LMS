@@ -89,7 +89,7 @@ const BSAReportUrl = ({
       const payload = {
         customer_id: customerId,
         application_id: applicationId,
-        mobile_no: applicationId || "",
+        mobile_no: mobileNo || "",
       };
       const response = await BSA_FlowGet(payload);
       // console.log("BSA_FlowGet Response:", response);
