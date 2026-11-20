@@ -159,19 +159,34 @@ export const GetAllDocumentTypes = async (req) => {
     }
 }
 
+// export const CreateDocumentType = async (req) => {
+//     try {
+//         const response = await api.post("/Master/CreateDocumentType", req);
+//         return response.data;
+//     } catch (error) {
+//         console.error("CreateDocumentType:", error.response?.data || error.message);
+//         throw error;
+//     }
+// }
+
 export const CreateDocumentType = async (req) => {
-    try {
-        const response = await api.post("/Master/CreateDocumentType", req);
-        return response.data;
-    } catch (error) {
-        console.error("CreateDocumentType:", error.response?.data || error.message);
-        throw error;
-    }
-}
+  try {
+    const response = await api.post("/Master/CreateDocumentType", req,
+      { headers: { "Content-Type": "multipart/form-data",},},
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("CreateDocumentType:", error.response?.data || error.message,);
+    throw error;
+  }
+};
 
 export const UpdateDocumentType = async (req) => {
     try {
-        const response = await api.put("/Master/UpdateDocumentType", req);
+        const response = await api.put("/Master/UpdateDocumentType", req,
+            { headers: { "Content-Type": "multipart/form-data",},},
+        );
         return response.data;
     } catch (error) {
         console.error("UpdateDocumentType:", error.response?.data || error.message);

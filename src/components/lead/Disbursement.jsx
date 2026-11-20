@@ -287,9 +287,12 @@ const Disbursement = () => {
   const formik = useFormik({
     initialValues: {
       utr_number: "",
-      disbursement_date: new Date().toISOString().split("T")[0],
+      bank_name: "",
+      payment_mode: "",
+      disbursement_date: "",
       utr_file: null,
       remarks: "",
+      disbursement_amount: "",
       confirmed: false,
     },
     validationSchema: Yup.object({
@@ -297,10 +300,23 @@ const Disbursement = () => {
         .trim()
         .required("UTR number is required")
         .min(6, "UTR number looks too short"),
+
+      // transaction_type: Yup.string().required("Transaction type is required"),
+
+      bank_name: Yup.string().required("Please select bank"),
+
+      payment_mode: Yup.string().required("Please select payment mode"),
+
+      disbursement_amount: Yup.number()
+        .typeError("Please enter a valid disbursement amount")
+        .required("Disbursement amount is required")
+        .positive("Amount must be greater than 0"),
+
       disbursement_date: Yup.date()
-        .typeError("Invalid date")
+        .typeError("Please select a valid disbursement date")
         .required("Disbursement date is required")
         .max(new Date(), "Cannot be a future date"),
+
       utr_file: Yup.mixed()
         .required("UTR file is required")
         .test("fileType", "Unsupported file type", (value) => {
@@ -311,7 +327,9 @@ const Disbursement = () => {
         .test("fileSize", "File must be ≤ 10 MB", (value) =>
           value ? value.size <= maxUtrSize : true,
         ),
+
       remarks: Yup.string().max(500, "Remarks cannot exceed 500 characters"),
+
       confirmed: Yup.boolean().oneOf(
         [true],
         "Please confirm before proceeding",
@@ -322,28 +340,28 @@ const Disbursement = () => {
         setIsProcessing(true);
 
         // 1) Upload UTR file (reuses existing docs endpoint)
-        if (customerId && applicationId) {
-          const ext = values.utr_file.name.split(".").pop().toLowerCase();
-          const base64 = await convertFileToBase64(values.utr_file);
-          const res = await SaveOtherDocuments({
-            id: 0,
-            customer_id: customerId,
-            application_id: applicationId,
-            document_type: "UTR_FILE",
-            document_base64: base64,
-            file_extension: ext,
-            is_active: true,
-            created_by: authData?.user_id,
-            company_id: import.meta.env.VITE_COMPANY_ID,
-            product_name: import.meta.env.VITE_PRODUCT_NAME,
-          });
-          if (!res?.status) {
-            toast.error(res?.message || "UTR file upload failed.");
-            setIsProcessing(false);
-            setSubmitting(false);
-            return;
-          }
-        }
+        // if (customerId && applicationId) {
+        //   const ext = values.utr_file.name.split(".").pop().toLowerCase();
+        //   const base64 = await convertFileToBase64(values.utr_file);
+        //   const res = await SaveOtherDocuments({
+        //     id: 0,
+        //     customer_id: customerId,
+        //     application_id: applicationId,
+        //     document_type: "UTR_FILE",
+        //     document_base64: base64,
+        //     file_extension: ext,
+        //     is_active: true,
+        //     created_by: authData?.user_id,
+        //     company_id: import.meta.env.VITE_COMPANY_ID,
+        //     product_name: import.meta.env.VITE_PRODUCT_NAME,
+        //   });
+        //   if (!res?.status) {
+        //     toast.error(res?.message || "UTR file upload failed.");
+        //     setIsProcessing(false);
+        //     setSubmitting(false);
+        //     return;
+        //   }
+        // }
 
         // 2) TODO: replace with your real disbursement/UTR API call
         //    e.g. await MarkDisbursed({
@@ -352,6 +370,27 @@ const Disbursement = () => {
         //      disbursement_date: values.disbursement_date,
         //      remarks: values.remarks,
         //    });
+
+        const req = {
+          customer_id: customerId,
+          application_id: applicationId,
+          vendor_loan_id: "",
+          product_code: "",
+          step_status: "8",
+          payment_mode: values.payment_mode,
+          reference_no: values.utr_number,
+          disbursement_amount: Number(values.disbursement_amount),
+          disbursement_date: values.disbursement_date,
+
+          updated_by: authData?.user_id,
+          bank_name: values.bank_name,
+          vendor_id: "",
+          company_id: import.meta.env.VITE_COMPANY_ID,
+          product_name: import.meta.env.VITE_PRODUCT_NAME,
+        };
+
+        console.log(req);
+        
 
         // 3) Existing simulated processing
         setTimeout(() => {
@@ -634,12 +673,12 @@ const Disbursement = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        title="Confirm Disbursement"
+        title="Update Disbursement"
         size="sm"
       >
         <form onSubmit={formik.handleSubmit} noValidate className="space-y-3">
           {/* Compact Summary */}
-          <div className="bg-slate-50 rounded-md p-3 grid grid-cols-2 gap-5">
+          {/* <div className="bg-slate-50 rounded-md p-3 grid grid-cols-2 gap-5">
             <div className="flex justify-between items-center text-xs">
               <span className="text-slate-500">Loan Amount</span>
               <span className="font-semibold text-slate-800">
@@ -676,10 +715,10 @@ const Disbursement = () => {
                 {disbursementData.date}
               </span>
             </div>
-          </div>
+          </div> */}
 
           {/* EMI Summary in Modal */}
-          <div className="p-2 mt-1.5 border-t border-slate-200 bg-gray-100">
+          {/* <div className="p-2 mt-1.5 border-t border-slate-200 bg-gray-100">
             <div className="flex items-center gap-1.5 mb-1">
               <Icon name="RiBankCardLine" size={12} color="#64748B" />
               <span className="text-[10px] font-semibold text-slate-600">
@@ -712,7 +751,7 @@ const Disbursement = () => {
                 </span>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* ── UTR Details ─────────────────────────────────────────── */}
           <div className="pt-2 border-t border-slate-200 space-y-2">
@@ -753,8 +792,29 @@ const Disbursement = () => {
                 />
               </div>
 
-              {/* Transaction Type */}
               <div>
+                <label className="block text-[10px] font-medium text-slate-600 mb-1">Disbursement Amount</label>
+                <input
+                  type="number"
+                  name="disbursement_amount"
+                  value={formik.values.disbursement_amount}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  placeholder="Enter disbursement amount"
+                  className={`w-full rounded-md border bg-white px-3 py-1.5 text-xs text-slate-700 focus:outline-none focus:ring-2 transition-all ${
+                    formik.touched.disbursement_amount && formik.errors.disbursement_amount
+                      ? "border-red-400 focus:border-red-500 focus:ring-red-500/20"
+                      : "border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20"
+                  }`}
+                />
+                <FieldError
+                  touched={formik.touched.disbursement_amount}
+                  error={formik.errors.disbursement_amount}
+                />
+              </div>
+
+              {/* Transaction Type */}
+              {/* <div>
                 <label
                   htmlFor="transaction_type"
                   className="block text-[10px] font-medium text-slate-600 mb-1"
@@ -780,6 +840,68 @@ const Disbursement = () => {
                 <FieldError
                   touched={formik.touched.transaction_type}
                   error={formik.errors.transaction_type}
+                />
+              </div> */}
+
+              {/* Bank Name */}
+              <div>
+                <label className="block text-[10px] font-medium text-slate-600 mb-1">
+                  Bank Name <span className="text-red-500">*</span>
+                </label>
+
+                <select
+                  name="bank_name"
+                  value={formik.values.bank_name}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className={`w-full rounded-md border bg-white px-3 py-1.5 text-xs text-slate-700 focus:outline-none focus:ring-2 ${
+                    formik.touched.bank_name && formik.errors.bank_name
+                      ? "border-red-400 focus:border-red-500"
+                      : "border-slate-200 focus:border-primary"
+                  }`}
+                >
+                  <option value="">Select Bank</option>
+                  <option value="HDFC Bank">HDFC Bank</option>
+                  <option value="ICICI Bank">ICICI Bank</option>
+                  <option value="State Bank of India">
+                    State Bank of India
+                  </option>
+                  <option value="Axis Bank">Axis Bank</option>
+                </select>
+
+                <FieldError
+                  touched={formik.touched.bank_name}
+                  error={formik.errors.bank_name}
+                />
+              </div>
+
+              {/* Payment Mode */}
+              <div>
+                <label className="block text-[10px] font-medium text-slate-600 mb-1">
+                  Payment Mode <span className="text-red-500">*</span>
+                </label>
+
+                <select
+                  name="payment_mode"
+                  value={formik.values.payment_mode}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className={`w-full rounded-md border bg-white px-3 py-1.5 text-xs text-slate-700 focus:outline-none focus:ring-2 ${
+                    formik.touched.payment_mode && formik.errors.payment_mode
+                      ? "border-red-400 focus:border-red-500"
+                      : "border-slate-200 focus:border-primary"
+                  }`}
+                >
+                  <option value="">Select Payment Mode</option>
+                  <option value="NEFT">NEFT</option>
+                  <option value="RTGS">RTGS</option>
+                  <option value="IMPS">IMPS</option>
+                  <option value="UPI">UPI</option>
+                </select>
+
+                <FieldError
+                  touched={formik.touched.payment_mode}
+                  error={formik.errors.payment_mode}
                 />
               </div>
 
@@ -897,7 +1019,7 @@ const Disbursement = () => {
           </div>
 
           {/* Confirmation */}
-          <div>
+          {(formik.values.disbursement_amount > 0) && <div>
             <div className="flex items-start gap-1.5">
               <input
                 type="checkbox"
@@ -915,7 +1037,7 @@ const Disbursement = () => {
                 I confirm all details are verified and authorize disbursement of
                 <span className="font-semibold text-primary">
                   {" "}
-                  {disbursementData.disbursementAmount}
+                  {formik.values.disbursement_amount}
                 </span>
               </label>
             </div>
@@ -923,7 +1045,7 @@ const Disbursement = () => {
               touched={formik.touched.confirmed}
               error={formik.errors.confirmed}
             />
-          </div>
+          </div>}
 
           {/* Action Buttons */}
           <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
