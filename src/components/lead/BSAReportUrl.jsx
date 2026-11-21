@@ -17,7 +17,6 @@ import {
 } from "../../api/kycApi";
 import { showValidationError, downloadBase64File } from "../utils/common";
 
-
 const cleanValue = (value) => {
   if (value == null || value === "") return "—";
 
@@ -54,6 +53,7 @@ const BSAReportUrl = ({
   const [BSA_Report, setBSAReport] = useState(null);
   const [loading, setLoading] = useState(false);
   const [verifying, setVerifying] = useState(false);
+  const [filePassword, setFilePassword] = useState("");
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const { authData } = useAuthData();
@@ -172,40 +172,40 @@ const BSAReportUrl = ({
     }
   };
 
-const handleFetchBsaResult = async (runId) => {
-  if (!runId) {
-    toast.info("BSA Run ID is missing.");
-    return;
-  }
-
-  try {
-    const response = await BSA_FlowResult({
-      customer_id: customerId,
-      application_id: applicationId,
-      runId: runId, // Changed from run_id to runId
-      company_id: import.meta.env.VITE_COMPANY_ID,
-      product_name: import.meta.env.VITE_PRODUCT_NAME,
-      created_by: authData?.user_id,
-    });
-
-    if (!response?.status) {
-      toast.info(response?.message || "BSA result not available.");
+  const handleFetchBsaResult = async (runId) => {
+    if (!runId) {
+      toast.info("BSA Run ID is missing.");
       return;
     }
 
-    if (!hasBsaResultData(response)) {
-      toast.info("BSA result is still processing.");
-      return;
+    try {
+      const response = await BSA_FlowResult({
+        customer_id: customerId,
+        application_id: applicationId,
+        runId: runId, // Changed from run_id to runId
+        company_id: import.meta.env.VITE_COMPANY_ID,
+        product_name: import.meta.env.VITE_PRODUCT_NAME,
+        created_by: authData?.user_id,
+      });
+
+      if (!response?.status) {
+        toast.info(response?.message || "BSA result not available.");
+        return;
+      }
+
+      if (!hasBsaResultData(response)) {
+        toast.info("BSA result is still processing.");
+        return;
+      }
+
+      const resultData = response?.data?.data?.data;
+
+      setBSAReport(resultData);
+    } catch (error) {
+      console.error("BSA Result Error:", error);
+      showValidationError(error);
     }
-
-    const resultData = response?.data?.data?.data;
-
-    setBSAReport(resultData);
-  } catch (error) {
-    console.error("BSA Result Error:", error);
-    showValidationError(error);
-  }
-};
+  };
 
   const handleFetch = async () => {
     if (!selectedDocument) {
@@ -218,7 +218,7 @@ const handleFetchBsaResult = async (runId) => {
       application_id: data?.personalKyc[0]?.application_id || "",
       fileurl: selectedDocument?.document_path,
       fileName: selectedDocument?.document_type,
-      filepassword: selectedDocument?.filepassword || "N",
+      filepassword: filePassword.trim() || "N",
       mobileno: data?.marketSurvey[0]?.business_owner_mobile_no || "",
       emailid: data?.personalKyc[0]?.email_id || "",
       company_id: import.meta.env.VITE_COMPANY_ID,
@@ -340,6 +340,14 @@ const handleFetchBsaResult = async (runId) => {
     } finally {
       setVerifying(false);
     }
+  };
+
+  const closeFetchModal = () => {
+    if (isFetching) return;
+
+    setShowFetchModal(false);
+    setSelectedDocument(null);
+    setFilePassword("");
   };
 
   return (
@@ -735,10 +743,15 @@ const handleFetchBsaResult = async (runId) => {
                   return (
                     <div
                       key={doc?.document_id || doc?.id || index}
-                      className={`flex items-center gap-3 rounded-lg border p-3 ${
+                      onClick={() => {
+                        if (isFetching) return;
+                        setSelectedDocument(doc);
+                        setFilePassword("");
+                      }}
+                      className={`flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition ${
                         isSelected
                           ? "border-emerald-500 bg-emerald-50/50"
-                          : "border-slate-200"
+                          : "border-slate-200 hover:border-emerald-300 hover:bg-slate-50"
                       }`}
                     >
                       <input
@@ -746,7 +759,11 @@ const handleFetchBsaResult = async (runId) => {
                         name="bankStatement"
                         checked={isSelected}
                         disabled={isFetching}
-                        onChange={() => setSelectedDocument(doc)}
+                        onChange={() => {
+                          setSelectedDocument(doc);
+                          setFilePassword("");
+                        }}
+                        onClick={(e) => e.stopPropagation()}
                         className="h-4 w-4 accent-emerald-600"
                       />
 
@@ -765,8 +782,11 @@ const handleFetchBsaResult = async (runId) => {
 
                       <button
                         type="button"
-                        onClick={() => setPreviewDocument({ url, name })}
-                        className="flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPreviewDocument({ url, name });
+                        }}
+                        className="flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 cursor-pointer"
                       >
                         <Icon name="RiEyeLine" size={15} />
                         Preview
@@ -776,11 +796,38 @@ const handleFetchBsaResult = async (runId) => {
                 })}
               </div>
 
+              {selectedDocument && (
+                <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-4">
+                  <label className="mb-2 block text-sm font-semibold text-slate-700">
+                    Bank Statement Password
+                    <span className="ml-2 text-xs font-normal text-slate-400">
+                      (Optional)
+                    </span>
+                  </label>
+
+                  <input
+                    type="password"
+                    value={filePassword}
+                    onChange={(e) => setFilePassword(e.target.value)}
+                    placeholder="Enter statement password if protected"
+                    disabled={isFetching}
+                    autoComplete="new-password"
+                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 disabled:bg-slate-100"
+                  />
+
+                  <p className="mt-1.5 text-xs text-slate-500">
+                    If the bank statement is password protected, enter its
+                    password. Otherwise, leave this field blank.
+                  </p>
+                </div>
+              )}
+
               <div className="flex justify-end gap-2 border-t border-slate-200 p-4">
                 <button
                   type="button"
                   disabled={isFetching}
-                  onClick={() => setShowFetchModal(false)}
+                  // onClick={() => setShowFetchModal(false)}
+                  onClick={closeFetchModal}
                   className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50"
                 >
                   Cancel

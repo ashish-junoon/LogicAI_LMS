@@ -20,6 +20,20 @@ const DocumentMaster = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [editingDocumentId, setEditingDocumentId] = useState(null);
 
+  const customStyles = {
+    rows: {
+      style: {
+        minHeight: "75px",
+      },
+    },
+    cells: {
+      style: {
+        paddingTop: "10px",
+        paddingBottom: "10px",
+      },
+    },
+  };
+
   // =========================================================
   // FETCH ALL DOCUMENT TYPES
   // =========================================================
@@ -94,6 +108,7 @@ const DocumentMaster = () => {
         id: row?.id,
         document_type: row?.document_type,
         is_active: nextStatus,
+        thumbnail_image: row?.thumbnail_image
       };
 
       const response = await UpdateDocumentType(req);
@@ -148,33 +163,110 @@ const DocumentMaster = () => {
     initialValues: {
       document_type: "",
       is_active: true,
+      thumbnail_image: null,
     },
 
     enableReinitialize: true,
+
+    // validationSchema: Yup.object({
+    //   document_type: Yup.string()
+    //     .trim()
+    //     .required("Document type is required")
+    //     .max(100, "Document type cannot exceed 100 characters"),
+    // }),
 
     validationSchema: Yup.object({
       document_type: Yup.string()
         .trim()
         .required("Document type is required")
         .max(100, "Document type cannot exceed 100 characters"),
+
+      thumbnail_image: Yup.mixed().when("$isEdit", {
+        is: true,
+        then: (schema) => schema.nullable(),
+        otherwise: (schema) => schema.required("Thumbnail image is required"),
+      }),
     }),
+
+    // onSubmit: async (values, { resetForm }) => {
+    //   try {
+    //     const req = {
+    //       document_type: values.document_type.trim(),
+    //       is_active: values.is_active,
+    //     };
+
+    //     let response;
+
+    //     if (isEdit) {
+    //       response = await UpdateDocumentType({
+    //         id: editingDocumentId,
+    //         ...req,
+    //       });
+    //     } else {
+    //       response = await CreateDocumentType(req);
+    //     }
+
+    //     if (response?.status) {
+    //       await fetchAllDocuments();
+
+    //       toast.success(
+    //         response?.message ||
+    //           (isEdit
+    //             ? "Document type updated successfully!"
+    //             : "Document type created successfully!"),
+    //       );
+
+    //       setIsModalOpen(false);
+    //       resetForm();
+    //       setIsEdit(false);
+    //       setEditingDocumentId(null);
+    //     } else {
+    //       toast.info(
+    //         response?.message ||
+    //           (isEdit
+    //             ? "Unable to update document type!"
+    //             : "Unable to add document type!"),
+    //       );
+    //     }
+    //   } catch (error) {
+    //     console.error(
+    //       isEdit
+    //         ? "Error updating document type:"
+    //         : "Error creating document type:",
+    //       error,
+    //     );
+
+    //     toast.error(
+    //       error?.response?.data?.title ||
+    //         error?.response?.data?.errors?.request?.[0] ||
+    //         error?.message ||
+    //         "Something went wrong!",
+    //     );
+    //   }
+    // },
 
     onSubmit: async (values, { resetForm }) => {
       try {
-        const req = {
-          document_type: values.document_type.trim(),
-          is_active: values.is_active,
-        };
-
         let response;
 
         if (isEdit) {
-          response = await UpdateDocumentType({
+          // UPDATE API
+          const req = {
             id: editingDocumentId,
-            ...req,
-          });
+            document_type: values.document_type.trim(),
+            is_active: values.is_active,
+          };
+
+          response = await UpdateDocumentType(req);
         } else {
-          response = await CreateDocumentType(req);
+          // CREATE API - MULTIPART
+          const formData = new FormData();
+
+          formData.append("document_type", values.document_type.trim());
+          formData.append("is_active", values.is_active);
+          formData.append("thumbnail_image", values.thumbnail_image);
+
+          response = await CreateDocumentType(formData);
         }
 
         if (response?.status) {
@@ -200,12 +292,7 @@ const DocumentMaster = () => {
           );
         }
       } catch (error) {
-        console.error(
-          isEdit
-            ? "Error updating document type:"
-            : "Error creating document type:",
-          error,
-        );
+        console.error("Document type error:", error);
 
         toast.error(
           error?.response?.data?.title ||
@@ -242,6 +329,39 @@ const DocumentMaster = () => {
       sortable: true,
       grow: 1,
     },
+
+    {
+      name: "Thumbnail",
+      selector: (row) => row?.thumbnail_image || "-",
+      sortable: true,
+      grow: 1,
+      cell: (row) =>
+        row?.thumbnail_image ? (
+          <img
+            src={row.thumbnail_image}
+            alt="Document Thumbnail"
+            className="w-12 h-12 object-cover rounded-md border border-gray-200 cursor-pointer"
+            onClick={() => window.open(row.thumbnail_image, "_blank")}
+          />
+        ) : (
+          <span className="text-gray-400 text-xs">No Image</span>
+        ),
+    },
+
+    // {
+    //   name: "Thumbnail",
+    //   cell: (row) =>
+    //     row?.thumbnail_image ? (
+    //       <img
+    //         src={row.thumbnail_image}
+    //         alt="Thumbnail"
+    //         className="w-14 h-14 object-cover rounded-md"
+    //       />
+    //     ) : (
+    //       "-"
+    //     ),
+    //   minWidth: "120px",
+    // },
 
     {
       name: "Action",
@@ -314,7 +434,11 @@ const DocumentMaster = () => {
         </div>
 
         {/* TABLE */}
-        <Table data={documentList} columns={columns} />
+        <Table
+          data={documentList}
+          columns={columns}
+          customStyles={customStyles}
+        />
       </div>
 
       {/* ADD / EDIT MODAL */}
@@ -335,6 +459,41 @@ const DocumentMaster = () => {
             />
 
             <ErrorText name="document_type" />
+          </div>
+
+          <div className="mt-3">
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              Thumbnail Image
+            </label>
+
+            <input
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              onChange={(e) => {
+                documentFormik.setFieldValue(
+                  "thumbnail_image",
+                  e.currentTarget.files?.[0] || null,
+                );
+              }}
+              onBlur={() =>
+                documentFormik.setFieldTouched("thumbnail_image", true)
+              }
+              className="w-full text-xs border border-gray-200 rounded-md p-2"
+            />
+
+            <ErrorText name="thumbnail_image" />
+
+            {documentFormik.values.thumbnail_image && (
+              <div className="mt-2">
+                <img
+                  src={URL.createObjectURL(
+                    documentFormik.values.thumbnail_image,
+                  )}
+                  alt="Thumbnail Preview"
+                  className="w-20 h-20 object-cover rounded-md border"
+                />
+              </div>
+            )}
           </div>
 
           {/* BUTTONS */}
