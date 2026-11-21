@@ -126,7 +126,7 @@ const LoanProductMaster = () => {
       loan_type: String(row.loan_type ?? ""),
       category: row.category || "",
       principle_amount: row.principle_amount ?? "",
-      repayment_frequency: row.repayment_frequency || "", 
+      repayment_frequency: row.repayment_frequency || "",
       lpf: row.lpf ?? "",
       interest_rate: row.interest_rate ?? "",
       insurance_rate: row.insurance_rate ?? row.insurance_fee ?? "",
@@ -225,10 +225,10 @@ const LoanProductMaster = () => {
   const validationSchema = useMemo(
     () =>
       Yup.object({
-        product_id: Yup.string()
-          .trim()
-          .required("Product ID is required")
-          .max(50, "Product ID cannot exceed 50 characters"),
+        // product_id: Yup.string()
+        //   .trim()
+        //   .required("Product ID is required")
+        //   .max(50, "Product ID cannot exceed 50 characters"),
 
         product_name: Yup.string()
           .trim()
@@ -628,8 +628,9 @@ const LoanProductMaster = () => {
       >
         <form onSubmit={productFormik.handleSubmit}>
           <div className="grid grid-cols-3 gap-3 mt-6">
-            <div>
+            {/* <div>
               <TextInput
+                disabled
                 label="Product ID"
                 name="product_id"
                 placeholder="Enter product ID"
@@ -638,7 +639,7 @@ const LoanProductMaster = () => {
                 onBlur={productFormik.handleBlur}
               />
               <ErrorText name="product_id" />
-            </div>
+            </div> */}
 
             <div>
               <TextInput
