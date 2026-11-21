@@ -640,6 +640,23 @@ const PageManagement = () => {
               <ErrorText name="page_name_type" />
             </div>
 
+            <div>
+              <SelectInput
+                label="Page Type"
+                name="page_name_type"
+                options={[
+                  { label: "LOS", value: "LOS" },
+                  { label: "LMS", value: "LMS" },
+                  { label: "BOTH", value: "BOTH" },
+                ]}
+                placeholder="Select Page Type"
+                value={pageFormik.values.page_name_type}
+                onChange={pageFormik.handleChange}
+                onBlur={pageFormik.handleBlur}
+              />
+              <ErrorText name="page_name_type" />
+            </div>
+
             {/* DESCRIPTION */}
             <div className="sm:col-span-2">
               <TextInput

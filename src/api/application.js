@@ -143,13 +143,3 @@ export const CAMREPORT = async (req) => {
         throw error;
     }
 }
-
-export const SaveVendorMapping = async (req) => {
-    try {
-        const response = await api.post("/LOS/SaveVendorMapping", req);
-        return response.data;
-    } catch (error) {
-        console.error("SaveVendorMapping:", error.response?.data || error.message);
-        throw error;
-    }
-}

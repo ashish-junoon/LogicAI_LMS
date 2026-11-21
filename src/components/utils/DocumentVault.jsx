@@ -37,6 +37,9 @@ const DocumentVault = ({
   const fileInputRef = useRef(null);
   const previewUrlsRef = useRef(new Set());
 
+  console.log(documents);
+  
+
   useEffect(() => {
     if(selectedFile){
         handleUpload();

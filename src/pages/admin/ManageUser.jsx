@@ -353,7 +353,7 @@ const ManageUser = () => {
       department: String(user.department_id ?? ""),
       designation: String(user.designation_id ?? ""),
       role: user.role || "",
-      user_type: user.user_type || "",
+      user_type: String(user.user_type),
       report_view: Boolean(user.report_view),
       is_active: user.is_active,
     });

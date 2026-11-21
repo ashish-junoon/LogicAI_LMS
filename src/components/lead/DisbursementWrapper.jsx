@@ -11,6 +11,7 @@ import UploadDisbursment from "./UploadDisbursment";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { useAuthData } from "../../context/authContext";
 import DocumentVault from "../utils/DocumentVault";
+import ENACH from "./ENACH";
 
 const DisbursementWrapper = ({ customerDetails, onRefresh }) => {
   const [activeSection, setActiveSection] = useState("disbursement");
@@ -30,6 +31,7 @@ const DisbursementWrapper = ({ customerDetails, onRefresh }) => {
       label: "Manage Disbursal",
       icon: "RiShieldCheckLine",
     },
+    { id: "enach", label: "ENACH", icon: "PiBookOpenTextDuotone" },
     { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
     { id: "userinfo", label: "User Details", icon: "RiFileList3Line" },
     { id: "documents", label: "Documents", icon: "RiFileList3Line" },
@@ -49,7 +51,9 @@ const DisbursementWrapper = ({ customerDetails, onRefresh }) => {
     switch (activeSection) {
       case "disbursement":
         return <Disbursement />;
-      // return <UploadDisbursment customerDetails={customerDetails} />;
+        // return <UploadDisbursment customerDetails={customerDetails} />;
+        case "enach":
+          return <ENACH data={customerDetails} />;
       case "remarks":
         return (
           <RemarksHistory
