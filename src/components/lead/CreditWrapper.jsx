@@ -59,6 +59,7 @@ const CreditWrapper = ({ customerDetails, onRefresh }) => {
   }, []);
 
   const handleSwitchProvider = () => {
+    switchProviderFormik.resetForm();
     setswitchLoanProvier(true);
   };
 
@@ -169,7 +170,7 @@ const CreditWrapper = ({ customerDetails, onRefresh }) => {
               <Button
                 btnIcon={"MdOutlineSwitchAccessShortcut"}
                 style={"bg-primary text-white"}
-                btnName={"Switch Provider"}
+                btnName={"Switch Vendor"}
                 onClick={handleSwitchProvider}
               />
             </div>

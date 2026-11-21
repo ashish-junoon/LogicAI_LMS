@@ -12,15 +12,18 @@ import TogleInput from "../../components/fields/TogleInput";
 import SelectInput from "../../components/fields/SelectInput";
 import Button from "../../components/utils/Button";
 
-import { GetAllUsers, CreateUsers, UpdateUsers } from "../../api/userApi.js";
+import { GetAllUsers, CreateUsers, UpdateUsers, GetAllRoles } from "../../api/userApi.js";
 import {
   GetAllBranches,
   GetAllDepartments,
   GetAllDesignations,
+  GetAllGenders,
 } from "../../api/mastersApi.js";
 import { Link } from "react-router-dom";
 import { useAuthData } from "../../context/authContext.jsx";
 import { MdViewInAr } from "react-icons/md";
+import { MdOutlineViewInAr } from "react-icons/md";
+import { showValidationError } from "../../components/utils/common.jsx";
 
 const initialValues = {
   full_name: "",
@@ -47,24 +50,59 @@ const ManageUser = () => {
   const [designationOptions, setdesignationOptions] = useState([]);
   const [departmentOptions, setdepartmentOptions] = useState([]);
   const [branchOptions, setbranchOptions] = useState([]);
+  const [roleOptions, setroleOptions] = useState([]);
+  const [genderOptions, setgenderOptions] = useState([]);
 
   const { authData } = useAuthData();
 
-  // Replace these sample options with your master API data.
-  const genderOptions = [
-    { label: "Male", value: "Male" },
-    { label: "Female", value: "Female" },
-    { label: "Other", value: "Other" },
-  ];
+    // =========================================================
+    // FETCH ALL GENDERS
+    // =========================================================
+    const fetchAllGenders = async () => {
+      try {
+        setIsLoading(true);
+        const response = await GetAllGenders();
+        const transformedData =
+          response?.data?.map((item, index) => ({
+            label : item.gender,
+            value : item.gender,
+            ...item,
+            sn: index + 1,
+          })).filter((item)=> item?.is_active) || [];
+  
+        setgenderOptions(transformedData);
+      } catch (error) {
+        console.error("Error fetching genders:", error);
+        showValidationError(error)
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const roleOptions = [
-    { label: "Manager", value: "Manager" },
-    { label: "Executive", value: "Executive" },
-    { label: "Other", value: "Other" },
-    { label: "Officer", value: "Officer" },
-    { label: "Admin", value: "Admin" },
-  ];
-
+    // GET ALL ROLES
+    const fetchAllRoles = useCallback(async () => {
+      try {
+        setIsLoading(true);
+        const response = await GetAllRoles();
+        const transformedData = (response?.data || [])?.map(
+          (role, index) => ({
+            label: role.role_name,
+            value: role.role_name,
+            // value: role.role_id,
+            sn: index + 1,
+            ...role,
+          }),
+        )?.filter((item=> item.is_active));
+  
+        setroleOptions(transformedData);
+      } catch (error) {
+        console.error("Error fetching roles:", error);
+        showValidationError(error)
+      } finally {
+        setIsLoading(false);
+      }
+    }, []);
+  
   const permissionOptions = [
     { label: "Yes", value: "true" },
     { label: "No", value: "false" },
@@ -120,13 +158,7 @@ const ManageUser = () => {
       setdepartmentOptions(transformedData);
     } catch (error) {
       console.error("Error fetching department:", error);
-
-      toast.error(
-        error?.response?.data?.title ||
-          error?.response?.data?.errors?.request?.[0] ||
-          error?.message ||
-          "Failed to fetch department!",
-      );
+      showValidationError(error)
     } finally {
       setIsLoading(false);
     }
@@ -138,9 +170,7 @@ const ManageUser = () => {
   const fetchAllBranches = async () => {
     try {
       setIsLoading(true);
-
       const response = await GetAllBranches();
-
       const transformedData =
         response?.data?.map((item, index) => ({
           value: item?.id,
@@ -151,13 +181,7 @@ const ManageUser = () => {
       setbranchOptions(transformedData);
     } catch (error) {
       console.error("Error fetching brach:", error);
-
-      toast.error(
-        error?.response?.data?.title ||
-          error?.response?.data?.errors?.request?.[0] ||
-          error?.message ||
-          "Failed to fetch brach!",
-      );
+      showValidationError(error)
     } finally {
       setIsLoading(false);
     }
@@ -167,6 +191,8 @@ const ManageUser = () => {
     fetchAllDesignations();
     fetchAllDepartments();
     fetchAllBranches();
+    fetchAllRoles();
+    fetchAllGenders();
   }, []);
 
   // GET ALL USERS
@@ -184,13 +210,7 @@ const ManageUser = () => {
       setUserList(transformedData);
     } catch (error) {
       console.error("Error fetching users:", error);
-
-      toast.error(
-        error?.response?.data?.title ||
-          error?.response?.data?.message ||
-          error?.message ||
-          "Failed to fetch users!",
-      );
+      showValidationError(error)
     } finally {
       setIsLoading(false);
     }
@@ -203,9 +223,7 @@ const ManageUser = () => {
   // FORMIK: ADD / EDIT USER
   const userFormik = useFormik({
     initialValues,
-
     enableReinitialize: true,
-
     validationSchema: Yup.object({
       full_name: Yup.string()
         .trim()
@@ -234,11 +252,8 @@ const ManageUser = () => {
         .matches(/^[A-Z]{5}[0-9]{4}[A-Z]$/, "Enter a valid PAN number"),
 
       branch: Yup.string().required("Please select branch"),
-
       department: Yup.string().required("Please select department"),
-
       designation: Yup.string().required("Please select designation"),
-
       role: Yup.string().required("Please select role"),
       user_type: Yup.string().required("Please select user type"),
 
@@ -372,7 +387,7 @@ const ManageUser = () => {
         department: String(row?.department_id ?? ""),
         designation: String(row?.designation_id ?? ""),
         role: row?.role,
-        user_type: row?.user_type,
+        user_type : String(row?.user_type),
         report_view: Boolean(row?.report_view),
         created_by: authData?.user_id,
         is_active: nextStatus,
@@ -405,13 +420,7 @@ const ManageUser = () => {
       );
 
       console.error("Error toggling user status:", error);
-
-      toast.error(
-        error?.response?.data?.title ||
-          error?.response?.data?.message ||
-          error?.message ||
-          "Something went wrong!",
-      );
+      showValidationError(error)
     }
   };
 
@@ -462,6 +471,7 @@ const ManageUser = () => {
       selector: (row) => row?.email_id || "-",
       sortable: true,
       wrap: true,
+      width: "250px"
     },
     {
       name: "Mobile",
@@ -699,6 +709,19 @@ const ManageUser = () => {
               />
               <ErrorText name="branch" />
             </div>
+            
+            {/* <div>
+              <SelectInput
+                label="Reporting Head"
+                name="branch"
+                placeholder="Select Branch"
+                options={branchOptions}
+                value={userFormik.values.branch}
+                onChange={userFormik.handleChange}
+                onBlur={userFormik.handleBlur}
+              />
+              <ErrorText name="branch" />
+            </div> */}
 
             <div>
               <SelectInput
