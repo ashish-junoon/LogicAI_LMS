@@ -1,13 +1,13 @@
 import React, { useRef, useState } from "react";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Icon from "../utils/Icon";
 import Modal from "../utils/Modal";
 import { useAuthData } from "../../context/authContext";
-import { SaveOtherDocuments } from "../../api/application";
-import { convertFileToBase64 } from "../utils/common";
+import { SaveOtherDocuments, UpdateDisbursement } from "../../api/application";
+import { convertFileToBase64, showValidationError } from "../utils/common";
 
 /* -------------------------------------------------------------------------- */
 /*  Helpers                                                                   */
@@ -237,7 +237,7 @@ const FieldError = ({ touched, error }) =>
 /*  Main component                                                            */
 /* -------------------------------------------------------------------------- */
 
-const Disbursement = () => {
+const Disbursement = ({data}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [disbursementStatus, setDisbursementStatus] = useState(null);
@@ -248,6 +248,7 @@ const Disbursement = () => {
   const [uploadingDoc, setUploadingDoc] = useState(null); // "SANCTION_LETTER" | "AGREEMENT_LETTER" | null
 
   const utrFileInputRef = useRef(null);
+  const navigate = useNavigate()
 
   const { authData } = useAuthData();
   // const [searchParams] = useSearchParams();
@@ -279,6 +280,9 @@ const Disbursement = () => {
     emiDay: "1st of every month",
   };
 
+  const SelectedVendor = data?.vendorMappings?.[0];
+  
+
   /* ---------- Formik: disbursement + UTR form ---------- */
 
   const allowedUtrExts = ["pdf", "jpg", "jpeg", "png", "doc", "docx"];
@@ -290,7 +294,6 @@ const Disbursement = () => {
       bank_name: "",
       payment_mode: "",
       disbursement_date: "",
-      utr_file: null,
       remarks: "",
       disbursement_amount: "",
       confirmed: false,
@@ -317,17 +320,6 @@ const Disbursement = () => {
         .required("Disbursement date is required")
         .max(new Date(), "Cannot be a future date"),
 
-      utr_file: Yup.mixed()
-        .required("UTR file is required")
-        .test("fileType", "Unsupported file type", (value) => {
-          if (!value) return true;
-          const ext = value.name?.split(".").pop()?.toLowerCase();
-          return allowedUtrExts.includes(ext);
-        })
-        .test("fileSize", "File must be ≤ 10 MB", (value) =>
-          value ? value.size <= maxUtrSize : true,
-        ),
-
       remarks: Yup.string().max(500, "Remarks cannot exceed 500 characters"),
 
       confirmed: Yup.boolean().oneOf(
@@ -339,44 +331,9 @@ const Disbursement = () => {
       try {
         setIsProcessing(true);
 
-        // 1) Upload UTR file (reuses existing docs endpoint)
-        // if (customerId && applicationId) {
-        //   const ext = values.utr_file.name.split(".").pop().toLowerCase();
-        //   const base64 = await convertFileToBase64(values.utr_file);
-        //   const res = await SaveOtherDocuments({
-        //     id: 0,
-        //     customer_id: customerId,
-        //     application_id: applicationId,
-        //     document_type: "UTR_FILE",
-        //     document_base64: base64,
-        //     file_extension: ext,
-        //     is_active: true,
-        //     created_by: authData?.user_id,
-        //     company_id: import.meta.env.VITE_COMPANY_ID,
-        //     product_name: import.meta.env.VITE_PRODUCT_NAME,
-        //   });
-        //   if (!res?.status) {
-        //     toast.error(res?.message || "UTR file upload failed.");
-        //     setIsProcessing(false);
-        //     setSubmitting(false);
-        //     return;
-        //   }
-        // }
-
-        // 2) TODO: replace with your real disbursement/UTR API call
-        //    e.g. await MarkDisbursed({
-        //      customer_id, application_id,
-        //      utr_number: values.utr_number,
-        //      disbursement_date: values.disbursement_date,
-        //      remarks: values.remarks,
-        //    });
-
         const req = {
           customer_id: customerId,
           application_id: applicationId,
-          vendor_loan_id: "",
-          product_code: "",
-          step_status: "8",
           payment_mode: values.payment_mode,
           reference_no: values.utr_number,
           disbursement_amount: Number(values.disbursement_amount),
@@ -384,38 +341,55 @@ const Disbursement = () => {
 
           updated_by: authData?.user_id,
           bank_name: values.bank_name,
-          vendor_id: "",
+          vendor_id: String(SelectedVendor?.vendor_id),
           company_id: import.meta.env.VITE_COMPANY_ID,
           product_name: import.meta.env.VITE_PRODUCT_NAME,
         };
 
-        console.log(req);
-        
+        const response = await UpdateDisbursement(req);
+        if (!response.status) {
+          toast.info(response.message || "Unable to update disbursement!");
+          return;
+        }
+
+        setDisbursementStatus({
+          success: true,
+          message: "Disbursement completed successfully!",
+          reference: `UTR: ${values.utr_number} | DISB-${Date.now()
+            .toString()
+            .slice(-6)}`,
+        });
+        setIsProcessing(false);
+        setIsModalOpen(false);
+        resetForm();
+        navigate("/lead-management/leads-disbursement");
 
         // 3) Existing simulated processing
-        setTimeout(() => {
-          setDisbursementStatus({
-            success: true,
-            message: "Disbursement completed successfully!",
-            reference: `UTR: ${values.utr_number} | DISB-${Date.now()
-              .toString()
-              .slice(-6)}`,
-          });
-          setIsProcessing(false);
-          setIsModalOpen(false);
-          resetForm();
-          if (utrFileInputRef.current) utrFileInputRef.current.value = "";
-          setTimeout(() => setDisbursementStatus(null), 5000);
-        }, 2000);
+        // setTimeout(() => {
+        //   setDisbursementStatus({
+        //     success: true,
+        //     message: "Disbursement completed successfully!",
+        //     reference: `UTR: ${values.utr_number} | DISB-${Date.now()
+        //       .toString()
+        //       .slice(-6)}`,
+        //   });
+        //   setIsProcessing(false);
+        //   setIsModalOpen(false);
+        //   resetForm();
+        //   if (utrFileInputRef.current) utrFileInputRef.current.value = "";
+        //   setTimeout(() => setDisbursementStatus(null), 5000);
+        // }, 2000);
       } catch (err) {
         console.error("Disbursement error:", err);
-        toast.error("Something went wrong.");
+        showValidationError(err);
         setIsProcessing(false);
       } finally {
         setSubmitting(false);
+        setIsProcessing(false)
       }
     },
   });
+  
 
   const handleDisburse = () => setIsModalOpen(true);
 
@@ -793,7 +767,9 @@ const Disbursement = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-medium text-slate-600 mb-1">Disbursement Amount</label>
+                <label className="block text-[10px] font-medium text-slate-600 mb-1">
+                  Disbursement Amount
+                </label>
                 <input
                   type="number"
                   name="disbursement_amount"
@@ -802,7 +778,8 @@ const Disbursement = () => {
                   onBlur={formik.handleBlur}
                   placeholder="Enter disbursement amount"
                   className={`w-full rounded-md border bg-white px-3 py-1.5 text-xs text-slate-700 focus:outline-none focus:ring-2 transition-all ${
-                    formik.touched.disbursement_amount && formik.errors.disbursement_amount
+                    formik.touched.disbursement_amount &&
+                    formik.errors.disbursement_amount
                       ? "border-red-400 focus:border-red-500 focus:ring-red-500/20"
                       : "border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20"
                   }`}
@@ -934,63 +911,6 @@ const Disbursement = () => {
                 />
               </div>
 
-              {/* UTR File */}
-              <div>
-                <label className="block text-[10px] font-medium text-slate-600 mb-1">
-                  UTR File <span className="text-red-500">*</span>
-                </label>
-
-                {!formik.values.utr_file ? (
-                  <button
-                    type="button"
-                    onClick={() => utrFileInputRef.current?.click()}
-                    className="w-full flex items-center justify-center gap-1.5 border border-dashed border-slate-300 rounded-md bg-slate-50 hover:bg-slate-100 hover:border-primary text-[11px] text-slate-600 py-2 transition-colors cursor-pointer"
-                  >
-                    <Icon name="RiUploadCloud2Line" size={14} color="#64748B" />
-                    <span>Click to upload UTR file</span>
-                  </button>
-                ) : (
-                  <div className="flex items-center justify-between gap-2 bg-slate-50 border border-slate-200 rounded-md px-2 py-1.5">
-                    <div className="min-w-0">
-                      <p className="text-[11px] font-medium text-slate-700 truncate">
-                        {formik.values.utr_file.name}
-                      </p>
-                      <p className="text-[9px] text-slate-500">
-                        {formatFileSize(formik.values.utr_file.size)}
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      disabled={isProcessing}
-                      onClick={() => {
-                        formik.setFieldValue("utr_file", null);
-                        if (utrFileInputRef.current)
-                          utrFileInputRef.current.value = "";
-                      }}
-                      className="text-[10px] font-medium text-red-500 hover:text-red-700 disabled:opacity-50"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                )}
-
-                <input
-                  ref={utrFileInputRef}
-                  type="file"
-                  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                  className="hidden"
-                  onChange={(e) =>
-                    formik.setFieldValue(
-                      "utr_file",
-                      e.target.files?.[0] || null,
-                    )
-                  }
-                />
-                <FieldError
-                  touched={formik.touched.utr_file}
-                  error={formik.errors.utr_file}
-                />
-              </div>
             </div>
           </div>
 
@@ -1019,33 +939,36 @@ const Disbursement = () => {
           </div>
 
           {/* Confirmation */}
-          {(formik.values.disbursement_amount > 0) && <div>
-            <div className="flex items-start gap-1.5">
-              <input
-                type="checkbox"
-                id="confirmDisbursement"
-                name="confirmed"
-                checked={formik.values.confirmed}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className="mt-0.5 w-3.5 h-3.5 text-primary border-slate-300 rounded focus:ring-emerald-500"
+          {formik.values.disbursement_amount > 0 && (
+            <div>
+              <div className="flex items-start gap-1.5">
+                <input
+                  type="checkbox"
+                  id="confirmDisbursement"
+                  name="confirmed"
+                  checked={formik.values.confirmed}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className="mt-0.5 w-3.5 h-3.5 text-primary border-slate-300 rounded focus:ring-emerald-500"
+                />
+                <label
+                  htmlFor="confirmDisbursement"
+                  className="text-[12px] text-slate-600 leading-relaxed"
+                >
+                  I confirm all details are verified and authorize disbursement
+                  of
+                  <span className="font-semibold text-primary">
+                    {" "}
+                    {formik.values.disbursement_amount}
+                  </span>
+                </label>
+              </div>
+              <FieldError
+                touched={formik.touched.confirmed}
+                error={formik.errors.confirmed}
               />
-              <label
-                htmlFor="confirmDisbursement"
-                className="text-[12px] text-slate-600 leading-relaxed"
-              >
-                I confirm all details are verified and authorize disbursement of
-                <span className="font-semibold text-primary">
-                  {" "}
-                  {formik.values.disbursement_amount}
-                </span>
-              </label>
             </div>
-            <FieldError
-              touched={formik.touched.confirmed}
-              error={formik.errors.confirmed}
-            />
-          </div>}
+          )}
 
           {/* Action Buttons */}
           <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">

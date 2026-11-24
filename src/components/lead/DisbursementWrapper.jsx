@@ -50,7 +50,7 @@ const DisbursementWrapper = ({ customerDetails, onRefresh }) => {
   const renderSection = () => {
     switch (activeSection) {
       case "disbursement":
-        return <Disbursement />;
+        return <Disbursement data={customerDetails} />;
         // return <UploadDisbursment customerDetails={customerDetails} />;
         case "enach":
           return <ENACH data={customerDetails} />;

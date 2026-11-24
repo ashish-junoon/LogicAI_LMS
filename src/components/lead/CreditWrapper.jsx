@@ -83,6 +83,24 @@ const CreditWrapper = ({ customerDetails, onRefresh }) => {
     },
   });
 
+  const switchProviderFormik = useFormik({
+    initialValues: {
+      vendor_id: "",
+      remark: "",
+    },
+    validationSchema: Yup.object({
+      vendor_id: Yup.string().required("Please select loan provider"),
+      remark: Yup.string()
+        .trim()
+        .min(10, "Remarks must be at least 10 characters")
+        .max(500, "Remarks cannot exceed 500 characters")
+        .required("Please enter remarks"),
+    }),
+    onSubmit: async (values, { resetForm }) => {
+      await handleUpdateVendorProvider(values, resetForm);
+    },
+  });
+
   const handleUpdateVendorProvider = async (values, resetForm) => {
     try {
       setUpdatingVendor(true);
@@ -97,7 +115,11 @@ const CreditWrapper = ({ customerDetails, onRefresh }) => {
         created_by: authData?.user_id || "",
       };
 
+      console.log("SaveVendorMapping Payload:", req);
+
       const response = await SaveVendorMapping(req);
+
+      console.log("SaveVendorMapping Response:", response);
 
       if (response?.status) {
         toast.success(response.message || "Vendor updated successfully");
@@ -106,9 +128,10 @@ const CreditWrapper = ({ customerDetails, onRefresh }) => {
         resetForm();
         onRefresh?.();
       } else {
-        toast.info(response?.message || "Unable to update vendor!");
+        toast.error(response?.message || "Unable to update vendor!");
       }
     } catch (error) {
+      console.error("SaveVendorMapping Error:", error);
       showValidationError(error);
     } finally {
       setUpdatingVendor(false);
@@ -342,31 +365,36 @@ const CreditWrapper = ({ customerDetails, onRefresh }) => {
         onClose={() => {
           if (!updatingVendor) {
             setswitchLoanProvier(false);
-            vendorFormik.resetForm();
+            switchProviderFormik.resetForm();
           }
         }}
       >
-        <form onSubmit={vendorFormik.handleSubmit} className="py-3 space-y-4">
+        <form
+          onSubmit={switchProviderFormik.handleSubmit}
+          className="py-3 space-y-4"
+        >
           {/* Provider */}
           <div>
             <SelectInput
               options={vendorList}
               label="Select Loan Provider"
               placeholder="Select Loan Provider"
-              value={vendorFormik.values.vendor_id}
+              value={switchProviderFormik.values.vendor_id}
               onChange={(value) =>
-                vendorFormik.setFieldValue(
+                switchProviderFormik.setFieldValue(
                   "vendor_id",
                   value?.value ?? value?.target?.value ?? value,
                 )
               }
-              onBlur={() => vendorFormik.setFieldTouched("vendor_id", true)}
+              onBlur={() =>
+                switchProviderFormik.setFieldTouched("vendor_id", true)
+              }
             />
 
-            {vendorFormik.touched.vendor_id &&
-              vendorFormik.errors.vendor_id && (
+            {switchProviderFormik.touched.vendor_id &&
+              switchProviderFormik.errors.vendor_id && (
                 <p className="text-xs text-red-500 mt-1">
-                  {vendorFormik.errors.vendor_id}
+                  {switchProviderFormik.errors.vendor_id}
                 </p>
               )}
           </div>
@@ -382,31 +410,18 @@ const CreditWrapper = ({ customerDetails, onRefresh }) => {
               rows={4}
               maxLength={500}
               placeholder="Enter reason for changing loan provider..."
-              value={vendorFormik.values.remark}
-              onChange={vendorFormik.handleChange}
-              onBlur={vendorFormik.handleBlur}
-              className={`w-full border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/20 resize-none ${
-                vendorFormik.touched.remark && vendorFormik.errors.remark
-                  ? "border-red-500"
-                  : "border-gray-300 focus:border-primary"
-              }`}
+              value={switchProviderFormik.values.remark}
+              onChange={switchProviderFormik.handleChange}
+              onBlur={switchProviderFormik.handleBlur}
+              className="w-full border rounded-lg px-3 py-2 text-sm outline-none"
             />
 
-            <div className="flex justify-between mt-1">
-              {vendorFormik.touched.remark && vendorFormik.errors.remark ? (
-                <p className="text-xs text-red-500">
-                  {vendorFormik.errors.remark}
-                </p>
-              ) : (
-                <p className="text-xs text-gray-400">
-                  Minimum 10 characters required
+            {switchProviderFormik.touched.remark &&
+              switchProviderFormik.errors.remark && (
+                <p className="text-xs text-red-500 mt-1">
+                  {switchProviderFormik.errors.remark}
                 </p>
               )}
-
-              <span className="text-xs text-gray-400">
-                {vendorFormik.values.remark.length}/500
-              </span>
-            </div>
           </div>
 
           {/* Actions */}
