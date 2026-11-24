@@ -26,9 +26,9 @@ const CALCULATION_METHOD_OPTIONS = [
 ];
 
 const REPAYMENT_FREQUENCY_OPTIONS = [
-  { label: "Days", value: "Days" },
-  { label: "Weekly", value: "Weekly" },
-  { label: "Biweekly", value: "Biweekly" },
+  // { label: "Days", value: "Days" },
+  // { label: "Weekly", value: "Weekly" },
+  // { label: "Biweekly", value: "Biweekly" },
   { label: "Monthly", value: "Monthly" },
 ];
 
