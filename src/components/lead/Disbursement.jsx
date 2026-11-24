@@ -250,6 +250,13 @@ const Disbursement = ({data}) => {
   const utrFileInputRef = useRef(null);
   const navigate = useNavigate()
 
+
+  console.log(data?.loanDetails?.[0]);
+  console.log(data?.bankDetails?.[0]);
+  const loanData = data?.loanDetails?.[0];
+  const bankData = data?.bankDetails?.[0];
+  
+
   const { authData } = useAuthData();
   // const [searchParams] = useSearchParams();
   // const customerId = searchParams.get("customer_id");
@@ -260,20 +267,24 @@ const Disbursement = ({data}) => {
   const { customerId, applicationId } = location.state?.pera || {};
 
   const disbursementData = {
-    loanAmount: "₹5,00,000",
+    loanAmount: `₹${loanData?.loan_amount}`,
     disbursementAmount: "₹4,75,000",
-    approvedBy: "Rajesh Khanna",
-    bankName: "HDFC Bank",
-    accountNumber: "XXXX-XXXX-1234",
-    ifscCode: "HDFC0000123",
-    accountHolderName: "Rahul Sharma",
-    modeOfPayment: "Bank Transfer",
+    // approvedBy: "Rajesh Khanna",
+    bankName: bankData?.bank_name,
+    accountNumber: bankData?.account_number,
+    ifscCode: bankData?.ifsc_code,
+    accountHolderName: bankData?.account_holder_name,
+    // modeOfPayment: "Bank Transfer",
     date: new Date().toISOString().split("T")[0],
 
     // EMI Details
-    emiAmount: "₹10,256",
-    emiTenure: "60 Months",
-    interestRate: "8.5%",
+    emiAmount: `₹${loanData?.emi_amount}`,
+    emiTenure: `${loanData?.tenure} Months`,
+    interestRate: `${loanData?.interest_rate}%`,
+    loan_type: `${loanData?.loan_type}`,
+    insurance_fee: `₹${loanData?.insurance_fee}`,
+    login_fee: `₹${loanData?.login_fee}`,
+    repayment_frequency: `${loanData?.repayment_frequency?.toUpperCase()}`,
     totalInterest: "₹1,15,360",
     totalPayable: "₹6,15,360",
     firstEmiDate: "2026-02-01",
@@ -415,16 +426,16 @@ const Disbursement = ({data}) => {
             </div>
             <div>
               <h2 className="text-xs font-semibold text-slate-800">
-                Disbursement
+                Update Disbursement
               </h2>
               <p className="text-[10px] text-slate-500">
                 Process loan disbursement
               </p>
             </div>
           </div>
-          <span className="text-[10px] font-medium text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">
+          {/* <span className="text-[10px] font-medium text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">
             LA-1250
-          </span>
+          </span> */}
         </div>
 
         {/* Content */}
@@ -465,41 +476,41 @@ const Disbursement = ({data}) => {
             </div>
           ) : (
             <div>
-              {/* Compact Summary Grid - 3 columns */}
-              <div className="grid grid-cols-3 gap-1.5 mb-3">
-                <div className="bg-slate-50 rounded-md px-2 py-1.5 text-center">
+              {/* Compact Summary Grid - 4 columns */}
+              <div className="grid grid-cols-4 gap-1.5 mb-3">
+                <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-md px-2 py-1.5 text-center">
                   <p className="text-[8px] text-slate-500 font-medium uppercase tracking-wider">
-                    Loan
+                    Loan Amount
                   </p>
                   <p className="text-xs font-bold text-slate-800">
                     {disbursementData.loanAmount}
                   </p>
                 </div>
-                <div className="bg-slate-50 rounded-md px-2 py-1.5 text-center">
+                {/* <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-md px-2 py-1.5 text-center">
                   <p className="text-[8px] text-slate-500 font-medium uppercase tracking-wider">
                     Disburse
                   </p>
                   <p className="text-xs font-bold text-primary">
                     {disbursementData.disbursementAmount}
                   </p>
-                </div>
-                <div className="bg-slate-50 rounded-md px-2 py-1.5 text-center">
+                </div> */}
+                {/* <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-md px-2 py-1.5 text-center">
                   <p className="text-[8px] text-slate-500 font-medium uppercase tracking-wider">
                     Mode
                   </p>
                   <p className="text-xs font-semibold text-slate-800">
                     {disbursementData.modeOfPayment}
                   </p>
-                </div>
-                <div className="bg-slate-50 rounded-md px-2 py-1.5 text-center">
+                </div> */}
+                {/* <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-md px-2 py-1.5 text-center">
                   <p className="text-[8px] text-slate-500 font-medium uppercase tracking-wider">
                     Approved By
                   </p>
                   <p className="text-xs font-semibold text-slate-800 truncate">
                     {disbursementData.approvedBy}
                   </p>
-                </div>
-                <div className="bg-slate-50 rounded-md px-2 py-1.5 text-center">
+                </div> */}
+                <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-md px-2 py-1.5 text-center">
                   <p className="text-[8px] text-slate-500 font-medium uppercase tracking-wider">
                     Bank
                   </p>
@@ -507,12 +518,20 @@ const Disbursement = ({data}) => {
                     {disbursementData.bankName}
                   </p>
                 </div>
-                <div className="bg-slate-50 rounded-md px-2 py-1.5 text-center">
+                <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-md px-2 py-1.5 text-center">
                   <p className="text-[8px] text-slate-500 font-medium uppercase tracking-wider">
                     Account
                   </p>
                   <p className="text-xs font-semibold text-slate-800">
                     {disbursementData.accountNumber}
+                  </p>
+                </div>
+                <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-md px-2 py-1.5 text-center">
+                  <p className="text-[8px] text-slate-500 font-medium uppercase tracking-wider">
+                    Account
+                  </p>
+                  <p className="text-xs font-semibold text-slate-800">
+                    {disbursementData.ifscCode}
                   </p>
                 </div>
               </div>
@@ -534,7 +553,7 @@ const Disbursement = ({data}) => {
                       {disbursementData.emiAmount}
                     </p>
                   </div>
-                  <div className="bg-slate-50 rounded-md px-2 py-1.5 text-center">
+                  <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-md px-2 py-1.5 text-center">
                     <p className="text-[8px] text-slate-500 font-medium uppercase tracking-wider">
                       Tenure
                     </p>
@@ -542,7 +561,7 @@ const Disbursement = ({data}) => {
                       {disbursementData.emiTenure}
                     </p>
                   </div>
-                  <div className="bg-slate-50 rounded-md px-2 py-1.5 text-center">
+                  <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-md px-2 py-1.5 text-center">
                     <p className="text-[8px] text-slate-500 font-medium uppercase tracking-wider">
                       Interest
                     </p>
@@ -550,18 +569,50 @@ const Disbursement = ({data}) => {
                       {disbursementData.interestRate}
                     </p>
                   </div>
-                  <div className="bg-slate-50 rounded-md px-2 py-1.5 text-center">
+                  <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-md px-2 py-1.5 text-center">
+                    <p className="text-[8px] text-slate-500 font-medium uppercase tracking-wider">
+                      Loan Type
+                    </p>
+                    <p className="text-xs font-semibold text-slate-800">
+                      {disbursementData.loan_type}
+                    </p>
+                  </div>
+                  <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-md px-2 py-1.5 text-center">
+                    <p className="text-[8px] text-slate-500 font-medium uppercase tracking-wider">
+                      Frequency
+                    </p>
+                    <p className="text-xs font-semibold text-slate-800">
+                      {disbursementData.repayment_frequency}
+                    </p>
+                  </div>
+                  <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-md px-2 py-1.5 text-center">
+                    <p className="text-[8px] text-slate-500 font-medium uppercase tracking-wider">
+                      Insurance Fee
+                    </p>
+                    <p className="text-xs font-semibold text-slate-800">
+                      {disbursementData.insurance_fee}
+                    </p>
+                  </div>
+                  <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-md px-2 py-1.5 text-center">
+                    <p className="text-[8px] text-slate-500 font-medium uppercase tracking-wider">
+                      Login Fee
+                    </p>
+                    <p className="text-xs font-semibold text-slate-800">
+                      {disbursementData.login_fee}
+                    </p>
+                  </div>
+                  {/* <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-md px-2 py-1.5 text-center">
                     <p className="text-[8px] text-slate-500 font-medium uppercase tracking-wider">
                       Total Payable
                     </p>
                     <p className="text-xs font-semibold text-slate-800">
                       {disbursementData.totalPayable}
                     </p>
-                  </div>
+                  </div> */}
                 </div>
 
                 {/* EMI Schedule Quick View */}
-                <div className="flex items-center justify-between mt-1.5 px-2 py-2 bg-blue-50/50 rounded-md border border-blue-100">
+                {/* <div className="flex items-center justify-between mt-1.5 px-2 py-2 bg-blue-50/50 rounded-md border border-blue-100">
                   <div className="flex items-center gap-1.5">
                     <Icon name="RiCalendarLine" size={12} color="#3B82F6" />
                     <span className="text-[11px] text-slate-600">
@@ -587,7 +638,7 @@ const Disbursement = ({data}) => {
                       {disbursementData.totalInterest}
                     </span>
                   </div>
-                </div>
+                </div> */}
               </div>
 
               {/* Required Documents (Sanction + Agreement) */}
@@ -631,13 +682,15 @@ const Disbursement = ({data}) => {
               </div>
 
               {/* Compact Button */}
-              <button
+              <div className="flex justify-end">
+                <button
                 onClick={handleDisburse}
-                className="w-full bg-primary text-white px-4 py-3 rounded-md font-semibold hover:bg-primary/80 transition-all flex items-center justify-center gap-1.5 text-xs shadow-sm hover:shadow cursor-pointer"
+                className="w-fit bg-primary text-white px-4 py-3 rounded-md font-semibold hover:bg-primary/80 transition-all flex items-center justify-center gap-1.5 text-xs shadow-xl cursor-pointer"
               >
                 <Icon name="RiSendPlane2Line" size={14} color="#FFFFFF" />
                 <span>Mark as Disbursed</span>
               </button>
+              </div>
             </div>
           )}
         </div>

@@ -11,7 +11,7 @@ import { useAuthData } from "../../context/authContext";
 import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import Modal from "./Modal.jsx";
 
-const UserHeader = ({ lead, permisssion, manualBtn }) => {
+const UserHeader = ({ lead, permisssion, manualBtn, data }) => {
   const [loading, setLoading] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [remark, setRemark] = useState("");
@@ -27,6 +27,8 @@ const UserHeader = ({ lead, permisssion, manualBtn }) => {
   const applicationId = searchParams.get("application_id") || routeLead?.application_id;
 
   const { authData } = useAuthData();
+
+  const CUSTOMER_SELFIE = data?.documents?.find((doc)=> doc.document_type == "CUSTOMER_SELFIE")?.document_path
 
   const handleOpenConfirmModal = () => {
     setRemark("");
@@ -141,6 +143,7 @@ const UserHeader = ({ lead, permisssion, manualBtn }) => {
             <div className="flex items-center gap-4">
               <Avatar
                 name={lead?.customer_name || lead?.business_owner_name}
+                // image={CUSTOMER_SELFIE}
                 size="lg"
                 ring
               />

@@ -239,6 +239,7 @@ const Telecalling = () => {
         permisssion={false}
         manualBtn={handleTelecalling}
         lead={lead}
+        data={customerDetails}
       />
       {loading ? (
         <Loader text="Loading customer details..." />
