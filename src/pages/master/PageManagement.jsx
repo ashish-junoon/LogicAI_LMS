@@ -25,7 +25,7 @@ import { MdDelete } from "react-icons/md";
 const initialValues = {
   group_id: "",
   page_name: "",
-  page_icon: "",
+  page_icon: "MdOutlineCheckCircle",
   page_display_name: "",
   page_url: "",
   page_display_index: "0",
@@ -43,7 +43,7 @@ const PageManagement = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [editingPageId, setEditingPageId] = useState(null);
 
-  const {authData} = useAuthData()
+  const { authData } = useAuthData();
 
   // =========================================================
   // FETCH ALL GROUPS
@@ -53,11 +53,13 @@ const PageManagement = () => {
       const response = await GetAllPageGroups();
 
       const transformedData =
-        response?.data?.map((item) => ({
-          value: String(item?.page_group_id),
-          label: item?.group_display_name || item?.group_name,
-          is_active: item?.is_active
-        }))?.filter((gp)=> gp?.is_active) || [];
+        response?.data
+          ?.map((item) => ({
+            value: String(item?.page_group_id),
+            label: item?.group_display_name || item?.group_name,
+            is_active: item?.is_active,
+          }))
+          ?.filter((gp) => gp?.is_active) || [];
 
       setGroupOptions(transformedData);
     } catch (error) {
@@ -67,7 +69,7 @@ const PageManagement = () => {
         error?.response?.data?.title ||
           error?.response?.data?.message ||
           error?.message ||
-          "Failed to fetch groups!"
+          "Failed to fetch groups!",
       );
     }
   };
@@ -96,7 +98,7 @@ const PageManagement = () => {
           error?.response?.data?.errors?.request?.[0] ||
           error?.response?.data?.message ||
           error?.message ||
-          "Failed to fetch pages!"
+          "Failed to fetch pages!",
       );
     } finally {
       setIsLoading(false);
@@ -119,22 +121,26 @@ const PageManagement = () => {
         .min(2, "Page name must be at least 2 characters")
         .max(100, "Page name cannot exceed 100 characters"),
 
-      page_name_type: Yup.string().trim().required(),
-
-      page_icon: Yup.string()
-        .trim()
-        .required("Page icon is required")
-        .max(100, "Page icon cannot exceed 100 characters"),
+      // page_icon: Yup.string()
+      //   .trim()
+      //   .required("Page icon is required")
+      //   .max(100, "Page icon cannot exceed 100 characters"),
 
       page_display_name: Yup.string()
         .trim()
         .required("Page display name is required")
         .max(100, "Display name cannot exceed 100 characters"),
 
-        page_url: Yup.string()
+      // page_url: Yup.string()
+      // .trim()
+      // .required("Page URL is required")
+      // .max(250, "Page URL cannot exceed 250 characters"),
+
+      page_url: Yup.string()
         .trim()
         .required("Page URL is required")
         .max(250, "Page URL cannot exceed 250 characters"),
+        // .matches(/^[^\s/]+$/, "Page URL cannot contain spaces or '/'"),
 
       // page_display_index: Yup.number()
       //   .typeError("Display index must be a number")
@@ -146,6 +152,10 @@ const PageManagement = () => {
         .trim()
         .required("Page description is required")
         .max(250, "Description cannot exceed 250 characters"),
+
+      page_name_type: Yup.string()
+        .trim()
+        .required("Page name type is required"),
     }),
 
     onSubmit: async (values) => {
@@ -153,15 +163,15 @@ const PageManagement = () => {
         const req = {
           group_id: Number(values.group_id),
           page_name: values.page_name.trim(),
-          page_name_type: values.page_name_type.trim(),
-          page_icon: values.page_icon.trim(),
+          // page_icon: values.page_icon.trim(),
+          page_icon: "MdOutlineCheckCircle",
           page_display_name: values.page_display_name.trim(),
           page_url: values.page_url.trim(),
           page_display_index: Number(values.page_display_index),
-          page_small_discription:
-            values.page_small_discription.trim(),
+          page_small_discription: values.page_small_discription.trim(),
           is_active: values.is_active,
-          created_by: authData?.user_id
+          created_by: authData?.user_id,
+          page_name_type: values.page_name_type || "LMS",
         };
 
         console.log(req);
@@ -179,7 +189,7 @@ const PageManagement = () => {
             response?.message ||
               (isEdit
                 ? "Page updated successfully!"
-                : "Page created successfully!")
+                : "Page created successfully!"),
           );
 
           closeModal();
@@ -187,15 +197,13 @@ const PageManagement = () => {
         } else {
           toast.info(
             response?.message ||
-              (isEdit
-                ? "Unable to update page!"
-                : "Unable to create page!")
+              (isEdit ? "Unable to update page!" : "Unable to create page!"),
           );
         }
       } catch (error) {
         console.error(
           isEdit ? "Error updating page:" : "Error creating page:",
-          error
+          error,
         );
 
         toast.error(
@@ -203,14 +211,15 @@ const PageManagement = () => {
             error?.response?.data?.errors?.request?.[0] ||
             error?.response?.data?.message ||
             error?.message ||
-            "Something went wrong!"
+            "Something went wrong!",
         );
       }
     },
   });
 
-  // console.log(groupOptions?.find(gp=> gp.page_group_id == pageFormik.values.group_id));
-  
+  console.log(
+    groupOptions?.find((gp) => gp.page_group_id == pageFormik.values.group_id),
+  );
 
   // =========================================================
   // ADD PAGE
@@ -236,17 +245,12 @@ const PageManagement = () => {
     pageFormik.setValues({
       group_id: String(row?.group_id ?? ""),
       page_name: row?.page_name || "",
-      page_name_type: row?.page_name_type || "",
-      page_icon: row?.page_icon || "",
+      page_icon: row?.page_icon || "MdOutlineCheckCircle",
       page_display_name: row?.page_display_name || "",
       page_url: row?.page_url || "",
-      page_display_index: row?.page_display_index ?? "0",
-      page_small_discription:
-        row?.page_small_discription || "",
-      is_active:
-        typeof row?.is_active === "boolean"
-          ? row.is_active
-          : true,
+      page_display_index: row?.page_display_index ?? "",
+      page_small_discription: row?.page_small_discription || "",
+      is_active: typeof row?.is_active === "boolean" ? row.is_active : true,
     });
 
     setIsPageModalOpen(true);
@@ -270,8 +274,8 @@ const PageManagement = () => {
       prev.map((item) =>
         item.page_id === row?.page_id
           ? { ...item, is_active: nextStatus }
-          : item
-      )
+          : item,
+      ),
     );
 
     try {
@@ -286,35 +290,32 @@ const PageManagement = () => {
         page_display_index: row?.page_display_index,
         page_small_discription: row?.page_small_discription,
         is_active: nextStatus,
-        created_by: authData?.user_id
+        page_name_type: row?.page_name_type || "LMS",
+        created_by: authData?.user_id,
       };
 
       const response = await UpdatePageName(req);
 
       if (response?.status) {
-        toast.success(
-          response?.message || "Page status updated successfully!"
-        );
+        toast.success(response?.message || "Page status updated successfully!");
       } else {
         setPageData((prev) =>
           prev.map((item) =>
             item.page_id === row?.page_id
               ? { ...item, is_active: row?.is_active }
-              : item
-          )
+              : item,
+          ),
         );
 
-        toast.info(
-          response?.message || "Unable to update page status!"
-        );
+        toast.info(response?.message || "Unable to update page status!");
       }
     } catch (error) {
       setPageData((prev) =>
         prev.map((item) =>
           item.page_id === row?.page_id
             ? { ...item, is_active: row?.is_active }
-            : item
-        )
+            : item,
+        ),
       );
 
       console.error("Error updating page status:", error);
@@ -323,7 +324,7 @@ const PageManagement = () => {
         error?.response?.data?.title ||
           error?.response?.data?.message ||
           error?.message ||
-          "Something went wrong!"
+          "Something went wrong!",
       );
     }
   };
@@ -346,9 +347,7 @@ const PageManagement = () => {
   // =========================================================
   const ErrorText = ({ name }) =>
     pageFormik.touched[name] && pageFormik.errors[name] ? (
-      <p className="mt-1 text-xs text-red-500">
-        {pageFormik.errors[name]}
-      </p>
+      <p className="mt-1 text-xs text-red-500">{pageFormik.errors[name]}</p>
     ) : null;
 
   // =========================================================
@@ -387,7 +386,7 @@ const PageManagement = () => {
       name: "Group",
       selector: (row) =>
         groupOptions.find(
-          (group) => Number(group.value) === Number(row?.group_id)
+          (group) => Number(group.value) === Number(row?.group_id),
         )?.label ||
         row?.group_name ||
         "-",
@@ -507,11 +506,7 @@ const PageManagement = () => {
         </div>
 
         {/* PAGE TABLE */}
-        <Table
-          data={pageData}
-          columns={pageColumns}
-          loading={isLoading}
-        />
+        <Table data={pageData} columns={pageColumns} loading={isLoading} />
       </div>
 
       {/* ADD / EDIT PAGE MODAL */}
@@ -520,10 +515,7 @@ const PageManagement = () => {
         isOpen={isPageModalOpen}
         onClose={closeModal}
       >
-        <form
-          onSubmit={pageFormik.handleSubmit}
-          className="pt-2"
-        >
+        <form onSubmit={pageFormik.handleSubmit} className="pt-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 px-4">
             {/* GROUP */}
             <div>
@@ -539,8 +531,7 @@ const PageManagement = () => {
                   w-full mt-1 border rounded-md px-3 py-2 text-sm
                   bg-white outline-none focus:border-primary
                   ${
-                    pageFormik.touched.group_id &&
-                    pageFormik.errors.group_id
+                    pageFormik.touched.group_id && pageFormik.errors.group_id
                       ? "border-red-500"
                       : "border-gray-300"
                   }
@@ -564,7 +555,7 @@ const PageManagement = () => {
             </div>
 
             {/* PAGE ICON */}
-            <div>
+            {/* <div>
               <TextInput
                 label="Page Icon"
                 name="page_icon"
@@ -574,7 +565,7 @@ const PageManagement = () => {
                 onBlur={pageFormik.handleBlur}
               />
               <ErrorText name="page_icon" />
-            </div>
+            </div> */}
 
             {/* DISPLAY NAME */}
             <div>
@@ -632,6 +623,40 @@ const PageManagement = () => {
               <ErrorText name="page_name_type" />
             </div>
 
+            <div>
+              <SelectInput
+                label="Page Type"
+                name="page_name_type"
+                options={[
+                  { label: "LOS", value: "LOS" },
+                  { label: "LMS", value: "LMS" },
+                  { label: "BOTH", value: "BOTH" },
+                ]}
+                placeholder="Select Page Type"
+                value={pageFormik.values.page_name_type}
+                onChange={pageFormik.handleChange}
+                onBlur={pageFormik.handleBlur}
+              />
+              <ErrorText name="page_name_type" />
+            </div>
+
+            <div>
+              <SelectInput
+                label="Page Type"
+                name="page_name_type"
+                options={[
+                  { label: "LOS", value: "LOS" },
+                  { label: "LMS", value: "LMS" },
+                  { label: "BOTH", value: "BOTH" },
+                ]}
+                placeholder="Select Page Type"
+                value={pageFormik.values.page_name_type}
+                onChange={pageFormik.handleChange}
+                onBlur={pageFormik.handleBlur}
+              />
+              <ErrorText name="page_name_type" />
+            </div>
+
             {/* DESCRIPTION */}
             <div className="sm:col-span-2">
               <TextInput
@@ -664,10 +689,7 @@ const PageManagement = () => {
                     : "Submit"
               }
               type="submit"
-              disabled={
-                !pageFormik.isValid ||
-                pageFormik.isSubmitting
-              }
+              disabled={!pageFormik.isValid || pageFormik.isSubmitting}
               style="
                 bg-primary text-white hover:bg-primary/90
                 disabled:opacity-50 disabled:cursor-not-allowed

@@ -133,6 +133,16 @@ export const SaveVendorMapping = async (req) => {
     }
 };
 
+export const UpdateDisbursement = async (req) => {
+    try {
+        const response = await api.post("/LOS/UpdateDisbursement", req);
+        return response.data;
+    } catch (error) {
+        console.error("UpdateDisbursement:", error.response?.data || error.message);
+        throw error;
+    }
+};
+
 
 export const CAMREPORT = async (req) => {
     try {

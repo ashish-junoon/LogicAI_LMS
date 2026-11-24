@@ -154,7 +154,7 @@ const LeadDetails = () => {
           { label: applicationId || "Lead Details" },
         ]}
       />
-      <UserHeader permisssion lead={lead} />
+      <UserHeader permisssion lead={lead} data={customerDetails} />
       {loading ? (
         <Loader text="Loading customer details..." />
       ) : error ? (

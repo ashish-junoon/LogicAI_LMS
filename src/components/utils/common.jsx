@@ -1,8 +1,49 @@
-function colorFor(name) {
-  let hash = 0;
-  for (let i = 0; i < name?.length; i++) hash = name?.charCodeAt(i) + ((hash << 5) - hash);
-  return PALETTE[Math.abs(hash) % PALETTE.length];
-}
+import { toast } from "react-toastify";
+
+// function colorFor(name) {
+//   let hash = 0;
+//   for (let i = 0; i < name?.length; i++) hash = name?.charCodeAt(i) + ((hash << 5) - hash);
+//   return PALETTE[Math.abs(hash) % PALETTE.length];
+// }
+
+// const PALETTE = [
+//   "bg-primary",
+//   "bg-[#0E7C7B]",
+//   "bg-[#7C5CBF]",
+//   "bg-[#B4691E]",
+//   "bg-[#3B7A57]",
+//   "bg-[#B4467A]",
+// ];
+
+// const SIZES = {
+//   sm: "h-8 w-8 text-xs",
+//   md: "h-10 w-10 text-sm",
+//   lg: "h-12 w-12 text-base",
+// };
+
+// export default function Avatar({ name, size = "md", ring = false }) {
+//   const initials = name
+//     ?.split(" ")
+//     .map((n) => n[0])
+//     .join("")
+//     .slice(0, 2)
+//     .toUpperCase();
+
+//   return (
+//     <div
+//       className={[
+//         "flex shrink-0 items-center justify-center rounded-full font-semibold text-white",
+//         colorFor(name),
+//         SIZES[size],
+//         ring ? "ring-2 ring-white/80" : "",
+//       ].join(" ")}
+//     >
+//       {initials}
+//     </div>
+//   );
+// }
+
+import { useState } from "react";
 
 const PALETTE = [
   "bg-primary",
@@ -19,25 +60,87 @@ const SIZES = {
   lg: "h-12 w-12 text-base",
 };
 
-export default function Avatar({ name, size = "md", ring = false }) {
-  const initials = name
-    ?.split(" ")
+function colorFor(name = "") {
+  let hash = 0;
+
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  return PALETTE[Math.abs(hash) % PALETTE.length];
+}
+
+export default function Avatar({
+  name = "",
+  size = "md",
+  ring = false,
+  image,
+}) {
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+  const initials = String(name)
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
     .map((n) => n[0])
     .join("")
     .slice(0, 2)
     .toUpperCase();
 
   return (
-    <div
-      className={[
-        "flex shrink-0 items-center justify-center rounded-full font-semibold text-white",
-        colorFor(name),
-        SIZES[size],
-        ring ? "ring-2 ring-white/80" : "",
-      ].join(" ")}
-    >
-      {initials}
-    </div>
+    <>
+      <div
+        onClick={() => image && setIsPreviewOpen(true)}
+        className={[
+          "flex shrink-0 items-center justify-center rounded-full overflow-hidden font-semibold text-white",
+          SIZES[size] || SIZES.md,
+          image ? "bg-gray-100 cursor-pointer hover:opacity-80" : colorFor(name),
+          ring ? "ring-2 ring-white/80" : "",
+        ].join(" ")}
+      >
+        {image ? (
+          <img
+            src={image}
+            className="h-full w-full object-cover"
+            alt={name || "Avatar"}
+          />
+        ) : (
+          initials || "?"
+        )}
+      </div>
+
+      {isPreviewOpen && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 p-4"
+          onClick={() => setIsPreviewOpen(false)}
+        >
+          <div
+            className="relative max-w-[90vw] max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setIsPreviewOpen(false)}
+              className="absolute -right-3 -top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white text-gray-800 shadow-lg hover:bg-gray-100"
+            >
+              ✕
+            </button>
+
+            <img
+              src={image}
+              alt={name || "Avatar Preview"}
+              className="max-h-[85vh] max-w-[85vw] rounded-xl object-contain bg-white shadow-2xl"
+            />
+
+            {name && (
+              <p className="mt-3 text-center text-sm font-medium text-white">
+                {name}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

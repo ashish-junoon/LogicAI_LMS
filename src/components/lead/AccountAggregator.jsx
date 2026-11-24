@@ -23,6 +23,9 @@ import Loader from "../utils/Loader";
 import { showValidationError } from "../utils/common";
 import { downloadZipFromUrl } from "../utils/downloadZipFromUrl";
 import { SettingStatus } from "../../api/userApi";
+import Button from "../utils/Button";
+import { color } from "framer-motion";
+import { IoRefresh } from "react-icons/io5";
 
 const AccountAggregator = ({
   userData = {},
@@ -61,23 +64,6 @@ const AccountAggregator = ({
       showValidationError(error);
     }
   };
-
-  // const fetchRecurringResult = async (req) => {
-  //   const reqId = req?.data.requestId;
-  //   try {
-  //     const req = {
-  //       customer_id: customerId,
-  //       application_id: applicationId,
-  //       company_id: import.meta.env.VITE_COMPANY_ID,
-  //       product_name: import.meta.env.VITE_PRODUCT_NAME,
-  //       created_by: authData?.user_id,
-  //       current_requestId: reqId,
-  //     };
-  //     const response = await RecurringResult(req)
-  //   } catch (error) {
-  //     showValidationError(error)
-  //   }
-  // }
 
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   const fetchRecurringStatus = async (id) => {
@@ -220,19 +206,6 @@ const AccountAggregator = ({
     window.open(account.pdf_link, "_blank", "noopener,noreferrer");
   };
 
-  // const handleDownloadReport = async (file) => {
-  //   try {
-  //     await downloadZipFromUrl(file?.pdf_link, {
-  //       downloadAll: false,
-  //       onSuccess: (files) => {
-  //         console.log("Files extracted:", files);
-  //       },
-  //     });
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // };
-
   const handleGetReport = async () => {
     try {
       setLoading(true);
@@ -248,14 +221,11 @@ const AccountAggregator = ({
         pan_no: userData?.pan,
         dob: userData?.dob,
         redirect_url: `${location.href}`,
-        // redirect_url: `https://finarkein.com`,
       };
 
       const response = await AccountAggregatorUnderwriting(request);
       console.log(response);
 
-      // const response = await getAccountAggregatorReport?.(userData);
-      // const response = aggres;
       if (response.status && response?.data?.status) {
         const requestIdData = {
           requestId: response?.data?.data?.requestId,
@@ -278,19 +248,6 @@ const AccountAggregator = ({
     }
   };
 
-  // const account = report?.data?.[0];
-  // const accounts = Array.isArray(report) ? report : [];
-
-  // const accounts = Array.isArray(report)
-  //   ? report
-  //       .filter((account) => account.consent_type === "CT001")
-  //       .sort(
-  //         (a, b) =>
-  //           new Date(b.created_datetime || 0) -
-  //           new Date(a.created_datetime || 0),
-  //       )
-  //   :
-  //     [];
 
   // GETTING ACCOUNTS ON CONDITIONAL
 
@@ -356,7 +313,7 @@ const AccountAggregator = ({
     }
   };
 
-  useEffect(() => {
+  const fetchresultOnRefresh = () => {
     const accounts = Array.isArray(report)
       ? report.filter((account) => account.consent_type === "CT001")
       : [];
@@ -388,6 +345,10 @@ const AccountAggregator = ({
 
       fetchAllAccountAggregatorResult(payload);
     });
+  }
+
+  useEffect(() => {
+    fetchresultOnRefresh()
   }, [accounts]);
 
   const handleAggregatorVerified = async () => {
@@ -431,6 +392,9 @@ const AccountAggregator = ({
     <>
       <div className="space-y-5">
         {/* Applicant Information */}
+        <div className="flex justify-end">
+          <Button onClick={()=> {fetchresultOnRefresh()}} style={"border border-gray-200 bg-gray-100"}><IoRefresh /></Button>
+        </div>
         <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
           <div className="flex items-center justify-between border-b border-gray-100 px-3 py-2">
             <div>

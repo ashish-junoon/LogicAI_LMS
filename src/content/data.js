@@ -459,7 +459,9 @@ export const sidebarData = [
   {
     title: "EMI Collection",
     icon: RiBankCard2Line,
-    children: [{ title: "Advance EMI", path: "/advance-emi" }],
+    children: [
+      { title: "Advance EMI", path: "/advance-emi" },
+    ],
   },
   {
     title: "Leads Center",

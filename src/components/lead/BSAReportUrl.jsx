@@ -82,7 +82,7 @@ const BSAReportUrl = ({
   const availableDocuments = documents.filter((doc) => getUrl(doc));
 
   // Fetch BSA report when customer/application details are available.
-  const fetchBSAReport = async (isMounted) => {
+  const fetchBSAReport = async (isMounted=true) => {
     setIsFetching(true);
 
     try {
@@ -144,6 +144,7 @@ const BSAReportUrl = ({
   }, [customerId, applicationId, mobileNo]);
 
   const handleUpdateStatus = async (runId) => {
+    setLoading(true)
     try {
       const response = await BSA_FlowStatus({
         customer_id: customerId,
@@ -166,9 +167,12 @@ const BSAReportUrl = ({
         // chahe result_state WAITING hi kyon na ho.
         await handleFetchBsaResult(statusData.run_id || runId);
       }
+      await fetchBSAReport(true)
     } catch (error) {
       console.error("BSA Status Error:", error);
       showValidationError(error);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -242,10 +246,11 @@ const BSAReportUrl = ({
         const result = response?.data;
         await handleFetchBsaResult(response?.data?.runId);
       } else {
-        toast.info(
+        toast.info( 
           response?.data?.message || "Failed to start BSA processing.",
         );
       }
+      await fetchBSAReport(true)
     } catch (error) {
       console.error("BSA Flow Run error:", error);
       showValidationError(error);
@@ -653,7 +658,7 @@ const BSAReportUrl = ({
                             className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-100 bg-primary hover:bg-primary/90 disabled:opacity-40"
                           >
                             {/* <Icon name="RiEyeLine" size={14} /> */}
-                            Check status
+                            {loading ? "Checking..." : "Check status"}
                           </button>
 
                           <button

@@ -13,6 +13,7 @@ import {
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { showValidationError } from "../../components/utils/common";
 
 const VendorMaster = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,13 +41,7 @@ const VendorMaster = () => {
       setVendorList(transformedData);
     } catch (error) {
       console.error("Error fetching vendors:", error);
-
-      toast.error(
-        error?.response?.data?.title ||
-          error?.response?.data?.errors?.request?.[0] ||
-          error?.message ||
-          "Failed to fetch vendors!"
-      );
+      showValidationError(error);
     } finally {
       setIsLoading(false);
     }

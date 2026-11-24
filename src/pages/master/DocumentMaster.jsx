@@ -108,7 +108,7 @@ const DocumentMaster = () => {
         id: row?.id,
         document_type: row?.document_type,
         is_active: nextStatus,
-        thumbnail_image: row?.thumbnail_image
+        thumbnail_image: null
       };
 
       const response = await UpdateDocumentType(req);
@@ -251,13 +251,19 @@ const DocumentMaster = () => {
 
         if (isEdit) {
           // UPDATE API
-          const req = {
-            id: editingDocumentId,
-            document_type: values.document_type.trim(),
-            is_active: values.is_active,
-          };
+          // const req = {
+          //   id: editingDocumentId,
+          //   document_type: values.document_type.trim(),
+          //   is_active: values.is_active,
+          // };
+          
+          const formData = new FormData();
+          formData.append("id", editingDocumentId);
+          formData.append("document_type", values.document_type.trim());
+          formData.append("is_active", values.is_active);
+          formData.append("thumbnail_image", values.thumbnail_image);
 
-          response = await UpdateDocumentType(req);
+          response = await UpdateDocumentType(formData);
         } else {
           // CREATE API - MULTIPART
           const formData = new FormData();

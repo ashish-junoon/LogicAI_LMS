@@ -249,7 +249,7 @@ const PagePermission = () => {
             <div className="text-md font-medium">Page Permission</div>
           </div>
 
-          {true && (
+          {/* {true && (
             <Button
               btnName="Save Permission"
               btnIcon="RiUserSettingsLine"
@@ -257,7 +257,7 @@ const PagePermission = () => {
               type="button"
               onClick={handleSave}
             />
-          )}
+          )} */}
         </div>
 
         {/* TABLE */}

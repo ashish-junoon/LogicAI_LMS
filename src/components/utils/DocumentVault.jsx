@@ -7,6 +7,7 @@ import { SaveOtherDocuments } from "../../api/application";
 import { convertFileToBase64 } from "./common";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
+import { BsEyeFill } from "react-icons/bs";
 
 const DocumentVault = ({
   documents = [],
@@ -36,6 +37,9 @@ const DocumentVault = ({
 
   const fileInputRef = useRef(null);
   const previewUrlsRef = useRef(new Set());
+
+  console.log(documents);
+  
 
   useEffect(() => {
     if(selectedFile){
@@ -224,8 +228,11 @@ const DocumentVault = ({
           <p className="truncate text-sm font-semibold text-ink-800">
             {label?.replaceAll("_", " ")}
           </p>
-          <p className="mt-1 truncate text-xs text-ink-500" title={fileName}>
+          {/* <p className="mt-1 truncate text-xs text-ink-500" title={fileName}>
             {fileName}
+          </p> */}
+          <p className="mt-1 truncate text-xs text-ink-500" title={fileName}>
+            {document?.creadted_by ? `By: ${document?.creadted_by}` : ""}
           </p>
         </div>
         {documentUrl && (
@@ -237,7 +244,7 @@ const DocumentVault = ({
             title="Open document"
             className="shrink-0 rounded-lg p-2 text-primary-700 hover:bg-primary-50"
           >
-            {/* <BsEyeFill size={16} /> */}
+            <BsEyeFill size={16} />
           </a>
         )}
       </div>
@@ -341,7 +348,7 @@ const DocumentVault = ({
                       title="Open full PDF"
                       className="absolute right-2 top-2 rounded-lg bg-white/90 p-2 text-primary-700 shadow hover:bg-white"
                     >
-                      {/* <BsEyeFill size={16} /> */}
+                      <BsEyeFill size={16} />
                     </a>
                   </div>
                   {renderDocumentFooter(document, label, documentUrl)}
