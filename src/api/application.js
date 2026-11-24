@@ -143,3 +143,14 @@ export const CAMREPORT = async (req) => {
         throw error;
     }
 }
+
+// Save Telle-Calling Question's answer
+export const SaveQuestionDetails = async (req) => {
+    try {
+        const response = await api.post("/LOS/SaveQuestionDetails", req);
+        return response.data;
+    } catch (error) {
+        console.error("SaveQuestionDetails:", error.response?.data || error.message);
+        throw error;
+    }
+};

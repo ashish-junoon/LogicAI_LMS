@@ -12,6 +12,7 @@ import DocumentSignature from "../common/DocumentSignature";
 import { SaveOtherDocuments } from "../../api/application";
 import { convertFileToBase64 } from "../utils/common";
 import { useAuthData } from "../../context/authContext";
+import CallKYC from "../common/CallKYC";
 
 const MAX_VIDEO_SIZE = 100 * 1024 * 1024;
 
@@ -27,7 +28,7 @@ const TelecallinWrapper = ({ customerDetails, onRefresh }) => {
   const loanDetails = customerDetails?.loanDetails?.[0] || {};
 
   const customerId = customerDetails?.customer_id || personalKyc.customer_id || marketSurvey.customer_id || loanDetails.customer_id;
-  const applicationId =customerDetails?.application_id || personalKyc.application_id || marketSurvey.application_id || loanDetails.application_id;
+  const applicationId = customerDetails?.application_id || personalKyc.application_id || marketSurvey.application_id || loanDetails.application_id;
 
   const permisions = {
     personalInfo: true,
@@ -59,7 +60,7 @@ const TelecallinWrapper = ({ customerDetails, onRefresh }) => {
     const customerId = customerDetails?.customer_id || personalKyc.customer_id || marketSurvey.customer_id || loanDetails.customer_id;
     const applicationId = customerDetails?.application_id || personalKyc.application_id || marketSurvey.application_id || loanDetails.application_id;
 
-      if (!customerId || !applicationId) {
+    if (!customerId || !applicationId) {
       setVideoUploadError("Customer ID and application ID are required to upload video KYC.");
       return;
     }
@@ -113,12 +114,13 @@ const TelecallinWrapper = ({ customerDetails, onRefresh }) => {
     (document) => document?.document_type?.toUpperCase() === "VIDEO_KYC",
   );
   const sections = [
-      { id: "user", label: "User Details", icon: "PiBookOpenTextDuotone" },
-      { id: "videokyc", label: "Video KYC", icon: "RiShieldCheckLine" },
-      // { id: "esign", label: "e-Signature", icon: "FaSignature" },
-      { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
-      { id: "document", label: "Documents", icon: "PiBookOpenTextDuotone" },
-      { id: "variations", label: "Variations", icon: "PiGraph" },
+    { id: "user", label: "User Details", icon: "PiBookOpenTextDuotone" },
+    { id: "videokyc", label: "Video KYC", icon: "RiShieldCheckLine" },
+    { id: "teleKyc", label: "Telle KYC", icon: "PiPhone" },
+    // { id: "esign", label: "e-Signature", icon: "FaSignature" },
+    { id: "remarks", label: "Remarks History", icon: "PiBookOpenTextDuotone" },
+    { id: "document", label: "Documents", icon: "PiBookOpenTextDuotone" },
+    { id: "variations", label: "Variations", icon: "PiGraph" },
   ];
 
   const renderSection = () => {
@@ -189,6 +191,19 @@ const TelecallinWrapper = ({ customerDetails, onRefresh }) => {
               )}
             </section>
             <LiveKYC />
+          </div>
+        );
+      case "teleKyc":
+        return (
+          <div className="space-y-4">
+            {/* <section className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              </section> */}
+            <CallKYC
+              questionsData={customerDetails?.telecallerDetails}
+              answerData={customerDetails?.questionAnsDetails}
+              customerId={customerId}
+              applicationId={applicationId}
+            />
           </div>
         );
       case "remarks":
@@ -277,11 +292,10 @@ const TelecallinWrapper = ({ customerDetails, onRefresh }) => {
                 <button
                   key={section.id}
                   onClick={() => setActiveSection(section.id)}
-                  className={`flex items-center gap-2 px-4 py-3 text-[13px] font-medium whitespace-nowrap border-b-2 transition-all cursor-pointer ${
-                    isActive
-                      ? "border-primary text-primary"
-                      : "border-transparent text-gray-500 hover:text-gray-800 hover:border-gray-300"
-                  }`}
+                  className={`flex items-center gap-2 px-4 py-3 text-[13px] font-medium whitespace-nowrap border-b-2 transition-all cursor-pointer ${isActive
+                    ? "border-primary text-primary"
+                    : "border-transparent text-gray-500 hover:text-gray-800 hover:border-gray-300"
+                    }`}
                 >
                   <Icon
                     name={section.icon}
@@ -295,7 +309,7 @@ const TelecallinWrapper = ({ customerDetails, onRefresh }) => {
             })}
           </nav>
         </div>
-        
+
         <div className="p-5">
           {renderSection()}
         </div>
