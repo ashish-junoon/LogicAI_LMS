@@ -9,7 +9,12 @@ import {
 import { useAuthData } from "../../context/authContext";
 import { toast } from "react-toastify";
 import officePulseLogo from "../../assets/img/officepulselogo2.png";
-import ReCAPTCHA from "react-google-recaptcha";
+import {
+  loadCaptchaEnginge,
+  LoadCanvasTemplateNoReload,
+  LoadCanvasTemplate,
+  validateCaptcha,
+} from "react-simple-captcha";
 
 const slides = [
   {
@@ -37,16 +42,15 @@ const Login = () => {
     email: "",
     mobile: "",
   });
-
+  const [captchaValue, setCaptchaValue] = useState("");
   const [loginType, setLoginType] = useState("email");
   const [isLoading, setIsLoading] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
+  const [resendTimer, setResendTimer] = useState(0);
 
   const { login } = useAuthData();
-
-  const [captchaToken, setCaptchaToken] = useState(null);
 
   const currentValue =
     loginType === "email"
@@ -61,6 +65,27 @@ const Login = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Initialise captcha on mount
+  useEffect(() => {
+    loadCaptchaEnginge(6);
+  }, []);
+
+  // OTP resend countdown timer
+  useEffect(() => {
+    if (resendTimer <= 0) return;
+
+    const timer = setTimeout(() => {
+      setResendTimer((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [resendTimer]);
+
+  const handleCaptchaReload = () => {
+    loadCaptchaEnginge(6);
+    setCaptchaValue("");
+  };
+
   // Change Login Method
   const handleLoginTypeChange = (type) => {
     if (loginType === type) return;
@@ -68,15 +93,21 @@ const Login = () => {
     setLoginType(type);
     setOtpSent(false);
     setOtp("");
+    setCaptchaValue("");
+    loadCaptchaEnginge(6); // fresh captcha for the new form
+    setResendTimer(0);
   };
 
   // Send Email / Mobile OTP
-  const handleSendOTP = async (e) => {
+  const handleSendOTP = async (e, isResend = false) => {
     e?.preventDefault();
 
-    if (!captchaToken) {
-      alert("Please verify CAPTCHA");
-      return;
+    // Validate captcha only for the initial send (not for resend)
+    if (!isResend) {
+      if (!validateCaptcha(captchaValue, false)) {
+        toast.error("Invalid captcha. Please try again.");
+        return;
+      }
     }
 
     const value = currentValue.trim();
@@ -85,7 +116,7 @@ const Login = () => {
       toast.error(
         loginType === "email"
           ? "Please enter email address"
-          : "Please enter mobile number",
+          : "Please enter mobile number"
       );
       return;
     }
@@ -120,12 +151,18 @@ const Login = () => {
 
       if (response?.status) {
         toast.success(
-          response?.message || "OTP sent successfully.",
+          response?.message || "OTP sent successfully."
         );
         setOtpSent(true);
         setOtp("");
+        // Start 60-second resend countdown
+        setResendTimer(60);
+
+        setCaptchaValue("");
       } else {
         toast.error(response?.message || "Failed to send OTP.");
+        setCaptchaValue("");
+        // loadCaptchaEnginge(6); // refresh on failure too
       }
     } catch (error) {
       const message =
@@ -134,6 +171,8 @@ const Login = () => {
         error.message;
 
       toast.error(message || "Failed to send OTP.");
+      setCaptchaValue("");
+      loadCaptchaEnginge(6);
     } finally {
       setIsLoading(false);
     }
@@ -166,7 +205,7 @@ const Login = () => {
         error.message;
 
       toast.error(
-        message || "Login failed. Please check your OTP and try again.",
+        message || "Login failed. Please check your OTP and try again."
       );
     } finally {
       setIsLoading(false);
@@ -177,6 +216,9 @@ const Login = () => {
   const handleChangeContact = () => {
     setOtpSent(false);
     setOtp("");
+    setCaptchaValue("");
+    setResendTimer(0);
+    loadCaptchaEnginge(6);
   };
 
   return (
@@ -217,8 +259,8 @@ const Login = () => {
                   type="button"
                   onClick={() => setActiveSlide(index)}
                   className={`h-2.5 rounded-full transition-all duration-300 ${activeSlide === index
-                      ? "w-8 bg-[#6E63FF]"
-                      : "w-2.5 bg-white/30 hover:bg-white/60"
+                    ? "w-8 bg-[#6E63FF]"
+                    : "w-2.5 bg-white/30 hover:bg-white/60"
                     }`}
                 />
               ))}
@@ -301,8 +343,8 @@ const Login = () => {
                     type="button"
                     onClick={() => handleLoginTypeChange("email")}
                     className={`flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer ${loginType === "email"
-                        ? "bg-white text-primary shadow-sm"
-                        : "text-gray-500 hover:text-gray-800"
+                      ? "bg-white text-primary shadow-sm"
+                      : "text-gray-500 hover:text-gray-800"
                       }`}
                   >
                     <Icon name="IoMailOutline" size={18} />
@@ -313,8 +355,8 @@ const Login = () => {
                     type="button"
                     onClick={() => handleLoginTypeChange("mobile")}
                     className={`flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer ${loginType === "mobile"
-                        ? "bg-white text-primary shadow-sm"
-                        : "text-gray-500 hover:text-gray-800"
+                      ? "bg-white text-primary shadow-sm"
+                      : "text-gray-500 hover:text-gray-800"
                       }`}
                   >
                     <Icon name="IoCallOutline" size={18} />
@@ -371,6 +413,40 @@ const Login = () => {
                   />
                 )}
 
+                {/* CAPTCHA — only before OTP is sent */}
+                {!otpSent && (
+                  <div className="-mb-2">
+                    <p className="text-sm font-medium text-gray-700 mb-3">
+                      Enter the code below
+                    </p>
+
+                    <div
+                      className="flex items-start flex-wrap"
+                    >
+                      <LoadCanvasTemplateNoReload />
+                      <button
+                        type="button"
+                        onClick={handleCaptchaReload}
+                        title="Reload CAPTCHA"
+                        className="pe-2 pt-1 rounded-lg text-primary cursor-pointer transition-colors"
+                      >
+                        <Icon name="IoReload" size={20} />
+                      </button>
+
+                      <input
+                        type="text"
+                        value={captchaValue}
+                        onChange={(event) =>
+                          setCaptchaValue(event.target.value)
+                        }
+                        placeholder="Enter captcha"
+                        autoComplete="off"
+                        className="flex-1 min-w-30 px-3 py-1.5 ms-2 rounded-lg border border-gray-300 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                      />
+                    </div>
+                  </div>
+                )}
+
                 {/* OTP Input */}
                 {otpSent && (
                   <div>
@@ -385,7 +461,7 @@ const Login = () => {
                         setOtp(
                           event.target.value
                             .replace(/\D/g, "")
-                            .slice(0, 4),
+                            .slice(0, 4)
                         )
                       }
                       required
@@ -403,21 +479,18 @@ const Login = () => {
 
                       <button
                         type="button"
-                        onClick={handleSendOTP}
-                        disabled={isLoading}
-                        className="text-xs font-semibold text-primary hover:underline disabled:opacity-50"
+                        onClick={(e) => handleSendOTP(e, true)}
+                        disabled={isLoading || resendTimer > 0}
+                        className="text-xs font-semibold text-primary hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        Resend OTP
+                        {resendTimer > 0
+                          ? `Resend OTP in ${resendTimer}s`
+                          : "Resend OTP"}
                       </button>
 
                     </div>
                   </div>
                 )}
-                <ReCAPTCHA
-                  sitekey={import.meta.env.VITE_SITE_KEY}
-                  onChange={(token) => setCaptchaToken(token)}
-                />
-
               </div>
 
               {/* Submit */}
