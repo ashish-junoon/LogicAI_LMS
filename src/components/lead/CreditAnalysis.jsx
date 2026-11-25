@@ -567,7 +567,7 @@ const CreditAnalysis = ({ data = {}, fetchData }) => {
   return (
     <>
       <div className="space-y-4">
-        <div className="bg-white rounded-xl border border-ink-100 shadow-card p-4 flex flex-wrap items-center gap-3">
+        {/* <div className="bg-white rounded-xl border border-ink-100 shadow-card p-4 flex flex-wrap items-center gap-3">
           <div className="min-w-0">
             <h2 className="text-sm font-display font-bold text-ink-900">
               Credit Analysis
@@ -589,7 +589,7 @@ const CreditAnalysis = ({ data = {}, fetchData }) => {
             <RiRefreshLine size={14} />
             Fetch Score
           </button>
-        </div>
+        </div> */}
 
         {/* Always render a card per applicant type. If a report exists for that
             customer_type the card binds it, otherwise every field shows N/A. */}
