@@ -15,6 +15,7 @@ import DocumentVault from "../utils/DocumentVault";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { useAuthData } from "../../context/authContext";
 import { showValidationError } from "../utils/common";
+import CreditAnalysis from "./CreditAnalysis";
 
 const InfoWrapper = ({ customerDetails, onRefresh, setCustomerDetails }) => {
   const [activeSection, setActiveSection] = useState("user");
@@ -23,6 +24,9 @@ const InfoWrapper = ({ customerDetails, onRefresh, setCustomerDetails }) => {
   const location = useLocation();
   const { customerId, applicationId } = location.state?.pera || {};
   const { authData } = useAuthData();
+
+  const BORROWER_CIBIL = customerDetails?.cibilDetails?.find((type)=> type?.customer_type == "BORROWER")
+  
 
   const permisions = {
     personalInfo: true,
@@ -115,7 +119,11 @@ const InfoWrapper = ({ customerDetails, onRefresh, setCustomerDetails }) => {
           />
         );
       case "credit":
-        return <CreditInfo creditData={customerDetails?.cibilDetails?.[0]} />;
+        return <CreditAnalysis
+            data={customerDetails}
+            fetchData={onRefresh}
+          />;
+        // return <CreditInfo creditData={customerDetails?.cibilDetails} />;
       case "videoKyc":
         return <VideoKYC />;
       case "bankInfo":
