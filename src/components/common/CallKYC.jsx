@@ -494,15 +494,7 @@ const CallKYC = ({
                   </p>
 
                   <p className="text-xs text-gray-700 leading-5">
-                    {questions[currentQuestion]?.question}
-                  </p>
-
-                  <p className="text-[10px] text-primary font-semibold uppercase tracking-wide mt-2">
-                    Expected Answer
-                  </p>
-
-                  <p className="text-xs text-gray-700 leading-5">
-                    {questions[currentQuestion]?.answer}
+                    {questions[currentQuestion]?.telecaller_question}
                   </p>
                 </div>
 
@@ -561,6 +553,12 @@ const CallKYC = ({
                   </div>
                 )}
               </div>
+              <p className="text-orange-400 p-2 text-sm">
+                ⚠️ <span className="font-semibold">आवश्यक सूचना</span> <br />
+                अगर आप किसी व्यक्ति को Cash में भुगतान करते हैं और आपके साथ किसी प्रकार का Fraud होता है, तो इसकी जिम्मेदारी आपकी स्वयं की होगी। Company की इसमें कोई जिम्मेदारी नहीं होगी। <br /><br />
+
+                इसीलिए अपनी EMI का भुगतान केवल Company द्वारा दिए गए अधिकृत Account या QR Code पर ही करें। <br />
+              </p>
             </div>
           </div>
 
