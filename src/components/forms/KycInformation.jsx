@@ -59,10 +59,14 @@ const KycInformation = ({
   const getDocumentUrl = (pattern) =>
     documents.find((document) => pattern.test(document?.document_type || ""))
       ?.document_path || "";
-  const aadhaarFrontUrl = getDocumentUrl(/aadhaar.*front|front.*aadhaar/i);
-  const aadhaarBackUrl = getDocumentUrl(/aadhaar.*back|back.*aadhaar/i);
-  const panDocumentUrl = getDocumentUrl(/pan.*front|front.*pan/i);
+  // const aadhaarFrontUrl = getDocumentUrl(/aadhaar.*front|front.*aadhaar/i);
+  // const aadhaarBackUrl = getDocumentUrl(/aadhaar.*back|back.*aadhaar/i);
+  // const panDocumentUrl = getDocumentUrl(/pan.*front|front.*pan/i);
   // const panDocumentUrl = getDocumentUrl(/\bpan\b/i);
+  
+  const aadhaarFrontUrl = documents?.find((doc)=> doc.document_type == "UID_FRONT_IMAGE")?.document_path;
+  const aadhaarBackUrl = documents?.find((doc)=> doc.document_type == "UID_BACK_IMAGE")?.document_path;
+  const panDocumentUrl = documents?.find((doc)=> doc.document_type == "PAN_FRONT_IMAGE")?.document_path;
 
   const is_pan_verified = data?.workflowNodes?.[0]?.is_aadhaar_verified
   const is_aadhaar_verified = data?.workflowNodes?.[0]?.is_pan_verified
