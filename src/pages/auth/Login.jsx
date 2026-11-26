@@ -43,6 +43,7 @@ const Login = () => {
     mobile: "",
   });
   const [captchaValue, setCaptchaValue] = useState("");
+  const [captchaError, setCaptchaError] = useState("");
   const [loginType, setLoginType] = useState("email");
   const [isLoading, setIsLoading] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
@@ -84,6 +85,7 @@ const Login = () => {
   const handleCaptchaReload = () => {
     loadCaptchaEnginge(6);
     setCaptchaValue("");
+     setCaptchaError("");
   };
 
   // Change Login Method
@@ -96,6 +98,7 @@ const Login = () => {
     setCaptchaValue("");
     loadCaptchaEnginge(6); // fresh captcha for the new form
     setResendTimer(0);
+    setCaptchaError("");
   };
 
   // Send Email / Mobile OTP
@@ -104,10 +107,17 @@ const Login = () => {
 
     // Validate captcha only for the initial send (not for resend)
     if (!isResend) {
-      if (!validateCaptcha(captchaValue, false)) {
-        toast.error("Invalid captcha. Please try again.");
+      if (!captchaValue.trim()) {
+        setCaptchaError("Please enter the captcha");
         return;
       }
+
+      if (!validateCaptcha(captchaValue, false)) {
+        setCaptchaError("Invalid captcha. Please try again.");
+        return;
+      }
+
+      setCaptchaError("");
     }
 
     const value = currentValue.trim();
@@ -219,6 +229,7 @@ const Login = () => {
     setCaptchaValue("");
     setResendTimer(0);
     loadCaptchaEnginge(6);
+    setCaptchaError("");
   };
 
   return (
@@ -443,6 +454,12 @@ const Login = () => {
                         autoComplete="off"
                         className="flex-1 min-w-30 px-3 py-1.5 ms-2 rounded-lg border border-gray-300 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                       />
+
+                      {captchaError && (
+                        <p className="text-xs text-red-500 mt-1 ms-2">
+                          {captchaError}
+                        </p>
+                      )}
                     </div>
                   </div>
                 )}
