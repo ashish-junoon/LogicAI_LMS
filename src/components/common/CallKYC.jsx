@@ -27,7 +27,7 @@ const CallKYC = ({
   type = "TELECALLING",
 }) => {
   const { authData } = useAuthData();
-  console.log("answerData", answerData)
+  // console.log("answerData", answerData)
   const [kycStatus, setKycStatus] = useState("pending");
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});

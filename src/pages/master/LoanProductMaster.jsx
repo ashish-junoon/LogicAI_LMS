@@ -15,6 +15,7 @@ import {
   GetAllLoanProducts,
   UpdateLoanProduct,
   GetAllLoanTypes,
+  GetAllVendors,
 } from "../../api/mastersApi";
 import { useAuthData } from "../../context/authContext";
 
@@ -43,7 +44,8 @@ const LoanProductMaster = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [editingProductId, setEditingProductId] = useState(null);
-  const [loanTypeOptions, setLoanTypeOptions] = useState([]); // <-- dynamic loan types
+  const [loanTypeOptions, setLoanTypeOptions] = useState([]);
+  const [loanPartnerOptions, setLoanPartnerOptions] = useState([]);
 
   const { authData } = useAuthData()
 
@@ -70,9 +72,42 @@ const LoanProductMaster = () => {
     }
   };
 
+  // =========================================================
+  // FETCH ALL LOAN Partners (for dropdown)
+  // =========================================================
+  const fetchLoanPartners = async () => {
+    try {
+      const response = await GetAllVendors();
+      // assume response.data is an array of loan type objects
+      const options = (response?.data || []).filter((item) => item?.is_active).map((item) => ({
+        label: item?.vendor_name,
+        value: String(item.id),
+      }));
+      // console.log("options", options)
+      setLoanPartnerOptions(options);
+    } catch (error) {
+      console.error("Error fetching loan partners:", error);
+      toast.error(
+        error?.response?.data?.title ||
+        error?.response?.data?.errors?.request?.[0] ||
+        error?.message ||
+        "Failed to load loan partners!"
+      );
+    }
+  };
+
+
   // Helper to get label from value
   const loanTypeLabel = (val) => {
     const option = loanTypeOptions.find(
+      (o) => Number(o.value) === Number(val)
+    );
+    return option?.label || "-";
+  };
+
+  // Helper to get label from value
+  const loanPartnerLabel = (val) => {
+    const option = loanPartnerOptions.find(
       (o) => Number(o.value) === Number(val)
     );
     return option?.label || "-";
@@ -121,10 +156,10 @@ const LoanProductMaster = () => {
 
     productFormik.setValues({
       product_id: row.product_id || "",
-      product_name: row.product_name || "",
+      // product_name: row.product_name || "",
+      vendor_name: row.vendor_name || "",
       product_type: row.product_type || "",
       loan_type: String(row.loan_type ?? ""),
-      category: row.category || "",
       principle_amount: row.principle_amount ?? "",
       repayment_frequency: row.repayment_frequency || "",
       lpf: row.lpf ?? "",
@@ -166,9 +201,9 @@ const LoanProductMaster = () => {
         id: row?.id,
         product_id: row?.product_id,
         loan_type: Number(row?.loan_type),
-        product_name: row?.product_name,
+        // product_name: row?.product_name,
+        vendor_name: row?.vendor_name,
         product_type: row?.product_type,
-        category: row?.category,
         principle_amount: Number(row?.principle_amount),
         repayment_frequency: row?.repayment_frequency,
         collection_date: row?.collection_date,
@@ -230,11 +265,15 @@ const LoanProductMaster = () => {
         //   .required("Product ID is required")
         //   .max(50, "Product ID cannot exceed 50 characters"),
 
-        product_name: Yup.string()
+        // product_name: Yup.string()
+        //   .trim()
+        //   .required("Product name is required")
+        //   .min(2, "Product name must be at least 2 characters")
+        //   .max(100, "Product name cannot exceed 100 characters"),
+
+        vendor_name: Yup.string()
           .trim()
-          .required("Product name is required")
-          .min(2, "Product name must be at least 2 characters")
-          .max(100, "Product name cannot exceed 100 characters"),
+          .required("Loan partner is required"),
 
         product_type: Yup.string()
           .trim()
@@ -247,10 +286,6 @@ const LoanProductMaster = () => {
             "Please select a valid loan type",
             (value) => loanTypeOptions.some((o) => o.value === value)
           ),
-
-        category: Yup.string()
-          .trim()
-          .required("Category is required"),
 
         principle_amount: Yup.number()
           .typeError("Principle amount must be a number")
@@ -270,14 +305,10 @@ const LoanProductMaster = () => {
           .min(22, "Interest rate must be at least 22")
           .required("Interest rate is required"),
 
-        collection_date: Yup.date()
-          .notRequired()
-          .nullable()
-          .typeError("Collection date must be a valid date")
-          .min(
-            new Date(new Date().setHours(0, 0, 0, 0)),
-            "Collection date cannot be in the past",
-          ),
+        collection_date: Yup.number()
+          .typeError("Collection day must be provided")
+          // .min(22, "Interest rate must be at least 22")
+          .required("Collection day is required"),
 
         tenure_months: Yup.number()
           .typeError("Tenure must be a number")
@@ -335,10 +366,10 @@ const LoanProductMaster = () => {
   const productFormik = useFormik({
     initialValues: {
       product_id: "",
-      product_name: "",
+      // product_name: "",
+      vendor_name: "",
       product_type: "",
       loan_type: "",
-      category: "",
       principle_amount: "",
       repayment_frequency: "",
       collection_date: "",
@@ -366,9 +397,9 @@ const LoanProductMaster = () => {
         const req = {
           product_id: values.product_id.trim(),
           loan_type: Number(values.loan_type),
-          product_name: values.product_name.trim(),
+          // product_name: values.product_name.trim(),
+          vendor_name: values.vendor_name.trim(),
           product_type: values.product_type.trim(),
-          category: values.category,
           principle_amount: Number(values.principle_amount),
           repayment_frequency: values?.repayment_frequency,
           collection_date: values.collection_date,
@@ -485,9 +516,14 @@ const LoanProductMaster = () => {
       selector: (row) => row?.product_id || "-",
       sortable: true,
     },
+    // {
+    //   name: "Product Name",
+    //   selector: (row) => row?.product_name || "-",
+    //   sortable: true,
+    // },
     {
-      name: "Product Name",
-      selector: (row) => row?.product_name || "-",
+      name: "Loan Partner",
+      selector: (row) => loanPartnerLabel(row?.vendor_name) || "-",
       sortable: true,
     },
     {
@@ -498,11 +534,6 @@ const LoanProductMaster = () => {
     {
       name: "Loan Type",
       selector: (row) => loanTypeLabel(row?.loan_type),
-      sortable: true,
-    },
-    {
-      name: "Category",
-      selector: (row) => row?.category || "-",
       sortable: true,
     },
     {
@@ -588,6 +619,7 @@ const LoanProductMaster = () => {
   useEffect(() => {
     fetchAllProducts();
     fetchLoanTypes();
+    fetchLoanPartners();
   }, []);
 
   const ErrorText = ({ name }) =>
@@ -641,7 +673,7 @@ const LoanProductMaster = () => {
               <ErrorText name="product_id" />
             </div> */}
 
-            <div>
+            {/* <div>
               <TextInput
                 label="Product Name"
                 name="product_name"
@@ -651,6 +683,19 @@ const LoanProductMaster = () => {
                 onBlur={productFormik.handleBlur}
               />
               <ErrorText name="product_name" />
+            </div> */}
+
+            <div>
+              <SelectInput
+                label="Loan Partner"
+                name="vendor_name"
+                placeholder="Select loan partner"
+                value={productFormik.values.vendor_name}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+                options={loanPartnerOptions}
+              />
+              <ErrorText name="vendor_name" />
             </div>
 
             <div>
@@ -677,21 +722,9 @@ const LoanProductMaster = () => {
                 value={productFormik.values.loan_type}
                 onChange={productFormik.handleChange}
                 onBlur={productFormik.handleBlur}
-                options={loanTypeOptions} // <-- dynamic options
+                options={loanTypeOptions}
               />
               <ErrorText name="loan_type" />
-            </div>
-
-            <div>
-              <TextInput
-                label="Category"
-                name="category"
-                placeholder="Enter category"
-                value={productFormik.values.category}
-                onChange={productFormik.handleChange}
-                onBlur={productFormik.handleBlur}
-              />
-              <ErrorText name="category" />
             </div>
 
             <div>
@@ -721,13 +754,14 @@ const LoanProductMaster = () => {
             </div>
 
             <div>
-              <DateInput
+              <SelectInput
                 label="Collection Date"
                 name="collection_date"
+                placeholder="Select Day of Collection"
                 value={productFormik.values.collection_date}
                 onChange={productFormik.handleChange}
                 onBlur={productFormik.handleBlur}
-              // disabled={!isEditing}
+                options={Array.from({ length: 28 }, (_, i) => ({ label: i + 1, value: i + 1 }))}
               />
               <ErrorText name="collection_date" />
             </div>
