@@ -557,7 +557,7 @@ const ManageUser = () => {
           <div className="text-md font-medium">Manage User</div>
 
           <div className="flex items-center gap-2">
-            <Link
+            {/* <Link
               to="/admin/manage-role"
               className="
                 text-sm py-1.5 px-3 rounded-sm bg-primary
@@ -566,7 +566,7 @@ const ManageUser = () => {
             >
               <Icon name="RiGroupLine" size={15} color="white" />
               Manage Role
-            </Link>
+            </Link> */}
 
             <button
               type="button"

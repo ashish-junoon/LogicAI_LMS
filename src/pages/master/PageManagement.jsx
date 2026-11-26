@@ -142,11 +142,11 @@ const PageManagement = () => {
         .max(250, "Page URL cannot exceed 250 characters"),
         // .matches(/^[^\s/]+$/, "Page URL cannot contain spaces or '/'"),
 
-      // page_display_index: Yup.number()
-      //   .typeError("Display index must be a number")
-      //   .integer("Display index must be a whole number")
-      //   .min(0, "Display index cannot be negative")
-      //   .required("Display index is required"),
+      page_display_index: Yup.number()
+        .typeError("Display index must be a number")
+        .integer("Display index must be a whole number")
+        .min(0, "Display index cannot be negative")
+        .required("Display index is required"),
 
       page_small_discription: Yup.string()
         .trim()
@@ -172,10 +172,7 @@ const PageManagement = () => {
           is_active: values.is_active,
           created_by: authData?.user_id,
           page_name_type: values.page_name_type || "LMS",
-        };
-
-        console.log(req);
-        
+        };        
 
         const response = isEdit
           ? await UpdatePageName({
@@ -594,7 +591,7 @@ const PageManagement = () => {
             </div>
 
             {/* DISPLAY INDEX */}
-            {/* <div>
+            <div>
               <TextInput
                 label="Page Display Index"
                 name="page_display_index"
@@ -605,7 +602,7 @@ const PageManagement = () => {
                 onBlur={pageFormik.handleBlur}
               />
               <ErrorText name="page_display_index" />
-            </div> */}
+            </div>
             
             <div>
               <SelectInput 
@@ -623,7 +620,7 @@ const PageManagement = () => {
               <ErrorText name="page_name_type" />
             </div>
 
-            <div>
+            {/* <div>
               <SelectInput
                 label="Page Type"
                 name="page_name_type"
@@ -638,9 +635,9 @@ const PageManagement = () => {
                 onBlur={pageFormik.handleBlur}
               />
               <ErrorText name="page_name_type" />
-            </div>
+            </div> */}
 
-            <div>
+            {/* <div>
               <SelectInput
                 label="Page Type"
                 name="page_name_type"
@@ -655,7 +652,7 @@ const PageManagement = () => {
                 onBlur={pageFormik.handleBlur}
               />
               <ErrorText name="page_name_type" />
-            </div>
+            </div> */}
 
             {/* DESCRIPTION */}
             <div className="sm:col-span-2">

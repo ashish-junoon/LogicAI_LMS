@@ -37,11 +37,12 @@ export const AuthDataProvider = ({ children }) => {
   });
 
   const login = (response, redirectTo = "/") => {
-    const responseData = response?.data?.data?.access_token
-      ? response.data.data
-      : response?.data?.access_token
-        ? response.data
-        : response;
+    const responseData =  response.data
+    // response?.data?.data?.access_token
+      // ? response.data.data
+      // : response?.data?.access_token
+        // ? response.data
+        // : response;
 
     if (!responseData?.access_token) {
       return false;
@@ -56,10 +57,10 @@ export const AuthDataProvider = ({ children }) => {
       expires_at: responseData.expires_at,
     };
 
-    if (!isValidAuthData(userData)) return false;
+    if (!isValidAuthData(responseData)) return false;
 
-    localStorage.setItem("authData", JSON.stringify(userData));
-    setAuthData(userData);
+    localStorage.setItem("authData", JSON.stringify(responseData));
+    setAuthData(responseData);
     navigate(redirectTo, { replace: true });
 
     return true;

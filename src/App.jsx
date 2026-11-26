@@ -66,6 +66,7 @@ import RateLimitPage from "./pages/auth/RateLimitPage";
 import AccessDenied from "./pages/auth/AccessDenied";
 import Loader from "./components/utils/Loader";
 import CollectionDetails from "./pages/emi/CollectionDetails";
+import Profile from "./pages/auth/Profile";
 
 // Normalize API URL and route URL
 const normalizePath = (path = "") => {
@@ -89,6 +90,8 @@ function GuestRoute({ children }) {
 
 // All application routes
 const routeComponents = {
+  "/profile": Profile,
+
   "/advance-emi": AdvanceEMI,
   "/emi-details": EMIDetails,
   "/collection-details": CollectionDetails,
@@ -154,6 +157,7 @@ const routeComponents = {
 };
 
 const noPermissionRequired = [
+  "/profile",
   "/admin/manage-permission",
   "/admin/manage-user",
   "/lead-center/all-leads",

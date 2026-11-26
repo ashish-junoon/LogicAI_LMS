@@ -5,12 +5,15 @@ import UserHeader from "../../components/utils/UserHeader";
 import Loader from "../../components/utils/Loader";
 import { CustomerDetails } from "../../api/application";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useAuthData } from "../../context/authContext";
 
 const DisbursementDetails = () => {
   const location = useLocation();
   const navigate = useNavigate()
   // const [searchParams] = useSearchParams();
   const routeLead = location.state?.lead;
+
+  const {authData} = useAuthData()
 
   // const customerId = searchParams.get("customer_id") || routeLead?.customer_id;
   // const applicationId = searchParams.get("application_id") || routeLead?.application_id;
@@ -40,8 +43,8 @@ const DisbursementDetails = () => {
       const response = await CustomerDetails({
         customer_id: customerId,
         application_id: applicationId,
-        role: "admin",
-        created_by: "admin",
+        role: authData?.role,
+        created_by: authData?.user_id,
       });
 
       if (!response?.status || !response?.data) {
