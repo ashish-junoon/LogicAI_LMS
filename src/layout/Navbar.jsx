@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { FiMenu, FiSearch, FiBell, FiChevronDown, FiLogOut, FiUser } from "react-icons/fi";
 import { useAuthData } from "../context/authContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar({ onToggleSidebar, onToggleMobile }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, logout } = useAuthData();
   const displayName = user?.full_name || "User";
+  const navigate = useNavigate()
   const initials = displayName.split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
 
   return (
@@ -70,7 +72,7 @@ export default function Navbar({ onToggleSidebar, onToggleMobile }) {
             <>
               <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
               <div className="absolute right-0 z-20 mt-2 w-48 rounded-lg border border-surface-border bg-white py-1 shadow-card">
-                <button className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-surface cursor-pointer">
+                <button onClick={()=> navigate("/profile")} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-surface cursor-pointer">
                   <FiUser size={15} /> My Profile
                 </button>
                 <button

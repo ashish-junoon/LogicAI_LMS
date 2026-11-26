@@ -132,8 +132,8 @@ const Telecalling = () => {
         const response = await CustomerDetails({
           customer_id: customerId,
           application_id: applicationId,
-          role: "admin",
-          created_by: "admin",
+          role: authData?.role,
+          created_by: authData?.user_id,
         });
 
         if (!response?.status || !response?.data) {

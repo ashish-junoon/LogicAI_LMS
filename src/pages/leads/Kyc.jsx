@@ -36,7 +36,7 @@ const Kyc = () => {
         const response = await CustomerDetails({
           customer_id: customerId,
           application_id: applicationId,
-          role: "admin",
+          role: authData?.role,
           created_by: authData?.user_id,
         });
 
