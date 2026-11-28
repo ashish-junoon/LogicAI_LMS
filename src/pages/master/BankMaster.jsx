@@ -63,9 +63,10 @@ const BankMaster = () => {
   const handleAddBank = () => {
     setIsEdit(false);
     setEditingBankId(null);
-
-    bankFormik.resetForm();
-
+    // bankFormik.resetForm();
+    bankFormik.resetForm({
+      values: { ...bankFormik.initialValues, index: bankList.length + 1 },
+    });
     setIsModalOpen(true);
   };
 
@@ -145,6 +146,16 @@ const BankMaster = () => {
     },
 
     validationSchema: Yup.object({
+      index: Yup.number()
+        .typeError("Index must be a number")
+        .integer("Index must be a whole number")
+        .min(1, "Index must be at least 1")
+        .max(
+          isEdit ? bankList.length : bankList.length + 1,
+          `Index must be between 1 and ${isEdit ? bankList.length : bankList.length + 1}`
+        )
+        .required("Index is required"),
+
       bank_name: Yup.string()
         .trim()
         .required("Bank name is required"),
@@ -155,6 +166,7 @@ const BankMaster = () => {
     onSubmit: async (values, { resetForm }) => {
       try {
         const req = {
+          display_index: values.index.trim(),
           bank_name: values.bank_name.trim(),
         };
 
@@ -315,24 +327,43 @@ const BankMaster = () => {
         }}
       >
         <form onSubmit={bankFormik.handleSubmit}>
-          <div className="mt-6">
+          <div className="mt-6 flex gap-3">
+            <div>
+              <TextInput
+                label="Display Index"
+                name="index"
+                type="number"
+                step="1"
+                placeholder="Enter index"
+                value={bankFormik.values.index}
+                onChange={bankFormik.handleChange}
+                onBlur={bankFormik.handleBlur}
+              />
+              {bankFormik.touched.index &&
+                bankFormik.errors.index && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {bankFormik.errors.index}
+                  </p>
+                )}
+            </div>
 
-            <TextInput
-              label="Bank Name"
-              name="bank_name"
-              placeholder="Enter bank name"
-              value={bankFormik.values.bank_name}
-              onChange={bankFormik.handleChange}
-              onBlur={bankFormik.handleBlur}
-            />
+            <div>
+              <TextInput
+                label="Bank Name"
+                name="bank_name"
+                placeholder="Enter bank name"
+                value={bankFormik.values.bank_name}
+                onChange={bankFormik.handleChange}
+                onBlur={bankFormik.handleBlur}
+              />
 
-            {bankFormik.touched.bank_name &&
-              bankFormik.errors.bank_name && (
-                <p className="mt-1 text-xs text-red-500">
-                  {bankFormik.errors.bank_name}
-                </p>
-              )}
-
+              {bankFormik.touched.bank_name &&
+                bankFormik.errors.bank_name && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {bankFormik.errors.bank_name}
+                  </p>
+                )}
+            </div>
           </div>
 
           {/* Buttons */}

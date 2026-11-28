@@ -25,7 +25,7 @@ const BusinessTradesMaster = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [editingBusinessId, setEditingBusinessId] = useState(null);
 
-  const {authData} = useAuthData()
+  const { authData } = useAuthData()
 
   //? FETCHING ALL BRANCH LIST
   const fetchAllBranches = async () => {
@@ -47,7 +47,10 @@ const BusinessTradesMaster = () => {
   const handleAddBranch = () => {
     setIsEdit(false);
     setEditingBusinessId(null);
-    BusinessTradeFormik.resetForm();
+    // businessTradeFormik.resetForm();
+    businessTradeFormik.resetForm({
+      values: { ...businessTradeFormik.initialValues, index: BusinessTrades?.length + 1 },
+    });
     setIsModalOpen(true);
   };
 
@@ -56,7 +59,9 @@ const BusinessTradesMaster = () => {
     setIsEdit(true);
     setEditingBusinessId(branch.id);
 
-    BusinessTradeFormik.setValues({
+    businessTradeFormik.setValues({
+      // index: branch.sn ?? "",
+      index: branch.display_index ?? "",
       business_trade: branch.business_trade || "",
       is_active: branch.is_active,
     });
@@ -77,6 +82,7 @@ const BusinessTradesMaster = () => {
     try {
       const req = {
         id: row.id,
+        display_index: Number(row.display_index) || 0,   // was: Number(row.sn) || 0
         business_trade: row.business_trade,
         is_active: nextStatus,
         created_by: authData?.user_id,
@@ -112,15 +118,26 @@ const BusinessTradesMaster = () => {
   };
 
   //? FORMIK FUNCTION TO ADD/EDIT BRANCH DATA
-  const BusinessTradeFormik = useFormik({
+  const businessTradeFormik = useFormik({
     initialValues: {
+      index: "",
       business_trade: "",
       is_active: "",
     },
 
-    enableReinitialize: true,
+    // enableReinitialize: true,
 
     validationSchema: Yup.object({
+      index: Yup.number()
+        .typeError("Index must be a number")
+        .integer("Index must be a whole number")
+        .min(1, "Index must be at least 1")
+        .max(
+          isEdit ? BusinessTrades?.length : BusinessTrades?.length + 1,
+          `Index must be between 1 and ${isEdit ? BusinessTrades?.length : BusinessTrades?.length + 1}`
+        )
+        .required("Index is required"),
+
       business_trade: Yup.string()
         .trim()
         .required("Business trade name is required")
@@ -131,6 +148,7 @@ const BusinessTradesMaster = () => {
     onSubmit: async (values, { resetForm }) => {
       try {
         const req = {
+          display_index: Number(values.index),
           business_trade: values.business_trade,
           is_active: values.is_active == "true" ? true : false,
           created_by: authData?.user_id,
@@ -186,6 +204,13 @@ const BusinessTradesMaster = () => {
       width: "80px",
     },
     {
+      name: "Display Index",
+      selector: (row) => row.display_index ?? "-",
+      sortable: true,
+      center: true,
+      width: "120px",
+    },
+    {
       name: "Business Trade",
       selector: (row) => row.business_trade,
       sortable: true,
@@ -222,8 +247,8 @@ const BusinessTradesMaster = () => {
   // }
 
   const ErrorText = ({ name }) =>
-    BusinessTradeFormik.touched[name] && BusinessTradeFormik.errors[name] ? (
-      <p className="mt-1 text-xs text-red-500">{BusinessTradeFormik.errors[name]}</p>
+    businessTradeFormik.touched[name] && businessTradeFormik.errors[name] ? (
+      <p className="mt-1 text-xs text-red-500">{businessTradeFormik.errors[name]}</p>
     ) : null;
 
 
@@ -252,15 +277,29 @@ const BusinessTradesMaster = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       >
-        <form onSubmit={BusinessTradeFormik.handleSubmit}>
+        <form onSubmit={businessTradeFormik.handleSubmit}>
           <div className="grid grid-cols-2 gap-3 mt-6">
+            <div>
+              <TextInput
+                label="Display Index"
+                name="index"
+                type="number"
+                step="1"
+                placeholder="Enter index"
+                value={businessTradeFormik.values.index}
+                onChange={businessTradeFormik.handleChange}
+                onBlur={businessTradeFormik.handleBlur}
+              />
+              <ErrorText name="index" />
+            </div>
+
             <div>
               <TextInput
                 label="Business Trade"
                 name={"business_trade"}
-                value={BusinessTradeFormik.values.business_trade}
-                onChange={BusinessTradeFormik.handleChange}
-                onBlur={BusinessTradeFormik.handleBlur}
+                value={businessTradeFormik.values.business_trade}
+                onChange={businessTradeFormik.handleChange}
+                onBlur={businessTradeFormik.handleBlur}
                 placeholder="Enter Business name"
               />
               <ErrorText name='business_trade' />
@@ -270,9 +309,9 @@ const BusinessTradesMaster = () => {
               label="Status"
               placeholder="Select status"
               name={"is_active"}
-              value={BusinessTradeFormik.values.is_active}
-              onChange={BusinessTradeFormik.handleChange}
-              onBlur={BusinessTradeFormik.handleBlur}
+              value={businessTradeFormik.values.is_active}
+              onChange={businessTradeFormik.handleChange}
+              onBlur={businessTradeFormik.handleBlur}
               options={[
                 { label: "Active", value: true },
                 { label: "Deactive", value: false },

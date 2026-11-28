@@ -43,9 +43,9 @@ const DepartmentMaster = () => {
 
       toast.error(
         error?.response?.data?.title ||
-          error?.response?.data?.errors?.request?.[0] ||
-          error?.message ||
-          "Failed to fetch departments!"
+        error?.response?.data?.errors?.request?.[0] ||
+        error?.message ||
+        "Failed to fetch departments!"
       );
     } finally {
       setIsLoading(false);
@@ -57,13 +57,24 @@ const DepartmentMaster = () => {
   // =========================================================
   const departmentFormik = useFormik({
     initialValues: {
+      index: "",
       department: "",
       is_active: true,
     },
 
-    enableReinitialize: true,
+    // enableReinitialize: true,
 
     validationSchema: Yup.object({
+      index: Yup.number()
+        .typeError("Index must be a number")
+        .integer("Index must be a whole number")
+        .min(1, "Index must be at least 1")
+        .max(
+          isEdit ? departments.length : departments.length + 1,
+          `Index must be between 1 and ${isEdit ? departments.length : departments.length + 1}`
+        )
+        .required("Index is required"),
+
       department: Yup.string()
         .trim()
         .required("Department is required")
@@ -77,6 +88,7 @@ const DepartmentMaster = () => {
     onSubmit: async (values, { resetForm }) => {
       try {
         const req = {
+          display_index: Number(values.index),
           department: values.department.trim(),
           is_active: values.is_active,
         };
@@ -97,9 +109,9 @@ const DepartmentMaster = () => {
 
           toast.success(
             response?.message ||
-              (isEdit
-                ? "Department updated successfully!"
-                : "Department created successfully!")
+            (isEdit
+              ? "Department updated successfully!"
+              : "Department created successfully!")
           );
 
           closeModal();
@@ -107,9 +119,9 @@ const DepartmentMaster = () => {
         } else {
           toast.info(
             response?.message ||
-              (isEdit
-                ? "Unable to update department!"
-                : "Unable to create department!")
+            (isEdit
+              ? "Unable to update department!"
+              : "Unable to create department!")
           );
         }
       } catch (error) {
@@ -122,9 +134,9 @@ const DepartmentMaster = () => {
 
         toast.error(
           error?.response?.data?.title ||
-            error?.response?.data?.errors?.request?.[0] ||
-            error?.message ||
-            "Something went wrong!"
+          error?.response?.data?.errors?.request?.[0] ||
+          error?.message ||
+          "Something went wrong!"
         );
       }
     },
@@ -138,10 +150,7 @@ const DepartmentMaster = () => {
     setEditingDepartmentId(null);
 
     departmentFormik.resetForm({
-      values: {
-        department: "",
-        is_active: true,
-      },
+      values: { ...departmentFormik.initialValues, index: departments.length + 1 },
     });
 
     setIsModalOpen(true);
@@ -176,9 +185,9 @@ const DepartmentMaster = () => {
       prev.map((item) =>
         item.id === row?.id
           ? {
-              ...item,
-              is_active: nextStatus,
-            }
+            ...item,
+            is_active: nextStatus,
+          }
           : item
       )
     );
@@ -195,7 +204,7 @@ const DepartmentMaster = () => {
       if (response?.status) {
         toast.success(
           response?.message ||
-            "Department status updated successfully!"
+          "Department status updated successfully!"
         );
       } else {
         // Revert
@@ -203,16 +212,16 @@ const DepartmentMaster = () => {
           prev.map((item) =>
             item.id === row?.id
               ? {
-                  ...item,
-                  is_active: row?.is_active,
-                }
+                ...item,
+                is_active: row?.is_active,
+              }
               : item
           )
         );
 
         toast.info(
           response?.message ||
-            "Unable to update department status!"
+          "Unable to update department status!"
         );
       }
     } catch (error) {
@@ -221,9 +230,9 @@ const DepartmentMaster = () => {
         prev.map((item) =>
           item.id === row?.id
             ? {
-                ...item,
-                is_active: row?.is_active,
-              }
+              ...item,
+              is_active: row?.is_active,
+            }
             : item
         )
       );
@@ -235,9 +244,9 @@ const DepartmentMaster = () => {
 
       toast.error(
         error?.response?.data?.title ||
-          error?.response?.data?.errors?.request?.[0] ||
-          error?.message ||
-          "Something went wrong!"
+        error?.response?.data?.errors?.request?.[0] ||
+        error?.message ||
+        "Something went wrong!"
       );
     }
   };
@@ -389,24 +398,46 @@ const DepartmentMaster = () => {
           onSubmit={departmentFormik.handleSubmit}
           className="pt-2"
         >
-          <div>
-            <TextInput
-              label="Department"
-              name="department"
-              placeholder="Enter department"
-              value={departmentFormik.values.department}
-              onChange={departmentFormik.handleChange}
-              onBlur={departmentFormik.handleBlur}
-            />
 
-            {departmentFormik.touched.department &&
-              departmentFormik.errors.department && (
-                <p className="mt-1 text-xs text-red-500">
-                  {departmentFormik.errors.department}
-                </p>
-              )}
+          <div className="flex gap-3">
+            <div>
+              <TextInput
+                label="Display Index"
+                name="index"
+                type="number"
+                step="1"
+                placeholder="Enter index"
+                value={departmentFormik.values.index}
+                onChange={departmentFormik.handleChange}
+                onBlur={departmentFormik.handleBlur}
+              />
+              {departmentFormik.touched.index &&
+                departmentFormik.errors.index && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {departmentFormik.errors.index}
+                  </p>
+                )}
+            </div>
+
+            <div>
+              <TextInput
+                label="Department"
+                name="department"
+                placeholder="Enter department"
+                value={departmentFormik.values.department}
+                onChange={departmentFormik.handleChange}
+                onBlur={departmentFormik.handleBlur}
+              />
+
+              {departmentFormik.touched.department &&
+                departmentFormik.errors.department && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {departmentFormik.errors.department}
+                  </p>
+                )}
+            </div>
           </div>
-
+          
           {/* BUTTONS */}
           <div className="flex justify-end gap-2 mt-5">
             <Button

@@ -143,7 +143,10 @@ const LoanProductMaster = () => {
   const handleAddProduct = () => {
     setIsEdit(false);
     setEditingProductId(null);
-    productFormik.resetForm();
+    // productFormik.resetForm();
+    productFormik.resetForm({
+      values: { ...productFormik.initialValues, index: productList.length + 1 },
+    });
     setIsModalOpen(true);
   };
 
@@ -271,6 +274,16 @@ const LoanProductMaster = () => {
         //   .min(2, "Product name must be at least 2 characters")
         //   .max(100, "Product name cannot exceed 100 characters"),
 
+        index: Yup.number()
+          .typeError("Index must be a number")
+          .integer("Index must be a whole number")
+          .min(1, "Index must be at least 1")
+          .max(
+            isEdit ? productList.length : productList.length + 1,
+            `Index must be between 1 and ${isEdit ? productList.length : productList.length + 1}`
+          )
+          .required("Index is required"),
+
         vendor_name: Yup.string()
           .trim()
           .required("Loan partner is required"),
@@ -365,6 +378,7 @@ const LoanProductMaster = () => {
   // =========================================================
   const productFormik = useFormik({
     initialValues: {
+      index: "",
       product_id: "",
       // product_name: "",
       vendor_name: "",
@@ -389,12 +403,13 @@ const LoanProductMaster = () => {
       is_active: false,
     },
 
-    enableReinitialize: true,
+    // enableReinitialize: true,
     validationSchema,
 
     onSubmit: async (values, { resetForm }) => {
       try {
         const req = {
+          display_index: Number(values.index),
           product_id: values.product_id.trim(),
           loan_type: Number(values.loan_type),
           // product_name: values.product_name.trim(),
@@ -684,6 +699,20 @@ const LoanProductMaster = () => {
               />
               <ErrorText name="product_name" />
             </div> */}
+
+            <div>
+              <TextInput
+                label="Display Index"
+                name="index"
+                type="number"
+                step="1"
+                placeholder="Enter index"
+                value={productFormik.values.index}
+                onChange={productFormik.handleChange}
+                onBlur={productFormik.handleBlur}
+              />
+              <ErrorText name="index" />
+            </div>
 
             <div>
               <SelectInput

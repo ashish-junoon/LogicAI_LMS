@@ -170,6 +170,7 @@ const noPermissionRequired = [
   "/admin/manage-user",
   "/lead-center/all-leads",
 
+
   "/leads-detail",
   "/credit-detail",
   "/kyc-detail",
@@ -178,6 +179,8 @@ const noPermissionRequired = [
   "/product-leads-detail",
   "/collection-details",
 
+  "/master/business-trade-master",
+  "/master/department-master",
   "/master/zone-master",
   "/master/region-master",
   "/master/area-master",
