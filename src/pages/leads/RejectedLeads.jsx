@@ -15,7 +15,7 @@ const RejectedLeads = () => {
       const response = await GetAllApplications({
         role: authData?.role,
         created_by: authData?.user_id,
-        step_status: "0"
+        step_status: "8"
       })
 
       if (!response?.status || !Array.isArray(response?.data)) {

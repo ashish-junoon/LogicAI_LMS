@@ -12,17 +12,14 @@ import TogleInput from "../../components/fields/TogleInput";
 import Button from "../../components/utils/Button";
 
 // Import your role APIs from the appropriate API file
-import {
-  GetAllRoles,
-  CreateRole,
-  UpdateRole,
-} from "../../api/userApi.js";
+import { GetAllRoles, CreateRole, UpdateRole } from "../../api/userApi.js";
 import { useNavigate } from "react-router-dom";
 import { useAuthData } from "../../context/authContext.jsx";
 
 const initialValues = {
   role_name: "",
   is_active: false,
+  hierarchy_level: "",
 };
 
 const ManageRole = () => {
@@ -31,9 +28,9 @@ const ManageRole = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [editingRoleId, setEditingRoleId] = useState(null);
-  const navgate = useNavigate()
+  const navgate = useNavigate();
 
-  const {authData} = useAuthData()
+  const { authData } = useAuthData();
   // GET ALL ROLES
   const fetchAllRoles = useCallback(async () => {
     try {
@@ -41,12 +38,10 @@ const ManageRole = () => {
 
       const response = await GetAllRoles();
 
-      const transformedData = (response?.data || []).map(
-        (role, index) => ({
-          ...role,
-          sn: index + 1,
-        }),
-      );
+      const transformedData = (response?.data || []).map((role, index) => ({
+        ...role,
+        sn: index + 1,
+      }));
 
       setRoleList(transformedData);
     } catch (error) {
@@ -73,29 +68,48 @@ const ManageRole = () => {
 
     enableReinitialize: true,
 
+    // validationSchema: Yup.object({
+    //   role_name: Yup.string()
+    //     .trim()
+    //     .required("Role name is required")
+    //     .min(2, "Role name must be at least 2 characters")
+    //     .max(100, "Role name cannot exceed 100 characters"),
+    // }),
+
     validationSchema: Yup.object({
       role_name: Yup.string()
         .trim()
         .required("Role name is required")
         .min(2, "Role name must be at least 2 characters")
         .max(100, "Role name cannot exceed 100 characters"),
+
+      role_code: Yup.string()
+        .trim()
+        .required("Role code is required")
+        .max(50, "Role code cannot exceed 50 characters"),
+
+      hierarchy_level: Yup.number()
+        .typeError("Hierarchy level must be a number")
+        .integer("Hierarchy level must be an integer")
+        .min(0, "Hierarchy level cannot be negative")
+        .required("Hierarchy level is required"),
     }),
 
     onSubmit: async (values, { resetForm }) => {
       try {
         const payload = {
+          role_id: isEdit ? editingRoleId : 0,
           role_name: values.role_name.trim(),
+          role_code: values.role_code.trim(),
+          hierarchy_level: Number(values.hierarchy_level),
           is_active: Boolean(values.is_active),
-          created_by: authData?.user_id
+          created_by: authData?.user_id,
         };
 
         let response;
 
         if (isEdit) {
-          response = await UpdateRole({
-            role_id: editingRoleId,
-            ...payload,
-          });
+          response = await UpdateRole(payload);
         } else {
           response = await CreateRole(payload);
         }
@@ -117,9 +131,7 @@ const ManageRole = () => {
         } else {
           toast.info(
             response?.message ||
-              (isEdit
-                ? "Unable to update role!"
-                : "Unable to create role!"),
+              (isEdit ? "Unable to update role!" : "Unable to create role!"),
           );
         }
       } catch (error) {
@@ -147,12 +159,27 @@ const ManageRole = () => {
   };
 
   // OPEN EDIT ROLE MODAL
+  // const handleEdit = (role) => {
+  //   setIsEdit(true);
+  //   setEditingRoleId(role.role_id);
+
+  //   roleFormik.setValues({
+  //     role_name: role.role_name || "",
+  //     is_active: Boolean(role.is_active),
+  //   });
+
+  //   roleFormik.setTouched({});
+  //   setIsModalOpen(true);
+  // };
+
   const handleEdit = (role) => {
     setIsEdit(true);
     setEditingRoleId(role.role_id);
 
     roleFormik.setValues({
       role_name: role.role_name || "",
+      role_code: role.role_code || "",
+      hierarchy_level: role.hierarchy_level ?? "",
       is_active: Boolean(role.is_active),
     });
 
@@ -178,14 +205,14 @@ const ManageRole = () => {
       const response = await UpdateRole({
         role_id: row?.role_id,
         role_name: row?.role_name,
+        role_code: row?.role_code,
+        hierarchy_level: row?.hierarchy_level,
         is_active: nextStatus,
-        created_by: authData?.user_id
+        created_by: authData?.user_id,
       });
 
       if (response?.status) {
-        toast.success(
-          response?.message || "Role status updated successfully!",
-        );
+        toast.success(response?.message || "Role status updated successfully!");
       } else {
         // Revert on API failure
         setRoleList((prev) =>
@@ -222,9 +249,7 @@ const ManageRole = () => {
   // VALIDATION ERROR
   const ErrorText = ({ name }) =>
     roleFormik.touched[name] && roleFormik.errors[name] ? (
-      <p className="mt-1 text-xs text-red-500">
-        {roleFormik.errors[name]}
-      </p>
+      <p className="mt-1 text-xs text-red-500">{roleFormik.errors[name]}</p>
     ) : null;
 
   // TABLE COLUMNS
@@ -254,11 +279,7 @@ const ManageRole = () => {
       center: true,
       width: "100px",
       cell: (row) => (
-        <button
-          type="button"
-          onClick={() => handleEdit(row)}
-          title="Edit Role"
-        >
+        <button type="button" onClick={() => handleEdit(row)} title="Edit Role">
           <Icon name="FaEdit" size={18} color="black" />
         </button>
       ),
@@ -283,28 +304,27 @@ const ManageRole = () => {
         <div className="flex justify-between items-center px-4 mb-4">
           <div className="text-md font-medium">Manage Role</div>
 
-            <div className="flex gap-2">
+          <div className="flex gap-2">
             <button
-            type="button"
-            onClick={()=> navgate(-1)}
-            className="flex items-center
+              type="button"
+              onClick={() => navgate(-1)}
+              className="flex items-center
               gap-2 py-1.5 px-3 rounded-sm border border-primary cursor-pointer text-sm font-medium text-primary hover:bg-primary/20"
-          >
-            {/* <Icon name="RiAddLine" size={15} color="white" /> */}
+            >
+              {/* <Icon name="RiAddLine" size={15} color="white" /> */}
+              Go Back
+            </button>
 
-            Go Back
-          </button>
-
-          <button
-            type="button"
-            onClick={handleAddRole}
-            className="flex items-center gap-2 p-1.5 px-3 rounded-sm
+            <button
+              type="button"
+              onClick={handleAddRole}
+              className="flex items-center gap-2 p-1.5 px-3 rounded-sm
               bg-primary hover:bg-primary/90 cursor-pointer
               text-sm font-medium text-white"
-          >
-            Add Role
-            <FaUserTag />
-          </button>
+            >
+              Add Role
+              <FaUserTag />
+            </button>
           </div>
         </div>
 
@@ -330,7 +350,7 @@ const ManageRole = () => {
         }}
       >
         <form onSubmit={roleFormik.handleSubmit}>
-          <div className="grid grid-cols-1 gap-3 mt-6 px-4">
+          <div className="grid grid-cols-2 gap-3 mt-6 px-4">
             <div>
               <TextInput
                 label="Role Name"
@@ -344,6 +364,31 @@ const ManageRole = () => {
               <ErrorText name="role_name" />
             </div>
 
+            <div>
+              <TextInput
+                label="Role Code"
+                name="role_code"
+                placeholder="Enter Role Code"
+                value={roleFormik.values.role_code}
+                onChange={roleFormik.handleChange}
+                onBlur={roleFormik.handleBlur}
+              />
+              <ErrorText name="role_code" />
+            </div>
+
+            <div>
+              <TextInput
+                label="Hierarchy Level"
+                name="hierarchy_level"
+                type="number"
+                placeholder="Enter Hierarchy Level"
+                value={roleFormik.values.hierarchy_level}
+                onChange={roleFormik.handleChange}
+                onBlur={roleFormik.handleBlur}
+              />
+              <ErrorText name="hierarchy_level" />
+            </div>
+
             {/* Status */}
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium text-gray-700">
@@ -355,9 +400,7 @@ const ManageRole = () => {
                 onChange={(value) => {
                   roleFormik.setFieldValue(
                     "is_active",
-                    typeof value === "boolean"
-                      ? value
-                      : value?.target?.checked,
+                    typeof value === "boolean" ? value : value?.target?.checked,
                   );
                 }}
               />
