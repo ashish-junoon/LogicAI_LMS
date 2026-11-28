@@ -12,7 +12,12 @@ import TogleInput from "../../components/fields/TogleInput";
 import SelectInput from "../../components/fields/SelectInput";
 import Button from "../../components/utils/Button";
 
-import { GetAllUsers, CreateUsers, UpdateUsers, GetAllRoles } from "../../api/userApi.js";
+import {
+  GetAllUsers,
+  CreateUsers,
+  UpdateUsers,
+  GetAllRoles,
+} from "../../api/userApi.js";
 import {
   GetAllBranches,
   GetAllDepartments,
@@ -36,8 +41,9 @@ const initialValues = {
   department: "",
   designation: "",
   role: "",
+  role_id: "",
   report_view: true,
-  is_active: false,
+  is_active: true,
   user_type: "",
 };
 
@@ -55,54 +61,56 @@ const ManageUser = () => {
 
   const { authData } = useAuthData();
 
-    // =========================================================
-    // FETCH ALL GENDERS
-    // =========================================================
-    const fetchAllGenders = async () => {
-      try {
-        setIsLoading(true);
-        const response = await GetAllGenders();
-        const transformedData =
-          response?.data?.map((item, index) => ({
-            label : item.gender,
-            value : item.gender,
+  // =========================================================
+  // FETCH ALL GENDERS
+  // =========================================================
+  const fetchAllGenders = async () => {
+    try {
+      setIsLoading(true);
+      const response = await GetAllGenders();
+      const transformedData =
+        response?.data
+          ?.map((item, index) => ({
+            label: item.gender,
+            value: item.gender,
             ...item,
             sn: index + 1,
-          })).filter((item)=> item?.is_active) || [];
-  
-        setgenderOptions(transformedData);
-      } catch (error) {
-        console.error("Error fetching genders:", error);
-        showValidationError(error)
-      } finally {
-        setIsLoading(false);
-      }
-    };
+          }))
+          .filter((item) => item?.is_active) || [];
 
-    // GET ALL ROLES
-    const fetchAllRoles = useCallback(async () => {
-      try {
-        setIsLoading(true);
-        const response = await GetAllRoles();
-        const transformedData = (response?.data || [])?.map(
-          (role, index) => ({
-            label: role.role_name,
-            value: role.role_name,
-            // value: role.role_id,
-            sn: index + 1,
-            ...role,
-          }),
-        )?.filter((item=> item.is_active));
-  
-        setroleOptions(transformedData);
-      } catch (error) {
-        console.error("Error fetching roles:", error);
-        showValidationError(error)
-      } finally {
-        setIsLoading(false);
-      }
-    }, []);
-  
+      setgenderOptions(transformedData);
+    } catch (error) {
+      console.error("Error fetching genders:", error);
+      showValidationError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // GET ALL ROLES
+  const fetchAllRoles = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const response = await GetAllRoles();
+      const transformedData = (response?.data || [])
+        ?.map((role, index) => ({
+          label: role.role_name,
+          value: role.role_name,
+          // value: role.role_id,
+          sn: index + 1,
+          ...role,
+        }))
+        ?.filter((item) => item.is_active);
+
+      setroleOptions(transformedData);
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+      showValidationError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   const permissionOptions = [
     { label: "Yes", value: "true" },
     { label: "No", value: "false" },
@@ -158,7 +166,7 @@ const ManageUser = () => {
       setdepartmentOptions(transformedData);
     } catch (error) {
       console.error("Error fetching department:", error);
-      showValidationError(error)
+      showValidationError(error);
     } finally {
       setIsLoading(false);
     }
@@ -181,7 +189,7 @@ const ManageUser = () => {
       setbranchOptions(transformedData);
     } catch (error) {
       console.error("Error fetching brach:", error);
-      showValidationError(error)
+      showValidationError(error);
     } finally {
       setIsLoading(false);
     }
@@ -210,7 +218,7 @@ const ManageUser = () => {
       setUserList(transformedData);
     } catch (error) {
       console.error("Error fetching users:", error);
-      showValidationError(error)
+      showValidationError(error);
     } finally {
       setIsLoading(false);
     }
@@ -275,6 +283,7 @@ const ManageUser = () => {
           department: String(values.department),
           designation: String(values.designation),
           role: values.role,
+          role_id: Number(values.role_id),
           user_type: values.user_type,
           report_view:
             values.report_view === true || values.report_view === "true",
@@ -353,6 +362,7 @@ const ManageUser = () => {
       department: String(user.department_id ?? ""),
       designation: String(user.designation_id ?? ""),
       role: user.role || "",
+      role_id: String(user.role_id ?? ""),
       user_type: String(user.user_type),
       report_view: Boolean(user.report_view),
       is_active: user.is_active,
@@ -387,7 +397,8 @@ const ManageUser = () => {
         department: String(row?.department_id ?? ""),
         designation: String(row?.designation_id ?? ""),
         role: row?.role,
-        user_type : String(row?.user_type),
+        role_id: row?.role_id,
+        user_type: String(row?.user_type),
         report_view: Boolean(row?.report_view),
         created_by: authData?.user_id,
         is_active: nextStatus,
@@ -420,7 +431,7 @@ const ManageUser = () => {
       );
 
       console.error("Error toggling user status:", error);
-      showValidationError(error)
+      showValidationError(error);
     }
   };
 
@@ -449,9 +460,15 @@ const ManageUser = () => {
       name: "Permission",
       selector: (row) => row.user_id,
       center: true,
-      cell: (row) => <Link className="text-xl" 
-      state={{ id: row.user_id}}
-      to={`/admin/manage-permission`}><FaEye className="animate-pulse" /></Link>,
+      cell: (row) => (
+        <Link
+          className="text-xl"
+          state={{ id: row.user_id }}
+          to={`/admin/manage-permission`}
+        >
+          <FaEye className="animate-pulse" />
+        </Link>
+      ),
     },
     {
       name: "Full Name",
@@ -471,7 +488,7 @@ const ManageUser = () => {
       selector: (row) => row?.email_id || "-",
       sortable: true,
       wrap: true,
-      width: "250px"
+      width: "250px",
     },
     {
       name: "Mobile",
@@ -490,42 +507,42 @@ const ManageUser = () => {
       sortable: true,
       wrap: true,
     },
-    {
-      name: "Department",
-      selector: (row) =>
-        row?.department ||
-        departmentOptions.find(
-          (option) => Number(option.value) === Number(row?.department),
-        )?.label ||
-        "-",
-      sortable: true,
-      wrap: true,
-    },
-    {
-      name: "Designation",
-      selector: (row) => row?.designation || "-",
-      sortable: true,
-      wrap: true,
-    },
-    {
-      name: "Role",
-      selector: (row) => row?.role || "-",
-      sortable: true,
-      center: true,
-    },
-    {
-      name: "Role Access",
-      selector: (row) => row?.user_type || "-",
-      sortable: true,
-      center: true,
-    },
-    {
-      name: "View Permission",
-      selector: (row) => (row?.report_view ? "Yes" : "No"),
-      sortable: true,
-      center: true,
-      width: "150px",
-    },
+    // {
+    //   name: "Department",
+    //   selector: (row) =>
+    //     row?.department ||
+    //     departmentOptions.find(
+    //       (option) => Number(option.value) === Number(row?.department),
+    //     )?.label ||
+    //     "-",
+    //   sortable: true,
+    //   wrap: true,
+    // },
+    // {
+    //   name: "Designation",
+    //   selector: (row) => row?.designation || "-",
+    //   sortable: true,
+    //   wrap: true,
+    // },
+    // {
+    //   name: "Role",
+    //   selector: (row) => row?.role || "-",
+    //   sortable: true,
+    //   center: true,
+    // },
+    // {
+    //   name: "Role Access",
+    //   selector: (row) => row?.user_type || "-",
+    //   sortable: true,
+    //   center: true,
+    // },
+    // {
+    //   name: "View Permission",
+    //   selector: (row) => (row?.report_view ? "Yes" : "No"),
+    //   sortable: true,
+    //   center: true,
+    //   width: "150px",
+    // },
     {
       name: "Action",
       center: true,
@@ -709,7 +726,7 @@ const ManageUser = () => {
               />
               <ErrorText name="branch" />
             </div>
-            
+
             {/* <div>
               <SelectInput
                 label="Reporting Head"
@@ -749,7 +766,7 @@ const ManageUser = () => {
               <ErrorText name="designation" />
             </div>
 
-            <div>
+            {/* <div>
               <SelectInput
                 label="Role"
                 name="role"
@@ -760,6 +777,31 @@ const ManageUser = () => {
                 onBlur={userFormik.handleBlur}
               />
               <ErrorText name="role" />
+            </div> */}
+
+            <div>
+              <SelectInput
+                label="Role"
+                name="role"
+                placeholder="Select Role"
+                options={roleOptions}
+                value={userFormik.values.role}
+                onChange={(e) => {
+                  const selectedRole = roleOptions.find(
+                    (item) => item.role_name === e.target.value,
+                  );
+
+                  userFormik.setFieldValue(
+                    "role",
+                    selectedRole?.role_name || "",
+                  );
+                  userFormik.setFieldValue(
+                    "role_id",
+                    selectedRole?.role_id || "",
+                  );
+                }}
+                onBlur={userFormik.handleBlur}
+              />
             </div>
 
             <div>

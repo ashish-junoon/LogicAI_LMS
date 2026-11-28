@@ -67,6 +67,9 @@ import AccessDenied from "./pages/auth/AccessDenied";
 import Loader from "./components/utils/Loader";
 import CollectionDetails from "./pages/emi/CollectionDetails";
 import Profile from "./pages/auth/Profile";
+import ZoneMaster from "./pages/master/ZoneMaster";
+import RegionMaster from "./pages/master/RegionMaster";
+import AreaMaster from "./pages/master/AreaMaster";
 
 // Normalize API URL and route URL
 const normalizePath = (path = "") => {
@@ -124,7 +127,12 @@ const routeComponents = {
   "/master/loan-subpurpose-master": LoanSubPurposeMaster,
   "/master/lead-source-master": LeadSource,
   "/master/tellecaller-quetions-master": TelecallerQuetionsMaster,
-  "/master/status": RedirectPage,
+  "/master/zone-master": ZoneMaster,
+  "/master/region-master": RegionMaster,
+  "/master/area-master": AreaMaster,
+
+
+  "/status": RedirectPage,
 
   // Admin
   "/admin/manage-user": ManageUser,
@@ -169,6 +177,10 @@ const noPermissionRequired = [
   "/disbursement-detail",
   "/product-leads-detail",
   "/collection-details",
+
+  "/master/zone-master",
+  "/master/region-master",
+  "/master/area-master",
 
   "/emi-details"
 ];

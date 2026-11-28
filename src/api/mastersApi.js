@@ -791,6 +791,79 @@ export const CreateVendor = async (req) => {
     }
 }
 
+// ?===========================
+// * Zone MASTER API'S
+// ?===========================
+
+export const GetAllZones = async (req) => {
+    try {
+        const response = await api.get("/Master/GetAllZones", req);
+        return response.data;
+    } catch (error) {
+        console.error("GetAllZones:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const CreateUpdateZone = async (req) => {
+    try {
+        const response = await api.post("/Master/CreateUpdateZone", req);
+        return response.data;
+    } catch (error) {
+        console.error("CreateUpdateZone:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+// ?===========================
+// * Region MASTER API'S
+// ?===========================
+
+export const GetAllRegions = async (req) => {
+    try {
+        const response = await api.get("/Master/GetAllRegions", req);
+        return response.data;
+    } catch (error) {
+        console.error("GetAllRegions:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const CreateUpdateRegion = async (req) => {
+    try {
+        const response = await api.post("/Master/CreateUpdateRegion", req);
+        return response.data;
+    } catch (error) {
+        console.error("CreateUpdateRegion:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+// ?===========================
+// * Area MASTER API'S
+// ?===========================
+
+export const GetAllAreas = async (req) => {
+    try {
+        const response = await api.get("/Master/GetAllAreas", req);
+        return response.data;
+    } catch (error) {
+        console.error("GetAllAreas:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+export const CreateUpdateArea = async (req) => {
+    try {
+        const response = await api.post("/Master/CreateUpdateArea", req);
+        return response.data;
+    } catch (error) {
+        console.error("CreateUpdateArea:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+
 
 // ?===========================
 // * TELLECALLER QUETION MASTER API'S

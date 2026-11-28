@@ -13,12 +13,15 @@ import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import TextInput from "../../components/fields/TextInput";
+import { useAuthData } from "../../context/authContext";
 
 const DocumentMaster = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [documentList, setDocumentList] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [editingDocumentId, setEditingDocumentId] = useState(null);
+
+  const {authData} = useAuthData()
 
   const customStyles = {
     rows: {
@@ -262,15 +265,17 @@ const DocumentMaster = () => {
           formData.append("document_type", values.document_type.trim());
           formData.append("is_active", values.is_active);
           formData.append("thumbnail_image", values.thumbnail_image);
-
+          formData.append("created_by", authData.created_by);
+          
           response = await UpdateDocumentType(formData);
         } else {
           // CREATE API - MULTIPART
           const formData = new FormData();
-
+          
           formData.append("document_type", values.document_type.trim());
           formData.append("is_active", values.is_active);
           formData.append("thumbnail_image", values.thumbnail_image);
+          formData.append("created_by", authData.created_by);
 
           response = await CreateDocumentType(formData);
         }
