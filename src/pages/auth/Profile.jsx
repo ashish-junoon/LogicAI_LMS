@@ -308,14 +308,9 @@ const Profile = () => {
 
   const user = authData
 
-  const initials =
-    user?.full_name
-      ?.split(" ")
-      .filter(Boolean)
-      .map((name) => name[0])
-      .join("")
-      .slice(0, 2)
-      .toUpperCase() || "U";
+  const initials = user?.full_name?.split(" ")
+      .filter(Boolean).map((name) => name[0])
+      .join("").slice(0, 2).toUpperCase() || "U";
 
   const InfoItem = ({ icon: Icon, label, value }) => (
     <div className="group flex min-w-0 items-center gap-3 rounded-xl border border-gray-100 bg-white p-3.5 transition-all duration-200 hover:border-primary/30 hover:bg-primary/[0.03] hover:shadow-sm">
@@ -567,20 +562,20 @@ const Profile = () => {
 
           <InfoItem
             icon={RiIdCardLine}
-            label="Branch ID"
-            value={user?.branch_id}
+            label="Branch Name"
+            value={user?.branch_name}
           />
 
           <InfoItem
             icon={RiIdCardLine}
-            label="Department ID"
-            value={user?.department_id}
+            label="Department"
+            value={user?.department}
           />
 
           <InfoItem
             icon={RiIdCardLine}
-            label="Designation ID"
-            value={user?.designation_id}
+            label="Designation"
+            value={user?.designation}
           />
         </div>
       </div>

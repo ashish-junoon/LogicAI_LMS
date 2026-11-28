@@ -33,14 +33,14 @@ export default function Navbar({ onToggleSidebar, onToggleMobile }) {
       </button>
 
       {/* search */}
-      <div className="relative hidden max-w-sm flex-1 sm:block">
+      {/* <div className="relative hidden max-w-sm flex-1 sm:block">
         <FiSearch className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
         <input
           type="text"
           placeholder="Search leads, loans, customers..."
           className="w-full rounded-lg border border-surface-border bg-surface py-2 pl-9 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/40"
         />
-      </div>
+      </div> */}
 
       <div className="ml-auto flex items-center gap-2">
         {/* <button
